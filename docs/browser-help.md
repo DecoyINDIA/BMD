@@ -6,6 +6,8 @@ When the browser can't hand a download to iDM, it keeps the download itself, so 
 
 To check iDM's side, open **Options → General** in iDM and click **Test browser integration...**. It checks that browser integration is on, that this is the installed copy, that the browsers can find iDM, and which browsers' extension has connected; **How to fix it** opens the section for the first that fails.
 
+<a name="not-installed"></a>
+
 ## iDM isn't installed, or browser integration isn't set up {#not-installed}
 
 The browser can't find the small helper program it talks to. It is registered when iDM is installed.
@@ -20,6 +22,8 @@ The browser can't find the small helper program it talks to. It is registered wh
 8. **The AppImage on Linux:** the AppImage's files are gone once it quits, so iDM keeps a copy of its helper program in its data folder (`~/.local/share/misterdownloadmanager/browser-host`) and points the browsers there. Start iDM once after moving or renaming the AppImage, or after an AppImage manager (Gear Lever, AppImageLauncher and the like) moved it, so the helper knows where to start it from.
 9. **Zen on Windows:** Zen 1.21.15b and later have a bug of their own that keeps add-ons from reaching their helper program ([zen-browser/desktop#15432](https://github.com/zen-browser/desktop/issues/15432)), with any add-on that uses one. Until Zen fixes it, Zen 1.21.14b works.
 
+<a name="not-running"></a>
+
 ## iDM didn't start in time {#not-running}
 
 When iDM isn't running, the browser starts it for each download and waits for it. It waited about 20 seconds this time and gave up.
@@ -29,6 +33,8 @@ When iDM isn't running, the browser starts it for each download and waits for it
 - With a VPN or proxy program, allow connections to `127.0.0.1` (your own computer): the browser's helper reaches iDM through one.
 - If iDM never opens, see [The setup or iDM won't start](troubleshooting.md).
 
+<a name="host-failed"></a>
+
 ## The connection to iDM failed {#host-failed}
 
 The browser started iDM's helper, but it stopped before answering. Security software is the usual cause.
@@ -37,6 +43,8 @@ The browser started iDM's helper, but it stopped before answering. Security soft
 - Reinstall iDM to restore its files.
 - On Linux, with Firefox or Chromium installed as a Snap, see [Flatpak and Snap browsers](#linux-sandbox).
 - Uninstalled iDM on Linux? The .deb and .rpm take their browser files with them; the AppImage's and the tar.gz's stay in your home folder: [remove them](getting-started.md#uninstall-linux), and the extension too.
+
+<a name="forbidden"></a>
 
 ## iDM doesn't accept this copy of the extension {#forbidden}
 
@@ -51,17 +59,23 @@ iDM's helper serves only its own extension. The browser says this copy isn't one
 - **A copy from elsewhere?** Remove it and add the extension as iDM's **Add iDM to your browser** window shows (see [Browser integration](browser-integration.md)).
 - **An older iDM?** Update iDM: a newer extension may have an ID an old helper doesn't know.
 
+<a name="update-app"></a>
+
 ## The extension is newer than iDM {#update-app}
 
 Downloads still work, but some of the extension's features need a newer iDM. Update it with **Help → Check for updates...** in iDM.
 
 If iDM says it's up to date, there's nothing for you to do. The extension updates by itself through its store and can get ahead of the app for a while. Everything keeps working, and the message goes away with the next version of iDM.
 
+<a name="too-large"></a>
+
 ## A download's details were too large {#too-large}
 
 A download carries its site's cookies (and a form's data) to iDM. A few sites set so many that together they exceed what iDM accepts from the browser (1 MB). The browser kept this one. Signing out and back in to the site usually trims them.
 
 **Download all links** and **Download selected links** send a long list of links in parts of up to 1 MB, so a page with tens of thousands of links reaches Link grabber whole. A single link longer than that, which no server takes, can't be sent: it is left out, the others still reach Link grabber, and this page opens to say so. When a site's cookies alone fill the 1 MB, no link can go with them: sign out and back in to the site, as above.
+
+<a name="options"></a>
 
 ## Downloads stay with the browser although iDM is connected {#options}
 
@@ -75,9 +89,13 @@ The extension is connected, but iDM's own settings leave this download to the br
 
 Also check the extension's toolbar button: with **Take downloads from this browser** off, everything stays with the browser.
 
+<a name="opened"></a>
+
 ## The browser opens PDFs and music instead of sending them {#opened}
 
 iDM also takes the file types the browser would show or play itself (a PDF, an MP3, also in a frame of a page), when they're listed in **Options → File types** and **Also take files the browser would open** is ticked in **Options → General → Keys...**. This needs a Chromium browser (Chrome, Edge, Brave, Opera, Vivaldi) version 128 or later, or Firefox. Sites in iDM's excluded sites keep opening them in the browser. Hold **Alt** (**Option** on a Mac) while clicking a link to leave it to the browser: Firefox then follows it as a plain click does, while Chromium browsers and Safari download it themselves (it is their own "download link").
+
+<a name="store-youtube"></a>
 
 ## No Download video button on YouTube in Chrome, Edge or Brave {#store-youtube}
 
@@ -85,13 +103,19 @@ The copy of the extension from the Chrome Web Store showed no **Download video**
 
 You can always save a video without the button: in iDM, open **Tasks → Download video from a page** and paste the video's address.
 
+<a name="site-access"></a>
+
 ## The extension can't read this site {#site-access}
 
 In Chrome, Edge and Brave you can limit an extension to some sites (right-click its toolbar button → **This can read and change site data**). On a site it may not read, the extension can't pass your sign-in on, so it leaves the download to the browser. Choose **On all sites** to let iDM take downloads everywhere.
 
+<a name="firefox-temporary"></a>
+
 ## Firefox forgets the extension after a restart {#firefox-temporary}
 
 An add-on loaded with **Load Temporary Add-on** (from `about:debugging`) is removed when Firefox closes. Remove it and install the add-on from [its page on addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/) instead: Firefox keeps that one, and updates it.
+
+<a name="linux-sandbox"></a>
 
 ## Linux: Flatpak and Snap browsers {#linux-sandbox}
 
