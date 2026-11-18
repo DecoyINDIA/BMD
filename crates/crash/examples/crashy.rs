@@ -1,11 +1,11 @@
 //! The end-to-end test's program (tests/e2e.rs): `crashy <freeze|panic|crash|thread-crash> <data
-//! dir>` starts its monitor (itself with `--crash-monitor`), attaches the crash handler as MDM
+//! dir>` starts its monitor (itself with `--crash-monitor`), attaches the crash handler as iDM
 //! does, and then freezes its main thread, panics, or crashes (on a thread of its own with
 //! `thread-crash`). The monitor writes the dump and the report
 //! (`<data>/crashes/*.txt`) and exits when this process is gone. With `CRASHY_MONITOR_LATE_MS` set,
 //! the monitor listens that much later.
 //!
-//! Test code: it may use `unsafe` (the crash handler, a null write, the thread id), MDM's own code
+//! Test code: it may use `unsafe` (the crash handler, a null write, the thread id), iDM's own code
 //! keeps that in win32.rs / unix.rs.
 #![allow(unsafe_code)]
 
@@ -190,7 +190,7 @@ fn run_monitor(m: mdm_crash::MonitorArgs) {
             let _ = failed.send(Event::ServeFailed(e));
         }
     });
-    // Leave once crashy is gone, as MDM's monitor does: on macOS the connection a dump was
+    // Leave once crashy is gone, as iDM's monitor does: on macOS the connection a dump was
     // written for isn't seen to close (minidumper drops it without a word), and crashy's
     // monitors stayed behind the tests.
     #[cfg(unix)]
@@ -226,8 +226,8 @@ fn run_monitor(m: mdm_crash::MonitorArgs) {
     }
 }
 
-// MDM's handler in front of crash-handler's, as the app has it (crates/app/src/unix.rs), so the
-// crashes here go through it as MDM's do. A copy, not shared: the app keeps `unsafe` in its
+// iDM's handler in front of crash-handler's, as the app has it (crates/app/src/unix.rs), so the
+// crashes here go through it as iDM's do. A copy, not shared: the app keeps `unsafe` in its
 // unix.rs (CLAUDE.md, rule 3); tests/in_frame.rs checks the two are the same.
 // ---- The handler in front of crash-handler's (#1239). examples/crashy.rs in crates/crash keeps
 // a copy of this module, from this line to the end mark, that crates/crash/tests/in_frame.rs

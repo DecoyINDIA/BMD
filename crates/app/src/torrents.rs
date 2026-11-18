@@ -186,7 +186,7 @@ pub fn save_torrent(hash: &str, bytes: &[u8]) -> std::io::Result<()> {
 /// A change of a torrent's kept files, beside the window.
 type Change = Box<dyn FnOnce() + Send>;
 
-/// MDM's own files for the torrents of the list, in its data folder: the .torrent kept for each
+/// iDM's own files for the torrents of the list, in its data folder: the .torrent kept for each
 /// and the record of a single file's new name (#517). A torrent's Delete changes them beside the
 /// window, on a thread of their own, one change after the other (an antivirus or a busy disk
 /// could hold the window on them); a torrent added while changes are under way has its files
@@ -336,7 +336,7 @@ pub struct Remote {
     pub parts: crate::app::RequestParts,
 }
 
-/// Fetch a .torrent from the web with MDM's own downloader, as `remote` says; at most
+/// Fetch a .torrent from the web with iDM's own downloader, as `remote` says; at most
 /// `mdm_torrent::MAX_TORRENT_FILE` (a bigger file isn't a torrent, and is stopped there).
 pub async fn fetch_torrent(remote: Remote) -> Result<Vec<u8>, String> {
     let not = || crate::errors::torrent(&mdm_torrent::TorrentError::NotATorrent);
@@ -345,7 +345,7 @@ pub async fn fetch_torrent(remote: Remote) -> Result<Vec<u8>, String> {
         .ok_or_else(not)
 }
 
-/// Fetch a small file from the web (a .torrent, an RSS feed) with MDM's own downloader, as
+/// Fetch a small file from the web (a .torrent, an RSS feed) with iDM's own downloader, as
 /// `remote` says, into memory: None when it is bigger than `max` bytes (stopped there). Its
 /// temporary file, resume state and part file are removed.
 pub async fn fetch_small(remote: Remote, max: u64) -> Result<Option<Vec<u8>>, String> {
@@ -395,7 +395,7 @@ pub async fn fetch_small(remote: Remote, max: u64) -> Result<Option<Vec<u8>>, St
     bytes
 }
 
-/// The blocklist as MDM converted it (mdm_torrent::blocklist), in the torrent data folder.
+/// The blocklist as iDM converted it (mdm_torrent::blocklist), in the torrent data folder.
 pub const BLOCKLIST_FILE: &str = "blocklist.p2p";
 /// The address it was fetched from (another address: fetched again).
 const BLOCKLIST_SOURCE: &str = "blocklist.source";
@@ -418,7 +418,7 @@ pub fn blocklist_updated(url: &str) -> Option<std::time::SystemTime> {
 
 /// Fetch and convert the blocklist at `url` (#40) when it was never converted, comes from
 /// another address now, or is older than `BLOCKLIST_DAYS`; in the background, one at a time
-/// (`busy`), with MDM's own downloader (Proxy / Socks applies). A list that isn't one keeps the
+/// (`busy`), with iDM's own downloader (Proxy / Socks applies). A list that isn't one keeps the
 /// last good one. The torrent session reads it when it starts.
 pub fn refresh_blocklist(
     rt: &tokio::runtime::Handle,
@@ -462,7 +462,7 @@ pub fn refresh_blocklist(
                         );
                     }
                 }
-                None => tracing::warn!("blocklist: {url} is not a list MDM can read"),
+                None => tracing::warn!("blocklist: {url} is not a list iDM can read"),
             },
             Err(e) => tracing::warn!("blocklist: {e}"),
         }

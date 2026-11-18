@@ -18,8 +18,8 @@ use serde_json::json;
 #[derive(Parser)]
 #[command(
     version,
-    about = "Mister Download Manager command line",
-    long_about = "Mister Download Manager command line: downloads, videos and torrents without the \
+    about = "iDM command line",
+    long_about = "iDM command line: downloads, videos and torrents without the \
                   window, and the running app's automation API. Guide: \
                   https://misterdownloadmanager.com/help/command-line.html"
 )]
@@ -162,7 +162,7 @@ enum Cmd {
         /// Put the subtitles into the video file instead of beside it (needs ffmpeg; MP4/MKV).
         #[arg(long)]
         embed_subs: bool,
-        /// Connections per stream (1 to 128), as `get`'s: MDM's engine downloads the streams
+        /// Connections per stream (1 to 128), as `get`'s: iDM's engine downloads the streams
         /// yt-dlp finds (#769), one in pieces (HLS, DASH) this many pieces at once.
         #[arg(short, long, default_value_t = Options::default().max_connections,
               value_parser = clap::value_parser!(u32).range(1..=MAX_CONNECTIONS_UNLOCKED as i64))]
@@ -426,8 +426,7 @@ impl std::error::Error for Reported {}
 /// Ask the running app (automation API) and print its answer, which is JSON already; an
 /// `{"error"}` answer fails the command.
 fn ask(cmd: mdm_ipc::Command) -> anyhow::Result<()> {
-    let answer = mdm_ipc::request(&cmd)
-        .map_err(|e| anyhow::anyhow!("Mister Download Manager isn't running ({e})"))?;
+    let answer = mdm_ipc::request(&cmd).map_err(|e| anyhow::anyhow!("iDM isn't running ({e})"))?;
     println!("{answer}");
     if serde_json::from_str::<mdm_ipc::api::ErrorAnswer>(&answer).is_ok() {
         return Err(Reported.into());
@@ -447,7 +446,7 @@ fn status_command(
         query: Some("list".into()),
         ..Default::default()
     })
-    .map_err(|e| anyhow::anyhow!("Mister Download Manager isn't running ({e})"))?;
+    .map_err(|e| anyhow::anyhow!("iDM isn't running ({e})"))?;
 
     if serde_json::from_str::<mdm_ipc::api::ErrorAnswer>(&answer).is_ok() {
         println!("{answer}");
@@ -582,7 +581,7 @@ fn pair(json: bool) -> anyhow::Result<()> {
         pair: true,
         ..Default::default()
     })
-    .map_err(|e| anyhow::anyhow!("Mister Download Manager isn't running ({e})"))?;
+    .map_err(|e| anyhow::anyhow!("iDM isn't running ({e})"))?;
     match mdm_ipc::api::parse::<mdm_ipc::api::PairAnswer>(&answer).map_err(anyhow::Error::msg)? {
         Ok(a) => {
             println!("{}", a.qr);
@@ -681,7 +680,7 @@ pub fn main(args: Vec<OsString>) -> ExitCode {
 }
 
 /// [`main`], downloading through the app's debrid `accounts` (#44).
-/// Does the command line `args` (as [`main_with`] takes them) download a link with MDM's own
+/// Does the command line `args` (as [`main_with`] takes them) download a link with iDM's own
 /// User-Agent (`get`, `resume`)? The app waits for the default browser's (#668) only for these.
 pub fn downloads(args: &[OsString]) -> bool {
     Cli::try_parse_from(std::iter::once(OsString::from(NAME)).chain(args.iter().cloned()))
@@ -854,24 +853,24 @@ async fn run(cmd: Cmd, json: bool, accounts: Option<&dyn Accounts>) -> anyhow::R
                 mdm_tools::proc::set_route(r.clone());
             }
             let dir = mdm_tools::tools_dir().ok_or_else(|| anyhow::anyhow!("no data folder"))?;
-            // A gallery-dl of the person's too old for MDM is passed over (#236), said plainly.
+            // A gallery-dl of the person's too old for iDM is passed over (#236), said plainly.
             let old = mdm_tools::gallery::chosen_too_old(&dir).map(|old| {
                 format!(
-                    "your gallery-dl {} ({}) is too old: MDM needs {} or newer",
+                    "your gallery-dl {} ({}) is too old: iDM needs {} or newer",
                     old.version,
                     old.exe.display(),
                     mdm_tools::gallery::OLDEST
                 )
             });
             let tool = mdm_tools::gallery::installed(&dir).ok_or_else(|| match &old {
-                Some(why) => anyhow::anyhow!("{why}; run install-gallery-dl for MDM's own copy"),
+                Some(why) => anyhow::anyhow!("{why}; run install-gallery-dl for iDM's own copy"),
                 None => anyhow::anyhow!("gallery-dl is not installed: run install-gallery-dl"),
             })?;
             if let Some(why) = &old {
                 if tool.is_system() {
                     eprintln!("{why}: using the system's, {}", tool.exe.display());
                 } else {
-                    eprintln!("{why}: using MDM's own copy, {}", tool.version);
+                    eprintln!("{why}: using iDM's own copy, {}", tool.version);
                 }
             }
             if !mdm_tools::gallery::handles(&tool, &url)? {
@@ -1515,7 +1514,7 @@ fn subs_arg(langs: &str, automatic: bool, embed: bool) -> mdm_tools::video::Subs
     }
 }
 
-/// MDM's engine for a video's streams (#769): this many connections each, through `route`.
+/// iDM's engine for a video's streams (#769): this many connections each, through `route`.
 fn video_engine(connections: u32, route: Option<mdm_engine::Route>) -> mdm_tools::streams::Engine {
     mdm_tools::streams::Engine {
         handle: tokio::runtime::Handle::current(),
@@ -1780,8 +1779,8 @@ impl std::fmt::Display for NoFormat {
 
 impl std::error::Error for NoFormat {}
 
-/// A download's options: the app's defaults (the default browser's User-Agent, #668, MDM's
-/// former one once if a site refuses it, #372, and MDM's own name once if a site's bot check
+/// A download's options: the app's defaults (the default browser's User-Agent, #668, iDM's
+/// former one once if a site refuses it, #372, and iDM's own name once if a site's bot check
 /// refuses the browser's and the browser-like connection too, #1422; a `--user-agent` or a
 /// `User-Agent` header given is the only one sent).
 fn opts(connections: u32) -> Options {

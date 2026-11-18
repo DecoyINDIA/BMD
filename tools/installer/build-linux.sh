@@ -2,11 +2,11 @@
 # Builds the Linux release for this machine's processor into target/dist/ (up to 0.2.4, each
 # name ended in "-experimental"), <arch> being x86_64 on a 64-bit Intel or AMD machine and arm64
 # on a 64-bit ARM one:
-#   MisterDownloadManager-<version>-linux-<arch>.AppImage        runs on most distros
-#   MisterDownloadManager-<version>-linux-<arch>.AppImage.zsync  its updates (AppImage tools)
-#   MisterDownloadManager-<version>-linux-<arch>.tar.gz          the plain programs
-#   MisterDownloadManager-<version>-linux-<arch>.deb             Debian, Ubuntu, Mint
-#   MisterDownloadManager-<version>-linux-<arch>.rpm             Fedora, RHEL, openSUSE
+#   iDM-<version>-linux-<arch>.AppImage        runs on most distros
+#   iDM-<version>-linux-<arch>.AppImage.zsync  its updates (AppImage tools)
+#   iDM-<version>-linux-<arch>.tar.gz          the plain programs
+#   iDM-<version>-linux-<arch>.deb             Debian, Ubuntu, Mint
+#   iDM-<version>-linux-<arch>.rpm             Fedora, RHEL, openSUSE
 # Update now (crates/tools/src/update.rs), the website (tools/website/build.py) and the docs
 # look for these names, and still for the "-experimental" ones of older releases.
 # Needs: cargo, pwsh (the extension), python3 with Pillow (the icon), dpkg-deb, rpmbuild, network access (appimagetool is fetched),
@@ -26,7 +26,7 @@ case "$(uname -m)" in
   aarch64) arch=arm64 deb_arch=arm64 pkg_arch=aarch64 ;;
   *) echo "no Linux release is built for $(uname -m)" >&2; exit 1 ;;
 esac
-name="MisterDownloadManager-$version-linux-$arch"
+name="iDM-$version-linux-$arch"
 programs=(misterdownloadmanager misterdownloadmanager-nmhost misterdownloadmanager-cli misterdownloadmanager-mcp)
 
 if [ "${1:-}" != "--no-build" ]; then
@@ -70,12 +70,12 @@ import sys
 from PIL import Image
 Image.open(sys.argv[1]).convert("RGBA").resize((256, 256), Image.LANCZOS).save(sys.argv[2])
 EOF
-# StartupWMClass: the class every window of MDM carries (main.rs APP_ID), so a window pinned to
+# StartupWMClass: the class every window of iDM carries (main.rs APP_ID), so a window pinned to
 # the taskbar or the dock is this entry's, whatever name an AppImage manager gives the entry (#940).
 cat > "$tree/usr/share/applications/misterdownloadmanager.desktop" <<EOF
 [Desktop Entry]
 Type=Application
-Name=Mister Download Manager
+Name=iDM
 Comment=Download manager
 Exec=misterdownloadmanager %U
 Icon=misterdownloadmanager
@@ -95,13 +95,13 @@ cp "$root/LICENSE" "$root/ATTRIBUTION.md" "$plain/"
 tar -C "$stage" -czf "$dist/$name.tar.gz" "$name"
 
 # .deb. Its dependencies, and the .rpm's: the libraries the window loads at run time. Without
-# libxkbcommon-x11 (winit's keyboard under X11, and XWayland, MDM's default in a Wayland session)
+# libxkbcommon-x11 (winit's keyboard under X11, and XWayland, iDM's default in a Wayland session)
 # the window panics at start; EGL draws Wayland windows; without the CA certificates no download
 # starts, HTTP ones too ("No CA certificates were loaded from the system"). GTK pulls in the rest.
 # The browsers' host manifests for everyone (#266), in the .deb and .rpm only: each folder the
 # browsers read them from (/etc/opt/chrome, /etc/chromium, /etc/opt/edge, /usr/lib/mozilla and
 # /usr/lib64/mozilla), naming /usr/bin/misterdownloadmanager-nmhost. The package owns them, so
-# uninstalling it removes them (not conffiles: `apt remove` takes them too), and MDM writes none
+# uninstalling it removes them (not conffiles: `apt remove` takes them too), and iDM writes none
 # in the home folder for a browser that reads them. The AppImage and the tar.gz register per user.
 system="$stage/system"
 "$tree/usr/bin/misterdownloadmanager-nmhost" --package-manifests "$system"
@@ -169,7 +169,7 @@ ln -s usr/bin/misterdownloadmanager "$appdir/AppRun"
 cp "$tree/usr/share/applications/misterdownloadmanager.desktop" "$appdir/"
 cp "$tree/usr/share/icons/hicolor/256x256/apps/misterdownloadmanager.png" "$appdir/"
 # appimagetool and the runtime it puts at the front of every AppImage, each at a fixed release and
-# checked by its sha256: their `continuous` tags move with every upstream commit, so the same MDM
+# checked by its sha256: their `continuous` tags move with every upstream commit, so the same iDM
 # tag could otherwise be packaged with a different tool. A new version is a new pair of hashes here
 # (GitHub shows each file's sha256 on its release page).
 appimagetool_tag=1.9.1
@@ -190,9 +190,9 @@ python3 "$root/tools/installer/fetch_release.py" AppImage/type2-runtime "$runtim
   "runtime-$pkg_arch" "$runtime" "$runtime_sha"
 chmod +x "$tool"
 # Update information (#24): AppImageLauncher, Gear Lever and AppImageUpdate read it from the
-# AppImage, find the latest release's .zsync and download only the parts that changed. MDM's own
+# AppImage, find the latest release's .zsync and download only the parts that changed. iDM's own
 # Update now doesn't need it. The pattern also matches the names up to 0.2.4, with "-experimental".
-update="gh-releases-zsync|anefzaoui|misterdownloadmanager|latest|MisterDownloadManager-*-linux-$arch*.AppImage.zsync"
+update="gh-releases-zsync|anefzaoui|misterdownloadmanager|latest|iDM-*-linux-$arch*.AppImage.zsync"
 # No FUSE on CI runners: the tool runs from its own extracted copy.
 # zstd at its strongest level (#25; unpacking is as fast): the tool's 128K blocks stay, as 1M
 # blocks make the AppImage start slower (AppImage/appimagetool#64).

@@ -10,7 +10,7 @@
 //!   nothing is downloaded until the user adds it to the queue;
 //! - the listener takes at most `mdm_cnl::POSTS_PER_MINUTE` posts a minute from each site, and
 //!   at most [`WAITING`] wait here for an answer; the window asks one site at a time, and a
-//!   site brings MDM's window up at most once a minute ([`RAISE_EVERY`]);
+//!   site brings iDM's window up at most once a minute ([`RAISE_EVERY`]);
 //! - the site is the one the browser names; a page it names none for is an unknown site, asked
 //!   about every time, and links to this computer or its network never arrive (`mdm_cnl`).
 //!
@@ -29,7 +29,7 @@ use crate::winui::{self, ButtonKind, LIGHT_BG, LIGHT_TEXT};
 
 /// The most posts waiting for the window: the inbox and those waiting for the site's answer.
 pub const WAITING: usize = 20;
-/// How often one site's posts bring MDM's window up: its links still arrive in between, in
+/// How often one site's posts bring iDM's window up: its links still arrive in between, in
 /// Link grabber, without the window coming to the front again.
 pub const RAISE_EVERY: Duration = Duration::from_secs(60);
 
@@ -118,7 +118,7 @@ impl Cnl {
 
     /// What arrived since the last frame, sorted by `sites` (Options' answers, site → allowed):
     /// an allowed site's links for Link grabber now; a blocked site's dropped; the others wait,
-    /// and the first of them is asked about. With them, whether MDM's window comes up for it:
+    /// and the first of them is asked about. With them, whether iDM's window comes up for it:
     /// for an allowed site's links or a new question, once every [`RAISE_EVERY`] for each site.
     pub fn take(&mut self, sites: &[(String, bool)]) -> (Vec<Imported>, bool) {
         self.take_at(sites, Instant::now())
@@ -257,7 +257,7 @@ impl SiteDialog {
                         ),
                         &[("site", &crate::i18n::isolate(site))],
                     ),
-                    // i18n: Click'n'Load window: a page whose web site the browser doesn't name, so MDM can't tell which site it is
+                    // i18n: Click'n'Load window: a page whose web site the browser doesn't name, so iDM can't tell which site it is
                     None => crate::i18n::tn(
                         n,
                         "An unknown site wants to send {n} link to Link grabber.",

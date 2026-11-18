@@ -122,7 +122,7 @@ pub fn app_icon() -> std::sync::Arc<egui::IconData> {
     app_picture()
 }
 
-/// The app icon's picture, the 256 px size, on every system: what MDM draws as a picture (the
+/// The app icon's picture, the 256 px size, on every system: what iDM draws as a picture (the
 /// crash report window's heading). Not [`app_icon`], empty on macOS. The tray's icon takes the
 /// hand-made size it is drawn at instead (`tray::picture`, #1161).
 pub fn app_picture() -> std::sync::Arc<egui::IconData> {
@@ -218,11 +218,11 @@ const CLIPBOARD_WAIT: std::time::Duration = std::time::Duration::from_millis(500
 /// One use of the clipboard at a time in the whole process, egui's copy and paste included
 /// (the same lock, `egui_winit::clipboard::lock_system_clipboard`): Windows lets the threads
 /// of a process open it at the same time, and two reads at once (the clipboard monitor's and
-/// Add URL's) corrupted the heap and ended MDM (#629). None: the wait ran out.
+/// Add URL's) corrupted the heap and ended iDM (#629). None: the wait ran out.
 fn clipboard_lock() -> Option<egui_winit::clipboard::SystemClipboardLock> {
     let lock = egui_winit::clipboard::lock_system_clipboard(CLIPBOARD_WAIT);
     if lock.is_none() {
-        tracing::warn!("clipboard: still in use elsewhere in MDM, not read or written");
+        tracing::warn!("clipboard: still in use elsewhere in iDM, not read or written");
     }
     lock
 }
@@ -299,7 +299,7 @@ pub enum Start {
     /// In front, as a start by the user does.
     Shown,
     /// Started with the session (the startup entry's [`mdm_ipc::STARTUP`]): hidden, downloads,
-    /// queues and the Scheduler running. It stays in the notification area once MDM's icon is
+    /// queues and the Scheduler running. It stays in the notification area once iDM's icon is
     /// there, or shows minimized if none comes (app.rs `at_login`, decided there alone).
     Session,
     /// Started with the session where a window can't be hidden (Wayland): minimized.
@@ -325,7 +325,7 @@ fn can_hide() -> bool {
 }
 
 /// Whether the main window can wait hidden in the notification area (Options' tooltip): a tray
-/// shows MDM's icon (Linux: a tray host is there, #59) and the window can be hidden.
+/// shows iDM's icon (Linux: a tray host is there, #59) and the window can be hidden.
 pub fn can_start_in_tray() -> bool {
     can_hide() && tray::available()
 }
@@ -356,7 +356,7 @@ fn main() -> std::process::ExitCode {
         // Downloads go through the debrid accounts of Options → Accounts (#44).
         return mdm_cli::main_with(cli.args, Some(&debrid::CliAccounts));
     }
-    // The Windows uninstaller, when the user chose to remove the data too: MDM's sign-ins leave
+    // The Windows uninstaller, when the user chose to remove the data too: iDM's sign-ins leave
     // the system's keychain with it (#44).
     if std::env::args().nth(1).as_deref() == Some("--forget-sign-ins") {
         return secrets::forget_all();
@@ -382,12 +382,12 @@ fn main() -> std::process::ExitCode {
     code
 }
 
-/// How long MDM's end waits for its log's last lines (a disk that holds them longer loses them).
+/// How long iDM's end waits for its log's last lines (a disk that holds them longer loses them).
 const LOG_AT_THE_END: std::time::Duration = std::time::Duration::from_secs(2);
 
 fn app() -> eframe::Result {
-    // MDM's crash monitor (crash.rs started it): the report window when the app crashes or
-    // freezes; it never becomes MDM's instance.
+    // iDM's crash monitor (crash.rs started it): the report window when the app crashes or
+    // freezes; it never becomes iDM's instance.
     let all: Vec<String> = std::env::args().collect();
     if let Some(m) = mdm_crash::MonitorArgs::parse(&all) {
         return crashui::monitor_main(m);
@@ -432,7 +432,7 @@ fn app() -> eframe::Result {
     // Started with the session (#226): read before the command goes to the channel; the start's
     // mode once the window system is known (below).
     let at_login = cmd.as_ref().is_some_and(|c| c.startup);
-    // This launch is MDM: its fonts are looked up while the rest starts (only the instance pays
+    // This launch is iDM: its fonts are looked up while the rest starts (only the instance pays
     // for them, not a launch that hands its command over).
     theme::prepare_fonts();
     // And the file icons' themes (Linux: gsettings), off the window's thread.
@@ -440,7 +440,7 @@ fn app() -> eframe::Result {
     unix::prepare_file_icons();
     // What an earlier update set aside (old programs, a Mac's old app, downloaded files).
     update::tidy();
-    // The command channel opens now, before the window: the browser's host that started MDM
+    // The command channel opens now, before the window: the browser's host that started iDM
     // waits for it, and what arrives meanwhile is handled at the first frame. Without it the
     // app still works; it just can't receive commands.
     let (tx, commands) = std::sync::mpsc::channel();
@@ -478,11 +478,7 @@ fn app() -> eframe::Result {
     // The log (release builds too) and the crash monitor.
     if let Some(data) = mdm_ipc::data_dir() {
         mdm_crash::logs::init(&data, mdm_crash::logs::APP);
-        tracing::info!(
-            "Mister Download Manager {} ({}) starting",
-            help::VERSION,
-            help::COMMIT
-        );
+        tracing::info!("iDM {} ({}) starting", help::VERSION, help::COMMIT);
     }
     // The default browser, looked for once on a thread of its own (logged): its User-Agent is
     // the one links added by hand go with (#668).
@@ -502,11 +498,11 @@ fn app() -> eframe::Result {
     #[cfg(target_os = "linux")]
     unix::on_session_end(rt.handle(), wake_at_end);
     // Linux: the libraries the window loads when it opens (#265). Without them it can't open
-    // (winit stopped at start): MDM says what's missing, in its language, and how to install it.
+    // (winit stopped at start): iDM says what's missing, in its language, and how to install it.
     #[cfg(target_os = "linux")]
     {
         i18n::set_lang(loaded.settings.language.as_deref());
-        // View → Window system's choice (#624): the same however MDM was started.
+        // View → Window system's choice (#624): the same however iDM was started.
         unix::set_window_system_pick(loaded.settings.window_system);
         let ws = unix::window_system();
         if !ws.missing.is_empty() {
@@ -589,7 +585,7 @@ fn app() -> eframe::Result {
             loaded,
             start,
         )));
-        // The session's end saves as an Exit saves, and MDM ends. Windows (shut down, restart,
+        // The session's end saves as an Exit saves, and iDM ends. Windows (shut down, restart,
         // sign out, an installer's Restart Manager): before Windows is answered. Linux (logout,
         // shutdown): logind's SIGTERM at the next frame (`Shared::logic`, heard since the start:
         // `unix::on_session_end`), or the X server going away (GNOME's ends at logout before the
@@ -647,7 +643,7 @@ impl eframe::App for Shared {
 }
 
 /// The session ends: the app's end as an Exit's (`App::end_session`), within the time the
-/// system gives (Windows: 5 s before it says MDM keeps the computer from shutting down), and the
+/// system gives (Windows: 5 s before it says iDM keeps the computer from shutting down), and the
 /// crash monitor told it's a clean one. The process ends right after (the caller): the app, when
 /// it could be reached, for what's left before.
 #[cfg(any(windows, target_os = "linux"))]
@@ -746,7 +742,7 @@ mod tests {
         );
     }
 
-    /// #1157: a read that waited out the lock (another use of the clipboard in MDM held it) is
+    /// #1157: a read that waited out the lock (another use of the clipboard in iDM held it) is
     /// a read that failed, not an empty clipboard: the watch for copied links keeps what it saw.
     #[test]
     fn a_read_that_waits_out_the_lock_failed() {
@@ -805,7 +801,7 @@ mod tests {
     }
 
     /// #629, #1103 on Windows' real clipboard, a private one (win32.rs `private_clipboard`: the
-    /// person's is neither read nor written): MDM's reads (the clipboard monitor's, Add URL's) and
+    /// person's is neither read nor written): iDM's reads (the clipboard monitor's, Add URL's) and
     /// writes, and egui's paste and copy in a text box, all at once from their threads for two
     /// seconds, and on until the reads have found a text and Copy… has written one a hundred
     /// times each (a busy machine does less in two seconds). Every read finds a whole text that

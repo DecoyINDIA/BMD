@@ -99,7 +99,7 @@ async fn a_files_page_gives_the_file() {
     }
 }
 
-/// The browser's address, expired before MDM asks it (a download added for later): the repair
+/// The browser's address, expired before iDM asks it (a download added for later): the repair
 /// page it leads to goes back to the file's page, whose button has today's address.
 #[tokio::test]
 async fn an_expired_address_leads_to_todays() {

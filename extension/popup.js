@@ -1,11 +1,11 @@
-// The toolbar button's popup: whether the browser reaches Mister Download Manager (and, when it
+// The toolbar button's popup: whether the browser reaches iDM (and, when it
 // doesn't, a link to the help page's section for why), pausing capture, leaving the current
 // site to the browser, opening the app or its Options, and the media the tab loaded (#38), each
 // to download. background.js does the work.
 const ext = globalThis.browser ?? globalThis.chrome;
-const HELP = "https://misterdownloadmanager.com/help/browser-help.html";
-// The creator's GitHub Sponsors page (the app's Help → Support MDM): a plain link, in a new tab.
-const SPONSORS = "https://github.com/sponsors/anefzaoui";
+const HELP = "https://github.com/DecoyINDIA/iDM-standalone/blob/main/docs/browser-help.md";
+// The project on GitHub (the app's Help → Support iDM): a plain link, in a new tab.
+const PROJECT_URL = "https://github.com/DecoyINDIA/iDM-standalone";
 const t = (key, ...subs) => ext.i18n.getMessage(key, subs) || key;
 const $ = (id) => document.getElementById(id);
 const ask = (m) => ext.runtime.sendMessage(m).catch(() => ({ ok: false }));
@@ -16,7 +16,7 @@ document.documentElement.dir = t("@@bidi_dir") === "rtl" ? "rtl" : "ltr";
 for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t(el.dataset.i18n);
 for (const el of document.querySelectorAll("[data-i18n-placeholder]")) el.placeholder = t(el.dataset.i18nPlaceholder);
 $("help").href = HELP;
-$("support").href = SPONSORS;
+$("support").href = PROJECT_URL;
 
 // The tab it is about: the window's active tab; with `?page=ADDRESS` (this page opened in a tab of
 // its own, for the tests and the pictures), the tab showing that address.
@@ -53,7 +53,7 @@ async function show() {
   $("take").disabled = !s.connected;
   $("open").disabled = $("options").disabled = !s.connected;
   $("version").textContent = s.version ? `v${s.version}` : "";
-  // Send downloads to: this computer, or another MDM (#157).
+  // Send downloads to: this computer, or another iDM (#157).
   $("to-here").checked = !s.remote && $("remote-form").hidden;
   $("to-remote").checked = Boolean(s.remote) || !$("remote-form").hidden;
   $("open").disabled = $("open").disabled || Boolean(s.remote);
@@ -105,7 +105,7 @@ async function showExcluded(site, connected) {
   };
 }
 
-// The last download left to the browser by MDM's Options, and which one (#208); a later one
+// The last download left to the browser by iDM's Options, and which one (#208); a later one
 // taken clears it (background.js noteLeft). A reason this version can't name says no more.
 function showDeclined(d) {
   const box = $("declined");
@@ -312,7 +312,7 @@ $("options").addEventListener("click", async () => {
   window.close();
 });
 
-// Send downloads to (#157): another MDM is paired here with its address and a code it shows.
+// Send downloads to (#157): another iDM is paired here with its address and a code it shows.
 $("to-remote").addEventListener("change", () => {
   $("remote-form").hidden = false;
   $("remote-url").focus();

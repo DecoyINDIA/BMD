@@ -1,6 +1,6 @@
-//! A stream in pieces downloaded by MDM's engine (#769): HLS (yt-dlp's `m3u8_native`) and DASH
+//! A stream in pieces downloaded by iDM's engine (#769): HLS (yt-dlp's `m3u8_native`) and DASH
 //! (`http_dash_segments`), brought in as yt-dlp's own downloaders for them (hlsnative,
-//! dashsegments) do, by MDM: the pieces listed (an HLS media playlist read as hlsnative reads it,
+//! dashsegments) do, by iDM: the pieces listed (an HLS media playlist read as hlsnative reads it,
 //! DASH's from yt-dlp's `fragments`), downloaded several at once (as many as Options →
 //! Connection gives a file) over the engine's connections (proxy, network adapter, DNS), under
 //! the speed limits, each kept on disk once whole so that a stop goes on from the pieces there,
@@ -51,7 +51,7 @@ pub struct Key {
     pub iv: [u8; 16],
 }
 
-/// Why a playlist's pieces can't be MDM's to download.
+/// Why a playlist's pieces can't be iDM's to download.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Unlisted {
     /// No end yet: a live stream still being recorded.
@@ -851,7 +851,7 @@ fn retry_after(headers: &HeaderMap) -> Option<Duration> {
         .map(Duration::from_secs)
 }
 
-/// An answer on MDM's own connection or on the browser-like one (#1289).
+/// An answer on iDM's own connection or on the browser-like one (#1289).
 enum Answer {
     Http(reqwest::Response),
     Browser(browserlike::Answer),
@@ -921,7 +921,7 @@ impl Run {
     }
 }
 
-/// `url` (its part `range`) asked on the connection the pieces go on: MDM's own, or the
+/// `url` (its part `range`) asked on the connection the pieces go on: iDM's own, or the
 /// browser-like one once a piece needed it. A refusal as a program's (`refuses_programs`) is
 /// asked again the way a browser connects (#1289). The answer as it came, whatever its status;
 /// a refusal of the browser-like connection too is `PieceError::Refused`.

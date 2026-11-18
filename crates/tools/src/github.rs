@@ -3,7 +3,7 @@
 //!
 //! GitHub's API answers 60 requests an hour for each internet address without an account. On a
 //! network many people share (a mobile carrier's or an internet provider's shared address, a
-//! campus, an office), others use them up, and the API refuses MDM: "403 rate limit exceeded".
+//! campus, an office), others use them up, and the API refuses iDM: "403 rate limit exceeded".
 //! github.com's own pages aren't limited that way: `<repo>/releases/latest` redirects to the
 //! latest release's page (`<repo>/releases/tag/<tag>`), and each of its files is at
 //! `<repo>/releases/download/<tag>/<name>`. The API is asked first (it lists the files, with
@@ -353,7 +353,7 @@ mod tests {
         }
     }
 
-    const MDM: &str = "anefzaoui/misterdownloadmanager";
+    const REPO: &str = "anefzaoui/misterdownloadmanager";
     const ZIP: &str = "MisterDownloadManager-9.9.9-x64.zip";
     const SETUP: &str = "MisterDownloadManager-9.9.9-setup.exe";
 
@@ -386,7 +386,7 @@ mod tests {
 
     /// #1337 end to end: GitHub's API refuses for its rate limit, so the latest release is found
     /// on the pages (the tag `releases/latest` redirects to), and its file is downloaded and
-    /// checked as Update now checks it, against the release's list signed by MDM's key; a file
+    /// checked as Update now checks it, against the release's list signed by iDM's key; a file
     /// that isn't the one the list names is still refused. yt-dlp's real signed list is fetched
     /// the same way and passes yt-dlp's key.
     #[tokio::test]
@@ -403,21 +403,23 @@ mod tests {
             ("SHA2-256SUMS.sig", "SHA2-256SUMS.sig"),
         ];
         let (lab, _dir) = fake_github(&[
-            (MDM, "v9.9.9", mdm_files),
+            (REPO, "v9.9.9", mdm_files),
             ("yt-dlp/yt-dlp", "2026.10.26", ytdlp_files),
         ])
         .await;
         let net = crate::net(mdm_engine::Proxy::None);
-        let api = lab.url(&format!("/gh/api/repos/{MDM}/releases/latest"));
+        let api = lab.url(&format!("/gh/api/repos/{REPO}/releases/latest"));
         let web = lab.url("/gh/web");
         let names = ["SHA256SUMS.txt", "SHA256SUMS.txt.sig", ZIP, SETUP];
-        let found = latest_release(&net, &api, &web, MDM, &names).await.unwrap();
+        let found = latest_release(&net, &api, &web, REPO, &names)
+            .await
+            .unwrap();
         assert_eq!(found.tag, "v9.9.9");
         assert_eq!(
             found.files[2],
             (
                 ZIP.to_owned(),
-                format!("{web}/{MDM}/releases/download/v9.9.9/{ZIP}")
+                format!("{web}/{REPO}/releases/download/v9.9.9/{ZIP}")
             )
         );
         // The API first, then the release's page by its redirect, never the page itself.
@@ -425,8 +427,8 @@ mod tests {
         assert_eq!(
             paths,
             [
-                format!("/gh/api/repos/{MDM}/releases/latest"),
-                format!("/gh/web/{MDM}/releases/latest"),
+                format!("/gh/api/repos/{REPO}/releases/latest"),
+                format!("/gh/web/{REPO}/releases/latest"),
             ]
         );
         // Downloaded and checked as Update now does: the signed list, then the file.

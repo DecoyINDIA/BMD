@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping with Mister Download Manager. Bug reports, ideas, translation fixes and pull
+Thanks for helping with iDM. Bug reports, ideas, translation fixes and pull
 requests are all welcome.
 
 ## Getting set up
@@ -39,7 +39,7 @@ node tools/extension/test.mjs
 
 Keep changes focused and match the code around them. A few rules hold everywhere:
 
-- **Clean room.** MDM contains no code, binaries, artwork, icons, sounds or text from Internet
+- **Clean room.** iDM contains no code, binaries, artwork, icons, sounds or text from Internet
   Download Manager or any other download manager. Never disassemble, decompile or patch another
   program, and never bypass anyone's licensing. See
   [Not a reverse-engineering project](README.md#not-a-reverse-engineering-project).
@@ -107,7 +107,7 @@ only that.
 ## Reporting problems
 
 Use **Help → Report a problem** in the app: it opens the bug report form with your version,
-system, how MDM was installed and its language filled in. The form asks for the same when you
+system, how iDM was installed and its language filled in. The form asks for the same when you
 open it yourself. Security problems: see [SECURITY.md](SECURITY.md).
 
 Pull requests are accepted under the project's licence, the

@@ -1,7 +1,7 @@
 //! #816: a failed request says what kind of failure it was (`mdm_engine::fault`), from real
 //! connections to servers on this computer: refused, an HTTP status, a secure connection that
 //! isn't one, no answer in time, an answer cut short, a name that isn't found (asked of a DNS
-//! server here, `support/fake_dns.rs`); and MDM's own requests go through the proxy Options sets.
+//! server here, `support/fake_dns.rs`); and iDM's own requests go through the proxy Options sets.
 
 use std::time::Duration;
 
@@ -191,7 +191,7 @@ async fn a_dns_that_never_answers_is_no_such_host() {
     );
 }
 
-/// MDM's own requests take Options' proxy: through one that isn't there, the request fails
+/// iDM's own requests take Options' proxy: through one that isn't there, the request fails
 /// connecting to it, without looking up the server's name (which doesn't exist).
 #[tokio::test]
 async fn through_the_proxy_set_in_options() {

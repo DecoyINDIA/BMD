@@ -13,7 +13,7 @@
 //! address, and twice the real round trip over https; a server slow to answer kept it so for
 //! seconds, and a download stopped meanwhile kept it for good.
 //!
-//! The answer is told whichever connection it came through (#954): the first request's, MDM's
+//! The answer is told whichever connection it came through (#954): the first request's, iDM's
 //! own or the browser-like one (#668), and when no first request came before the connections,
 //! as with a resumed download, the first connection's.
 

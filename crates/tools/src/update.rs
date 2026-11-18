@@ -1,6 +1,6 @@
-//! Mister Download Manager updating itself: how this copy was installed, the release file that
+//! iDM updating itself: how this copy was installed, the release file that
 //! replaces it, and that file fetched and checked against the release's SHA256SUMS.txt, whose
-//! signature by MDM's release key ([`crate::signed_by_mdm`]) is checked first. Putting the file
+//! signature by iDM's release key ([`crate::signed_by_mdm`]) is checked first. Putting the file
 //! in place is the app's (`crates/app/src/update.rs`): it has to close itself to do it.
 
 use std::path::{Path, PathBuf};
@@ -8,7 +8,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 
 use crate::{Error, signed_by_mdm, sum_for};
 
-/// How this copy of MDM was installed: what an update replaces, and how.
+/// How this copy of iDM was installed: what an update replaces, and how.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Install {
     /// Windows, the setup program.
@@ -25,7 +25,7 @@ pub enum Install {
     /// Linux, the plain programs.
     TarGz,
     /// Linux, a package of another package manager (pacman, …): that package manager updates
-    /// it, never MDM.
+    /// it, never iDM.
     System,
     /// Built here: never updated from a release.
     Source,
@@ -122,7 +122,7 @@ impl Install {
     /// Linux files are named without "-experimental" from the release after 0.2.4
     /// (build-linux.sh), and the macOS ones may lose it too: the plain name is looked for first,
     /// then the `…-experimental` one of the releases before. None for a build from source, or for
-    /// a processor MDM publishes nothing for (32-bit Linux or Mac; `None`, see [`Arch::THIS`]).
+    /// a processor iDM publishes nothing for (32-bit Linux or Mac; `None`, see [`Arch::THIS`]).
     pub fn assets_on(self, arch: Option<Arch>, version: &str) -> Vec<String> {
         let Some(arch) = arch else {
             return Vec::new();
@@ -148,7 +148,7 @@ impl Install {
             (_, Arch::Arm64) if linux => ("linux-arm64".to_owned(), self.linux_ext()),
             _ => return Vec::new(),
         };
-        let name = |tail: &str| format!("MisterDownloadManager-{version}-{tail}{ext}");
+        let name = |tail: &str| format!("iDM-{version}-{tail}{ext}");
         match (self, arch) {
             (Install::Installer | Install::PortableZip | Install::PlainZip, _) => vec![name(&tail)],
             // Linux on ARM came after "-experimental" went: it has no older name.
@@ -181,7 +181,7 @@ pub enum Arch {
 
 impl Arch {
     /// This build's processor. A copy built for x64 and run emulated on an ARM PC says x64: it
-    /// updates to the x64 files until the ARM build is installed. None for a processor MDM
+    /// updates to the x64 files until the ARM build is installed. None for a processor iDM
     /// publishes nothing for (a build from source on RISC-V, ...): it never updates itself.
     pub const THIS: Option<Arch> = if cfg!(target_arch = "x86_64") {
         Some(Arch::X64)
@@ -205,8 +205,8 @@ impl Arch {
 
 /// Linux: which package manager's package `exe` is, asking each whether it owns the file
 /// (`owns(program, arguments)`: it ran and said yes). The .deb's (dpkg), the .rpm's (rpm), or
-/// another's (pacman; a program in /usr/bin none of them owns): those MDM leaves to the system's
-/// updates. Else the plain programs (.tar.gz), which MDM replaces itself. A path that isn't
+/// another's (pacman; a program in /usr/bin none of them owns): those iDM leaves to the system's
+/// updates. Else the plain programs (.tar.gz), which iDM replaces itself. A path that isn't
 /// UTF-8 is never one of the packages'.
 fn linux_package(exe: &Path, owns: &dyn Fn(&str, &[&str]) -> bool) -> Install {
     let Some(path) = exe.to_str() else {
@@ -247,8 +247,8 @@ impl Progress {
     }
 }
 
-/// Fetch release file `name` from `assets` (name, download address) into `dir` with MDM's own
-/// engine (`net`), after checking the release's SHA256SUMS.txt is signed by MDM's key, and check
+/// Fetch release file `name` from `assets` (name, download address) into `dir` with iDM's own
+/// engine (`net`), after checking the release's SHA256SUMS.txt is signed by iDM's key, and check
 /// the file against it. Returns the file.
 pub async fn fetch(
     assets: &[(String, String)],
@@ -432,7 +432,7 @@ Connection: close
             (setup, "mdm-SHA256SUMS.txt"),
         ]);
         let dir = tempfile::tempdir().unwrap();
-        // Through MDM's own engine, as the app fetches it.
+        // Through iDM's own engine, as the app fetches it.
         let net = crate::net(mdm_engine::Proxy::None);
         let progress = Progress::default();
         let file = fetch(&assets(&base), zip, dir.path(), &net, &progress)
@@ -481,15 +481,15 @@ Connection: close
         let x64 = Some(Arch::X64);
         assert_eq!(
             Install::Installer.assets_on(x64, "0.2.2"),
-            ["MisterDownloadManager-0.2.2-setup.exe"]
+            ["iDM-0.2.2-setup.exe"]
         );
         assert_eq!(
             Install::PortableZip.assets_on(x64, "0.2.2"),
-            ["MisterDownloadManager-0.2.2-portable.zip"]
+            ["iDM-0.2.2-portable.zip"]
         );
         assert_eq!(
             Install::PlainZip.assets_on(x64, "0.2.2"),
-            ["MisterDownloadManager-0.2.2-x64.zip"]
+            ["iDM-0.2.2-x64.zip"]
         );
         // Linux and macOS: the plain name first, then the one up to 0.2.x.
         for (install, ext) in [
@@ -501,8 +501,8 @@ Connection: close
             assert_eq!(
                 install.assets_on(x64, "1.0.0"),
                 [
-                    format!("MisterDownloadManager-1.0.0-linux-x86_64{ext}"),
-                    format!("MisterDownloadManager-1.0.0-linux-x86_64-experimental{ext}"),
+                    format!("iDM-1.0.0-linux-x86_64{ext}"),
+                    format!("iDM-1.0.0-linux-x86_64-experimental{ext}"),
                 ]
             );
         }
@@ -511,8 +511,8 @@ Connection: close
             assert_eq!(
                 Install::Dmg.assets_on(Some(arch), "1.0.0"),
                 [
-                    format!("MisterDownloadManager-1.0.0-macos-{name}.dmg"),
-                    format!("MisterDownloadManager-1.0.0-macos-{name}-experimental.dmg"),
+                    format!("iDM-1.0.0-macos-{name}.dmg"),
+                    format!("iDM-1.0.0-macos-{name}-experimental.dmg"),
                 ]
             );
         }
@@ -533,27 +533,27 @@ Connection: close
         let (arm, x86) = (Some(Arch::Arm64), Some(Arch::X86));
         assert_eq!(
             Install::Installer.assets_on(arm, "1.0.0"),
-            ["MisterDownloadManager-1.0.0-setup-arm64.exe"]
+            ["iDM-1.0.0-setup-arm64.exe"]
         );
         assert_eq!(
             Install::PortableZip.assets_on(arm, "1.0.0"),
-            ["MisterDownloadManager-1.0.0-portable-arm64.zip"]
+            ["iDM-1.0.0-portable-arm64.zip"]
         );
         assert_eq!(
             Install::PlainZip.assets_on(arm, "1.0.0"),
-            ["MisterDownloadManager-1.0.0-arm64.zip"]
+            ["iDM-1.0.0-arm64.zip"]
         );
         assert_eq!(
             Install::Installer.assets_on(x86, "1.0.0"),
-            ["MisterDownloadManager-1.0.0-setup-x86.exe"]
+            ["iDM-1.0.0-setup-x86.exe"]
         );
         assert_eq!(
             Install::PortableZip.assets_on(x86, "1.0.0"),
-            ["MisterDownloadManager-1.0.0-portable-x86.zip"]
+            ["iDM-1.0.0-portable-x86.zip"]
         );
         assert_eq!(
             Install::PlainZip.assets_on(x86, "1.0.0"),
-            ["MisterDownloadManager-1.0.0-x86.zip"]
+            ["iDM-1.0.0-x86.zip"]
         );
         for (install, ext) in [
             (Install::TarGz, ".tar.gz"),
@@ -564,12 +564,12 @@ Connection: close
             // Linux on ARM came after "-experimental" went.
             assert_eq!(
                 install.assets_on(arm, "1.0.0"),
-                [format!("MisterDownloadManager-1.0.0-linux-arm64{ext}")]
+                [format!("iDM-1.0.0-linux-arm64{ext}")]
             );
             assert!(install.assets_on(x86, "1.0.0").is_empty());
         }
         assert!(Install::Dmg.assets_on(x86, "1.0.0").is_empty());
-        // A processor MDM publishes nothing for never updates itself.
+        // A processor iDM publishes nothing for never updates itself.
         for install in Install::ALL {
             assert!(install.assets_on(None, "1.0.0").is_empty());
         }
@@ -592,13 +592,13 @@ Connection: close
     fn the_windows_names_are_build_ps1_s() {
         let script = include_str!("../../../tools/installer/build.ps1").replace("\r\n", "\n");
         assert!(script.contains(
-            "\nNew-Zip \"MisterDownloadManager-$version-portable$suffix\" $true\nNew-Zip \"MisterDownloadManager-$version-$Arch\" $false\n"
+            "\nNew-Zip \"iDM-$version-portable$suffix\" $true\nNew-Zip \"iDM-$version-$Arch\" $false\n"
         ));
         assert!(script.contains("$suffix = if ($Arch -eq \"x64\") { \"\" } else { \"-$Arch\" }"));
         assert!(script.contains("[ValidateSet(\"x64\", \"arm64\", \"x86\")]"));
         let iss = include_str!("../../../tools/installer/mdm.iss").replace("\r\n", "\n");
         assert!(iss.contains(
-            "#if Arch == \"x64\"\nOutputBaseFilename=MisterDownloadManager-{#AppVersion}-setup\n#else\nOutputBaseFilename=MisterDownloadManager-{#AppVersion}-setup-{#Arch}\n#endif"
+            "#if Arch == \"x64\"\nOutputBaseFilename=iDM-{#AppVersion}-setup\n#else\nOutputBaseFilename=iDM-{#AppVersion}-setup-{#Arch}\n#endif"
         ));
         for arch in [Arch::X64, Arch::Arm64, Arch::X86] {
             let (a, suffix) = match arch {
@@ -607,15 +607,15 @@ Connection: close
             };
             assert_eq!(
                 Install::Installer.assets_on(Some(arch), "1.0.0"),
-                [format!("MisterDownloadManager-1.0.0-setup{suffix}.exe")]
+                [format!("iDM-1.0.0-setup{suffix}.exe")]
             );
             assert_eq!(
                 Install::PortableZip.assets_on(Some(arch), "1.0.0"),
-                [format!("MisterDownloadManager-1.0.0-portable{suffix}.zip")]
+                [format!("iDM-1.0.0-portable{suffix}.zip")]
             );
             assert_eq!(
                 Install::PlainZip.assets_on(Some(arch), "1.0.0"),
-                [format!("MisterDownloadManager-1.0.0-{a}.zip")]
+                [format!("iDM-1.0.0-{a}.zip")]
             );
         }
     }
@@ -626,7 +626,7 @@ Connection: close
     fn the_linux_names_are_build_linux_sh_s() {
         let script = include_str!("../../../tools/installer/build-linux.sh").replace("\r\n", "\n");
         assert!(
-            script.contains("\nname=\"MisterDownloadManager-$version-linux-$arch\"\n"),
+            script.contains("\nname=\"iDM-$version-linux-$arch\"\n"),
             "build-linux.sh names its files differently"
         );
         // Its processors, as the names say them.
@@ -648,11 +648,11 @@ Connection: close
             );
             assert_eq!(
                 install.assets_on(Some(Arch::X64), "1.0.0")[0],
-                format!("MisterDownloadManager-1.0.0-linux-x86_64{ext}")
+                format!("iDM-1.0.0-linux-x86_64{ext}")
             );
             assert_eq!(
                 install.assets_on(Some(Arch::Arm64), "1.0.0")[0],
-                format!("MisterDownloadManager-1.0.0-linux-arm64{ext}")
+                format!("iDM-1.0.0-linux-arm64{ext}")
             );
         }
     }
@@ -669,14 +669,14 @@ Connection: close
         let exe = Path::new("/usr/bin/misterdownloadmanager");
         assert_eq!(linux_package(exe, &owner("dpkg-query")), Install::Deb);
         assert_eq!(linux_package(exe, &owner("rpm")), Install::Rpm);
-        // An Arch package (pacman), or in /usr/bin with no package manager MDM knows: the
+        // An Arch package (pacman), or in /usr/bin with no package manager iDM knows: the
         // system's.
         assert_eq!(linux_package(exe, &owner("pacman")), Install::System);
         assert_eq!(linux_package(exe, &owner("none")), Install::System);
         // On Debian with rpm's tools installed too: still the .deb's.
         let both = |tool: &str, _: &[&str]| tool == "dpkg-query" || tool == "rpm";
         assert_eq!(linux_package(exe, &both), Install::Deb);
-        // The .tar.gz unpacked in the home folder, /opt or /usr/local: MDM's own to replace.
+        // The .tar.gz unpacked in the home folder, /opt or /usr/local: iDM's own to replace.
         let nobody = |_: &str, _: &[&str]| false;
         let home = Path::new("/home/me/MisterDownloadManager/misterdownloadmanager");
         assert_eq!(linux_package(home, &nobody), Install::TarGz);
@@ -688,18 +688,16 @@ Connection: close
             linux_package(Path::new("/usr/local/bin/misterdownloadmanager"), &nobody),
             Install::TarGz
         );
-        // MDM updates neither another package manager's copy nor a build of its own.
+        // iDM updates neither another package manager's copy nor a build of its own.
         assert!(Install::System.assets("1.0.0").is_empty());
     }
 
     #[test]
     fn bundles_on_a_mac() {
-        let exe = Path::new(
-            "/Applications/Mister Download Manager.app/Contents/MacOS/misterdownloadmanager",
-        );
+        let exe = Path::new("/Applications/iDM.app/Contents/MacOS/misterdownloadmanager");
         assert_eq!(
             app_bundle(exe).as_deref(),
-            Some(Path::new("/Applications/Mister Download Manager.app"))
+            Some(Path::new("/Applications/iDM.app"))
         );
         assert_eq!(
             app_bundle(Path::new("/usr/bin/misterdownloadmanager")),
@@ -747,8 +745,7 @@ Connection: close
         let zip_path = root.path().join("r.zip");
         let mut w = zip::ZipWriter::new(std::fs::File::create(&zip_path).unwrap());
         let opts = zip::write::SimpleFileOptions::default();
-        w.start_file("MisterDownloadManager-9.9.9-x64/mdm.exe", opts)
-            .unwrap();
+        w.start_file("iDM-9.9.9-x64/mdm.exe", opts).unwrap();
         w.write_all(b"exe").unwrap();
         w.start_file("../escape.txt", opts).unwrap();
         w.write_all(b"no").unwrap();

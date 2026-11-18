@@ -1,5 +1,5 @@
-//! A video's streams downloaded by MDM's engine (#769). yt-dlp looks the page up and chooses the
-//! formats (its `-f`); MDM's engine downloads each stream as it downloads any file, over the
+//! A video's streams downloaded by iDM's engine (#769). yt-dlp looks the page up and chooses the
+//! formats (its `-f`); iDM's engine downloads each stream as it downloads any file, over the
 //! connections Options → Connection gives, under the speed limits, with pause and resume and
 //! retries, into the very file yt-dlp would have written (`<stem>.f<id>.<ext>` for a stream it
 //! merges, `<stem>.<ext>` for a choice of one). yt-dlp then does what it does after its own
@@ -412,7 +412,7 @@ impl Unlocker for StreamLink {
     }
 }
 
-/// MDM's engine for a video's streams: the app's runtime, and the options a file from the page
+/// iDM's engine for a video's streams: the app's runtime, and the options a file from the page
 /// would get (connections, proxy, network adapter, DNS, the limit for all downloads, the hosts'
 /// learned limits, this download's own speed limit).
 #[derive(Clone)]
@@ -664,7 +664,7 @@ enum Unlisted {
 
 /// The pieces of stream `s` (an HLS playlist fetched and read, DASH's as yt-dlp listed them),
 /// and the browser-like connection when the playlist only came on it (#1289: its site's bot
-/// check refused MDM's own connection; its pieces then start on it).
+/// check refused iDM's own connection; its pieces then start on it).
 async fn list_pieces(
     s: &Stream,
     opts: &mdm_engine::Options,

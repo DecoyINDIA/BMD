@@ -1,5 +1,5 @@
 //! The native host as the browser runs it: the real program, its standard streams framed as
-//! native messages, its own data folder (MDM_DATA_DIR) with a fake Mister Download Manager
+//! native messages, its own data folder (MDM_DATA_DIR) with a fake iDM
 //! listening where `ipc.json` says, answering as the test wants.
 
 use std::io::{BufRead, BufReader, Read, Write};
@@ -186,7 +186,7 @@ fn options_and_a_refusing_app_start_nothing() {
     let _ = std::fs::remove_dir_all(&dir);
 }
 
-/// #208: every download left to the browser is in MDM's log with why, whether the host refused
+/// #208: every download left to the browser is in iDM's log with why, whether the host refused
 /// it or the extension left it alone by the same rules (and only told the host); none reaches
 /// the app. A private window's is logged without its site or name.
 #[test]
@@ -452,7 +452,7 @@ fn a_host_in_a_temporary_folder_is_not_registered() {
     let _ = std::fs::remove_dir_all(&home);
 }
 
-/// #818: at the app's start (`--repair`) a manifest that works naming another copy of MDM stays
+/// #818: at the app's start (`--repair`) a manifest that works naming another copy of iDM stays
 /// (two copies are both legitimate); one naming a helper that is gone is taken over, and Set it
 /// up (`--register`) takes the browsers from any copy.
 #[cfg(not(windows))]

@@ -525,13 +525,13 @@ pub struct Item {
     /// download reaches `Status::Complete`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub rename_on_complete: Option<String>,
-    /// True when a folder download's destination already held files before MDM added it, so
+    /// True when a folder download's destination already held files before iDM added it, so
     /// folder-level deferred rename refuses to sweep untracked files along.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub preexisting_folder: bool,
-    /// Its file was dragged out of Download complete and moved to a place MDM couldn't learn
+    /// Its file was dragged out of Download complete and moved to a place iDM couldn't learn
     /// (#869): Open and Open folder say so while it isn't at `dest`. Cleared when it is placed
-    /// again (a move MDM follows, Move/Rename) or downloaded again.
+    /// again (a move iDM follows, Move/Rename) or downloaded again.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub moved_away: bool,
     /// The page it was found on, as the browser sent it (its Referer): kept with the list, so
@@ -559,7 +559,7 @@ pub struct Item {
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub private_window: bool,
     /// A video's (its `url` is the page): the address its file came from, the first stream of
-    /// its last run as yt-dlp gave it to MDM's engine (#795). The windows' "Address".
+    /// its last run as yt-dlp gave it to iDM's engine (#795). The windows' "Address".
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub file_url: Option<Url>,
     #[serde(skip)]
@@ -731,7 +731,7 @@ fn without_queries(text: &str) -> String {
 
 /// A helper's progress (yt-dlp's, gallery-dl's) as the engine's view: one segment when its size
 /// is known, one connection (theirs: neither opens more), its notes as events. A video whose
-/// streams MDM's engine downloads (#769) shows the engine's own: the streams' segments one after
+/// streams iDM's engine downloads (#769) shows the engine's own: the streams' segments one after
 /// another, the connections of the one under way, its server.
 fn tool_snapshot(p: mdm_tools::video::Progress, url: &Url) -> mdm_engine::Snapshot {
     use mdm_engine::download::{ConnStatus, ConnView};
@@ -837,7 +837,7 @@ impl Job {
 
     /// A helper program downloads it, and takes a speed limit only as it starts, so a new limit
     /// starts it again (#708, `App::reapply_helper_limits`): gallery-dl, and yt-dlp for a video
-    /// MDM's engine doesn't download (#769: a live stream, RTMP…).
+    /// iDM's engine doesn't download (#769: a live stream, RTMP…).
     pub fn is_helper(&self) -> bool {
         match self {
             Job::Video { job, .. } => job.helper().is_some(),
@@ -913,7 +913,7 @@ pub struct VideoSpec {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub parts: Vec<PathBuf>,
     /// The user typed its file name (#1102): kept as typed, never shortened to fit the path
-    /// limits; one too long for its folder says so when it starts. A name MDM gave (the page's
+    /// limits; one too long for its folder says so when it starts. A name iDM gave (the page's
     /// title) is shortened instead.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub named: bool,
@@ -1491,7 +1491,7 @@ impl Item {
         self.context.referer = referer;
     }
 
-    /// Why yt-dlp downloads this running video itself (#769), once it has found out: MDM's engine
+    /// Why yt-dlp downloads this running video itself (#769), once it has found out: iDM's engine
     /// downloads every other one.
     pub fn video_helper(&self) -> Option<mdm_tools::streams::Helper> {
         match &self.live {
@@ -1556,7 +1556,7 @@ impl Item {
         };
         let service = service.as_str();
         Some(crate::i18n::fmt(
-            // i18n: a torrent's status while the user's debrid service downloads it, before MDM gets its files; {service} the service ("Real-Debrid"), {percent} how far it is ("45%")
+            // i18n: a torrent's status while the user's debrid service downloads it, before iDM gets its files; {service} the service ("Real-Debrid"), {percent} how far it is ("45%")
             crate::i18n::t("{percent} at {service}"),
             &[
                 ("service", service),
@@ -2166,7 +2166,7 @@ mod tests {
     use super::*;
 
     /// #1088: a download replaces the file chosen in the Save dialog only while its place is that
-    /// file; the choice is kept with the list (a download queued with Later, MDM restarted).
+    /// file; the choice is kept with the list (a download queued with Later, iDM restarted).
     #[test]
     fn a_download_replaces_only_the_file_chosen_while_it_is_its_place() {
         let url = Url::parse("http://127.0.0.1:9/a.7z").unwrap();
@@ -2480,7 +2480,7 @@ mod helper_connection_tests {
     }
 
     /// #793: a video yt-dlp downloads itself shows its one connection, not an empty list; one
-    /// MDM's engine downloads shows the engine's connections, every one of them.
+    /// iDM's engine downloads shows the engine's connections, every one of them.
     #[test]
     fn the_connections_list_is_never_empty_while_a_video_downloads() {
         let page: Url = "https://www.example.com/watch?v=abc".parse().unwrap();

@@ -90,7 +90,7 @@ pub struct Settings {
     /// Show the "Download complete" dialog (Options → Downloads).
     pub show_complete: bool,
     /// Download complete snoozed until then (unix seconds; its window's Snooze menu, #741):
-    /// `show_complete` stays as it is. A snooze until MDM restarts is not saved.
+    /// `show_complete` stays as it is. A snooze until iDM restarts is not saved.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub complete_snoozed_until: Option<i64>,
     /// List right-click → On Double click: Open (true) or Properties (IDM default).
@@ -114,17 +114,17 @@ pub struct Settings {
     /// View → Dark Mode support (IDM 6.37): follow Windows' dark app mode; off = always light.
     pub dark_mode_support: bool,
     /// View → Always dark (#60): dark whatever the system says (a desktop that reports no
-    /// preference, or a dark MDM on a light desktop).
+    /// preference, or a dark iDM on a light desktop).
     pub always_dark: bool,
     /// The look (#45): a built-in theme's id ("classic", the default) or a theme file's name in
     /// the data folder's `themes` folder (crate::themefile).
     pub theme: String,
     /// View → Draw with (#89): OpenGL or Direct3D (Windows only), used from the next start.
-    /// None: MDM's default (`renderer::DEFAULT`), which may change.
+    /// None: iDM's default (`renderer::DEFAULT`), which may change.
     pub renderer: Option<crate::renderer::Api>,
     /// View → Window system (Linux, in a Wayland session that also runs XWayland, #624): X11
-    /// (XWayland) or Wayland, used from the next start, however MDM is started (its menu entry,
-    /// the browser's helper, the session's autostart). None: MDM decides at each start
+    /// (XWayland) or Wayland, used from the next start, however iDM is started (its menu entry,
+    /// the browser's helper, the session's autostart). None: iDM decides at each start
     /// (`unix::window_system`). `MDM_WAYLAND=1` or `0` overrides it for one start.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub window_system: Option<WindowSystemPick>,
@@ -162,14 +162,14 @@ pub struct Settings {
     pub clipboard_autostart: bool,
     /// General: Minimize hides the main window, and a download's progress window, to the
     /// notification area, as closing the main window does (#63). On by default (the
-    /// maintainer's choice), for existing lists too. Only where a tray shows MDM's icon.
+    /// maintainer's choice), for existing lists too. Only where a tray shows iDM's icon.
     pub minimize_to_tray: bool,
-    /// General: closing the main window keeps MDM running, hidden in the notification area (else
+    /// General: closing the main window keeps iDM running, hidden in the notification area (else
     /// closing quits). On by default, for existing lists too, in every copy. Only where a tray
-    /// shows MDM's icon.
+    /// shows iDM's icon.
     pub close_to_tray: bool,
     /// General: a private (incognito) window's downloads are written to the saved list like any
-    /// other, so they survive MDM closing or restarting (their cookies stay in memory, as every
+    /// other, so they survive iDM closing or restarting (their cookies stay in memory, as every
     /// download's do). Off by default: they live in memory only, as the browser keeps them.
     pub keep_private_downloads: bool,
     /// General (#558): global keyboard shortcut to show or hide the main window (e.g. `Cmd+U`,
@@ -227,7 +227,7 @@ pub struct Settings {
     /// "User-Agent for manually added downloads": the user's, or empty for the automatic one
     /// (the default browser's, #668: `mdm_engine::agent::automatic`). Saved before #668 as
     /// Internet Explorer 11's, the default then: read as empty (`own_user_agent`), which an older
-    /// MDM reads as its default again.
+    /// iDM reads as its default again.
     #[serde(deserialize_with = "automatic_agent")]
     pub user_agent: String,
     /// Connection: per-server connection limits (server, number).
@@ -299,8 +299,8 @@ pub struct Settings {
     /// Torrents keep sharing after they finish (D-018: off; a finished torrent stops, like any
     /// download).
     pub torrent_keep_sharing: bool,
-    /// Torrent settings' "Open magnet links and .torrent files with Mister Download Manager":
-    /// the system opens them with MDM (D-018: opt-in, current user), and the browser hands a
+    /// Torrent settings' "Open magnet links and .torrent files with iDM":
+    /// the system opens them with iDM (D-018: opt-in, current user), and the browser hands a
     /// .torrent download over (#1058: off, it stays with the browser for the user's own torrent
     /// client). None: never decided, settled once at the first start (`settle_torrent_handler`)
     /// and saved. Saved as `torrent_handler`, which mdm_ipc::capture::CaptureRules reads (None
@@ -391,7 +391,7 @@ pub struct Settings {
 
 /// Options → File types defaults (IDM 6.42), shared with the browser host (mdm_ipc::capture).
 pub use mdm_ipc::capture::{DEFAULT_AUTO_TYPES, DEFAULT_EXCLUDED_SITES};
-/// The browsers IDM 6.42 lists, plus Firefox's forks MDM tells apart (#41; capture::browser_named),
+/// The browsers IDM 6.42 lists, plus Firefox's forks iDM tells apart (#41; capture::browser_named),
 /// all captured on.
 pub const BROWSERS: [&str; 12] = [
     "Apple Safari",          // not translated: a product name
@@ -606,7 +606,7 @@ impl Settings {
             "proxy".into(),
             &|| {
                 format!(
-                    "Mister Download Manager: {} {}:{}",
+                    "iDM: {} {}:{}",
                     // i18n: the proxy's password in the system's keychain (Credential Manager, the keyring): its name there, followed by the proxy's address
                     crate::i18n::t("proxy server"),
                     self.proxy_host,
@@ -619,7 +619,7 @@ impl Settings {
             "archives/passwords".into(),
             &|| {
                 format!(
-                    "Mister Download Manager: {}",
+                    "iDM: {}",
                     // i18n: the list of archive passwords in the system's keychain (Credential Manager, the keyring): its name there
                     crate::i18n::t("archive passwords")
                 )
@@ -629,7 +629,7 @@ impl Settings {
         for (a, d) in self.debrid_accounts.iter().zip(&mut disk.debrid_accounts) {
             d.secret = kept(
                 format!("debrid/{}", a.id),
-                &|| format!("Mister Download Manager: {} ({})", a.service.name(), a.user),
+                &|| format!("iDM: {} ({})", a.service.name(), a.user),
                 &a.secret,
             );
         }
@@ -642,7 +642,7 @@ impl Settings {
 {user}"
                     ))
                 ),
-                &|| format!("Mister Download Manager: {site} ({user})"),
+                &|| format!("iDM: {site} ({user})"),
                 pw,
             );
         }
@@ -711,7 +711,7 @@ pub fn remember(list: &mut Vec<String>, value: &str) {
     list.truncate(HISTORY);
 }
 
-/// A saved "User-Agent for manually added downloads": MDM's former default (Internet Explorer
+/// A saved "User-Agent for manually added downloads": iDM's former default (Internet Explorer
 /// 11's, before #668) or nothing is the automatic one (empty).
 fn automatic_agent<'de, D: serde::Deserializer<'de>>(d: D) -> Result<String, D::Error> {
     let saved = String::deserialize(d)?;
@@ -863,11 +863,11 @@ impl Settings {
     }
 
     /// Why a download from the browser can't start (#42): its proxy asks for a login that the
-    /// VPN or proxy extension gives, which MDM can't have. Going around it would show the
+    /// VPN or proxy extension gives, which iDM can't have. Going around it would show the
     /// user's own address, so the download stops and says so.
     pub fn browser_proxy_refused(&self, context: &mdm_ipc::Command) -> Option<String> {
         (self.proxy_from_browser && context.proxy_login).then(|| {
-            // i18n: an error: the browser's VPN or proxy extension logs in to its proxy itself, and MDM can't; Options → Proxy / Socks → Network adapter is where an adapter can be chosen
+            // i18n: an error: the browser's VPN or proxy extension logs in to its proxy itself, and iDM can't; Options → Proxy / Socks → Network adapter is where an adapter can be chosen
             crate::i18n::t(
                 "the browser's proxy (a VPN or proxy extension) asks for a login only that extension has: use the VPN's own app, or choose its network adapter in Options → Proxy / Socks",
             )
@@ -1112,7 +1112,7 @@ pub fn dns_choice(
     })
 }
 
-/// The proxy MDM's own downloads go through (its helpers, its updates, a crash report's
+/// The proxy iDM's own downloads go through (its helpers, its updates, a crash report's
 /// symbols): Options → Proxy / Socks, kept in step by the app ([`share_proxy`]); Windows' own
 /// settings in a process without them (the crash monitor).
 static OWN_PROXY: std::sync::RwLock<Option<mdm_engine::Proxy>> = std::sync::RwLock::new(None);
@@ -1165,12 +1165,12 @@ pub fn share_video_settings(s: &Settings) {
     mdm_tools::video::set_chapters(s.video_chapters);
 }
 
-/// The network adapter MDM's connections go through now (#35).
+/// The network adapter iDM's connections go through now (#35).
 pub fn own_route() -> mdm_engine::Route {
     OWN_ROUTE.read().unwrap().clone()
 }
 
-/// How MDM downloads its own files: its engine, as itself, through the user's proxy, DNS and
+/// How iDM downloads its own files: its engine, as itself, through the user's proxy, DNS and
 /// network adapter.
 pub fn own_net() -> mdm_engine::Options {
     let proxy = OWN_PROXY
@@ -1190,8 +1190,8 @@ mod tests {
     use std::path::Path;
 
     /// #668: the User-Agent for links added by hand is the default browser's unless one is set.
-    /// Saved before, MDM's former default (Internet Explorer 11's) or nothing reads as automatic;
-    /// automatic is saved empty, which an older MDM reads as its own default again.
+    /// Saved before, iDM's former default (Internet Explorer 11's) or nothing reads as automatic;
+    /// automatic is saved empty, which an older iDM reads as its own default again.
     #[test]
     fn the_user_agent_is_automatic_unless_one_is_set() {
         use super::Settings;
@@ -1353,7 +1353,7 @@ mod tests {
             let changed = s.settle_torrent_handler(installer, || registered);
             (s.torrent_associations, changed)
         };
-        // Never decided: MDM opens .torrent files now (the installer's task, an earlier tick,
+        // Never decided: iDM opens .torrent files now (the installer's task, an earlier tick,
         // an all-users association) → on; it doesn't → off.
         assert_eq!(settle(undecided(), None, true), (Some(true), true));
         assert_eq!(settle(undecided(), None, false), (Some(false), true));

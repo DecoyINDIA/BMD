@@ -292,7 +292,7 @@ fn write(p: &Path, json: &[u8]) -> std::io::Result<()> {
 }
 
 /// Saves the list on a thread of its own. The write ends with a flush to the disk, which waited
-/// for every byte a big download had written meanwhile: on the window's thread it froze MDM for
+/// for every byte a big download had written meanwhile: on the window's thread it froze iDM for
 /// seconds (a crash report caught it: "freeze in store::save"). The newest list waiting replaces
 /// an older one not yet written. Any file the window keeps saving goes the same way
 /// ([`Saver::writing`]): Windows holding every write on C: for a shadow copy held the window
@@ -378,7 +378,7 @@ impl Saver {
             .take()
     }
 
-    /// Wait until nothing is waiting or being written (MDM closing), or until `deadline` (the
+    /// Wait until nothing is waiting or being written (iDM closing), or until `deadline` (the
     /// session ending, which can't wait for a disk that holds its writes). True when all of it
     /// was written.
     pub fn flush_until(&self, deadline: Option<std::time::Instant>) -> bool {

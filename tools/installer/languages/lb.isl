@@ -1,4 +1,4 @@
-﻿; Mister Download Manager's installer in Luxembourgish: tools/installer/languages.py
+﻿; iDM's installer in Luxembourgish: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Deinstalléieren %1.
 
 [CustomMessages]
 TaskBrowser=Browserintegratioun ariichten (&B) (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Maacht .&torrent-Fichieren a Magnet-Linke mat Mister Download Manager op
-TaskStartup=Start Mister Download Manager, wann &Windows start
+TaskTorrents=Maacht .&torrent-Fichieren a Magnet-Linke mat iDM op
+TaskStartup=Start iDM, wann &Windows start
 TaskGroupOther=Aneres:
-Launch=Start Mister Download Manager
+Launch=Start iDM
 KeepData=Och Är Downloadlëscht an Astellunge läschen?%n%nÄr erofgeluede Fichiere ginn souwisou net beréiert.
