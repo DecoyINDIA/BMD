@@ -74,7 +74,7 @@ systems and bring everything iDM needs; from the AppImage or the `.tar.gz`, a mi
 named at start with the command that installs it. **Update now** asks the package manager which
 package iDM is.
 
-![iDM's main window on Ubuntu 24.04's GNOME desktop: the categories and a list of downloads, each with the desktop's icon for its type](images/main-linux.webp)
+![iDM's main window on Linux showing categories and a list of downloads](images/main-linux.webp)
 *On Ubuntu's GNOME desktop, with the desktop's own file icons.*
 
 What's left: the Flatpak Firefox isn't checked yet; screen readers (Orca) don't read iDM's

@@ -52,13 +52,13 @@ builds none for it): install it with your system's packages or pip.
 | `...-linux-x86_64.AppImage` | Runs on most distributions: make it executable (`chmod +x`) and run it. It updates itself in place (**Help → Check for updates**). |
 | `...-linux-x86_64.tar.gz` | The plain programs, for any distribution. |
 
-![iDM's main window on Ubuntu 24.04's GNOME desktop: the categories and a list of downloads, each with the desktop's icon for its type](images/main-linux.webp)
-*iDM on Ubuntu's GNOME desktop, with the desktop's own file icons.*
+![iDM's main window on Linux showing categories and a list of downloads](images/main-linux.webp)
+*iDM in an X11 session on Linux.*
 
 Browser integration is set up by iDM itself at each start (the browsers installed then are found); add the extension as in [Browser integration](browser-integration.md). Firefox installed as a Snap (Ubuntu's) reaches iDM once you allow it; other Snap and Flatpak browsers can't (see [Flatpak and Snap browsers](browser-help.md#linux-sandbox)). The tray icon, Dark Mode support and Launch on startup work on GNOME (Ubuntu's), KDE Plasma, Xfce and Cinnamon.
 
-![The window that offers the browser extension on Linux: Google Chrome and Mozilla Firefox, each with Add the extension](images/browser-offer-linux.webp)
-*iDM finds the browsers installed and offers each one its extension.*
+![iDM's browser extension setup window on Linux](images/browser-offer-linux.webp)
+*Use Set it up if browser integration has not been configured.*
 
 In a Wayland session the windows go through XWayland or Wayland (below). Not there yet on Linux: screen
 readers (Orca) don't read iDM's windows; browsers installed as a Flatpak can't reach iDM (Firefox
@@ -82,17 +82,6 @@ bars:
   *The Scheduler.*
 - ![Options on its Connection page, on Linux](images/options-linux.webp)
   *Options.*
-
-And on the other desktops it was checked on:
-
-<!-- pictures -->
-
-- ![iDM's main window on KDE Plasma](images/kde-main-linux.webp)
-  *KDE Plasma.*
-- ![iDM's main window on Cinnamon](images/cinnamon-main-linux.webp)
-  *Cinnamon.*
-- ![iDM's main window on Xfce](images/xfce-main-linux.webp)
-  *Xfce.*
 
 #### Uninstall on Linux {#uninstall-linux}
 
@@ -263,9 +252,6 @@ used, and how to make and share one.
 Closing the main window doesn't quit iDM. It hides in the notification area, and downloads, queues and schedules carry on. To make closing quit (a portable copy's folder can then be deleted), untick **Options → General → Keep running when closing the window**. If there is no icon for iDM at all — not in the notification area, nor behind the ^ hidden icons — the window minimizes to the taskbar instead, so downloads continue and there is a way back. An icon behind ^ can be clicked to bring the window back, and starting iDM again always does. On macOS the window closes into the Dock, as Mac apps' windows do: click iDM's icon in the Dock (or in the menu bar) to bring it back, and quit with **Cmd+Q** or **iDM → Quit**.
 
 On Linux this needs a tray, which most desktops have (KDE Plasma, Xfce, Cinnamon, Ubuntu's GNOME or GNOME with the AppIndicator extension, waybar's tray). On a desktop without one (some tiling window managers), closing the window quits iDM, since there would be nowhere to bring it back from.
-
-![iDM's icon in the top bar of Ubuntu's GNOME, its menu open: Open iDM, Add new download, Add batch download, Downloads in progress, Speed Limiter, Scheduler, the main queue, Options and Exit](images/tray-linux.webp)
-*The tray icon's menu on Ubuntu's GNOME.*
 
 - Click the tray icon to bring the window back.
 - Right-click it for **Add new download**, **Add batch download**, **Downloads in progress**, **Speed Limiter**, **Scheduler**, the main download queue, **Options** and **Exit**.

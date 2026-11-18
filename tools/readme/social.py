@@ -40,8 +40,8 @@ def main():
     icon = Image.open(ROOT / "art/Mister Download Manager.png").convert("RGBA").resize((112, 112), Image.LANCZOS)
     card.paste(icon, (64, 56), icon)
     draw.text((196, 58), "iDM", font=font("segoeuib.ttf", 56), fill=INK)
-    draw.text((198, 132), "Downloads faster than IDM. Free, forever.", font=font("segoeui.ttf", 34), fill=ACCENT)
-    draw.text((66, 196), "Windows, macOS and Linux  ·  86 languages  ·  no ads, no trial, no sign-up",
+    draw.text((198, 132), "Download files, videos, and torrents.", font=font("segoeui.ttf", 34), fill=ACCENT)
+    draw.text((66, 196), "Windows and Linux  ·  Experimental macOS support",
               font=font("segoeui.ttf", 24), fill=MUTED)
 
     out = ROOT / "docs/images/social-preview.png"
