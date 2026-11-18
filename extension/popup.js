@@ -3,9 +3,9 @@
 // site to the browser, opening the app or its Options, and the media the tab loaded (#38), each
 // to download. background.js does the work.
 const ext = globalThis.browser ?? globalThis.chrome;
-const HELP = "https://github.com/DecoyINDIA/iDM-standalone/blob/main/docs/browser-help.md";
+const HELP = "https://github.com/DecoyINDIA/iDM/blob/main/docs/browser-help.md";
 // The project on GitHub (the app's Help → Support iDM): a plain link, in a new tab.
-const PROJECT_URL = "https://github.com/DecoyINDIA/iDM-standalone";
+const PROJECT_URL = "https://github.com/DecoyINDIA/iDM";
 const t = (key, ...subs) => ext.i18n.getMessage(key, subs) || key;
 const $ = (id) => document.getElementById(id);
 const ask = (m) => ext.runtime.sendMessage(m).catch(() => ({ ok: false }));

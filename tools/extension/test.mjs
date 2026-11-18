@@ -886,17 +886,17 @@ const ok = (what) => {
   let answered = 0;
   ({ sent, tabs } = await run(long, () => (++answered === 3 ? { ok: false, why: "not-running" } : { ok: true })));
   assert.equal(sent.length, 3);
-  assert.deepEqual(tabs, ["https://github.com/DecoyINDIA/iDM-standalone/blob/main/docs/browser-help.md#not-running"]);
+  assert.deepEqual(tabs, ["https://github.com/DecoyINDIA/iDM/blob/main/docs/browser-help.md#not-running"]);
   // A link longer than a whole message: the others go, and the help page says one was left out.
   const huge = `https://x.test/${"x".repeat(MAX)}`;
   ({ sent, tabs } = await run([...long, huge]));
   assert.deepEqual(sent.flatMap((m) => m.links), long);
-  assert.deepEqual(tabs, ["https://github.com/DecoyINDIA/iDM-standalone/blob/main/docs/browser-help.md#too-large"]);
+  assert.deepEqual(tabs, ["https://github.com/DecoyINDIA/iDM/blob/main/docs/browser-help.md#too-large"]);
   // Only such links: nothing goes, too large.
   let store;
   ({ sent, tabs, store } = await run([huge]));
   assert.deepEqual(sent, []);
-  assert.deepEqual(tabs, ["https://github.com/DecoyINDIA/iDM-standalone/blob/main/docs/browser-help.md#too-large"]);
+  assert.deepEqual(tabs, ["https://github.com/DecoyINDIA/iDM/blob/main/docs/browser-help.md#too-large"]);
   assert.equal(store.status.why, "too-large");
   ok("Download all links: a list at the limit whole, past it in parts the host takes, failures explained");
 }
@@ -1240,7 +1240,7 @@ const ok = (what) => {
     await ask(listeners, { type: "open-post", url: "https://news.test/p/1" }, from);
     assert.deepEqual(await ask(listeners, { type: "open-post", url: "https://elsewhere.test/p/1" }, from), { ok: false }, "a post on this page's site only");
     assert.deepEqual(opened, [
-      { url: "https://github.com/DecoyINDIA/iDM-standalone/releases", openerTabId: 5, index: 3 },
+      { url: "https://github.com/DecoyINDIA/iDM/releases", openerTabId: 5, index: 3 },
       { url: "https://news.test/p/1", openerTabId: 5, index: 3 },
     ]);
     // A plain file: `direct` with it, and `show` back for "Show".

@@ -21,7 +21,7 @@ its name and its state. The download list reads each download's name, status and
 know what is running and how far it has got without looking.
 
 The help names Windows' screen readers, Narrator and NVDA. If you use a screen reader on Linux
-or macOS, please [tell us how it goes](https://github.com/DecoyINDIA/iDM-standalone/issues/new/choose).
+or macOS, please [tell us how it goes](https://github.com/DecoyINDIA/iDM/issues/new/choose).
 
 ## No mouse needed
 

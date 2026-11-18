@@ -12,11 +12,11 @@ use crate::dialogs::{Outcome, window};
 use crate::winui::{self, ButtonKind, r};
 
 /// The repository: problem reports, releases, source, licences.
-pub const REPO: &str = "https://github.com/DecoyINDIA/iDM-standalone";
-const LATEST: &str = "https://api.github.com/repos/DecoyINDIA/iDM-standalone/releases/latest";
+pub const REPO: &str = "https://github.com/DecoyINDIA/iDM";
+const LATEST: &str = "https://api.github.com/repos/DecoyINDIA/iDM/releases/latest";
 /// The repository on GitHub (`owner/name`): its release pages when GitHub's API refuses for its
 /// rate limit (#1337).
-const REPO_PATH: &str = "DecoyINDIA/iDM-standalone";
+const REPO_PATH: &str = "DecoyINDIA/iDM";
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const COMMIT: &str = env!("MDM_COMMIT");
 /// While iDM runs, the automatic check comes again this often (it also checks at every start).

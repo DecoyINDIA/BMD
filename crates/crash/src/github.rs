@@ -3,7 +3,7 @@
 
 use serde::Deserialize;
 
-pub const REPO: &str = "DecoyINDIA/iDM-standalone";
+pub const REPO: &str = "DecoyINDIA/iDM";
 
 /// GitHub turns away very long addresses: the form's address is kept under this, the report cut
 /// to fit (the full one goes in as the attached file).

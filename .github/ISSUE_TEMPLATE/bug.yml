@@ -10,7 +10,7 @@ body:
     attributes:
       value: |
         Thanks for taking the time. **Help → Report a problem** in iDM opens this form with your version and system already filled in.
-        For a security problem, use the [private reporting form](https://github.com/DecoyINDIA/iDM-standalone/security/advisories/new).
+        For a security problem, use the [private reporting form](https://github.com/DecoyINDIA/iDM/security/advisories/new).
   - type: input
     id: os
     attributes:
@@ -103,5 +103,5 @@ body:
     attributes:
       label: Before you send it
       options:
-        - label: I looked through the [open issues](https://github.com/DecoyINDIA/iDM-standalone/issues) and this one isn't there yet.
+        - label: I looked through the [open issues](https://github.com/DecoyINDIA/iDM/issues) and this one isn't there yet.
           required: true

@@ -16,7 +16,7 @@ Delete the `data` folder (or make it read-only) and the same copy behaves like t
 
 ## Set it up
 
-1. Download `iDM-<version>-portable.zip` from [Releases](https://github.com/DecoyINDIA/iDM-standalone/releases).
+1. Download `iDM-<version>-portable.zip` from [Releases](https://github.com/DecoyINDIA/iDM/releases).
 2. Unzip it where you want iDM to live, for example `E:\iDM` on a USB stick.
 3. Run `misterdownloadmanager.exe` from there.
 

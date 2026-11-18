@@ -52,7 +52,7 @@ stick](guide-usb-stick.md) shows the set-up.
 For Linux on x86-64 (and ARM64 from the version after 0.5.2): an AppImage for most
 distributions, a `.deb` for Ubuntu, Debian, Mint and Pop!_OS, an `.rpm` for Fedora, openSUSE and
 RHEL, and a `.tar.gz` of the plain programs. For macOS 11 and later, on Apple Silicon or Intel,
-`.dmg` files still marked `-experimental`. Please [tell us how it went](https://github.com/DecoyINDIA/iDM-standalone/issues/new/choose), good
+`.dmg` files still marked `-experimental`. Please [tell us how it went](https://github.com/DecoyINDIA/iDM/issues/new/choose), good
 or bad.
 
 There, iDM connects itself to your browsers at each start, has its tray icon, follows the

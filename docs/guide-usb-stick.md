@@ -6,7 +6,7 @@ The portable copy runs straight from a USB stick and keeps its list and settings
 
 ## 1. Put iDM on the stick
 
-1. Download `iDM-<version>-portable.zip` from [Releases](https://github.com/DecoyINDIA/iDM-standalone/releases).
+1. Download `iDM-<version>-portable.zip` from [Releases](https://github.com/DecoyINDIA/iDM/releases).
 2. Unzip it onto the stick, for example to `E:\iDM`.
 3. Check that there is a `data` folder next to `misterdownloadmanager.exe`. That folder is what makes iDM portable. Don't delete it.
 4. Run `misterdownloadmanager.exe` and pick your language.

@@ -146,7 +146,7 @@ focus = "ring"
 Every colour role, size and control style, with what it sets, is listed on the website's
 [Themes page](https://misterdownloadmanager.com/themes.html#make-your-own) (read from iDM's own
 code, so it never drifts). The built-in themes are written the same way:
-[read them on GitHub](https://github.com/DecoyINDIA/iDM-standalone/tree/main/crates/app/assets/themes).
+[read them on GitHub](https://github.com/DecoyINDIA/iDM/tree/main/crates/app/assets/themes).
 
 A key iDM doesn't know, or a value it can't read, is skipped and written to iDM's log (the `logs`
 folder beside the themes folder), so a file made for a newer iDM still loads. A file that isn't
@@ -160,7 +160,7 @@ A theme in a folder of its own (`harbour/theme.toml`) can bring its icons in `ic
 more), each named for what it shows (`tb-add-url.svg`, `cat-music.png`…). SVG and PNG files keep
 their colours; `-symbolic.svg` and `-symbolic.png` ones, as GNOME and KDE name them, take the
 theme's text colour. An icon the set lacks is drawn as the classic look draws it. The full list of
-names is in [themeicons.rs](https://github.com/DecoyINDIA/iDM-standalone/blob/main/crates/app/src/themeicons.rs) (`NEEDS`).
+names is in [themeicons.rs](https://github.com/DecoyINDIA/iDM/blob/main/crates/app/src/themeicons.rs) (`NEEDS`).
 
 ## Make one
 
@@ -176,7 +176,7 @@ from a description.
 ## Share it
 
 Made something others would like? Open a
-[pull request](https://github.com/DecoyINDIA/iDM-standalone/pulls) that adds it to
+[pull request](https://github.com/DecoyINDIA/iDM/pulls) that adds it to
 `crates/app/assets/themes`, with:
 
 - the `.toml` file, and its folder of icons if it has one;
@@ -186,7 +186,7 @@ Made something others would like? Open a
   program.
 
 Not sure yet? Show it in the
-[discussions](https://github.com/DecoyINDIA/iDM-standalone/discussions) first.
+[discussions](https://github.com/DecoyINDIA/iDM/discussions) first.
 [CONTRIBUTING.md](../CONTRIBUTING.md) explains how pull requests work here.
 
 ## Next steps

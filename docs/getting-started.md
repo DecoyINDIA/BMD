@@ -8,7 +8,7 @@ ARM64): see [On Linux](#on-linux). Builds for macOS are new and still experiment
 
 ## Choose a download
 
-Published iDM builds will appear on the [Releases](https://github.com/DecoyINDIA/iDM-standalone/releases) page. Until builds are available, follow the [source build instructions](../CONTRIBUTING.md#getting-set-up). Windows builds use these file names:
+Published iDM builds will appear on the [Releases](https://github.com/DecoyINDIA/iDM/releases) page. Until builds are available, follow the [source build instructions](../CONTRIBUTING.md#getting-set-up). Windows builds use these file names:
 
 | File | What it is |
 |---|---|
@@ -124,7 +124,7 @@ find ~/.mozilla ~/.librewolf ~/.config -name com.misterdownloadmanager.host.json
 
 The macOS builds are fresh and still experimental: we haven't tried them on a Mac ourselves yet,
 so you'd be among the first. Please
-[tell us how it went](https://github.com/DecoyINDIA/iDM-standalone/issues/new/choose), good or bad.
+[tell us how it went](https://github.com/DecoyINDIA/iDM/issues/new/choose), good or bad.
 
 | File | What it is |
 |---|---|

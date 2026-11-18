@@ -9,7 +9,7 @@ torrents. You control it with the [remote control's page](remote-control.md) (fr
 computer on your network), the browser extension pointed at it, or its command line.
 
 > **New:** the server mode is new in this version. Please
-> [tell us how it goes](https://github.com/DecoyINDIA/iDM-standalone/issues).
+> [tell us how it goes](https://github.com/DecoyINDIA/iDM/issues).
 
 ## With Docker
 
@@ -24,8 +24,8 @@ docker pull ghcr.io/anefzaoui/misterdownloadmanager:latest
 Or build the image yourself from iDM's source:
 
 ```sh
-git clone https://github.com/DecoyINDIA/iDM-standalone
-cd iDM-standalone
+git clone https://github.com/DecoyINDIA/iDM
+cd iDM
 docker build -t misterdownloadmanager .
 ```
 

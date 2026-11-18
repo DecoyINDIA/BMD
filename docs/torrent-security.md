@@ -59,7 +59,7 @@ It works as a kill switch. When the adapter disconnects, running torrents stop w
 
 ## Reporting a problem
 
-Found a security issue? Please report it privately on GitHub (**Security → Report a vulnerability**, see [SECURITY.md](https://github.com/DecoyINDIA/iDM-standalone/blob/main/SECURITY.md)) rather than in a public issue.
+Found a security issue? Please report it privately on GitHub (**Security → Report a vulnerability**, see [SECURITY.md](https://github.com/DecoyINDIA/iDM/blob/main/SECURITY.md)) rather than in a public issue.
 
 ## Next steps
 

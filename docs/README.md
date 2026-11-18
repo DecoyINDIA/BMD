@@ -62,8 +62,8 @@ These pages explain each part of the program. The tutorials walk through the thi
 - **[Crash reports](crash-reports.md)** — what the crash report window shows when iDM closes unexpectedly or stops responding, what a report contains, and how to send it.
 - **[Troubleshooting](troubleshooting.md)** — what to check when a download fails, the browser doesn't hand over a download, or a schedule doesn't start.
 - **[The browser and iDM aren't connected](browser-help.md)** — what the extension's red **!** means, reason by reason, and how to fix each.
-- **[Releases](https://github.com/DecoyINDIA/iDM-standalone/releases)** — download the latest version.
-- **[Report a problem](https://github.com/DecoyINDIA/iDM-standalone/issues/new/choose)** — or use **Help → Report a problem** in iDM, which fills in your version, system and how iDM was installed for you.
+- **[Releases](https://github.com/DecoyINDIA/iDM/releases)** — download the latest version.
+- **[Report a problem](https://github.com/DecoyINDIA/iDM/issues/new/choose)** — or use **Help → Report a problem** in iDM, which fills in your version, system and how iDM was installed for you.
 
 ---
 

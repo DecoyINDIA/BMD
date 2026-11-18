@@ -54,8 +54,8 @@ context	source	translation
 
 To send your changes:
 
-- Open a pull request on [GitHub](https://github.com/DecoyINDIA/iDM-standalone) with the edited catalog, or
-- [open an issue](https://github.com/DecoyINDIA/iDM-standalone/issues) describing what should change, if you'd rather not edit the file.
+- Open a pull request on [GitHub](https://github.com/DecoyINDIA/iDM) with the edited catalog, or
+- [open an issue](https://github.com/DecoyINDIA/iDM/issues) describing what should change, if you'd rather not edit the file.
 
 ## Next steps
 

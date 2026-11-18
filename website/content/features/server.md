@@ -47,4 +47,4 @@ window, so a download that would ask a question, such as a duplicate, takes the 
 settings, or isn't added. Don't publish the port on the internet: reach your home network through
 a VPN instead.
 
-Server mode is new, so please [tell us how it goes](https://github.com/DecoyINDIA/iDM-standalone/issues).
+Server mode is new, so please [tell us how it goes](https://github.com/DecoyINDIA/iDM/issues).

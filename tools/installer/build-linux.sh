@@ -115,11 +115,11 @@ cat > "$deb/DEBIAN/control" <<EOF
 Package: misterdownloadmanager
 Version: $version
 Architecture: $deb_arch
-Maintainer: DecoyINDIA <https://github.com/DecoyINDIA/iDM-standalone>
+Maintainer: DecoyINDIA <https://github.com/DecoyINDIA/iDM>
 Depends: libc6 (>= $glibc), libgtk-3-0, libgl1, libegl1, libxkbcommon0, libxkbcommon-x11-0, ca-certificates
 Section: net
 Priority: optional
-Homepage: https://github.com/DecoyINDIA/iDM-standalone
+Homepage: https://github.com/DecoyINDIA/iDM
 Description: Download manager
  Speeds up downloads with several connections at once, resumes them, catches them from the
  browser, and downloads videos and torrents.
@@ -135,7 +135,7 @@ Version: $version
 Release: 1
 Summary: Download manager
 License: GPL-3.0-or-later
-URL: https://github.com/DecoyINDIA/iDM-standalone
+URL: https://github.com/DecoyINDIA/iDM
 Requires: glibc >= $glibc, gtk3, mesa-libGL, mesa-libEGL, libxkbcommon, libxkbcommon-x11, ca-certificates
 AutoReqProv: no
 

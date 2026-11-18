@@ -1,7 +1,7 @@
 # Security
 
 Please report security problems privately, not in a public issue: use GitHub's
-**[Report a vulnerability](https://github.com/DecoyINDIA/iDM-standalone/security/advisories/new)**
+**[Report a vulnerability](https://github.com/DecoyINDIA/iDM/security/advisories/new)**
 form on this repository. Say what you found, how to reproduce it, and which version you used
 (**Help → About** shows it).
 

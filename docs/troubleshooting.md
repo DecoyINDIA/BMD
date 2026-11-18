@@ -73,7 +73,7 @@ iDM keeps Internet Download Manager's compact sizes. On a large or high-resoluti
 
 A window larger than the screen at that size (Options at 200 % on a 1366 × 768 screen) opens as large as the screen allows, and the rest scrolls: with the scroll bars, the mouse wheel, or **Tab** to the next control.
 
-iDM tells Windows it draws for each monitor's own scale, so Windows never stretches its windows into blur, and it draws Windows' fonts grid-fitted to whole pixels. If the text still looks blurred, tell us your screen's resolution and Windows' display scale when you [report it](https://github.com/DecoyINDIA/iDM-standalone/issues).
+iDM tells Windows it draws for each monitor's own scale, so Windows never stretches its windows into blur, and it draws Windows' fonts grid-fitted to whole pixels. If the text still looks blurred, tell us your screen's resolution and Windows' display scale when you [report it](https://github.com/DecoyINDIA/iDM/issues).
 
 ## The window freezes or draws wrongly
 
@@ -93,7 +93,7 @@ On Windows, iDM draws its windows with Direct3D 12; on Linux and macOS, with Ope
 
 ## The setup or iDM won't start
 
-- If Windows says **Windows protected your PC**, click **More info**, check that the file is `iDM-<version>-setup.exe` from the [Releases](https://github.com/DecoyINDIA/iDM-standalone/releases) page, then click **Run anyway**.
+- If Windows says **Windows protected your PC**, click **More info**, check that the file is `iDM-<version>-setup.exe` from the [Releases](https://github.com/DecoyINDIA/iDM/releases) page, then click **Run anyway**.
 - iDM runs only once. Starting it again brings the running copy's window to the front. If nothing appears, look for iDM's icon in the notification area.
 - **Linux, from the AppImage or the tar.gz:** if the system lacks a library iDM's window needs (such as `libxkbcommon-x11`), iDM names it on the terminal and in a message box, with the command that installs it (`sudo apt install libxkbcommon-x11-0`, or your distribution's). The .deb and .rpm bring these libraries themselves. In a Wayland session iDM opens its window on Wayland instead.
 - **Linux, the first start is slow:** iDM looks up the system's fonts for every script once, all together, while it starts (fontconfig); a first start on a busy computer can take a few seconds more. Install your distribution's Noto fonts if some scripts or symbols show as boxes.
@@ -104,13 +104,13 @@ A few antivirus programs flag new installers just because they have rarely seen 
 
 To check that your copy is the real one:
 
-1. Download iDM only from [GitHub Releases](https://github.com/DecoyINDIA/iDM-standalone/releases).
+1. Download iDM only from [GitHub Releases](https://github.com/DecoyINDIA/iDM/releases).
 2. Get your file's SHA-256. On Windows, run `certutil -hashfile "iDM-0.5.0-setup.exe" SHA256`; on Linux, `sha256sum` and the file's name.
 3. Compare it with the same file's line in that release's `SHA256SUMS.txt`.
 
-If they match, it is the file we published. Every release is built on GitHub from the [public source code](https://github.com/DecoyINDIA/iDM-standalone), so anyone can read what went into it.
+If they match, it is the file we published. Every release is built on GitHub from the [public source code](https://github.com/DecoyINDIA/iDM), so anyone can read what went into it.
 
-If your antivirus quarantined iDM, restore it and add an exception for its folder. If it flags something other than the setup or iDM's own programs, or a copy from anywhere else, don't run it, and please [tell us](https://github.com/DecoyINDIA/iDM-standalone/issues).
+If your antivirus quarantined iDM, restore it and add an exception for its folder. If it flags something other than the setup or iDM's own programs, or a copy from anywhere else, don't run it, and please [tell us](https://github.com/DecoyINDIA/iDM/issues).
 
 ## HTTPS downloads fail with "no certificates" (Linux)
 
@@ -140,7 +140,7 @@ When there is one, **Update now** downloads it, checks it, puts it in place and 
 | Linux, the .deb or .rpm | Opens the checked package in your system's package installer, which asks for your password. |
 | Linux, another package manager's package (pacman, ...) | Nothing: the window says so, and your system's updates bring the new version. |
 
-iDM installs an update only when the release's list of checksums is signed by the configured release key and the file matches it; anything else is refused, and **Download** opens the [Releases](https://github.com/DecoyINDIA/iDM-standalone/releases) page instead. Updating this way starts with version 0.2.1: earlier versions open the Releases page.
+iDM installs an update only when the release's list of checksums is signed by the configured release key and the file matches it; anything else is refused, and **Download** opens the [Releases](https://github.com/DecoyINDIA/iDM/releases) page instead. Updating this way starts with version 0.2.1: earlier versions open the Releases page.
 
 iDM asks GitHub's API for the newest version (of iDM, and of yt-dlp and ffmpeg). GitHub answers 60 such questions an hour for each internet address, so on a network many people share (a mobile or home internet provider that puts many customers behind one address, a campus, an office) others can use them up. iDM then reads GitHub's ordinary release pages instead, with the same checks of what it downloads. If GitHub refuses those too, the window says **api.github.com refused the request (403 Forbidden): too many requests from your network for now**: try again in an hour, or from another network.
 
@@ -155,7 +155,7 @@ The AppImage can also be updated by AppImage tools (AppImageLauncher, Gear Lever
 
 Choose **Help → Report a problem**. It opens the bug report form on GitHub with your iDM version, your system and its version, how iDM was installed and its interface language already filled in. Describe what happened, what you expected and the steps that make it happen. For a download, include the address if you can share it, and the reason shown under **Status**.
 
-You can also [open the form yourself](https://github.com/DecoyINDIA/iDM-standalone/issues/new?template=bug.yml); it asks for the same details.
+You can also [open the form yourself](https://github.com/DecoyINDIA/iDM/issues/new?template=bug.yml); it asks for the same details.
 
 ## Next steps
 
