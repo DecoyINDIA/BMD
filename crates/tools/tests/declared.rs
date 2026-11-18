@@ -2,7 +2,7 @@
 //! a hidden welcome video in its HTML (`/gen/1M/welcome.mp4`) and declares another as its own
 //! (`/gen/2M/film.mp4`, "The Film") in its JSON-LD, its `og:video` or its `twitter:player`.
 //!
-//! The page's reading (MDM's engine, as the look-up reads it) runs with `cargo test`. The look-up
+//! The page's reading (iDM's engine, as the look-up reads it) runs with `cargo test`. The look-up
 //! and the download through the real yt-dlp are ignored: they need yt-dlp's program.
 //!
 //!   MDM_TEST_YTDLP=…\yt-dlp.exe cargo test -p mdm-tools --test declared -- --ignored --nocapture
@@ -15,7 +15,7 @@ use mdm_tools::proc::FromBrowser;
 use mdm_tools::resolve::Looked;
 use mdm_tools::video::{State, Subs, VideoJob};
 
-/// What MDM's engine reads `page` declaring, as [`declared::look_up`] reads it.
+/// What iDM's engine reads `page` declaring, as [`declared::look_up`] reads it.
 fn read(rt: &tokio::runtime::Runtime, page: &str) -> Option<Declared> {
     let url = reqwest::Url::parse(page).unwrap();
     let opts = mdm_engine::Options::default();

@@ -18,14 +18,14 @@ use rustls::{DigitallySignedStruct, SignatureScheme};
 pub const NO_ROOTS: &str = "this system has no trusted certificates to check the server with \
                             (install the ca-certificates package)";
 
-/// The crypto provider MDM's own TLS configurations use (the one reqwest uses too).
+/// The crypto provider iDM's own TLS configurations use (the one reqwest uses too).
 pub(crate) fn provider() -> Arc<CryptoProvider> {
     Arc::new(rustls::crypto::aws_lc_rs::default_provider())
 }
 
 /// Whether the system has certificates to check servers with. Windows and macOS always do
 /// (their verifiers ask the system at each connection); Linux reads its CA bundle, which can be
-/// missing. Asked again until it's found, so installing the certificates while MDM runs is seen
+/// missing. Asked again until it's found, so installing the certificates while iDM runs is seen
 /// by the next download.
 pub fn system_has_roots() -> bool {
     static FOUND: AtomicBool = AtomicBool::new(false);
@@ -41,7 +41,7 @@ pub fn system_has_roots() -> bool {
 
 /// `builder` with the TLS it can have here: reqwest's own (the system's verifier) when the
 /// system has certificates, else one whose every secure connection fails with [`NO_ROOTS`]
-/// (reqwest's would refuse to build the client at all, plain HTTP included). MDM's own clients
+/// (reqwest's would refuse to build the client at all, plain HTTP included). iDM's own clients
 /// get it through `net::bind_client`; the torrent session's (trackers, UPnP) through librqbit's
 /// `SessionOptions::configure_http_client` (mdm-torrent).
 pub fn configure(builder: reqwest::ClientBuilder) -> reqwest::ClientBuilder {
@@ -81,7 +81,7 @@ pub fn is_no_roots(e: &(dyn std::error::Error + 'static)) -> bool {
 }
 
 /// Why a server's certificate was refused (`Error::Certificate`): what a browser warns about
-/// too. MDM has no way around it: the user is told what is wrong with it.
+/// too. iDM has no way around it: the user is told what is wrong with it.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CertProblem {
     /// Its validity ended.
@@ -263,7 +263,7 @@ mod tests {
         assert_eq!(e.to_string(), NO_ROOTS);
     }
 
-    /// A client of this system (its verifier, as MDM's downloads have it), trusting the lab's
+    /// A client of this system (its verifier, as iDM's downloads have it), trusting the lab's
     /// test CA besides.
     fn trusting(ca: Vec<u8>) -> reqwest::Client {
         let config = crate::ftp::client_config(&[ca]).unwrap();

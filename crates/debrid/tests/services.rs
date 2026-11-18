@@ -1,5 +1,5 @@
 //! AllDebrid, Premiumize, TorBox and Mega-Debrid against the lab server's fakes (labserver `debrid`), end to end
-//! through MDM's engine, as `realdebrid.rs` does for Real-Debrid. The fake host `hoster.test`
+//! through iDM's engine, as `realdebrid.rs` does for Real-Debrid. The fake host `hoster.test`
 //! resolves nowhere: a download that completes came through the service's direct link.
 
 use std::sync::Arc;
@@ -317,7 +317,7 @@ async fn torbox_links_come_through_the_account_once_it_has_the_file() {
 async fn megadebrid_links_come_through_the_account_by_key_or_password() {
     let (lab, http) = lab().await;
     // An application's key: it works, and the API has no call that says whether its account is
-    // premium, so MDM doesn't claim it is.
+    // premium, so iDM doesn't claim it is.
     let info = check(
         &http,
         ServiceKind::MegaDebrid,

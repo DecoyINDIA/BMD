@@ -73,7 +73,7 @@ pub struct VideoDialog {
     from_browser: String,
     /// Save to.
     folder: String,
-    /// The Video and Music categories' folders MDM puts in Save to (#611): Music's while a
+    /// The Video and Music categories' folders iDM puts in Save to (#611): Music's while a
     /// sound-only choice is chosen, as long as Save to holds one of them (a folder typed or
     /// picked stays). No Music folder: the Music category was deleted, all goes as video.
     video_dir: String,
@@ -462,7 +462,7 @@ impl VideoDialog {
         );
         // A playlist's quality chosen, a list or a video looked up: Save to follows (#611).
         self.follow_sound();
-        // Helpers... open: on Close, the helpers are read again (another program, or MDM's own).
+        // Helpers... open: on Close, the helpers are read again (another program, or iDM's own).
         if let Some(h) = &mut self.helpers
             && !matches!(h.show(ctx, rt), Outcome::Open)
         {
@@ -552,7 +552,7 @@ impl VideoDialog {
     }
 
     /// Save to goes to the Music category's folder when the choice turns sound-only, back to
-    /// Video's when it turns video again, but only while it holds the folder MDM put there: a
+    /// Video's when it turns video again, but only while it holds the folder iDM put there: a
     /// folder the user typed or picked is theirs (#611).
     fn follow_sound(&mut self) {
         let Some(sound) = self.sound_only() else {
@@ -705,7 +705,7 @@ impl VideoDialog {
                     "Video lookups use yt-dlp (about 23 MB, checked against its signature).",
                 ),
             )),
-            // MDM installs ffmpeg on 64-bit Windows only (its builds are Windows ones, x64 and
+            // iDM installs ffmpeg on 64-bit Windows only (its builds are Windows ones, x64 and
             // ARM64); elsewhere the system's package manager has it, and the note says so instead
             // of a button.
             (Some(_), None) if mdm_tools::ffmpeg::available() => Some((
@@ -717,9 +717,9 @@ impl VideoDialog {
             (Some(_), None) if cfg!(windows) => Some((
                 Tool::Ffmpeg,
                 "",
-                // i18n: in Download video, on 32-bit Windows (no button: no ffmpeg build MDM can check exists for it); Helpers... is the button below
+                // i18n: in Download video, on 32-bit Windows (no button: no ffmpeg build iDM can check exists for it); Helpers... is the button below
                 crate::i18n::t(
-                    "The best qualities, MP3, Opus and FLAC need ffmpeg, which MDM has no copy of for 32-bit Windows: choose your own with Helpers...",
+                    "The best qualities, MP3, Opus and FLAC need ffmpeg, which iDM has no copy of for 32-bit Windows: choose your own with Helpers...",
                 ),
             )),
             (Some(_), None) => Some((
@@ -1062,11 +1062,11 @@ impl VideoDialog {
             &[("Helpers...", 90.0)],
             now_at.0 - 8.0 - 11.0,
         )[0];
-        // Where yt-dlp and ffmpeg come from: MDM's own copies or the person's (#51).
+        // Where yt-dlp and ffmpeg come from: iDM's own copies or the person's (#51).
         if winui::button(
             ui,
             r(o, helpers_at.0, BUTTONS_Y, helpers_at.1, 21.0),
-            // i18n: button in Download video: where MDM takes yt-dlp and ffmpeg from
+            // i18n: button in Download video: where iDM takes yt-dlp and ffmpeg from
             "Helpers...",
             ButtonKind::Normal,
             false,
@@ -1166,7 +1166,7 @@ impl VideoDialog {
         winui::why_disabled(
             resp,
             ffmpeg && converts,
-            // i18n: why "Embed chapters" is greyed in Download video: the choice is a sound converted to MP3, Opus or FLAC, which MDM saves without chapters
+            // i18n: why "Embed chapters" is greyed in Download video: the choice is a sound converted to MP3, Opus or FLAC, which iDM saves without chapters
             "MP3, Opus and FLAC files are saved without chapters",
         );
         if can {
@@ -1242,7 +1242,7 @@ fn all_offered(subs: &[SubChoice]) -> bool {
     subs.iter().filter(|s| !s.automatic).count() >= 2
 }
 
-/// The Subtitles list (English where it is MDM's words; combo_light shows them translated):
+/// The Subtitles list (English where it is iDM's words; combo_light shows them translated):
 /// None, All the uploader's, then each language, the automatic ones marked.
 fn sub_items(subs: &[SubChoice], looked_up: bool) -> Vec<String> {
     let mut out = vec![if looked_up && subs.is_empty() {
@@ -1408,7 +1408,7 @@ pub(crate) fn file_name(title: &str, c: &Choice) -> String {
 
 /// The Download video window's look-up of `page` with the browser's context: yt-dlp's, or, when
 /// yt-dlp read the page generically, the video the page declares its own (#1076,
-/// `mdm_tools::declared`, the page read as Options says MDM's own requests go), which the
+/// `mdm_tools::declared`, the page read as Options says iDM's own requests go), which the
 /// download then keeps as its address. A plain file's size is asked of its server, as yt-dlp
 /// doesn't say it (#320).
 pub(crate) fn look_up(
@@ -1503,7 +1503,7 @@ pub(crate) fn private_auth_error(e: &str) -> Option<String> {
     .any(|s| lower.contains(s))
     .then(|| {
         let hint = crate::i18n::t(
-            // i18n: a private-window video's authentication failure: only cookies supplied by that private window may be used, even after restarting MDM
+            // i18n: a private-window video's authentication failure: only cookies supplied by that private window may be used, even after restarting iDM
             "Private-window downloads do not use Cookies for video sites from Options. Open the page in a private window, sign in there, and use its Download video button again.",
         );
         format!("{e}\n\n{hint}")
@@ -1864,7 +1864,7 @@ mod tests {
         assert_eq!(lookup_error(expired, false, None), expired);
     }
 
-    /// #229: yt-dlp's refusals and its trouble with a browser's cookies, in MDM's words, saying
+    /// #229: yt-dlp's refusals and its trouble with a browser's cookies, in iDM's words, saying
     /// which cookies it had.
     #[test]
     fn cookie_and_sign_in_errors_in_plain_words() {

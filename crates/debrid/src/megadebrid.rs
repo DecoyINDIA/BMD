@@ -1,5 +1,5 @@
 //! Mega-Debrid's API, as documented at <https://www.mega-debrid.eu/index.php?page=api> (read
-//! 2026-11-09). Only what MDM uses: signing in, the supported hosters, and direct links
+//! 2026-11-09). Only what iDM uses: signing in, the supported hosters, and direct links
 //! (`getLink`).
 //!
 //! - One address for everything, `api.php?action=NAME`; every answer is JSON with
@@ -8,7 +8,7 @@
 //!   as `token` with every call; or the user name and password (`connectUser`), which give a
 //!   token valid until the next sign-in.
 //! - The documentation puts the token, user name and password in the address; the service takes
-//!   them in the POST body as well (tried 2026-11-09), so MDM sends every secret there, never in
+//!   them in the POST body as well (tried 2026-11-09), so iDM sends every secret there, never in
 //!   an address that could end up in a log.
 //! - Only premium accounts can use the API; a free one signs in (its `vip_end` is in the past)
 //!   and its links are refused.
@@ -31,7 +31,7 @@ struct Status {
     response_text: String,
 }
 
-/// What an error code means for MDM. The documentation lists no codes: these two are the ones
+/// What an error code means for iDM. The documentation lists no codes: these two are the ones
 /// its answers were seen to carry (2026-11-09); any other is shown in the service's own words
 /// (`response_text`), as the documentation recommends.
 pub(crate) fn fault_of(code: &str, text: &str) -> Fault {
@@ -66,14 +66,14 @@ fn read<T: serde::de::DeserializeOwned>(
         return Err(Fault::Service(if status >= 500 {
             F::ServiceDown
         } else {
-            F::Other("an answer MDM can't read".into())
+            F::Other("an answer iDM can't read".into())
         }));
     };
     if s.response_code != "ok" {
         return Err(fault_of(&s.response_code, &s.response_text));
     }
     serde_json::from_slice(body)
-        .map_err(|_| Fault::Service(F::Other("an answer MDM can't read".into())))
+        .map_err(|_| Fault::Service(F::Other("an answer iDM can't read".into())))
 }
 
 async fn call<T: serde::de::DeserializeOwned>(

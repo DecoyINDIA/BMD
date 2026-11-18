@@ -1,6 +1,6 @@
 //! The first start's offer of the video helpers (user request 2026-11-01): yt-dlp finds a page's
 //! video, ffmpeg joins its picture and sound. Both are asked for once, explained, and downloaded
-//! on Yes (through MDM's own engine, checked against their publishers' signed checksums: see
+//! on Yes (through iDM's own engine, checked against their publishers' signed checksums: see
 //! mdm_tools); Not now leaves them to Tasks → Download video from a page, which offers them again.
 
 use std::sync::Arc;
@@ -39,7 +39,7 @@ pub struct Helpers {
 }
 
 /// Whether to offer the helpers at this start: never asked, and one of them is missing (ffmpeg
-/// counts only where MDM can install one, Windows; elsewhere the system's is used).
+/// counts only where iDM can install one, Windows; elsewhere the system's is used).
 pub fn worth_asking() -> bool {
     let Some(dir) = mdm_tools::tools_dir() else {
         return false;
@@ -66,7 +66,7 @@ impl Helpers {
         if mdm_tools::installed(&dir).is_none() {
             list.push("yt-dlp");
         }
-        // ffmpeg: MDM's own on Windows (it has no build elsewhere, where the system's is used).
+        // ffmpeg: iDM's own on Windows (it has no build elsewhere, where the system's is used).
         if cfg!(windows) && mdm_tools::ffmpeg::installed(&dir).is_none() {
             list.push("ffmpeg");
         }
@@ -169,7 +169,7 @@ impl Helpers {
         let p = ui.painter().clone();
         let (ink, muted) = (winui::TEXT(), winui::MUTED());
         let w = 520.0;
-        // The banner: MDM's own logo, what this is for, in one line, and why now.
+        // The banner: iDM's own logo, what this is for, in one line, and why now.
         let extra = winui::banner(
             ui,
             &p,
@@ -211,7 +211,7 @@ impl Helpers {
                     .to_owned()
                 } else {
                     crate::i18n::t(
-                        "Sites send their best quality as separate video and audio, and ffmpeg joins them. On this system MDM uses yours: install ffmpeg with your package manager.",
+                        "Sites send their best quality as separate video and audio, and ffmpeg joins them. On this system iDM uses yours: install ffmpeg with your package manager.",
                     )
                     .to_owned()
                 },
@@ -221,7 +221,7 @@ impl Helpers {
                 // i18n: a promise in the helpers window: the helpers are free, official and checked
                 "Free, official and checked",
                 crate::i18n::t(
-                    "Both are open source. MDM gets them from their official releases with its own downloader and checks each file's signature before it runs. About 100 MB, once.",
+                    "Both are open source. iDM gets them from their official releases with its own downloader and checks each file's signature before it runs. About 100 MB, once.",
                 )
                 .to_owned(),
             ),
@@ -465,12 +465,12 @@ impl Helpers {
     }
 }
 
-// ---- Video helpers: MDM's own copies or the person's (#51) ------------------------------------
+// ---- Video helpers: iDM's own copies or the person's (#51) ------------------------------------
 
 use mdm_tools::chosen::Helper;
 
 /// Helpers (Download video from a page or a gallery → Helpers...): for yt-dlp, ffmpeg and
-/// gallery-dl (#58), where MDM takes it from (its own copy, or a program of the person's), and the
+/// gallery-dl (#58), where iDM takes it from (its own copy, or a program of the person's), and the
 /// way to choose another: one copy of each for every program that uses them (#51).
 pub struct Programs {
     dir: Option<std::path::PathBuf>,
@@ -478,7 +478,7 @@ pub struct Programs {
     found: [Option<mdm_tools::Installed>; 3],
     /// A chosen program being checked (`--version`), and what it answered.
     checking: Option<(Helper, Answer)>,
-    /// MDM's own yt-dlp or gallery-dl being downloaded in place of the system's (#452, #571),
+    /// iDM's own yt-dlp or gallery-dl being downloaded in place of the system's (#452, #571),
     /// and how that went.
     installing: Option<(Helper, Answer)>,
     error: Option<String>,
@@ -513,7 +513,7 @@ impl Programs {
         ];
     }
 
-    /// MDM's own yt-dlp or gallery-dl in place of the system's (#452, #571): downloaded and
+    /// iDM's own yt-dlp or gallery-dl in place of the system's (#452, #571): downloaded and
     /// checked as usual, from then on the one used (`mdm_tools::installed`,
     /// `mdm_tools::gallery::installed`). It goes on if the window is closed.
     fn install_own(
@@ -581,7 +581,7 @@ impl Programs {
         window(
             ctx,
             "video-helpers",
-            // i18n: window title: where MDM takes its helper programs (yt-dlp, ffmpeg, gallery-dl) from
+            // i18n: window title: where iDM takes its helper programs (yt-dlp, ffmpeg, gallery-dl) from
             "Helpers",
             [500.0, 292.0],
             false,
@@ -614,7 +614,7 @@ impl Programs {
                 .filter(|c| h == Helper::GalleryDl && mdm_tools::gallery::too_old(&c.version));
             let checking = self.checking.as_ref().is_some_and(|(c, _)| *c == h);
             let downloading = self.installing.as_ref().is_some_and(|(i, _)| *i == h);
-            // Whether MDM downloads a copy of its own on this system and processor: yt-dlp
+            // Whether iDM downloads a copy of its own on this system and processor: yt-dlp
             // almost everywhere, gallery-dl not on macOS nor Linux on ARM, ffmpeg on 64-bit
             // Windows only (BtbN builds none for 32-bit Windows).
             let has_own = match h {
@@ -622,23 +622,23 @@ impl Programs {
                 Helper::GalleryDl => mdm_tools::gallery::asset().is_some(),
                 Helper::Ffmpeg => mdm_tools::ffmpeg::available(),
             };
-            // The system's copy may be the person's to keep up to date: MDM's own can replace it
-            // (#452, #571), where MDM has one for this system and processor.
+            // The system's copy may be the person's to keep up to date: iDM's own can replace it
+            // (#452, #571), where iDM has one for this system and processor.
             let replaceable = has_own;
             let system = replaceable && found.is_some_and(mdm_tools::Installed::is_system);
             let status = match (too_old, found) {
                 _ if downloading => {
-                    // i18n: Video helpers: MDM's own yt-dlp is being downloaded
-                    crate::i18n::t("Downloading MDM's own copy...").to_owned()
+                    // i18n: Video helpers: iDM's own yt-dlp is being downloaded
+                    crate::i18n::t("Downloading iDM's own copy...").to_owned()
                 }
                 _ if checking => {
                     // i18n: Video helpers: a program just chosen is being checked
                     crate::i18n::t("Checking the program...").to_owned()
                 }
                 (Some(old), _) => crate::i18n::fmt(
-                    // i18n: Video helpers: the person's own gallery-dl is too old and not used; {version} = its version, {oldest} = the oldest MDM can use
+                    // i18n: Video helpers: the person's own gallery-dl is too old and not used; {version} = its version, {oldest} = the oldest iDM can use
                     crate::i18n::t(
-                        "Your own program ({version}) is too old: MDM needs {oldest} or newer",
+                        "Your own program ({version}) is too old: iDM needs {oldest} or newer",
                     ),
                     &[
                         ("version", &old.version),
@@ -659,19 +659,19 @@ impl Programs {
                     &[("path", &crate::i18n::ltr(&i.exe.display().to_string()))],
                 ),
                 (None, Some(i)) => crate::i18n::fmt(
-                    // i18n: Video helpers: {version} = the version of MDM's own copy
-                    crate::i18n::t("Mister Download Manager's own copy, version {version}"),
+                    // i18n: Video helpers: {version} = the version of iDM's own copy
+                    crate::i18n::t("iDM's own copy, version {version}"),
                     &[("version", &i.version)],
                 ),
                 // Linux and macOS as before: there the system's package manager (or Homebrew)
-                // installs what MDM has no copy of, and MDM finds it.
+                // installs what iDM has no copy of, and iDM finds it.
                 // i18n: Video helpers: no copy of this helper yet
                 (None, None) if has_own || !cfg!(windows) => {
                     crate::i18n::t("Not installed yet").to_owned()
                 }
-                // i18n: Video helpers: MDM can't download this helper on this Windows (ffmpeg on 32-bit Windows); "Use another program" is the button below
+                // i18n: Video helpers: iDM can't download this helper on this Windows (ffmpeg on 32-bit Windows); "Use another program" is the button below
                 (None, None) => crate::i18n::t(
-                    "MDM has no copy for this system: install it, or use another program",
+                    "iDM has no copy for this system: install it, or use another program",
                 )
                 .to_owned(),
             };
@@ -691,7 +691,7 @@ impl Programs {
                 &p,
                 &[
                     ("Use another program...", 14.0, 180.0),
-                    ("Use MDM's own copy", 202.0, 180.0),
+                    ("Use iDM's own copy", 202.0, 180.0),
                 ],
                 8.0,
                 486.0,
@@ -724,8 +724,8 @@ impl Programs {
             if winui::button(
                 ui,
                 r(o, own_at.0, y - o.y + 46.0, own_at.1, 21.0),
-                // i18n: Video helpers: button: go back to the copy MDM downloads and checks itself
-                "Use MDM's own copy",
+                // i18n: Video helpers: button: go back to the copy iDM downloads and checks itself
+                "Use iDM's own copy",
                 if (mine || system) && !busy {
                     ButtonKind::Normal
                 } else {

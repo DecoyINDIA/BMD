@@ -1,4 +1,4 @@
-# Mister Download Manager on a server, without a window (#157): docs/server.md.
+# iDM on a server, without a window (#157): docs/server.md.
 #
 #   docker build -t misterdownloadmanager .
 #   docker run -d --name mdm -p 8463:8463 -v mdm-config:/config -v /srv/downloads:/downloads \
@@ -49,5 +49,5 @@ VOLUME ["/config", "/downloads"]
 EXPOSE 8463
 # Any user works (`--user 99:100` on Unraid): it needs only to write /config and /downloads.
 USER 1000:1000
-# MDM handles docker stop's SIGTERM itself (it saves the list), so it runs as PID 1.
+# iDM handles docker stop's SIGTERM itself (it saves the list), so it runs as PID 1.
 ENTRYPOINT ["misterdownloadmanager", "--headless"]

@@ -1,4 +1,4 @@
-//! #202: a freeze while MDM handles a command must still be reported. Since #176 the incoming
+//! #202: a freeze while iDM handles a command must still be reported. Since #176 the incoming
 //! commands and the clock run in the app's `logic`, which egui calls every frame (and alone while
 //! the main window is minimized); the freeze watchdog timed only `ui`, so a command that hung
 //! never opened the crash report window nor wrote a freeze report. The real app, off the screens
@@ -244,7 +244,7 @@ fn hidden_stall(what: &str, ask: Option<Duration>) -> (Option<Duration>, Option<
         let began = Instant::now();
         if let Some(ask) = ask {
             std::thread::sleep(ask);
-            // A second launch asks for the window (as a click on MDM's shortcut does).
+            // A second launch asks for the window (as a click on iDM's shortcut does).
             second_launch(data, &["/show", "about"]);
         }
         wait_until(
@@ -303,7 +303,7 @@ fn a_hidden_window_kept_waiting_is_logged_not_reported() {
     assert!(report.is_none());
 }
 
-/// The same window busy for 12 s (an endless loop of MDM's own) is a freeze, hidden or not.
+/// The same window busy for 12 s (an endless loop of iDM's own) is a freeze, hidden or not.
 #[test]
 #[ignore = "opens the app's windows (off-screen): needs OpenGL or Direct3D; run with --ignored"]
 fn a_hidden_window_busy_is_reported() {

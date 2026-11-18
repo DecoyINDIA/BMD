@@ -1,7 +1,7 @@
 //! Updating in place (Help → Check for updates → Update now): this copy's release file, fetched
 //! and checked in the background (`mdm_tools::update`: the release's signed checksum list), then
 //! put where this copy is, on a thread of its own too (unpacking, `tar`, `hdiutil`, `ditto`: the
-//! window's thread waits for none of them, #222). MDM closes for it; the new copy starts with
+//! window's thread waits for none of them, #222). iDM closes for it; the new copy starts with
 //! `/updated`, waits for the old one to be gone, and removes what the update set aside.
 
 use std::path::{Path, PathBuf};
@@ -18,11 +18,11 @@ pub const UPDATED: &str = "/updated";
 /// What follows once the file is in place.
 #[derive(Debug)]
 pub enum Next {
-    /// MDM closes once this has started: the new copy (or the installer, which starts it).
+    /// iDM closes once this has started: the new copy (or the installer, which starts it).
     /// Started on the worker, but only when not cancelled meanwhile ([`Job::drop`]: closing the
     /// window starts nothing).
     Restart,
-    /// Handed to the system's package installer (a .deb or .rpm): MDM stays open.
+    /// Handed to the system's package installer (a .deb or .rpm): iDM stays open.
     Opened,
 }
 
@@ -166,7 +166,7 @@ fn apply(install: Install, file: &Path, cancelled: &AtomicBool) -> Result<Next, 
         Ok(Next::Restart)
     };
     match install {
-        // The installer closes MDM itself (/exit), installs where it was (the same install
+        // The installer closes iDM itself (/exit), installs where it was (the same install
         // mode), and starts it again (/relaunch, tools/installer/mdm.iss).
         Install::Installer => {
             if cancelled.load(Ordering::Acquire) {
@@ -317,16 +317,16 @@ mod tests {
                 .collect()
         };
         let full = a(&[
-            "MisterDownloadManager-0.2.2-setup.exe",
+            "iDM-0.2.2-setup.exe",
             "SHA256SUMS.txt",
             "SHA256SUMS.txt.sig",
         ]);
         assert_eq!(
             asset_on(Install::Installer, X64, "0.2.2", &full).as_deref(),
-            Some("MisterDownloadManager-0.2.2-setup.exe")
+            Some("iDM-0.2.2-setup.exe")
         );
         // An unsigned release, another kind's file, a build from source: no.
-        let unsigned = a(&["MisterDownloadManager-0.2.2-setup.exe", "SHA256SUMS.txt"]);
+        let unsigned = a(&["iDM-0.2.2-setup.exe", "SHA256SUMS.txt"]);
         assert_eq!(asset_on(Install::Installer, X64, "0.2.2", &unsigned), None);
         assert_eq!(asset_on(Install::PortableZip, X64, "0.2.2", &full), None);
         assert_eq!(asset_on(Install::Source, X64, "0.2.2", &full), None);
@@ -343,9 +343,9 @@ mod tests {
                 .map(|n| (n.to_string(), format!("https://x/{n}")))
                 .collect()
         };
-        let old = "MisterDownloadManager-0.3.0-linux-x86_64-experimental.AppImage";
-        let new = "MisterDownloadManager-0.3.0-linux-x86_64.AppImage";
-        let deb = "MisterDownloadManager-0.3.0-linux-x86_64.deb";
+        let old = "iDM-0.3.0-linux-x86_64-experimental.AppImage";
+        let new = "iDM-0.3.0-linux-x86_64.AppImage";
+        let deb = "iDM-0.3.0-linux-x86_64.deb";
         for (assets, want) in [
             (release(&[old]), Some(old)),
             (release(&[new, deb]), Some(new)),
@@ -372,19 +372,19 @@ mod tests {
     #[test]
     fn each_processor_takes_its_own_file() {
         let names = [
-            "MisterDownloadManager-1.0.0-setup.exe",
-            "MisterDownloadManager-1.0.0-setup-arm64.exe",
-            "MisterDownloadManager-1.0.0-setup-x86.exe",
-            "MisterDownloadManager-1.0.0-portable.zip",
-            "MisterDownloadManager-1.0.0-portable-arm64.zip",
-            "MisterDownloadManager-1.0.0-portable-x86.zip",
-            "MisterDownloadManager-1.0.0-x64.zip",
-            "MisterDownloadManager-1.0.0-arm64.zip",
-            "MisterDownloadManager-1.0.0-x86.zip",
-            "MisterDownloadManager-1.0.0-linux-x86_64.AppImage",
-            "MisterDownloadManager-1.0.0-linux-arm64.AppImage",
-            "MisterDownloadManager-1.0.0-linux-x86_64.deb",
-            "MisterDownloadManager-1.0.0-linux-arm64.deb",
+            "iDM-1.0.0-setup.exe",
+            "iDM-1.0.0-setup-arm64.exe",
+            "iDM-1.0.0-setup-x86.exe",
+            "iDM-1.0.0-portable.zip",
+            "iDM-1.0.0-portable-arm64.zip",
+            "iDM-1.0.0-portable-x86.zip",
+            "iDM-1.0.0-x64.zip",
+            "iDM-1.0.0-arm64.zip",
+            "iDM-1.0.0-x86.zip",
+            "iDM-1.0.0-linux-x86_64.AppImage",
+            "iDM-1.0.0-linux-arm64.AppImage",
+            "iDM-1.0.0-linux-x86_64.deb",
+            "iDM-1.0.0-linux-arm64.deb",
             "SHA256SUMS.txt",
             "SHA256SUMS.txt.sig",
         ];
@@ -409,7 +409,7 @@ mod tests {
         ] {
             assert_eq!(
                 asset_on(install, arch, "1.0.0", &assets).as_deref(),
-                Some(format!("MisterDownloadManager-1.0.0-{want}").as_str()),
+                Some(format!("iDM-1.0.0-{want}").as_str()),
                 "{install:?} {arch:?}"
             );
         }

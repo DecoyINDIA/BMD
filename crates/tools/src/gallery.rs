@@ -4,13 +4,13 @@
 //! `keys/gallery-dl.asc`), the program against that list, kept in `tools/gallery-dl/<version>/`
 //! with the previous version, never older; or the person's own copy (`chosen`). It runs in the
 //! same kind of job (Windows) or process group (Linux, macOS) as yt-dlp does (`proc::spawn`), so
-//! Stop and MDM's end take it and all it started.
+//! Stop and iDM's end take it and all it started.
 //!
 //! A download is a folder: gallery-dl prints each file it saves (one path a line, `# path` for
 //! one already there), and skips what is already there when started again, so a gallery started
 //! again fetches only its new images.
 //!
-//! MDM's engine downloads the files (#769): gallery-dl first lists each one, its address and the
+//! iDM's engine downloads the files (#769): gallery-dl first lists each one, its address and the
 //! path it would save it to (`--print prepare-after:…`, nothing downloaded), the engine brings
 //! them in several at once into those paths, under the speed limits, and gallery-dl then runs as
 //! before: it finds them there and fetches only what the engine couldn't have (a site that wants
@@ -36,7 +36,7 @@ use crate::{Error, Installed, chosen};
 const KEY: &str = include_str!("../keys/gallery-dl.asc");
 /// Where releases come from (Gitea's API, as GitHub's: `tag_name`, `assets`).
 const RELEASES: &str = "https://codeberg.org/api/v1/repos/mikf/gallery-dl/releases/latest";
-/// MDM as sites see it: gallery-dl's own name is refused by some (Wikimedia's servers answer
+/// iDM as sites see it: gallery-dl's own name is refused by some (Wikimedia's servers answer
 /// 429 to unnamed tools); this one says who asks and where to read about it.
 pub const USER_AGENT: &str = concat!(
     "MisterDownloadManager/",
@@ -68,12 +68,12 @@ pub fn signed_by_gallery_dl(sums: &[u8], sig: &[u8]) -> bool {
     crate::signed_by(KEY, sums, sig)
 }
 
-/// The oldest gallery-dl MDM can drive: `--directory` (the files right in the gallery's own
+/// The oldest gallery-dl iDM can drive: `--directory` (the files right in the gallery's own
 /// folder) came in 1.20.0. Debian 11's 1.17 lacks it; Ubuntu 22.04's 1.20.5 and every later
 /// distribution's has it (#236).
 pub const OLDEST: &str = "1.20.0";
 
-/// What a gallery-dl release accepts of the options MDM passes, past those every release from
+/// What a gallery-dl release accepts of the options iDM passes, past those every release from
 /// [`OLDEST`] has (`--extractor-info`, `--sleep`, `--range`, `--limit-rate`, `--cookies`,
 /// `--proxy`, `--ignore-config`). Each release from 1.17 to 1.30 was asked in mdm-lab (#236):
 /// argparse refuses an option it doesn't know, so one too many fails the whole download, as
@@ -81,12 +81,12 @@ pub const OLDEST: &str = "1.20.0";
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Accepts {
     /// `--no-input` (1.27.1): never a question on the console. Without it the same holds, as
-    /// MDM gives it no input to read (`proc::spawn`): a question ends it instead of waiting.
+    /// iDM gives it no input to read (`proc::spawn`): a question ends it instead of waiting.
     pub no_input: bool,
     /// `--user-agent` (1.24.0); before it, the same setting as `-o user-agent=…`.
     pub user_agent: bool,
     /// `--print` with its `prepare-after` event and the file's `{_url}` and `{_path}` (1.32.0):
-    /// the files listed without downloading, for MDM's engine (#769). Asked of each release
+    /// the files listed without downloading, for iDM's engine (#769). Asked of each release
     /// (2026-11-11): 1.27.0 has no `--print`; 1.27.7 to 1.29.0 print `None` for both and download
     /// the files; 1.31.0 prints `None`; 1.32.0 lists them.
     pub print: bool,
@@ -95,7 +95,7 @@ pub struct Accepts {
 impl Accepts {
     /// For `version` as gallery-dl prints it (`1.26.9`, `1.31.0-dev`). A version that can't be
     /// read is taken as a recent one, as before #236. The system's copy (#571), whose version
-    /// isn't asked (finding it starts no program), gets what every release MDM drives accepts:
+    /// isn't asked (finding it starts no program), gets what every release iDM drives accepts:
     /// a distribution's may be one of the oldest.
     pub fn of(version: &str) -> Accepts {
         if version == crate::SYSTEM {
@@ -130,9 +130,9 @@ pub fn too_old(version: &str) -> bool {
     release(version).is_some_and(|have| Some(have) < release(OLDEST))
 }
 
-/// The gallery-dl to use: the person's own (`chosen`), else MDM's install in `dir`; else the
+/// The gallery-dl to use: the person's own (`chosen`), else iDM's install in `dir`; else the
 /// system's (#571, as yt-dlp's: a package manager's, Homebrew's or pip's, kept up to date by
-/// it). A chosen one too old for MDM ([`too_old`], chosen before #236 checked) is passed over;
+/// it). A chosen one too old for iDM ([`too_old`], chosen before #236 checked) is passed over;
 /// [`chosen_too_old`] names it, for the Helpers window to say so.
 pub fn installed(dir: &Path) -> Option<Installed> {
     let own = chosen::chosen(dir, chosen::Helper::GalleryDl)
@@ -141,7 +141,7 @@ pub fn installed(dir: &Path) -> Option<Installed> {
     own.or_else(|| crate::system::installed("gallery-dl"))
 }
 
-/// The person's own gallery-dl when it is too old for MDM, so passed over.
+/// The person's own gallery-dl when it is too old for iDM, so passed over.
 pub fn chosen_too_old(dir: &Path) -> Option<Installed> {
     chosen::chosen(dir, chosen::Helper::GalleryDl).filter(|mine| too_old(&mine.version))
 }
@@ -165,8 +165,8 @@ struct Asset {
 }
 
 /// Install the latest gallery-dl into `dir` unless the installed one is as new, downloaded with
-/// MDM's engine (`net`), counted into `progress`. The person's own copy is theirs to update. A
-/// system copy doesn't count as installed here: this is the way to MDM's own instead (Helpers,
+/// iDM's engine (`net`), counted into `progress`. The person's own copy is theirs to update. A
+/// system copy doesn't count as installed here: this is the way to iDM's own instead (Helpers,
 /// #571), which then wins ([`installed`]).
 pub async fn install_latest(
     dir: &Path,
@@ -292,7 +292,7 @@ struct Shared {
     /// `known`'s paths, to tell one already listed at once: a gallery's lines number up to
     /// `KEEP_PATHS`, so searching `known` for each would take time squared, with the lock held.
     known_set: HashSet<PathBuf>,
-    /// The files MDM's engine saved this run (#769), counted among gallery-dl's `There`.
+    /// The files iDM's engine saved this run (#769), counted among gallery-dl's `There`.
     by_engine: u64,
 }
 
@@ -306,7 +306,7 @@ impl Shared {
     }
 }
 
-/// MDM's engine for a gallery's files (#769).
+/// iDM's engine for a gallery's files (#769).
 struct ByEngine<'a> {
     engine: crate::streams::Engine,
     agent: String,
@@ -507,7 +507,7 @@ fn listed(line: &str, folder: &Path) -> Option<(url::Url, PathBuf)> {
 
 impl GalleryJob {
     /// Download `url`'s files into `folder`, the gallery's own.
-    /// `engine`: MDM's engine, which downloads the files gallery-dl lists (#769); without it, or
+    /// `engine`: iDM's engine, which downloads the files gallery-dl lists (#769); without it, or
     /// with a gallery-dl too old to list them, gallery-dl downloads them itself. `saved` is shown
     /// each file saved, on the job's own thread before the job says it is done (#1103): the
     /// app's mark that they came from the internet, never written on the window's thread.
@@ -689,7 +689,7 @@ impl Drop for GalleryJob {
 }
 
 /// The browser's context (`FromBrowser::args`, made for yt-dlp) as gallery-dl takes it: its
-/// cookies, and its User-Agent or MDM's (`--user-agent`, or `-o user-agent=…` before 1.24); no
+/// cookies, and its User-Agent or iDM's (`--user-agent`, or `-o user-agent=…` before 1.24); no
 /// Referer, Origin (`--add-header`), or yt-dlp's browser-store opt-out, which gallery-dl has no
 /// option for (it never reads Options' video cookie store).
 fn browser_args(theirs: Vec<String>, accepts: Accepts) -> Vec<String> {
@@ -813,7 +813,7 @@ fn finish(
         SystemTime::now(),
         if engine > 0 {
             format!(
-                "MDM saved {engine} files, gallery-dl {saved} ({} already there)",
+                "iDM saved {engine} files, gallery-dl {saved} ({} already there)",
                 there.saturating_sub(engine)
             )
         } else {
@@ -838,7 +838,7 @@ fn finish(
 mod tests {
     use super::*;
 
-    /// A gallery whose files are all there already (every file MDM's engine saved comes back so,
+    /// A gallery whose files are all there already (every file iDM's engine saved comes back so,
     /// #769) is read in time linear in its files: each line's path is told from those listed at
     /// once, not searched for among them, with the lock `progress` waits on held.
     #[test]
@@ -900,7 +900,7 @@ mod tests {
         );
     }
 
-    /// Each processor MDM is published for takes gallery-dl's build for it, or the x64 one on
+    /// Each processor iDM is published for takes gallery-dl's build for it, or the x64 one on
     /// Windows on ARM, and the release's signed list has a checksum for each.
     #[test]
     fn gallery_dl_has_a_build_for_each_windows_processor() {
@@ -947,11 +947,11 @@ mod tests {
         assert_eq!(accepts("1.32.19"), (true, true));
         assert_eq!(accepts("1.31.0-dev"), (true, true));
         assert_eq!(accepts("2.0"), (true, true));
-        // One that can't be read: as recent as MDM's own.
+        // One that can't be read: as recent as iDM's own.
         assert_eq!(accepts("unknown"), (true, true));
         // The system's, not asked (#571): what every release from 1.20.0 accepts.
         assert_eq!(accepts("system"), (false, false));
-        // #769: the files listed for MDM's engine, from 1.32.0 (earlier ones printed `None`).
+        // #769: the files listed for iDM's engine, from 1.32.0 (earlier ones printed `None`).
         let print = |v: &str| Accepts::of(v).print;
         assert!(!print("1.27.7") && !print("1.31.0") && !print("system"));
         assert!(print("1.32.0") && print("1.32.19") && print("unknown"));
@@ -987,7 +987,7 @@ mod tests {
         );
     }
 
-    /// The browser's User-Agent (else MDM's) and cookies, as each release takes them; its
+    /// The browser's User-Agent (else iDM's) and cookies, as each release takes them; its
     /// Referer and Origin (#900) never, which gallery-dl has no option for.
     #[test]
     fn the_browsers_context_as_each_release_takes_it() {
@@ -1028,7 +1028,7 @@ mod tests {
         );
     }
 
-    /// A gallery-dl chosen before #236 checked, too old for MDM: MDM's own copy instead.
+    /// A gallery-dl chosen before #236 checked, too old for iDM: iDM's own copy instead.
     #[test]
     fn a_chosen_release_too_old_gives_way_to_mdms_own() {
         let dir = tempfile::tempdir().unwrap();

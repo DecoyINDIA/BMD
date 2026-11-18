@@ -1,4 +1,4 @@
-//! #668: a site whose bot check refuses MDM's own connection (`Error::BotCheck`) is asked once
+//! #668: a site whose bot check refuses iDM's own connection (`Error::BotCheck`) is asked once
 //! more the way a browser connects, and the download goes on through that connection only. The
 //! lab server's `browser_only` fault stands in for the bot check: it refuses, with Cloudflare's
 //! `cf-mitigated: challenge`, every request without the headers browsers send (`Sec-Fetch-Mode`).
@@ -72,7 +72,7 @@ async fn a_bot_check_is_passed_the_way_a_browser_connects() {
         .expect("the browser-like connection gets through");
     same_content(&out.path, 668, 3 << 20);
     let log = settled_log(&s).await;
-    // MDM's own request first, refused; then the browser-like connection's.
+    // iDM's own request first, refused; then the browser-like connection's.
     assert_eq!(log[0].outcome, "fault:browser_only", "{log:?}");
     assert!(log[0].sec_fetch_mode.is_none());
     let through: Vec<_> = log[1..].iter().collect();
@@ -257,7 +257,7 @@ async fn a_look_gets_past_the_bot_check_too() {
 }
 
 /// #954: a look and a download that got through only on the browser-like connection tell their
-/// server: its address, and the round trip of MDM's own connection, which the bot check refused
+/// server: its address, and the round trip of iDM's own connection, which the bot check refused
 /// at the same server.
 #[tokio::test]
 async fn through_the_browser_like_connection_the_server_is_told() {
@@ -325,7 +325,7 @@ async fn stop_ends_it() {
 }
 
 /// Over HTTPS the lab's bot check looks at the TLS handshake itself, as real ones do: a plain
-/// client that sends a browser's headers is still refused; MDM's own request is refused, and the
+/// client that sends a browser's headers is still refused; iDM's own request is refused, and the
 /// browser-like connection, whose handshake is Chrome's, gets the file.
 #[tokio::test]
 async fn over_https_the_handshake_itself_is_what_gets_through() {
@@ -484,7 +484,7 @@ async fn a_second_refusal_stays_the_bot_check() {
     assert_eq!(log.len(), 2, "{log:?}");
 }
 
-/// FileHippo's way (#630): 412 Precondition Failed, empty, to whatever isn't a browser. MDM's
+/// FileHippo's way (#630): 412 Precondition Failed, empty, to whatever isn't a browser. iDM's
 /// first request carries no precondition, so that 412 can only refuse the program: it is asked
 /// once more the way a browser connects too, and the file comes.
 #[tokio::test]
@@ -573,7 +573,7 @@ async fn the_browser_like_connection_downloads_on_several_connections() {
             .filter(|e| e.outcome.starts_with("fault:"))
             .count(),
         1,
-        "only MDM's own first request was refused: {log:?}"
+        "only iDM's own first request was refused: {log:?}"
     );
     for e in &log[1..] {
         assert!(e.sec_fetch_mode.is_some(), "{e:?}");

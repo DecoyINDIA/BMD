@@ -62,9 +62,9 @@ pub fn describe(e: &Error) -> String {
         ),
         Error::DriveGone => t("the drive or network share is no longer available").to_owned(),
         Error::PathTooLong(path) => path_too_long(path),
-        // i18n: why a download failed (#701): a file host answered with its own web page (a countdown before the link, a captcha, a sign-in) where the file was expected. The browser gets past it; MDM's browser extension then hands the real file back to MDM
+        // i18n: why a download failed (#701): a file host answered with its own web page (a countdown before the link, a captcha, a sign-in) where the file was expected. The browser gets past it; iDM's browser extension then hands the real file back to iDM
         Error::GotWebPage => t(
-            "the site sent a web page instead of the file (a waiting page, a captcha or a sign-in): open the link in your browser, finish there, and the download comes back to MDM",
+            "the site sent a web page instead of the file (a waiting page, a captcha or a sign-in): open the link in your browser, finish there, and the download comes back to iDM",
         )
         .to_owned(),
         Error::RangesUnavailable => t("the server did not send the requested part").to_owned(),
@@ -147,12 +147,12 @@ fn path_too_long(path: &std::path::Path) -> String {
 }
 
 /// Why the server's certificate was refused (#762), in words a user can act on: a browser
-/// warns about the same, and MDM has no way around it.
+/// warns about the same, and iDM has no way around it.
 fn certificate(problem: CertProblem) -> &'static str {
     match problem {
         // i18n: why a download failed: the site's security certificate (what proves a secure, HTTPS, site is the one it says) is past its end date. Browsers warn about the same site
         CertProblem::Expired => t(
-            "the site's security certificate has expired, so MDM can't be sure it's the real site (your browser warns about it too)",
+            "the site's security certificate has expired, so iDM can't be sure it's the real site (your browser warns about it too)",
         ),
         // i18n: why a download failed: the site's security certificate's validity hasn't begun; usually this computer's date or time is wrong
         CertProblem::NotYetValid => t(
@@ -160,23 +160,23 @@ fn certificate(problem: CertProblem) -> &'static str {
         ),
         // i18n: why a download failed: the site's security certificate was signed by the site itself or by an issuer this computer doesn't trust. Browsers warn about the same site
         CertProblem::Untrusted => t(
-            "the site's security certificate isn't trusted (it's self-signed or from an unknown issuer), so MDM can't be sure it's the real site (your browser warns about it too)",
+            "the site's security certificate isn't trusted (it's self-signed or from an unknown issuer), so iDM can't be sure it's the real site (your browser warns about it too)",
         ),
         // i18n: why a download failed: the site's security certificate was made for other site names than the one in the address
         CertProblem::WrongName => t(
-            "the site's security certificate is for another site name, so MDM can't be sure it's the real site (your browser warns about it too)",
+            "the site's security certificate is for another site name, so iDM can't be sure it's the real site (your browser warns about it too)",
         ),
         CertProblem::Revoked => {
             // i18n: why a download failed: the issuer of the site's security certificate took it back
-            t("the site's security certificate was revoked by its issuer, so MDM won't trust it")
+            t("the site's security certificate was revoked by its issuer, so iDM won't trust it")
         }
         // i18n: why a download failed: the site's security certificate is made for other uses than a website (its "extended key usage" leaves out web servers)
         CertProblem::NotForWebsites => t(
-            "the site's security certificate isn't made for websites, so MDM can't be sure it's the real site",
+            "the site's security certificate isn't made for websites, so iDM can't be sure it's the real site",
         ),
         // i18n: why a download failed: the site's security certificate was refused for another reason (a bad signature, a broken certificate)
         CertProblem::Other => t(
-            "the site's security certificate was refused, so MDM can't be sure it's the real site",
+            "the site's security certificate was refused, so iDM can't be sure it's the real site",
         ),
     }
 }
@@ -194,15 +194,15 @@ pub fn service(service: &str, fault: &mdm_engine::ServiceFault) -> String {
         F::AccountBlocked => t("{service}: the account is locked or not activated"),
         // i18n: a debrid service's error: the account has no premium (or it ended)
         F::NotPremium => t("{service}: this needs a premium account"),
-        // i18n: a debrid service's error: it can't reach the file's host now; MDM retries later
+        // i18n: a debrid service's error: it can't reach the file's host now; iDM retries later
         F::HostDown => {
-            t("{service} can't reach this file host right now; MDM will try again later")
+            t("{service} can't reach this file host right now; iDM will try again later")
         }
         // i18n: a debrid service's error: the account's limit (traffic) for this host is used up
         F::LimitReached => t("{service}: your limit for this file host is used up for now"),
         // i18n: a debrid service's error: too many downloads at once through the account
         F::TooManyActive => {
-            t("{service}: too many downloads at once through your account; MDM will try again")
+            t("{service}: too many downloads at once through your account; iDM will try again")
         }
         // i18n: a debrid service's error: it refuses this computer's address (a VPN or a server address)
         F::IpRefused => t("{service} refuses this connection (a VPN or server address?)"),
@@ -212,8 +212,8 @@ pub fn service(service: &str, fault: &mdm_engine::ServiceFault) -> String {
         F::FileRefused => t("{service} won't give this file"),
         // i18n: a debrid service's error: the file has a password
         F::PasswordNeeded => t("{service}: this file is password-protected"),
-        // i18n: a debrid service's error: too many requests; MDM waits and retries
-        F::TooManyRequests(_) => t("{service} asks to slow down; MDM will try again in a minute"),
+        // i18n: a debrid service's error: too many requests; iDM waits and retries
+        F::TooManyRequests(_) => t("{service} asks to slow down; iDM will try again in a minute"),
         // i18n: a debrid service's error: it isn't answering
         F::ServiceDown => t("{service} is not responding; try again later"),
         // i18n: a debrid service's error: it can't get the torrent sent to it (nobody shares it any more, or its magnet link can't be read)
@@ -354,8 +354,8 @@ pub fn tools(e: &mdm_tools::Error) -> String {
             version,
             oldest,
         } => fmt(
-            // i18n: error: a program chosen as a helper is too old; {name} = gallery-dl, {version} = its version, {oldest} = the oldest one MDM can use
-            t("{name} {version} is too old: MDM needs {oldest} or newer"),
+            // i18n: error: a program chosen as a helper is too old; {name} = gallery-dl, {version} = its version, {oldest} = the oldest one iDM can use
+            t("{name} {version} is too old: iDM needs {oldest} or newer"),
             &[("name", name), ("version", version), ("oldest", oldest)],
         ),
     }
@@ -370,7 +370,7 @@ fn reach(host: &str, fault: mdm_engine::fault::Fault, cause: Option<&str>) -> St
         && let Some(proxy) = own_proxy()
     {
         return fmt(
-            // i18n: a helper (yt-dlp, ffmpeg) couldn't be downloaded: the proxy set in Options ({proxy}, its address) didn't let MDM connect
+            // i18n: a helper (yt-dlp, ffmpeg) couldn't be downloaded: the proxy set in Options ({proxy}, its address) didn't let iDM connect
             t("could not connect through the proxy {proxy}"),
             &[("proxy", &ltr(&proxy))],
         );

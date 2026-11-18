@@ -1,6 +1,6 @@
-//! Real gallery-dl releases against the lab server, as MDM starts them (#236: a distribution's
-//! gallery-dl may be older than MDM's own copy). Each release MDM can drive is chosen, reads an
-//! address (and says when it can't), and saves a picture with MDM's User-Agent; one older than
+//! Real gallery-dl releases against the lab server, as iDM starts them (#236: a distribution's
+//! gallery-dl may be older than iDM's own copy). Each release iDM can drive is chosen, reads an
+//! address (and says when it can't), and saves a picture with iDM's User-Agent; one older than
 //! `gallery::OLDEST` is refused when chosen.
 //!
 //! Ignored: it needs `MDM_TEST_GALLERYDLS`, the programs separated as in PATH (`:` or `;`):
@@ -92,10 +92,10 @@ fn every_release_mdm_can_drive_saves_a_gallery() {
             .unwrap_or_else(|| panic!("{v}: no request"));
         assert_eq!(get.user_agent.as_deref(), Some(USER_AGENT), "{v}");
         rows.push(format!(
-            "{v}: chosen, reads and refuses addresses, saved {} with MDM's User-Agent",
+            "{v}: chosen, reads and refuses addresses, saved {} with iDM's User-Agent",
             saved[0].file_name().to_string_lossy()
         ));
-        // #769: with MDM's engine, gallery-dl lists the file (1.26 and later) and the engine
+        // #769: with iDM's engine, gallery-dl lists the file (1.26 and later) and the engine
         // saves it under gallery-dl's name; gallery-dl then finds it there. An older one
         // downloads it itself, as before.
         lab.clear_log();
@@ -141,7 +141,7 @@ fn every_release_mdm_can_drive_saves_a_gallery() {
         let events: Vec<&str> = p.events.iter().map(|(_, e)| e.as_str()).collect();
         let by_engine = mdm_tools::gallery::Accepts::of(&v).print;
         assert_eq!(
-            events.iter().any(|e| e.starts_with("MDM saved 1 files")),
+            events.iter().any(|e| e.starts_with("iDM saved 1 files")),
             by_engine,
             "{v}: {events:?}"
         );
@@ -152,7 +152,7 @@ fn every_release_mdm_can_drive_saves_a_gallery() {
                 .find(|e| e.path.starts_with("/gen/64K/"))
                 .unwrap_or_else(|| panic!("{v}: no request"));
             assert_eq!(get.user_agent.as_deref(), Some(USER_AGENT), "{v}");
-            rows.push(format!("{v}: listed, saved by MDM's engine"));
+            rows.push(format!("{v}: listed, saved by iDM's engine"));
         }
     }
     for r in rows {

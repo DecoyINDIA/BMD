@@ -623,7 +623,7 @@ const SIDECAR: usize = 9;
 const DUPLICATE: usize = 6;
 /// Shortest name worth making when a deep folder leaves little room.
 const MIN_NAME: usize = 20;
-/// The most a video's files add to its stem (#1102), MDM's engine's and yt-dlp's alike: a
+/// The most a video's files add to its stem (#1102), iDM's engine's and yt-dlp's alike: a
 /// stream's pieces, `<stem>.f<id>.<ext>.mdm.pieces/000123.mdm.part` (2 + a format id of up to
 /// 32 + 1 + an extension of up to 5 + 11 + 1 + 15), longer than yt-dlp's own
 /// `<stem>.f<id>.<ext>.part`, `.ytdl` and `.part-Frag<N>.part`, its merge's `<stem>.temp.<ext>`,
@@ -636,7 +636,7 @@ pub const HELPER_FILES: usize = 67;
 const LONG_PATH: usize = 32_000;
 
 /// Whether Windows lets programs use paths past `MAX_PATH` (`LongPathsEnabled`), as yt-dlp and
-/// ffmpeg do then. MDM's own file calls get past it either way (Rust's standard library makes a
+/// ffmpeg do then. iDM's own file calls get past it either way (Rust's standard library makes a
 /// long path a `\\?\` one), but keep within it while it is off so that every program the files
 /// are opened with can. The app reads it as it starts (win32.rs); off until then, and on every
 /// other system, where it means nothing.
@@ -751,7 +751,7 @@ fn fit_name_in(dir: &Path, name: &str, limits: Limits) -> Option<String> {
     (room >= MIN_NAME).then(|| clamp_to(name, room.min(MAX_NAME), limits))
 }
 
-/// A video's `name` (`<stem>.<ext>`), its stem shortened so that every file MDM's engine and
+/// A video's `name` (`<stem>.<ext>`), its stem shortened so that every file iDM's engine and
 /// yt-dlp write for it ([`HELPER_FILES`]) and a duplicate's number stay within the path limits
 /// (#1102), extension kept. None when `dir` alone leaves too little room.
 pub fn fit_stem(dir: &Path, name: &str) -> Option<String> {
@@ -2009,11 +2009,11 @@ mod tests {
         bytes: true,
     };
 
-    /// #1102's post, as MDM named its video: 221 characters, a 250-character temporary file and
+    /// #1102's post, as iDM named its video: 221 characters, a 250-character temporary file and
     /// a 269-character path in `D:\Downloads\Video`.
     const POST: &str = "Kira on X_ _This is f_cking insane. Nvidia CEO Jensen Huang on what he expects from an engineer he pays $500,000 a year_ _If that $500,000 engineer did not consume at least $250,000 worth of tokens_ He'd be deeply alarmed";
 
-    /// Every file MDM's engine and yt-dlp write for a video stem, after the stem (a format id of
+    /// Every file iDM's engine and yt-dlp write for a video stem, after the stem (a format id of
     /// 32 characters, as long as [`HELPER_FILES`] allows; X's sound, #1102's; YouTube's).
     fn helper_suffixes() -> Vec<String> {
         let id32 = "x".repeat(32);
@@ -2202,7 +2202,7 @@ mod tests {
     }
 
     /// #1102: a name the user typed is kept as typed (numbered only when taken), however long;
-    /// one MDM gave is fitted.
+    /// one iDM gave is fitted.
     #[test]
     fn a_typed_video_name_is_kept() {
         let d = tempfile::tempdir().unwrap();

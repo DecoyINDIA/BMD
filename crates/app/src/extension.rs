@@ -11,7 +11,7 @@
 //!
 //! Where it stands (the browsers' folders, the extension's notes) is read beside the window,
 //! never on its thread (#1218): a browser's folder can take seconds to answer (a sleeping disk,
-//! a network home folder, macOS asking the person whether MDM may read another app's data), and
+//! a network home folder, macOS asking the person whether iDM may read another app's data), and
 //! the window shows what it read last meanwhile.
 
 use std::path::PathBuf;
@@ -68,7 +68,7 @@ struct Status {
     seen: Vec<String>,
     /// The browsers can find the app (the native host is registered).
     registered: bool,
-    /// macOS kept MDM out of a browser's folder, when reading it or setting it up.
+    /// macOS kept iDM out of a browser's folder, when reading it or setting it up.
     refused: Option<Refused>,
 }
 
@@ -186,7 +186,7 @@ impl Extension {
             ctx,
             "extension",
             // i18n: title of the window that offers the browser extension
-            "Add Mister Download Manager to your browser",
+            "Add iDM to your browser",
             [W, h + extra],
             false,
             winui::BG(),
@@ -296,7 +296,7 @@ impl Extension {
                     o.y + y + 16.0,
                     &format!(
                         "\u{2714} {}",
-                        // i18n: in the browser extension's window, beside a browser whose extension reached MDM
+                        // i18n: in the browser extension's window, beside a browser whose extension reached iDM
                         crate::i18n::t("Connected")
                     ),
                     winui::SUCCESS(),
@@ -345,11 +345,11 @@ impl Extension {
             // As wide as its label in this language (#192); the paragraph ends 10 px before it.
             let (fix_x, fix_w) =
                 winui::buttons_to_right(&p, W - 18.0, 8.0, &[("Set it up", 110.0)], 180.0)[0];
-            // macOS kept MDM out of a browser's folder (#1218, #1173): what to allow, and where.
+            // macOS kept iDM out of a browser's folder (#1218, #1173): what to allow, and where.
             let why = match &refused {
                 Some(refused) => format!("{} {}", refused_line(refused), refused_how()),
                 None => crate::i18n::t(
-                    "Browser integration isn't set up on this computer, so no browser can reach Mister Download Manager yet.",
+                    "Browser integration isn't set up on this computer, so no browser can reach iDM yet.",
                 )
                 .to_owned(),
             };
@@ -365,7 +365,7 @@ impl Extension {
             let fix = winui::button(
                 ui,
                 r(o, fix_x, y - 4.0, fix_w, 25.0),
-                // i18n: button in the browser extension's window: register MDM's helper with the browsers
+                // i18n: button in the browser extension's window: register iDM's helper with the browsers
                 "Set it up",
                 ButtonKind::Accent,
                 false,
@@ -378,7 +378,7 @@ impl Extension {
         let (line, color) = if !registered {
             (String::new(), muted)
         } else if !known {
-            // i18n: in the browser extension's window, while it reads whether the browsers can reach MDM (a moment, usually)
+            // i18n: in the browser extension's window, while it reads whether the browsers can reach iDM (a moment, usually)
             (crate::i18n::t("Checking...").to_owned(), muted)
         } else if connected {
             (
@@ -420,7 +420,7 @@ impl Extension {
             crate::help::open_page(mdm_ipc::extension::GUIDE_DOC);
         }
         // As wide as their labels in this language (#192), Don't ask again only while no
-        // extension has reached MDM.
+        // extension has reached iDM.
         let row: Vec<(&str, f32)> = if connected {
             vec![("Close", 90.0)]
         } else {
@@ -584,7 +584,7 @@ const STEPS: [&str; 8] = [
     // i18n: step 7 of turning on the Safari extension; the quoted tab name is what Safari's settings show in this language: use Apple's own word for it, or keep the English name when unsure
     "Switch to the \"Extensions\" tab (the puzzle piece).",
     // i18n: step 8 of turning on the Safari extension
-    "Turn on \"Mister Download Manager\" and allow it on all websites.",
+    "Turn on \"iDM\" and allow it on all websites.",
 ];
 
 /// The browsers whose extension reached the app, by Options' names.
@@ -602,7 +602,7 @@ pub enum Registration {
     Ready,
     /// A browser's folder (or the registry) has no manifest.
     Missing,
-    /// No browser MDM knows was found to register with (Linux and macOS find them by their
+    /// No browser iDM knows was found to register with (Linux and macOS find them by their
     /// folders; Windows registers for every browser at once).
     #[cfg_attr(windows, allow(dead_code))]
     NoBrowser,
@@ -612,7 +612,7 @@ pub enum Registration {
     /// that wrote it: one run from inside a zip, whose temporary folder was deleted (#818).
     #[cfg_attr(unix, allow(dead_code))]
     Gone(PathBuf),
-    /// macOS refused to let MDM read this browser folder ("Operation not permitted", #1218):
+    /// macOS refused to let iDM read this browser folder ("Operation not permitted", #1218):
     /// its protection of other apps' data. Other systems never say it (their folders don't
     /// refuse that way); an off-screen test copy can, for its screenshots (MDM_TEST_REFUSED).
     Refused(PathBuf),
@@ -646,8 +646,8 @@ pub fn registration() -> Registration {
     return crate::unix::host_registration();
 }
 
-/// macOS kept MDM out of a browser's folder ("Operation not permitted", EPERM, #1218, #1173):
-/// which browser's (its name in the app; empty when the folder is no browser's MDM knows by
+/// macOS kept iDM out of a browser's folder ("Operation not permitted", EPERM, #1218, #1173):
+/// which browser's (its name in the app; empty when the folder is no browser's iDM knows by
 /// name), and the folder.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Refused {
@@ -667,7 +667,7 @@ impl Refused {
     }
 }
 
-/// The browser whose folder `path` is in (under `Library/Application Support/`, as MDM's table
+/// The browser whose folder `path` is in (under `Library/Application Support/`, as iDM's table
 /// names its data and host folders on macOS: `Google/Chrome/NativeMessagingHosts` is Chrome's,
 /// `Mozilla/...` Firefox's), None for another folder.
 fn browser_of_folder(path: &str) -> Option<&'static str> {
@@ -686,7 +686,7 @@ fn browser_of_folder(path: &str) -> Option<&'static str> {
 }
 
 /// Whether the native host's error `error` (its `--register`, or the window's own) says macOS
-/// kept MDM out of a browser's folder: "<folder>: Operation not permitted (os error 1)", the
+/// kept iDM out of a browser's folder: "<folder>: Operation not permitted (os error 1)", the
 /// folder under `Library/Application Support/`. Only on macOS (`macos`): elsewhere EPERM means
 /// other things, and the error is shown as it is.
 fn refused_in(error: &str, macos: bool) -> Option<Refused> {
@@ -708,7 +708,7 @@ fn refused_in(error: &str, macos: bool) -> Option<Refused> {
     Some(Refused::at(std::path::Path::new(before[start..].trim())))
 }
 
-/// macOS keeping MDM out of a browser's folder now: the folder it refused to read, else the last
+/// macOS keeping iDM out of a browser's folder now: the folder it refused to read, else the last
 /// Set it up's error, if it says so.
 fn refused_now(registration: &Registration) -> Option<Refused> {
     match registration {
@@ -717,15 +717,15 @@ fn refused_now(registration: &Registration) -> Option<Refused> {
     }
 }
 
-/// What macOS refusing a folder means, in a line: "macOS keeps MDM out of Google Chrome's folder".
+/// What macOS refusing a folder means, in a line: "macOS keeps iDM out of Google Chrome's folder".
 fn refused_line(refused: &Refused) -> String {
     if refused.browser.is_empty() {
-        // i18n: a check of Test browser integration, and the browser extension's window (macOS): macOS refused to let MDM read or write a browser's folder (where the browser finds MDM's helper)
-        crate::i18n::t("macOS keeps Mister Download Manager out of a browser's folder.").to_owned()
+        // i18n: a check of Test browser integration, and the browser extension's window (macOS): macOS refused to let iDM read or write a browser's folder (where the browser finds iDM's helper)
+        crate::i18n::t("macOS keeps iDM out of a browser's folder.").to_owned()
     } else {
         crate::i18n::fmt(
-            // i18n: a check of Test browser integration, and the browser extension's window (macOS): macOS refused to let MDM read or write {browser}'s folder (where the browser finds MDM's helper); {browser} is a browser's name
-            crate::i18n::t("macOS keeps Mister Download Manager out of {browser}'s folder."),
+            // i18n: a check of Test browser integration, and the browser extension's window (macOS): macOS refused to let iDM read or write {browser}'s folder (where the browser finds iDM's helper); {browser} is a browser's name
+            crate::i18n::t("macOS keeps iDM out of {browser}'s folder."),
             &[("browser", &refused.browser)],
         )
     }
@@ -736,9 +736,9 @@ fn refused_line(refused: &Refused) -> String {
 /// apps", Apple's Platform Support guide; the prompt macOS shows is "… would like to access data
 /// from other apps").
 fn refused_how() -> &'static str {
-    // i18n: under "macOS keeps Mister Download Manager out of …'s folder" (Test browser integration, the browser extension's window): how to allow it. The quoted words and System Settings → Privacy & Security → Full Disk Access are macOS's own: use Apple's words in this language, or keep the English ones when unsure
+    // i18n: under "macOS keeps iDM out of …'s folder" (Test browser integration, the browser extension's window): how to allow it. The quoted words and System Settings → Privacy & Security → Full Disk Access are macOS's own: use Apple's words in this language, or keep the English ones when unsure
     crate::i18n::t(
-        "If macOS asks whether it may access data from other apps, allow it. Or turn on Mister Download Manager in System Settings → Privacy & Security → Full Disk Access. Then press Set it up.",
+        "If macOS asks whether it may access data from other apps, allow it. Or turn on iDM in System Settings → Privacy & Security → Full Disk Access. Then press Set it up.",
     )
 }
 
@@ -964,7 +964,7 @@ pub fn checks(advanced: bool) -> Vec<Check> {
     if temporary_copy() {
         out.push(check(
             false,
-            // i18n: a check of Test browser integration: MDM was started from inside a zip (or from the temporary folder), which is deleted after it quits, so it can't be connected to the browsers
+            // i18n: a check of Test browser integration: iDM was started from inside a zip (or from the temporary folder), which is deleted after it quits, so it can't be connected to the browsers
             "This copy runs from a temporary folder that will be deleted",
             Some("not-installed"),
         ));
@@ -973,14 +973,14 @@ pub fn checks(advanced: bool) -> Vec<Check> {
     out.push(match &registration {
         Registration::Ready | Registration::Missing => check(
             registration == Registration::Ready,
-            // i18n: a check of Test browser integration: the browsers find MDM's helper program
-            "The browsers can find Mister Download Manager",
+            // i18n: a check of Test browser integration: the browsers find iDM's helper program
+            "The browsers can find iDM",
             Some("not-installed"),
         ),
         Registration::NoBrowser => check(
             false,
-            // i18n: a check of Test browser integration (Linux, macOS): MDM found no browser it can connect to (one installed as a Flatpak isn't found)
-            "No browser MDM can connect to was found",
+            // i18n: a check of Test browser integration (Linux, macOS): iDM found no browser it can connect to (one installed as a Flatpak isn't found)
+            "No browser iDM can connect to was found",
             Some("not-installed"),
         ),
         Registration::HelperMissing(path) => {
@@ -997,7 +997,7 @@ pub fn checks(advanced: bool) -> Vec<Check> {
             let folder = manifest.parent().unwrap_or(manifest);
             Check {
                 ok: false,
-                // i18n: a check of Test browser integration: the browsers are pointed at a copy of MDM that was deleted (often one started from inside a zip); that copy's folder shows on the line under it
+                // i18n: a check of Test browser integration: the browsers are pointed at a copy of iDM that was deleted (often one started from inside a zip); that copy's folder shows on the line under it
                 text: crate::i18n::t("The browsers are set up for a copy that is gone:").to_owned(),
                 why: Some("not-installed"),
                 detail: Some(folder.display().to_string()),
@@ -1041,7 +1041,7 @@ pub fn checks(advanced: bool) -> Vec<Check> {
     if seen.is_empty() {
         out.push(check(
             false,
-            // i18n: a check of Test browser integration: no browser's extension has reached MDM
+            // i18n: a check of Test browser integration: no browser's extension has reached iDM
             "No browser's extension has connected yet",
             None,
         ));
@@ -1237,7 +1237,7 @@ mod tests {
     fn a_folder_macos_refused_is_named_with_its_browser() {
         let chrome = "/Users/a b/Library/Application Support/Google/Chrome/NativeMessagingHosts";
         let error = format!(
-            "/Applications/Mister Download Manager.app/Contents/MacOS/misterdownloadmanager-nmhost \
+            "/Applications/iDM.app/Contents/MacOS/misterdownloadmanager-nmhost \
              --repair: exit status: 1: registered com.misterdownloadmanager.host in /Users/a b/\
              Library/Application Support/Vivaldi/NativeMessagingHosts misterdownloadmanager-nmhost: \
              {chrome}: Operation not permitted (os error 1)"
@@ -1275,7 +1275,7 @@ mod tests {
         );
     }
 
-    /// The browser of a folder, by MDM's table: each of Chrome's channels has a folder of its
+    /// The browser of a folder, by iDM's table: each of Chrome's channels has a folder of its
     /// own, all Chrome's; Brave's hosts folder is Chrome's; another folder is none.
     #[test]
     fn folders_name_their_browser() {
@@ -1305,14 +1305,8 @@ mod tests {
         let line = refused_line(&chrome);
         let unknown = refused_line(&Refused::default());
         println!("{line}\n{unknown}\n{}", refused_how());
-        assert_eq!(
-            line,
-            "macOS keeps Mister Download Manager out of Google Chrome's folder."
-        );
-        assert_eq!(
-            unknown,
-            "macOS keeps Mister Download Manager out of a browser's folder."
-        );
+        assert_eq!(line, "macOS keeps iDM out of Google Chrome's folder.");
+        assert_eq!(unknown, "macOS keeps iDM out of a browser's folder.");
         assert!(refused_how().contains("Privacy & Security → Full Disk Access"));
         let check = refused_check(&chrome);
         assert!(!check.ok && check.why == Some("not-installed") && check.how.is_some());

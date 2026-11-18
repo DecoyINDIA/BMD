@@ -350,7 +350,7 @@ impl Deleter {
         *self.pending.0.lock().unwrap() -= 1;
     }
 
-    /// Wait until every batch handed over is deleted, for at most `wait` (MDM's end: a disk that
+    /// Wait until every batch handed over is deleted, for at most `wait` (iDM's end: a disk that
     /// holds a delete doesn't hold the exit). True when none is left.
     pub fn finish(&self, wait: Duration) -> bool {
         let (n, done) = &*self.pending;

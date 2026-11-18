@@ -432,8 +432,8 @@ impl LeftoverSearch {
 }
 
 /// The quality menu's answer for its choice after the duplicate check: a new download started or
-/// queued; else `sent` (the one already there was opened or resumed, or MDM asks what to do in its
-/// Duplicate window), which the extension shows as sent to MDM.
+/// queued; else `sent` (the one already there was opened or resumed, or iDM asks what to do in its
+/// Duplicate window), which the extension shows as sent to iDM.
 fn menu_answer(step: DupStep, start_now: bool) -> &'static str {
     use ipc::api::lookup;
     match step {
@@ -454,7 +454,7 @@ enum Cmd {
     CheckUpdates,
     About,
     TellFriend,
-    /// Help → Support MDM: the creator's GitHub Sponsors page in the browser.
+    /// Help → Support iDM: the project's GitHub page in the browser.
     Support,
     Exit,
     Stop,
@@ -682,9 +682,9 @@ fn place_in(
 }
 
 /// What a drag of the list's selected rows carries out (#1210): the files of the finished
-/// downloads among them, in the list's order (`rows`), as they are where MDM put them. A row not
+/// downloads among them, in the list's order (`rows`), as they are where iDM put them. A row not
 /// finished has no file to give yet and stays out (a drag of only those carries nothing, so none
-/// starts), and so does a file a drop took where MDM couldn't follow (#869: it isn't at its
+/// starts), and so does a file a drop took where iDM couldn't follow (#869: it isn't at its
 /// path). Whether each file is still there is the drag's to see, off the window's thread (#743).
 #[cfg_attr(not(windows), allow(dead_code))]
 fn drag_carries(
@@ -1098,10 +1098,10 @@ fn next_trim(done: u32) -> Duration {
 }
 
 /// Started with the session (#226), the window waits hidden until the notification area is
-/// known: MDM's own tray icon created and a tray there to show it. A desktop's tray can come
-/// after MDM (GNOME's AppIndicator extension at sign-in answered 11.5 s after MDM's icon, on
-/// the lab's VM), and MDM's icon after its own first look: this long they are waited for,
-/// counted from MDM's icon (from the start while it has none), the window still hidden,
+/// known: iDM's own tray icon created and a tray there to show it. A desktop's tray can come
+/// after iDM (GNOME's AppIndicator extension at sign-in answered 11.5 s after iDM's icon, on
+/// the lab's VM), and iDM's icon after its own first look: this long they are waited for,
+/// counted from iDM's icon (from the start while it has none), the window still hidden,
 /// before it shows minimized.
 const TRAY_GRACE: Duration = Duration::from_secs(30);
 
@@ -1135,15 +1135,15 @@ fn tray_toggle_hide(
 enum AtLogin {
     /// Not known yet: hidden, looked at again in a second.
     Wait,
-    /// MDM's icon is in a notification area: the window stays hidden there.
+    /// iDM's icon is in a notification area: the window stays hidden there.
     Tray,
     /// No notification area within [`TRAY_GRACE`]: shown, minimized.
     Minimize,
 }
 
-/// `since` the start, and since MDM's tray `icon` was created (None: not yet): whether a tray
+/// `since` the start, and since iDM's tray `icon` was created (None: not yet): whether a tray
 /// `host` shows it (Windows, macOS: always one; Linux: a StatusNotifierWatcher, #59). The
-/// grace counts from the icon, so a slow start of MDM's own doesn't eat the desktop's time.
+/// grace counts from the icon, so a slow start of iDM's own doesn't eat the desktop's time.
 fn at_login(since: Duration, icon: Option<Duration>, host: bool) -> AtLogin {
     if icon.is_some() && host {
         AtLogin::Tray
@@ -1260,7 +1260,7 @@ pub struct App {
     /// Options was asked for from outside (the extension's Button settings..., `/show`): it comes
     /// to the front once shown, or it would open behind the browser (#77).
     raise_options: bool,
-    /// When MDM started (the update check waits a few seconds after it).
+    /// When iDM started (the update check waits a few seconds after it).
     started: Instant,
     /// When this run last checked for updates by itself (seconds since the epoch).
     update_checked_this_run: Option<i64>,
@@ -1462,7 +1462,7 @@ pub struct App {
     trim_when_hidden: Option<Instant>,
     trims_since_hidden: u32,
     /// Started with the session, the window hidden until the notification area is known
-    /// (#226, [`at_login`]): when, when MDM's tray icon was first seen, and when it was last
+    /// (#226, [`at_login`]): when, when iDM's tray icon was first seen, and when it was last
     /// looked at.
     at_login: Option<Instant>,
     at_login_icon: Option<Instant>,
@@ -1695,7 +1695,7 @@ enum VideoGoes {
 
 /// Where a video added goes: Download Now (`start_now`) starts it; Later asks which queue when
 /// Options say so (`queue_panel`). A choice made in the browser's quality menu (`from_menu`,
-/// with Options' "only add to the queue") asks nothing in MDM's window, which the browser's
+/// with Options' "only add to the queue") asks nothing in iDM's window, which the browser's
 /// choice doesn't open: it goes into the main queue, as the browser's own downloads do then
 /// (`open_url`'s silent path). Never in no queue at all, which a cancelled panel would leave it.
 fn video_goes(start_now: bool, from_menu: bool, queue_panel: bool) -> VideoGoes {
@@ -1819,7 +1819,7 @@ impl App {
         self.exiting
     }
 
-    /// Every way MDM is asked to quit comes here: File → Exit, the tray's Exit, `/exit` (the
+    /// Every way iDM is asked to quit comes here: File → Exit, the tray's Exit, `/exit` (the
     /// command line, a second launch), Update now, and a queue's or a download's "Exit when done".
     /// The close that follows quits whatever Options' "Keep running when closing the window" says
     /// (`tray::on_close`); only closing the window itself follows that setting. As the app goes
@@ -1876,7 +1876,7 @@ impl App {
         }
         // "Launch on startup" is whatever the Run key says (the installer may have set it); on
         // Linux and macOS, the autostart entry / LaunchAgent.
-        // An entry written before #226 (by versions before 0.5.0, or by their installer) starts MDM
+        // An entry written before #226 (by versions before 0.5.0, or by their installer) starts iDM
         // with its window in front: written again, with the argument that starts it in the
         // notification area. Only an entry for this very program (not one a copy elsewhere
         // wrote), and never by a portable copy, which writes nothing outside its folder.
@@ -2818,7 +2818,7 @@ impl App {
     /// everything running stops (its connections were held to the route before, or to none;
     /// sockets that are bound can't leak, this is so they don't wait for a timeout) and the
     /// torrent session with it; what was stopped so starts again once the route lets it.
-    /// Each frame (#44): the debrid accounts set up again when they, or MDM's network settings
+    /// Each frame (#44): the debrid accounts set up again when they, or iDM's network settings
     /// (the API calls take the same proxy, DNS and adapter), changed; then the services' host
     /// lists read, off the window's thread. No account: no request at all.
     fn debrid_tick(&mut self) {
@@ -3145,7 +3145,7 @@ impl App {
                     ctx.set_zoom_factor(z);
                 }
             }
-            // The system's graphics API's device lost on purpose (Direct3D, Vulkan, Metal); MDM
+            // The system's graphics API's device lost on purpose (Direct3D, Vulkan, Metal); iDM
             // starts again (renderer.rs).
             #[cfg(gpu)]
             "renderer-lost" if crate::offscreen() => crate::renderer::test_device_lost(),
@@ -3434,7 +3434,7 @@ impl App {
             }
             return;
         }
-        // The startup entry's (#226): this start began in the tray (main.rs), or MDM already
+        // The startup entry's (#226): this start began in the tray (main.rs), or iDM already
         // ran; either way the window stays where it is.
         if cmd.startup {
             return;
@@ -3533,7 +3533,7 @@ impl App {
             self.dirty = true;
             return;
         }
-        // Its Undo (#404): that site's downloads come to MDM again.
+        // Its Undo (#404): that site's downloads come to iDM again.
         if let Some(host) = cmd.include_site.as_deref() {
             self.settings.excluded_sites =
                 mdm_ipc::capture::unlist_site(&self.settings.excluded_sites, host);
@@ -3698,7 +3698,7 @@ impl App {
             user_agent: given.map_or_else(mdm_engine::agent::automatic, str::to_owned),
             automatic_agent: given.is_none(),
             // A browser's User-Agent (handed over, or the automatic one) may be refused on this
-            // connection (#372): the one set in Options, else MDM's former one (Internet
+            // connection (#372): the one set in Options, else iDM's former one (Internet
             // Explorer 11's, which such bot checks let through), is tried once then. One the
             // user set is the user's choice: no other.
             agent_fallback: match (context.user_agent.is_some(), own) {
@@ -3707,7 +3707,7 @@ impl App {
                 (false, Some(_)) => None,
             },
             // A site whose bot check refuses the browser's User-Agent and the browser-like
-            // connection too (#1422, SourceForge's): asked once more under MDM's own name, or
+            // connection too (#1422, SourceForge's): asked once more under iDM's own name, or
             // the one set in Options when a browser handed the download over. Again, one the
             // user set for every download is the user's choice: no other.
             own_agent: match (context.user_agent.is_some(), own) {
@@ -4740,14 +4740,14 @@ impl App {
         }
         self.settle_at_login(ctx);
         // Hidden in the notification area, and the shell, running and answering, has said for
-        // some seconds that it has no icon of MDM's (lost, and not added back): the window comes
+        // some seconds that it has no icon of iDM's (lost, and not added back): the window comes
         // back to the taskbar, minimized. Never on no answer, or while Explorer isn't running
         // (it gives the icon back as it starts again).
         #[cfg(windows)]
         if self.hidden && self.at_login.is_none() && self.tray.as_ref().is_some_and(|t| t.rescue())
         {
             tracing::info!(
-                "hidden, and the shell has no tray icon of MDM's: back in the taskbar, minimized"
+                "hidden, and the shell has no tray icon of iDM's: back in the taskbar, minimized"
             );
             self.hidden = false;
             self.trim_when_hidden = None;
@@ -4816,8 +4816,8 @@ impl App {
         // closing closes, as any window's does: Options' "Keep running when closing the window"
         // off, no tray at all, or Linux with no tray host (#59: a hidden window couldn't come
         // back, and one that merely minimized could never be closed). macOS (#1125): the window
-        // closes into the Dock, as Mac apps' do, and a click on MDM's icon there brings it back.
-        // Asked to quit (`quit`: File → Exit, Cmd+Q, MDM → Quit, Exit when done…), the close quits
+        // closes into the Dock, as Mac apps' do, and a click on iDM's icon there brings it back.
+        // Asked to quit (`quit`: File → Exit, Cmd+Q, iDM → Quit, Exit when done…), the close quits
         // whatever the option.
         if ctx.input(|i| i.viewport().close_requested()) {
             use crate::tray::OnClose;
@@ -4837,7 +4837,7 @@ impl App {
             let taskbar = cfg!(not(target_os = "linux"));
             match crate::tray::on_close(quitting, keep, tray, icon, taskbar, dock) {
                 OnClose::Hide if dock => {
-                    tracing::info!("close: hidden; MDM's icon in the Dock brings it back");
+                    tracing::info!("close: hidden; iDM's icon in the Dock brings it back");
                     ctx.send_viewport_cmd(egui::ViewportCommand::CancelClose);
                     self.hide_to_tray(ctx);
                 }
@@ -4933,7 +4933,7 @@ impl App {
     fn watch_clipboard(&mut self, ctx: &egui::Context) {
         // Looked at off the window's thread (clipboard.rs): the program that owns the clipboard
         // may hang, and a read that waits for it took the window with it (#418). The watch wakes
-        // the window only for a newly copied text: an idle MDM draws no frame for it (#847).
+        // the window only for a newly copied text: an idle iDM draws no frame for it (#847).
         let on = self.settings.clipboard_autostart;
         crate::clipboard::watch(on);
         let Some(text) = crate::clipboard::copied().filter(|_| on) else {
@@ -5308,7 +5308,7 @@ impl App {
             return false;
         }
         let Some(spec) = torrent_spec else {
-            // A file or a folder of MDM's own: renamed on a thread of its own (#1103), as a disk
+            // A file or a folder of iDM's own: renamed on a thread of its own (#1103), as a disk
             // slow to answer would hold the window meanwhile; `poll_deferred_torrent_renames`
             // takes the answer. Cleared now, as for a torrent below.
             let side = self.item(id).map(|i| {
@@ -5357,7 +5357,7 @@ impl App {
             Err(hold) => {
                 drop(hold);
                 // Keep `item.rename_on_complete` persisted in `downloads.json` while waiting
-                // for `torrent_host` so quitting MDM before it starts does not lose it.
+                // for `torrent_host` so quitting iDM before it starts does not lose it.
                 if !self.deferred_torrent_queue.contains(&id) {
                     self.deferred_torrent_queue.push(id);
                 }
@@ -5369,7 +5369,7 @@ impl App {
 
     /// A finished download's rename on completion (a file's or a torrent's, each on a thread of
     /// its own) is done: the row follows the new name, then its archive is extracted
-    /// (`notify_ui`; not while MDM exits).
+    /// (`notify_ui`; not while iDM exits).
     fn apply_finished_rename(
         &mut self,
         id: u64,
@@ -5603,7 +5603,7 @@ impl App {
 
     /// The browser's quality menu over a video (crates/nmhost, videolookup.rs): a look-up
     /// started (answered at once, yt-dlp on a thread of its own), a question about one, or the
-    /// choice made there, added as Download video's Download Now adds it: MDM's window stays
+    /// choice made there, added as Download video's Download Now adds it: iDM's window stays
     /// where it is, the download's progress window opens (Options' "only add to the queue":
     /// into the main queue instead, with no queue panel either).
     fn quality_menu(&mut self, cmd: &ipc::Command) -> ipc::api::VideoLookupAnswer {
@@ -5736,7 +5736,7 @@ impl App {
         rate
     }
 
-    /// Start a video item: yt-dlp (installed and verified) finds it, MDM's engine downloads its
+    /// Start a video item: yt-dlp (installed and verified) finds it, iDM's engine downloads its
     /// streams (#769).
     fn start_video(&mut self, id: u64, show: bool) {
         // Its place first, looked at beside the window (`video_place`: its folder is read): the
@@ -5957,7 +5957,7 @@ impl App {
 
     /// Torrent settings' switch just turned on (#1091): when Windows still opens magnet links or
     /// .torrent files with another program (a choice in Default apps, which no program may
-    /// change), say which and open Settings at MDM's Default apps page, where the user picks it.
+    /// change), say which and open Settings at iDM's Default apps page, where the user picks it.
     /// An instance off the screens (a test's) never asks this computer: it takes the names in
     /// MDM_TEST_TORRENT_DEFAULTS (`;` between them), and its log says what would have opened.
     #[cfg(windows)]
@@ -5983,9 +5983,9 @@ impl App {
         self.notice = Some((
             crate::i18n::mark("Torrent settings"),
             crate::i18n::fmt(
-                // i18n: after ticking "Open magnet links and .torrent files with Mister Download Manager", when Windows' Default apps keeps another app; {apps}: their names. "MAGNET" as Windows' Default apps lists it
+                // i18n: after ticking "Open magnet links and .torrent files with iDM", when Windows' Default apps keeps another app; {apps}: their names. "MAGNET" as Windows' Default apps lists it
                 crate::i18n::t(
-                    "Windows still opens magnet links or .torrent files with {apps}, chosen in Windows' Default apps, where only you can change it. Settings opens there now: pick Mister Download Manager for MAGNET and .torrent.",
+                    "Windows still opens magnet links or .torrent files with {apps}, chosen in Windows' Default apps, where only you can change it. Settings opens there now: pick iDM for MAGNET and .torrent.",
                 ),
                 &[("apps", &crate::i18n::isolate(&others.join(", ")))],
             ),
@@ -6131,7 +6131,7 @@ impl App {
             item.note(crate::i18n::fmt(
                 // i18n: event log: a torrent goes through the user's debrid account, not to peers; {service} its name ("Real-Debrid")
                 crate::i18n::t(
-                    "Through {service}: the service downloads the torrent, then MDM its files",
+                    "Through {service}: the service downloads the torrent, then iDM its files",
                 ),
                 &[("service", service.name())],
             ));
@@ -6202,7 +6202,7 @@ impl App {
     /// download added, if one was (not when the debrid account takes it).
     fn add_torrent(&mut self, add: crate::torrentdlg::TorrentAdd) -> Option<u64> {
         let meta = &add.meta;
-        // MDM's own files for it (the record of its new name, the .torrent kept): written after
+        // iDM's own files for it (the record of its new name, the .torrent kept): written after
         // the changes under way beside the window (a Delete's, perhaps of this very torrent:
         // `torrents::KeptFiles`), else now as before.
         let after = crate::torrents::kept_files().changing();
@@ -6436,7 +6436,7 @@ impl App {
         }
     }
 
-    /// Fetch feed `id` in the background (once at a time), with MDM's own connection settings.
+    /// Fetch feed `id` in the background (once at a time), with iDM's own connection settings.
     fn rss_fetch(&mut self, id: u64) {
         let Some(feed) = self.rss.feeds.iter().find(|f| f.id == id) else {
             return;
@@ -6458,7 +6458,7 @@ impl App {
                     };
                     match crate::torrents::fetch_small(remote, crate::rss::MAX_FEED).await {
                         Ok(Some(bytes)) => crate::rss::parse(&String::from_utf8_lossy(&bytes)),
-                        // i18n: RSS: a feed bigger than MDM reads (5 MB)
+                        // i18n: RSS: a feed bigger than iDM reads (5 MB)
                         Ok(None) => Err(crate::i18n::t("larger than a feed can be").to_owned()),
                         Err(e) => Err(e),
                     }
@@ -6569,7 +6569,7 @@ impl App {
             self.rss.note(
                 now,
                 crate::i18n::fmt(
-                    // i18n: RSS feeds window, under the rules: not added, because files of its names are already in the folder (MDM never writes into them unasked)
+                    // i18n: RSS feeds window, under the rules: not added, because files of its names are already in the folder (iDM never writes into them unasked)
                     crate::i18n::t(
                         "{title}: not added: files of its names are already in {folder}",
                     ),
@@ -7080,7 +7080,7 @@ impl App {
             .ok()
             .filter(mdm_engine::supported)
         else {
-            return fail("unsupported", "not an address MDM downloads");
+            return fail("unsupported", "not an address iDM downloads");
         };
         // Already in the list: no one at the computer to ask, so Options' choice, with "ask"
         // taken as "add it again" (under a numbered name).
@@ -7571,7 +7571,7 @@ impl App {
 
     /// Files dragged out of Download complete (#869) or the list (#1210) that the drop target
     /// moved: the download follows its file where the shell said it went, or remembers it went
-    /// where MDM couldn't learn. Only while the download still points where the drag took the
+    /// where iDM couldn't learn. Only while the download still points where the drag took the
     /// file from.
     fn poll_dragged_out(&mut self) {
         use dialogs::DraggedFrom;
@@ -7602,15 +7602,15 @@ impl App {
                     item.note(crate::i18n::fmt(note, &[("folder", &folder)]));
                 }
                 dialogs::DraggedOut::MovedAway => {
-                    tracing::info!("drag out: download {id}'s file moved where MDM can't follow");
+                    tracing::info!("drag out: download {id}'s file moved where iDM can't follow");
                     item.moved_away = true;
                     item.note(match dragged_from {
                         DraggedFrom::Complete => crate::i18n::t(
-                            "Dragged out of Download complete and moved to a place MDM couldn't learn",
+                            "Dragged out of Download complete and moved to a place iDM couldn't learn",
                         ),
                         DraggedFrom::List => crate::i18n::t(
-                            // i18n: a download's note: its file was dragged out of the download list and moved somewhere MDM can't tell (a program took it, the Recycle Bin)
-                            "Dragged out of the list and moved to a place MDM couldn't learn",
+                            // i18n: a download's note: its file was dragged out of the download list and moved somewhere iDM can't tell (a program took it, the Recycle Bin)
+                            "Dragged out of the list and moved to a place iDM couldn't learn",
                         ),
                     });
                 }
@@ -7662,7 +7662,7 @@ impl App {
         let dest = target
             .and_then(|id| self.items.iter().find(|i| i.id == id))
             .map(|i| i.dest.clone());
-        // Its file dragged out of Download complete to a place MDM couldn't learn (#869).
+        // Its file dragged out of Download complete to a place iDM couldn't learn (#869).
         let moved_away = target
             .and_then(|id| self.items.iter().find(|i| i.id == id))
             .is_some_and(|i| i.moved_away);
@@ -7784,7 +7784,7 @@ impl App {
             Cmd::AddThemeFile => {
                 // i18n: title of the file dialog of View → Theme → Add a theme file
                 let title = crate::i18n::t("Add a theme file").to_owned();
-                // i18n: the kind of file View → Theme → Add a theme file lists: MDM's themes (TOML, JSON), Base16 schemes (YAML) and pywal's colors.json
+                // i18n: the kind of file View → Theme → Add a theme file lists: iDM's themes (TOML, JSON), Base16 schemes (YAML) and pywal's colors.json
                 let kinds = crate::i18n::t("Themes and colour schemes").to_owned();
                 let all = crate::i18n::t("All files").to_owned();
                 // Where pywal writes its colours, when it has: the first place to look.
@@ -7817,7 +7817,7 @@ impl App {
                 if Some(api) == crate::renderer::GPU {
                     crate::renderer::forget_failure();
                 } else {
-                    // OpenGL chosen again after it couldn't draw MDM (#835, #847): tried and
+                    // OpenGL chosen again after it couldn't draw iDM (#835, #847): tried and
                     // checked again.
                     crate::renderer::forget_gl_failure();
                 }
@@ -8146,7 +8146,7 @@ impl App {
                 self.dirty = true;
                 match i.status {
                     Status::Complete => {
-                        // Downloaded again: its file is where MDM saved it.
+                        // Downloaded again: its file is where iDM saved it.
                         i.moved_away = false;
                         finished.push(i.id);
                     }
@@ -8440,10 +8440,10 @@ impl App {
                 Err(e) => {
                     if self.save_failed.as_ref() != Some(&e) {
                         self.notice = Some((
-                            crate::i18n::mark("Mister Download Manager"),
+                            crate::i18n::mark("iDM"),
                             crate::i18n::fmt(
                                 crate::i18n::t(
-                                    "The download list could not be saved: {error}. Changes are kept while MDM runs.",
+                                    "The download list could not be saved: {error}. Changes are kept while iDM runs.",
                                 ),
                                 &[("error", &e)],
                             ),
@@ -8619,7 +8619,7 @@ impl App {
                     true,
                     self.settings.dark_mode_support,
                 ),
-                // MDM's (#60): dark whatever the system says (a desktop that reports nothing).
+                // iDM's (#60): dark whatever the system says (a desktop that reports nothing).
                 I(
                     // i18n: View menu: a check item; dark mode on, whatever the system's setting
                     "Always dark",
@@ -8654,23 +8654,18 @@ impl App {
                 I("&Video downloads", Cmd::HelpPage("video.md"), true, false),
                 I("&Keyboard shortcuts", Cmd::Shortcuts, true, false),
                 Sep,
-                I(
-                    "Mister Download Manager &Home Page",
-                    Cmd::HelpPage(""),
-                    true,
-                    false,
-                ),
+                I("iDM &Home Page", Cmd::HelpPage(""), true, false),
                 I("&Report a problem", Cmd::ReportProblem, true, false),
                 Sep,
                 I("Check for &updates...", Cmd::CheckUpdates, true, false),
                 Sep,
-                I("&About Mister Download Manager", Cmd::About, true, false),
+                I("&About iDM", Cmd::About, true, false),
                 I("Tell a &friend", Cmd::TellFriend, true, false),
-                // MDM's, not IDM's: the creator's GitHub Sponsors page, asked for only.
-                I("Support &MDM", Cmd::Support, true, false),
+                // iDM's, not IDM's: the creator's GitHub Sponsors page, asked for only.
+                I("Support &iDM", Cmd::Support, true, false),
             ],
         };
-        // View → Theme (MDM's, #45), after Always dark; then Draw with (#89, #206), where wgpu is
+        // View → Theme (iDM's, #45), after Always dark; then Draw with (#89, #206), where wgpu is
         // built (Windows, Linux, macOS: renderer.rs).
         if let Some(at) = menu
             .iter()
@@ -8702,7 +8697,7 @@ impl App {
         let mut items = Vec::new();
         let mut files = false;
         let on = |id: &str| chosen == id;
-        // i18n: View → Theme: MDM's own look, the default (IDM's layout, Windows 11's controls)
+        // i18n: View → Theme: iDM's own look, the default (IDM's layout, Windows 11's controls)
         items.push(Radio("Classic", Cmd::Theme("classic"), true, on("classic")));
         // i18n: View → Theme: the system's own colours (its accent colour, its high contrast)
         items.push(Radio("Native", Cmd::Theme("native"), true, on("native")));
@@ -8749,7 +8744,7 @@ impl App {
         items.push(I("Add a theme file…", Cmd::AddThemeFile, true, false));
         // i18n: View → Theme: opens the folder where theme files go (TOML or JSON)
         items.push(I("Open themes folder", Cmd::OpenThemesFolder, true, false));
-        // i18n: View menu: submenu choosing MDM's look (colours, sizes, icons): Classic, Native…
+        // i18n: View menu: submenu choosing iDM's look (colours, sizes, icons): Classic, Native…
         Sub("Theme", true, items)
     }
 
@@ -8765,7 +8760,7 @@ impl App {
                 MenuEntry::Radio(label, Cmd::InterfaceSize(p), true, p == now)
             })
             .collect();
-        // i18n: View menu: submenu choosing how large MDM draws its windows and text (100 % to 200 %), as a browser's zoom
+        // i18n: View menu: submenu choosing how large iDM draws its windows and text (100 % to 200 %), as a browser's zoom
         MenuEntry::Sub("&Interface size", true, items)
     }
 
@@ -8786,7 +8781,7 @@ impl App {
     /// View → Draw with (#89, #206): OpenGL or the system's own graphics API (Direct3D on
     /// Windows, Vulkan on Linux, Metal on macOS), used from the next start. Greyed lines say when
     /// what draws now isn't the choice: the system's API failed here (and why), OpenGL can't
-    /// draw MDM here (#835), a software renderer draws, or the choice waits for the next start.
+    /// draw iDM here (#835), a software renderer draws, or the choice waits for the next start.
     #[cfg(gpu)]
     fn draw_with_menu(&self) -> MenuEntry<Cmd> {
         use crate::renderer::{self, Api, Why};
@@ -8843,9 +8838,9 @@ impl App {
         let failed = renderer::gpu_failed().filter(|_| on);
         let active = renderer::active();
         // The system's API on a software renderer (WARP): said, with why below (no card for
-        // it, an OpenGL that can't draw MDM).
+        // it, an OpenGL that can't draw iDM).
         let software = active == Some(gpu) && renderer::software();
-        // OpenGL can't draw MDM here (#835, #847): said, and why, where it changed what draws.
+        // OpenGL can't draw iDM here (#835, #847): said, and why, where it changed what draws.
         let unfit = renderer::gl_failed().filter(|_| active == Some(gpu) && (software || !on));
         // The software renderer draws because no card here has a driver for the system's API:
         // one line says both (Windows, #847).
@@ -8853,7 +8848,7 @@ impl App {
         if active.is_some_and(|a| a != chosen) || software {
             items.push(Sep);
             let mut notes = Vec::new();
-            // Since when, and when MDM tries it again (#1205).
+            // Since when, and when iDM tries it again (#1205).
             let again = |a: Option<renderer::Again>| {
                 a.map(|a| off(crate::chrome::label(&Self::again_text(a))))
             };
@@ -8868,13 +8863,13 @@ impl App {
                     notes.push(match why {
                         // i18n: View → Draw with: a greyed note under "… didn't start here"; why: no graphics card here has a driver for that graphics system ("it")
                         Why::NoAdapter => off("No graphics card here has a driver for it"),
-                        // i18n: View → Draw with: a greyed note under "… didn't start here"; why: the window stayed empty, so MDM started again with OpenGL
+                        // i18n: View → Draw with: a greyed note under "… didn't start here"; why: the window stayed empty, so iDM started again with OpenGL
                         Why::NoFirstFrame => off("Its first frame didn't show within 10 seconds"),
-                        // i18n: View → Draw with: a greyed note under "… didn't start here"; why: MDM crashed or was closed while starting with it
+                        // i18n: View → Draw with: a greyed note under "… didn't start here"; why: iDM crashed or was closed while starting with it
                         Why::EndedEarly => off("Its last start ended before its first frame"),
                         // i18n: View → Draw with: a greyed note under "… didn't start here"; why: the graphics card stopped working twice (a driver update or reset)
                         Why::LostTwice => off("The graphics card was lost twice in 10 minutes"),
-                        // i18n: View → Draw with: a greyed note under "… didn't start here"; why: another error, written in MDM's log
+                        // i18n: View → Draw with: a greyed note under "… didn't start here"; why: another error, written in iDM's log
                         _ => off("It couldn't start: the log says why"),
                     });
                     notes.extend(again(renderer::gpu_again()));
@@ -8882,32 +8877,32 @@ impl App {
                 // A software renderer that draws for want of a card says only that.
                 (None, None) if software => items.push(software_note),
                 (None, None) if unfit.is_some() => {}
-                // i18n: View → Draw with: a greyed note under the choices; the choice takes effect when MDM is started again
-                (None, None) => notes.push(off("Applies the next time MDM starts")),
+                // i18n: View → Draw with: a greyed note under the choices; the choice takes effect when iDM is started again
+                (None, None) => notes.push(off("Applies the next time iDM starts")),
             }
             if let Some(why) = unfit {
                 notes.push(match why {
-                    // i18n: View → Draw with: a greyed note; this computer's OpenGL (its graphics driver) is too old, so MDM doesn't draw with it
-                    Why::TooOld => off("OpenGL here is too old to draw MDM"),
-                    // i18n: View → Draw with: a greyed note; why MDM no longer draws with OpenGL: its window froze inside the graphics card's driver while OpenGL drew
+                    // i18n: View → Draw with: a greyed note; this computer's OpenGL (its graphics driver) is too old, so iDM doesn't draw with it
+                    Why::TooOld => off("OpenGL here is too old to draw iDM"),
+                    // i18n: View → Draw with: a greyed note; why iDM no longer draws with OpenGL: its window froze inside the graphics card's driver while OpenGL drew
                     Why::FrozeInDriver => off("OpenGL froze inside the graphics driver here"),
-                    // i18n: View → Draw with: a greyed note; why MDM no longer draws with OpenGL: its window stayed empty for 10 seconds, so MDM started again another way
+                    // i18n: View → Draw with: a greyed note; why iDM no longer draws with OpenGL: its window stayed empty for 10 seconds, so iDM started again another way
                     Why::NoFirstFrame => off("OpenGL's first frame didn't show within 10 seconds"),
-                    // i18n: View → Draw with: a greyed note; why MDM no longer draws with OpenGL: MDM crashed or was closed while starting with it
+                    // i18n: View → Draw with: a greyed note; why iDM no longer draws with OpenGL: iDM crashed or was closed while starting with it
                     Why::EndedEarly => off("OpenGL's last start ended before its first frame"),
-                    // i18n: View → Draw with: a greyed note; why MDM no longer draws with OpenGL: it couldn't start on this computer
+                    // i18n: View → Draw with: a greyed note; why iDM no longer draws with OpenGL: it couldn't start on this computer
                     _ => off("OpenGL didn't start here"),
                 });
                 notes.extend(again(renderer::gl_again()));
             }
             items.extend(notes);
         }
-        // i18n: View menu: submenu choosing what draws MDM's windows: OpenGL, or Direct3D, Vulkan or Metal (graphics systems)
+        // i18n: View menu: submenu choosing what draws iDM's windows: OpenGL, or Direct3D, Vulkan or Metal (graphics systems)
         Sub("Draw with", true, items)
     }
 
     /// View → Draw with's note under a way that failed here: since when it is passed over, and
-    /// when MDM tries it again (#1205; renderer.rs `verdict`). Dates as the interface writes them.
+    /// when iDM tries it again (#1205; renderer.rs `verdict`). Dates as the interface writes them.
     #[cfg(gpu)]
     fn again_text(a: crate::renderer::Again) -> String {
         use crate::i18n::{fmt, t};
@@ -8921,26 +8916,26 @@ impl App {
                 .unwrap_or_default()
         };
         let template = match (a.next_start, a.at, a.on_update) {
-            // i18n: View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw MDM; {date}: the day that was found; MDM tries that graphics system again when it next starts
-            (true, ..) => t("Since {date}: MDM tries it again at its next start"),
+            // i18n: View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw iDM; {date}: the day that was found; iDM tries that graphics system again when it next starts
+            (true, ..) => t("Since {date}: iDM tries it again at its next start"),
             (false, Some(_), true) => {
-                // i18n: View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw MDM; {date}: the day that was found; {retry}: the day MDM tries it again, unless the graphics driver is updated before
-                t("Since {date}: MDM tries it again on {retry}, or after a driver update")
+                // i18n: View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw iDM; {date}: the day that was found; {retry}: the day iDM tries it again, unless the graphics driver is updated before
+                t("Since {date}: iDM tries it again on {retry}, or after a driver update")
             }
-            // i18n: View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw MDM; {date}: the day that was found; {retry}: the day MDM tries it again
-            (false, Some(_), false) => t("Since {date}: MDM tries it again on {retry}"),
-            // i18n: View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw MDM; {date}: the day that was found; MDM tries it again once the graphics driver is updated
-            (false, None, true) => t("Since {date}: MDM tries it again after a driver update"),
-            // i18n: View → Draw with: a greyed note under why a graphics system doesn't draw MDM; {date}: the day that was found
+            // i18n: View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw iDM; {date}: the day that was found; {retry}: the day iDM tries it again
+            (false, Some(_), false) => t("Since {date}: iDM tries it again on {retry}"),
+            // i18n: View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw iDM; {date}: the day that was found; iDM tries it again once the graphics driver is updated
+            (false, None, true) => t("Since {date}: iDM tries it again after a driver update"),
+            // i18n: View → Draw with: a greyed note under why a graphics system doesn't draw iDM; {date}: the day that was found
             (false, None, false) => t("Since {date}"),
         };
         let retry = a.at.map(date).unwrap_or_default();
         fmt(template, &[("date", &date(a.since)), ("retry", &retry)])
     }
 
-    /// View → Window system (Linux, a Wayland session that runs XWayland too, #624): MDM's own
+    /// View → Window system (Linux, a Wayland session that runs XWayland too, #624): iDM's own
     /// choice at each start, X11 through XWayland, or Wayland's own windows; saved, so every
-    /// way MDM starts (its menu entry, the browser's helper, the session's autostart) uses it
+    /// way iDM starts (its menu entry, the browser's helper, the session's autostart) uses it
     /// from the next start. A greyed line says which one draws now, and when the choice waits
     /// for the next start.
     #[cfg(target_os = "linux")]
@@ -8951,7 +8946,7 @@ impl App {
         let pick = self.settings.window_system;
         let ws = crate::unix::window_system();
         let mut items = vec![
-            // i18n: View → Window system: MDM chooses the window system itself at each start
+            // i18n: View → Window system: iDM chooses the window system itself at each start
             Radio("&Automatic", Cmd::WindowSystem(None), true, pick.is_none()),
             // i18n: View → Window system: X11's windows, through XWayland in a Wayland session (names of Linux display systems, usually kept as is)
             Radio(
@@ -8969,18 +8964,18 @@ impl App {
             ),
             Sep,
             if ws.wayland {
-                // i18n: View → Window system: a greyed note; MDM's windows are Wayland's now
+                // i18n: View → Window system: a greyed note; iDM's windows are Wayland's now
                 off("In use: Wayland")
             } else {
-                // i18n: View → Window system: a greyed note; MDM's windows are X11's (through XWayland) now
+                // i18n: View → Window system: a greyed note; iDM's windows are X11's (through XWayland) now
                 off("In use: X11 (XWayland)")
             },
         ];
         if pick.is_some_and(|p| (p == P::Wayland) != ws.wayland) {
-            // i18n: View → Draw with: a greyed note under the choices; the choice takes effect when MDM is started again
-            items.push(off("Applies the next time MDM starts"));
+            // i18n: View → Draw with: a greyed note under the choices; the choice takes effect when iDM is started again
+            items.push(off("Applies the next time iDM starts"));
         }
-        // i18n: View menu: submenu choosing the window system MDM's windows use on Linux (X11 through XWayland, or Wayland)
+        // i18n: View menu: submenu choosing the window system iDM's windows use on Linux (X11 through XWayland, or Wayland)
         Sub("&Window system", true, items)
     }
 
@@ -9093,7 +9088,7 @@ impl App {
             Popup::Node(node) => (self.node_entries(node), None),
             Popup::DropTarget => (
                 vec![
-                    MenuEntry::Item("Show Mister Download Manager", Cmd::ShowMain, true, false),
+                    MenuEntry::Item("Show iDM", Cmd::ShowMain, true, false),
                     MenuEntry::Item("&Add new download", Cmd::AddUrl, true, false),
                     MenuEntry::Sep,
                     MenuEntry::Item("Hide drop target", Cmd::ToggleDropTarget, true, false),
@@ -10295,7 +10290,7 @@ impl App {
 
     /// Download video's Download Now / Later, or the browser's quality menu's choice
     /// (`from_menu`), through the same check as any other download: the same page in the same
-    /// quality is a duplicate, another quality is not. A question opens its own window (MDM's
+    /// quality is a duplicate, another quality is not. A question opens its own window (iDM's
     /// stays where it is). What became of it.
     fn add_video_checked(
         &mut self,
@@ -10684,9 +10679,9 @@ impl App {
                     ctx,
                 );
             } else {
-                // A file MDM can't download or import (a picture, a program).
+                // A file iDM can't download or import (a picture, a program).
                 self.notice = Some((
-                    crate::i18n::mark("Mister Download Manager"),
+                    crate::i18n::mark("iDM"),
                     crate::i18n::fmt(
                         crate::i18n::t(
                             "Nothing to download in {item}: drop links, a .torrent file, or a list of addresses (.txt, .ef2).",
@@ -11186,7 +11181,7 @@ impl App {
 
     /// IDM looks for a new version once a week; so do we (off: the switch in Check for updates). Found: the
     /// update window says so; otherwise nothing shows.
-    /// The automatic update check: a few seconds after every start, then once a day while MDM
+    /// The automatic update check: a few seconds after every start, then once a day while iDM
     /// runs (it was at most once a week). A new version's window comes to the front, as apps
     /// announce theirs. Not in off-screen test runs (their windows stay as asked).
     fn auto_update_check(&mut self, ctx: &egui::Context) {
@@ -11316,7 +11311,7 @@ impl App {
         if let Some(d) = &mut self.updates {
             match d.show(ctx, &self.rt, &mut weekly) {
                 Outcome::Open => {}
-                // Update now: the new copy is going in place; MDM saves and closes for it.
+                // Update now: the new copy is going in place; iDM saves and closes for it.
                 Outcome::Done(true) => {
                     self.updates = None;
                     close_for_update = true;
@@ -11680,7 +11675,7 @@ impl App {
                 };
                 if self.settings.settle_torrent_handler(installer, registered) {
                     tracing::info!(
-                        "torrents: Open magnet links and .torrent files with MDM settled {}",
+                        "torrents: Open magnet links and .torrent files with iDM settled {}",
                         if self.settings.torrent_associations == Some(true) {
                             "on"
                         } else {
@@ -11764,8 +11759,8 @@ impl App {
                             crate::unix::set_torrent_handlers(assoc);
                         }
                         // Windows: a choice recorded in Default apps for another program stays
-                        // first, and only the user can change it (#1091): MDM says so and opens
-                        // its page there. Linux and macOS: the switch made MDM the default.
+                        // first, and only the user can change it (#1091): iDM says so and opens
+                        // its page there. Linux and macOS: the switch made iDM the default.
                         #[cfg(windows)]
                         if assoc {
                             self.tell_torrent_defaults();
@@ -12328,7 +12323,7 @@ impl eframe::App for App {
     /// (no window is raised or focused for it beyond what the command itself does).
     fn logic(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         crate::renderer::present_unpaced(frame);
-        // MDM's own work: not counted as the graphics API's time to its first frame (#280).
+        // iDM's own work: not counted as the graphics API's time to its first frame (#280).
         crate::renderer::own_work_begin();
         self.tick(ctx);
         crate::renderer::own_work_end();
@@ -12345,7 +12340,7 @@ impl App {
         // The freeze watchdog times this as it times `ui` (crash.rs): a command or the clock
         // that hangs is reported too, minimized or not (#202).
         crate::crash::logic_begin();
-        // Whether a stall now could be seen: every window of MDM's hidden (the main window in
+        // Whether a stall now could be seen: every window of iDM's hidden (the main window in
         // the notification area, no other window open) is felt by nobody (#1126).
         crate::crash::hidden(self.hidden && ctx.input(|i| i.raw.viewports.len() <= 1));
         crate::crash::armed();
@@ -12432,7 +12427,7 @@ impl App {
             .is_none_or(|t| t.elapsed() > Duration::from_secs(2))
         {
             self.ticked = Some(Instant::now());
-            // For a crash report: what MDM has open and running (sent when it changes).
+            // For a crash report: what iDM has open and running (sent when it changes).
             crate::crash::step(crate::crash::Step::ReportState);
             crate::crash::state(
                 self.items.len(),
@@ -12622,7 +12617,7 @@ impl App {
 impl Drop for App {
     /// Exit, a closed window that quits, a headless run's end: [`App::finish`].
     fn drop(&mut self) {
-        // macOS ends the program right after this when it quits MDM itself (Cmd+Q, MDM → Quit,
+        // macOS ends the program right after this when it quits iDM itself (Cmd+Q, iDM → Quit,
         // the Dock's Quit, logging out): eframe drops the app on the way, and `main` never
         // gets its turn to say the exit was clean (#1125).
         #[cfg(target_os = "macos")]
@@ -12651,7 +12646,7 @@ const EXIT_STOP_WAIT: Duration = Duration::from_secs(10);
 
 impl App {
     /// The session is ending (Windows: shut down, restart, sign out, or an installer closing
-    /// MDM through the Restart Manager; `win32::on_session_end`. Linux: logout or shutdown,
+    /// iDM through the Restart Manager; `win32::on_session_end`. Linux: logout or shutdown,
     /// whose SIGTERM or lost display `unix::on_session_end` and `unix::on_display_lost` hear):
     /// what an Exit does at its end, now, within [`SESSION_END`], on the window's thread between
     /// two frames. Nobody is there to answer a question: nothing is asked. The process ends
@@ -12663,7 +12658,7 @@ impl App {
         self.finish(Some(Instant::now() + SESSION_END));
     }
 
-    /// The tray icon goes, as at an Exit: when only MDM is closed (the Restart Manager) and the
+    /// The tray icon goes, as at an Exit: when only iDM is closed (the Restart Manager) and the
     /// session goes on, it would stay in the notification area until the pointer passed over it.
     /// Last, once all is saved: the shell may be slow to answer (#747).
     #[cfg(windows)]
@@ -12681,7 +12676,7 @@ impl App {
         // The longest first: the downloads save while the rest is done.
         let stopping = self.stop_for_the_end();
         // yt-dlp, gallery-dl and all they started end, and none starts any more (#1301: on
-        // Linux and macOS nothing else ends them with MDM).
+        // Linux and macOS nothing else ends them with iDM).
         mdm_tools::proc::end_all();
         let left = |cap: Duration| {
             deadline.map_or(cap, |d| {
@@ -12696,7 +12691,7 @@ impl App {
         }
         // An archive being extracted stops; its staging folder goes with it.
         self.extracts.stop();
-        // No wake for a queue MDM won't be there to start (Linux's alarm would outlive it).
+        // No wake for a queue iDM won't be there to start (Linux's alarm would outlive it).
         self.wake.clear();
         self.keep_unseen();
         let until = saves_by(began, deadline);
@@ -12750,7 +12745,7 @@ impl App {
 
     /// The end ([`App::finish`]): the file downloads that run are stopped as Stop stops them,
     /// which flushes what they received and saves their resume state; their ids. Torrents keep
-    /// their own resume data as they go, and a video's or a gallery's helpers end with MDM
+    /// their own resume data as they go, and a video's or a gallery's helpers end with iDM
     /// (`mdm_tools::proc::end_all`).
     fn stop_for_the_end(&self) -> Vec<u64> {
         self.items
@@ -12895,7 +12890,7 @@ mod drag_carries_tests {
     }
 
     /// #1210: a drag of the list's selection carries the finished downloads' files, in the
-    /// list's order; rows not finished, rows not selected and a file moved where MDM couldn't
+    /// list's order; rows not finished, rows not selected and a file moved where iDM couldn't
     /// follow stay out; a selection of unfinished rows only carries nothing.
     #[test]
     fn a_drag_carries_the_selected_finished_files_in_list_order() {
@@ -13058,10 +13053,10 @@ mod at_login_tests {
     fn the_window_waits_for_the_tray_then_stays_there_or_shows_minimized() {
         let s = Duration::from_secs;
         let icon = |d| Some(s(d));
-        // The tray first (Windows, KDE): MDM's icon registered, the window stays hidden.
+        // The tray first (Windows, KDE): iDM's icon registered, the window stays hidden.
         assert_eq!(at_login(s(0), icon(0), true), AtLogin::Tray);
-        // The decision first (XFCE: MDM looked before its own icon had registered; GNOME: the
-        // AppIndicator extension's tray came 11.5 s after MDM's icon): waited for, hidden, then
+        // The decision first (XFCE: iDM looked before its own icon had registered; GNOME: the
+        // AppIndicator extension's tray came 11.5 s after iDM's icon): waited for, hidden, then
         // the tray.
         assert_eq!(at_login(s(0), None, false), AtLogin::Wait);
         assert_eq!(at_login(s(0), icon(0), false), AtLogin::Wait);
@@ -13070,7 +13065,7 @@ mod at_login_tests {
             at_login(s(60), TRAY_GRACE.checked_sub(s(1)), true),
             AtLogin::Tray
         );
-        // The grace counts from MDM's icon: a slow start of its own leaves the desktop its time.
+        // The grace counts from iDM's icon: a slow start of its own leaves the desktop its time.
         assert_eq!(at_login(TRAY_GRACE + s(5), icon(5), false), AtLogin::Wait);
         // No tray within the grace period (a desktop without one, #59; Windows' taskbar not
         // there to take the icon): shown, minimized.
@@ -13262,7 +13257,7 @@ mod video_goes_tests {
     use super::{VideoGoes, video_goes};
 
     /// The browser's quality menu queues a choice (Options: only add to the queue) in the main
-    /// queue, never through the queue panel, which would open in MDM's window and, cancelled,
+    /// queue, never through the queue panel, which would open in iDM's window and, cancelled,
     /// leave it in no queue; the Download video window's Later still asks when Options say so.
     #[test]
     fn a_choice_from_the_browser_is_queued_without_asking() {
@@ -14495,7 +14490,7 @@ mod access_key_tests {
         ))
     }
 
-    /// Every menu MDM builds, in the states that change them: the menu bar, its menus, the
+    /// Every menu iDM builds, in the states that change them: the menu bar, its menus, the
     /// right-click and drop-down menus, a text box's, and their submenus.
     fn every_menu() -> Vec<Level> {
         let mut app = app();

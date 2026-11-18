@@ -1,4 +1,4 @@
-//! A small DNS server on 127.0.0.1, plain over TCP (MDM asks plain DNS over TCP only), for the
+//! A small DNS server on 127.0.0.1, plain over TCP (iDM asks plain DNS over TCP only), for the
 //! tests that choose it in Options → Connection → DNS (#36): the names they look up are answered
 //! here, never by the system's DNS or the network. It answers `*.mdm.test` with 127.0.0.1 and
 //! every other name with NXDOMAIN ("no such name"), at once; or, silent, never answers.

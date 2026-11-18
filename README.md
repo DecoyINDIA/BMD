@@ -4,9 +4,9 @@ iDM is an open-source download manager for Windows, Linux, and macOS, maintained
 
 ## Get started
 
-Check [GitHub Releases](https://github.com/DecoyINDIA/iDM-standalone/releases) for iDM builds. While the release list is empty, use the [build instructions](CONTRIBUTING.md#getting-set-up) to build from source. The [user guide](docs/README.md) covers configuration and browser integration.
+Check [GitHub Releases](https://github.com/DecoyINDIA/iDM/releases) for iDM builds. While the release list is empty, use the [build instructions](CONTRIBUTING.md#getting-set-up) to build from source. The [user guide](docs/README.md) covers configuration and browser integration.
 
-Report bugs through [Issues](https://github.com/DecoyINDIA/iDM-standalone/issues). Use the [security policy](SECURITY.md) for private vulnerability reports.
+Report bugs through [Issues](https://github.com/DecoyINDIA/iDM/issues). Use the [security policy](SECURITY.md) for private vulnerability reports.
 
 ## Not a reverse-engineering project
 
