@@ -1484,6 +1484,17 @@ impl Item {
         Some(known.find(|r| !site_only(r)).unwrap_or(first))
     }
 
+    /// [`Item::web_page`] when it is a web address (http, https, ftp), for Refresh download
+    /// address to open in the browser. The page and the Referer are whatever the browser, the
+    /// command line, the automation API or MCP said: a path, a share or another scheme handed to
+    /// the system's opener would start a program instead.
+    pub fn page_to_open(&self) -> Option<String> {
+        url::Url::parse(self.web_page()?.trim())
+            .ok()
+            .filter(mdm_engine::supported)
+            .map(String::from)
+    }
+
     /// The referer sent with it from now on (the browser's, File Properties'): the request's
     /// copy and the list's together (#795).
     pub fn set_referer(&mut self, referer: Option<String>) {
@@ -2080,6 +2091,23 @@ mod file_address_tests {
         assert_eq!(f.web_page(), Some("https://www.example.com/"));
         f.page = Some(String::new());
         assert_eq!(f.web_page(), Some("https://www.example.com/"));
+        assert_eq!(
+            f.page_to_open().as_deref(),
+            Some("https://www.example.com/")
+        );
+        // Refresh download address opens web pages only: never a program, a share or a file.
+        for odd in [
+            r"C:\Windows\System32\calc.exe",
+            r"\\x.test\share\run.exe",
+            "file:///C:/Windows/System32/calc.exe",
+            "ms-msdt:/id PCWDiagnostic",
+            "javascript:alert(1)",
+        ] {
+            f.page = Some(odd.into());
+            f.set_referer(None);
+            assert_eq!(f.web_page(), Some(odd));
+            assert_eq!(f.page_to_open(), None, "{odd}");
+        }
     }
 
     /// The referer and a video's file address are kept with the list (#795); the browser's

@@ -364,11 +364,11 @@ fn main() -> std::process::ExitCode {
     // The local time's offset, asked on a thread of its own from now on (#536).
     clock::start();
     // A server (#157): the app without a window.
-    let all: Vec<String> = std::env::args().skip(1).collect();
+    let all = args();
     let code = if headless::asked(&all) {
         headless::main(all)
     } else {
-        match app() {
+        match app(all) {
             Ok(()) => std::process::ExitCode::SUCCESS,
             // As `main` returning the error would.
             Err(e) => {
@@ -385,11 +385,17 @@ fn main() -> std::process::ExitCode {
 /// How long iDM's end waits for its log's last lines (a disk that holds them longer loses them).
 const LOG_AT_THE_END: std::time::Duration = std::time::Duration::from_secs(2);
 
-fn app() -> eframe::Result {
+/// The command line's arguments (without the program's name), as [`mdm_ipc::launch_args`]
+/// keeps them: started for a magnet link or a .torrent file, nothing that came after it in the
+/// link is read as a switch.
+fn args() -> Vec<String> {
+    mdm_ipc::launch_args(std::env::args().skip(1).collect())
+}
+
+fn app(args: Vec<String>) -> eframe::Result {
     // iDM's crash monitor (crash.rs started it): the report window when the app crashes or
     // freezes; it never becomes iDM's instance.
-    let all: Vec<String> = std::env::args().collect();
-    if let Some(m) = mdm_crash::MonitorArgs::parse(&all) {
+    if let Some(m) = mdm_crash::MonitorArgs::parse(&args) {
         return crashui::monitor_main(m);
     }
 
@@ -405,7 +411,6 @@ fn app() -> eframe::Result {
     }));
 
     // IDM-style command line; hand it to a running instance if there is one.
-    let args: Vec<String> = std::env::args().skip(1).collect();
     let cmd = mdm_ipc::parse_args(&args);
     // Started by an update (update.rs): the old copy may still be closing; this one waits for
     // it rather than handing it anything.
