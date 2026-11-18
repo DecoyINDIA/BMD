@@ -1,18 +1,18 @@
-; Mister Download Manager's Windows installer (Inno Setup 6). Built by tools/installer/build.ps1,
+; iDM's Windows installer (Inno Setup 6). Built by tools/installer/build.ps1,
 ; which passes /DAppVersion=..., /DArch=... and /DBin=... and, when a certificate is set up,
 ; /DSign with /Smdmsign=...
 ;
 ; Install for the current user (no administrator rights, %LOCALAPPDATA%\Programs) or for
 ; everyone (Program Files); the wizard asks. Tasks: browser integration (native messaging host
 ; for Chrome, Edge, Brave and Firefox), .torrent files and magnet links, start with Windows, a
-; desktop shortcut. A running MDM is asked to save and quit first (/exit). Uninstalling asks
-; whether to keep the download list and settings; removing them also removes MDM's sign-ins from
+; desktop shortcut. A running iDM is asked to save and quit first (/exit). Uninstalling asks
+; whether to keep the download list and settings; removing them also removes iDM's sign-ins from
 ; Windows Credential Manager (misterdownloadmanager --forget-sign-ins).
 
 #ifndef AppVersion
   #define AppVersion "0.5.2"
 #endif
-#define AppName "Mister Download Manager"
+#define AppName "iDM"
 #define AppExe "misterdownloadmanager.exe"
 #define HostExe "misterdownloadmanager-nmhost.exe"
 #define Root "..\.."
@@ -32,9 +32,9 @@ AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
 AppPublisher=DecoyINDIA
-AppPublisherURL=https://github.com/DecoyINDIA/iDM-standalone
-AppSupportURL=https://github.com/DecoyINDIA/iDM-standalone/issues
-AppUpdatesURL=https://github.com/DecoyINDIA/iDM-standalone/releases
+AppPublisherURL=https://github.com/DecoyINDIA/iDM
+AppSupportURL=https://github.com/DecoyINDIA/iDM/issues
+AppUpdatesURL=https://github.com/DecoyINDIA/iDM/releases
 AppCopyright=Copyright (C) 2026 Ahmed Nefzaoui
 DefaultDirName={autopf}\{#AppName}
 DisableProgramGroupPage=yes
@@ -63,18 +63,18 @@ SetupIconFile={#Root}\crates\app\assets\icons\app\mdm.ico
 UninstallDisplayIcon={app}\{#AppExe}
 UninstallDisplayName={#AppName}
 OutputDir={#Root}\target\dist
-; x64's keeps the name it had before there were others: MDM's Update now looks for it by name.
+; x64's keeps the name it had before there were others: iDM's Update now looks for it by name.
 #if Arch == "x64"
-OutputBaseFilename=MisterDownloadManager-{#AppVersion}-setup
+OutputBaseFilename=iDM-{#AppVersion}-setup
 #else
-OutputBaseFilename=MisterDownloadManager-{#AppVersion}-setup-{#Arch}
+OutputBaseFilename=iDM-{#AppVersion}-setup-{#Arch}
 #endif
 ; A 64 MB dictionary (#25): an 8 MB one (lzma2/max) only finds what repeats close by in the
 ; solid archive. A few MB smaller; building needs about 750 MB of memory, installing 64 MB.
 Compression=lzma2/ultra64
 SolidCompression=yes
 ChangesAssociations=yes
-; A running MDM is asked to quit by [Code] (it holds the mutex MisterDownloadManager.Running);
+; A running iDM is asked to quit by [Code] (it holds the mutex MisterDownloadManager.Running);
 ; AppMutex isn't used because it would refuse to start before that. Restart Manager is the
 ; fallback for anything else holding the files (a browser running the host).
 CloseApplications=yes
@@ -106,7 +106,7 @@ lang_en.KeepData=Also delete your download list and settings?%n%nYour downloaded
 ; languages show Setup's own message, that this Windows isn't supported.
 #if Arch == "x86"
 [Messages]
-lang_en.WindowsVersionNotSupported=This is the setup for 32-bit Windows, and this computer runs 64-bit Windows. Download MisterDownloadManager-{#AppVersion}-setup.exe instead (or MisterDownloadManager-{#AppVersion}-setup-arm64.exe on a Windows on ARM PC).
+lang_en.WindowsVersionNotSupported=This is the setup for 32-bit Windows, and this computer runs 64-bit Windows. Download iDM-{#AppVersion}-setup.exe instead (or iDM-{#AppVersion}-setup-arm64.exe on a Windows on ARM PC).
 #endif
 
 [Tasks]
@@ -137,7 +137,7 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopico
 ; takes it on its first start, when it has no language setting yet (settings.rs), then deletes it.
 Root: HKCU; Subkey: "Software\MisterDownloadManager"; ValueType: string; ValueName: "InstallLanguage"; ValueData: "{language}"; Flags: uninsdeletevalue uninsdeletekeyifempty
 ; Start with Windows: the same value Options -> "Launch on startup" writes and reads, with the
-; argument that starts MDM in the notification area (#226; win32.rs startup_command).
+; argument that starts iDM in the notification area (#226; win32.rs startup_command).
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "MisterDownloadManager"; ValueData: """{app}\{#AppExe}"" /startup"; Flags: uninsdeletevalue; Tasks: startup
 ; The "torrents" task, ticked or not: Torrent settings' switch on the app's first start that hasn't
 ; decided it (#1058: it then also decides whether the browser hands .torrent downloads over;
@@ -154,7 +154,7 @@ Root: HKA; Subkey: "Software\Classes\magnet"; ValueType: string; ValueName: ""; 
 Root: HKA; Subkey: "Software\Classes\magnet"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""; Tasks: torrents
 Root: HKA; Subkey: "Software\Classes\magnet\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#AppExe},0"; Tasks: torrents
 Root: HKA; Subkey: "Software\Classes\magnet\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExe}"" ""%1"""; Tasks: torrents
-; Windows' Default apps (#1091): MDM listed for MAGNET and .torrent, where the user picks it (a
+; Windows' Default apps (#1091): iDM listed for MAGNET and .torrent, where the user picks it (a
 ; choice recorded there for another program stays first, and no program may change it). The
 ; same keys and names as win32.rs set_torrent_handlers; ApplicationName matches the
 ; RegisteredApplications value's name, and each association has an MDM-only ProgID. The app
@@ -174,7 +174,7 @@ Root: HKA; Subkey: "Software\RegisteredApplications"; ValueType: string; ValueNa
 Filename: "{app}\{#HostExe}"; Parameters: "--register"; Flags: runhidden; Tasks: browser; Check: not IsAdminInstallMode
 Filename: "{app}\{#HostExe}"; Parameters: "--register --all-users"; Flags: runhidden; Tasks: browser; Check: IsAdminInstallMode
 Filename: "{app}\{#AppExe}"; Description: "{cm:Launch}"; Flags: nowait postinstall skipifsilent
-; Update now in MDM runs this setup silently with /relaunch=1: MDM starts again once installed,
+; Update now in iDM runs this setup silently with /relaunch=1: iDM starts again once installed,
 ; as the user (not as the administrator an all-users update asked for).
 Filename: "{app}\{#AppExe}"; Parameters: "/updated"; Flags: nowait runasoriginaluser; Check: Relaunch
 
@@ -189,13 +189,13 @@ Type: files; Name: "{app}\com.misterdownloadmanager.host*.json"
 const
   RunningMutex = 'MisterDownloadManager.Running';
 
-{ /relaunch=1 on the command line (MDM's Update now): start MDM again after installing. }
+{ /relaunch=1 on the command line (iDM's Update now): start iDM again after installing. }
 function Relaunch: Boolean;
 begin
   Result := ExpandConstant('{param:relaunch|0}') = '1';
 end;
 
-{ Ask a running MDM to save and quit, and wait up to 15 s for it. }
+{ Ask a running iDM to save and quit, and wait up to 15 s for it. }
 procedure ExitRunningApp(Exe: String);
 var
   Code, Waited: Integer;
@@ -234,7 +234,7 @@ begin
     RegDeleteKeyIncludingSubkeys(HKA, Key);
 end;
 
-{ Asked before the files go (the sign-ins are removed by MDM itself), the list and settings
+{ Asked before the files go (the sign-ins are removed by iDM itself), the list and settings
   removed after. A silent uninstall keeps both. }
 var
   RemoveData: Boolean;
@@ -260,7 +260,7 @@ begin
     RemoveData := False;
     if DirExists(Data) and not UninstallSilent() then
       RemoveData := MsgBox(CustomMessage('KeepData'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES;
-    { The sign-ins MDM keeps in Windows Credential Manager (only MDM's own entries). }
+    { The sign-ins iDM keeps in Windows Credential Manager (only iDM's own entries). }
     if RemoveData then
       Exec(ExpandConstant('{app}\{#AppExe}'), '--forget-sign-ins', '', SW_HIDE, ewWaitUntilTerminated, Code);
   end;

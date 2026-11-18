@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "Mister Download Manager"
+    "message": "iDM"
   },
   "description": {
-    "message": "מעביר הורדות מהדפדפן אל Mister Download Manager."
+    "message": "מעביר הורדות מהדפדפן אל iDM."
   },
   "menu": {
-    "message": "הורד באמצעות Mister Download Manager"
+    "message": "הורד באמצעות iDM"
   },
   "video_download": {
     "message": "הורד סרטון"
@@ -30,19 +30,19 @@
     "message": "הגדרות לחצן..."
   },
   "video_sent": {
-    "message": "נשלח אל Mister Download Manager"
+    "message": "נשלח אל iDM"
   },
   "menu_selected": {
-    "message": "הורד את הקישורים שנבחרו באמצעות Mister Download Manager"
+    "message": "הורד את הקישורים שנבחרו באמצעות iDM"
   },
   "menu_all": {
-    "message": "הורד את כל הקישורים באמצעות Mister Download Manager"
+    "message": "הורד את כל הקישורים באמצעות iDM"
   },
   "status_connected": {
-    "message": "מחובר אל Mister Download Manager"
+    "message": "מחובר אל iDM"
   },
   "status_connected_version": {
-    "message": "מחובר אל Mister Download Manager $version$",
+    "message": "מחובר אל iDM $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "מושהה: ההורדות נשארות בדפדפן"
   },
   "status_not_installed": {
-    "message": "Mister Download Manager אינו מותקן, או ששילוב הדפדפן שלו אינו מוגדר"
+    "message": "iDM אינו מותקן, או ששילוב הדפדפן שלו אינו מוגדר"
   },
   "status_forbidden": {
-    "message": "Mister Download Manager אינו מקבל עותק זה של ההרחבה"
+    "message": "iDM אינו מקבל עותק זה של ההרחבה"
   },
   "status_not_running": {
-    "message": "Mister Download Manager לא הופעל בזמן"
+    "message": "iDM לא הופעל בזמן"
   },
   "status_host_failed": {
-    "message": "החיבור ל- Mister Download Manager נכשל"
+    "message": "החיבור ל- iDM נכשל"
   },
   "status_too_large": {
     "message": "פרטי ההורדה הזו היו גדולים מדי למסירה"
   },
   "status_update_app": {
-    "message": "עדכן את Mister Download Manager כדי להשתמש בכל מה שתוסף זה מציע"
+    "message": "עדכן את iDM כדי להשתמש בכל מה שתוסף זה מציע"
   },
   "popup_take": {
     "message": "קבל הורדות מדפדפן זה"
@@ -78,10 +78,10 @@
     "message": "שלח הורדות דרך שרת ה-Proxy או הרחבת ה-VPN של דפדפן זה"
   },
   "popup_proxy_title": {
-    "message": "Mister Download Manager מוריד אז דרך אותו שרת Proxy כמו הדפדפן הזה. הדפדפן יבקש ממך פעם אחת לאפשר זאת; כיבוי אפשרות זו מבטל זאת."
+    "message": "iDM מוריד אז דרך אותו שרת Proxy כמו הדפדפן הזה. הדפדפן יבקש ממך פעם אחת לאפשר זאת; כיבוי אפשרות זו מבטל זאת."
   },
   "popup_proxy_title_chromium": {
-    "message": "Mister Download Manager יוריד אז דרך אותו שרת proxy שבו משתמש הדפדפן הזה. כשהאפשרות הזו כבויה, התוסף לא קורא את שרת ה-proxy של הדפדפן."
+    "message": "iDM יוריד אז דרך אותו שרת proxy שבו משתמש הדפדפן הזה. כשהאפשרות הזו כבויה, התוסף לא קורא את שרת ה-proxy של הדפדפן."
   },
   "popup_exclude_site": {
     "message": "לעולם אל תיקח הורדות מ־$site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "פתח את Mister Download Manager"
+    "message": "פתח את iDM"
   },
   "popup_options": {
     "message": "אפשרויות..."
@@ -114,7 +114,7 @@
     "message": "עזרה"
   },
   "popup_support": {
-    "message": "תמוך ב-MDM"
+    "message": "תמוך ב-iDM"
   },
   "popup_fix": {
     "message": "איך לתקן זאת"
@@ -150,7 +150,7 @@
     "message": "האפשרות 'השתמש בשילוב דפדפן מתקדם' כבויה ב'אפשרויות' ← 'כללי'."
   },
   "declined_torrents": {
-    "message": "זהו קובץ טורנט, והאפשרות ״פתיחת קישורי magnet וקובצי .torrent באמצעות Mister Download Manager״ כבויה בהגדרות הטורנט."
+    "message": "זהו קובץ טורנט, והאפשרות ״פתיחת קישורי magnet וקובצי .torrent באמצעות iDM״ כבויה בהגדרות הטורנט."
   },
   "declined_site_access": {
     "message": "אין הרשאה להרחבה לקרוא אתר זה (גישת האתר של הדפדפן)."
@@ -195,16 +195,16 @@
     "message": "אין כאן סרטון להורדה"
   },
   "video_playlist": {
-    "message": "רשימת סרטונים: בחר אותם ב-Mister Download Manager"
+    "message": "רשימת סרטונים: בחר אותם ב-iDM"
   },
   "video_no_ytdlp": {
-    "message": "Mister Download Manager זקוק ל-yt-dlp עבור סרטון זה"
+    "message": "iDM זקוק ל-yt-dlp עבור סרטון זה"
   },
   "video_too_long": {
     "message": "החיפוש ארך זמן רב מדי"
   },
   "video_busy": {
-    "message": "Mister Download Manager עסוק בסרטונים אחרים"
+    "message": "iDM עסוק בסרטונים אחרים"
   },
   "video_queued": {
     "message": "נוסף לתור"
@@ -228,7 +228,7 @@
     "message": "מחשב זה"
   },
   "popup_send_remote": {
-    "message": "Mister Download Manager אחר (שרת)"
+    "message": "iDM אחר (שרת)"
   },
   "popup_remote_code": {
     "message": "קוד צימוד"
@@ -297,19 +297,19 @@
     "message": "הורד את האיכות הטובה ביותר"
   },
   "video_sending": {
-    "message": "שולח ל-MDM..."
+    "message": "שולח ל-iDM..."
   },
   "video_added": {
-    "message": "נוסף ל-MDM"
+    "message": "נוסף ל-iDM"
   },
   "video_show": {
     "message": "הצג"
   },
   "video_no_answer": {
-    "message": "MDM לא הגיב"
+    "message": "iDM לא הגיב"
   },
   "video_get_mdm": {
-    "message": "קבל את MDM"
+    "message": "קבל את iDM"
   },
   "video_retry": {
     "message": "נסה שוב"
@@ -324,7 +324,7 @@
     "message": "כל האיכויות והכתוביות..."
   },
   "video_failed": {
-    "message": "Mister Download Manager אינו מותקן או לא הופעל"
+    "message": "iDM אינו מותקן או לא הופעל"
   },
   "video_download_best": {
     "message": "הורד את האיכות הטובה ביותר"

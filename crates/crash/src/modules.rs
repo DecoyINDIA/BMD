@@ -3,7 +3,7 @@
 //! The Linux dump writer (minidump-writer) makes one module of a program's mappings only when
 //! they follow each other in memory. A program linked by lld can leave an unmapped page between
 //! its first, read-only mapping (the ELF header, at file offset 0) and its code, whenever the
-//! code segment happens to start on a page of its own (MDM 0.5.0's did). The writer then lists
+//! code segment happens to start on a page of its own (iDM 0.5.0's did). The writer then lists
 //! the code as a module of its own, based where the code starts instead of where the program
 //! starts. Every address in the code was then read 0xd96000 too low: the release's symbols named
 //! the wrong functions, unwinding found no unwind tables, and the report's own offsets
@@ -215,7 +215,7 @@ mod tests {
     const EXE: &str = "/usr/bin/misterdownloadmanager";
     const LIBC: &str = "/usr/lib64/libc.so.6";
 
-    /// MDM 0.5.0's layout (#661): the header's mapping, a page unmapped, then the code with the
+    /// iDM 0.5.0's layout (#661): the header's mapping, a page unmapped, then the code with the
     /// rest of the program after it.
     fn split_maps() -> String {
         format!(

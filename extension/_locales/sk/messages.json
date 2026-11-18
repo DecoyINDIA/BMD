@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "Mister Download Manager"
+    "message": "iDM"
   },
   "description": {
-    "message": "Odovzdá sťahovanie z prehliadača do Mister Download Manager."
+    "message": "Odovzdá sťahovanie z prehliadača do iDM."
   },
   "menu": {
-    "message": "Stiahnuť pomocou Mister Download Manager"
+    "message": "Stiahnuť pomocou iDM"
   },
   "video_download": {
     "message": "Stiahnuť video"
@@ -30,19 +30,19 @@
     "message": "Nastavenia tlačidla..."
   },
   "video_sent": {
-    "message": "Odoslané do Mister Download Manager"
+    "message": "Odoslané do iDM"
   },
   "menu_selected": {
-    "message": "Stiahnuť vybrané odkazy pomocou Mister Download Manager"
+    "message": "Stiahnuť vybrané odkazy pomocou iDM"
   },
   "menu_all": {
-    "message": "Stiahnuť všetky odkazy pomocou Mister Download Manager"
+    "message": "Stiahnuť všetky odkazy pomocou iDM"
   },
   "status_connected": {
-    "message": "Pripojené k Mister Download Manager"
+    "message": "Pripojené k iDM"
   },
   "status_connected_version": {
-    "message": "Pripojené k Mister Download Manager $version$",
+    "message": "Pripojené k iDM $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Pozastavené: sťahovania zostávajú v prehliadači"
   },
   "status_not_installed": {
-    "message": "Mister Download Manager nie je nainštalovaný alebo jeho integrácia prehliadača nie je nastavená"
+    "message": "iDM nie je nainštalovaný alebo jeho integrácia prehliadača nie je nastavená"
   },
   "status_forbidden": {
-    "message": "Mister Download Manager neprijíma túto kópiu rozšírenia"
+    "message": "iDM neprijíma túto kópiu rozšírenia"
   },
   "status_not_running": {
-    "message": "Mister Download Manager sa nespustil včas"
+    "message": "iDM sa nespustil včas"
   },
   "status_host_failed": {
-    "message": "Pripojenie k aplikácii Mister Download Manager zlyhalo"
+    "message": "Pripojenie k aplikácii iDM zlyhalo"
   },
   "status_too_large": {
     "message": "Podrobnosti tohto sťahovania boli príliš veľké na odovzdanie"
   },
   "status_update_app": {
-    "message": "Aktualizujte aplikáciu Mister Download Manager, aby ste mohli používať všetko, čo toto rozšírenie ponúka"
+    "message": "Aktualizujte aplikáciu iDM, aby ste mohli používať všetko, čo toto rozšírenie ponúka"
   },
   "popup_take": {
     "message": "Preberať sťahovania z tohto prehliadača"
@@ -78,10 +78,10 @@
     "message": "Odosielať sťahovania cez proxy alebo rozšírenie VPN tohto prehliadača"
   },
   "popup_proxy_title": {
-    "message": "Aplikácia Mister Download Manager potom sťahuje cez rovnaký server proxy ako tento prehliadač. Prehliadač vás raz požiada o povolenie; vypnutím tejto možnosti sa povolenie odoberie."
+    "message": "Aplikácia iDM potom sťahuje cez rovnaký server proxy ako tento prehliadač. Prehliadač vás raz požiada o povolenie; vypnutím tejto možnosti sa povolenie odoberie."
   },
   "popup_proxy_title_chromium": {
-    "message": "Mister Download Manager potom sťahuje cez rovnaký server proxy ako tento prehliadač. Keď je táto možnosť vypnutá, rozšírenie nečíta server proxy prehliadača."
+    "message": "iDM potom sťahuje cez rovnaký server proxy ako tento prehliadač. Keď je táto možnosť vypnutá, rozšírenie nečíta server proxy prehliadača."
   },
   "popup_exclude_site": {
     "message": "Nikdy nepreberať sťahovania z webu $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Otvoriť Mister Download Manager"
+    "message": "Otvoriť iDM"
   },
   "popup_options": {
     "message": "Možnosti..."
@@ -114,7 +114,7 @@
     "message": "Pomocník"
   },
   "popup_support": {
-    "message": "Podporte MDM"
+    "message": "Podporte iDM"
   },
   "popup_fix": {
     "message": "Ako to opraviť"
@@ -150,7 +150,7 @@
     "message": "Použiť rozšírenú integráciu prehliadača je vypnuté v Možnostiach → Všeobecné."
   },
   "declined_torrents": {
-    "message": "Je to torrent a možnosť Otvoriť magnetické odkazy a súbory .torrent pomocou Mister Download Manager je v nastaveniach torrentov vypnutá."
+    "message": "Je to torrent a možnosť Otvoriť magnetické odkazy a súbory .torrent pomocou iDM je v nastaveniach torrentov vypnutá."
   },
   "declined_site_access": {
     "message": "Rozšírenie nemá povolené čítať túto stránku (prístup prehliadača k stránke)."
@@ -195,16 +195,16 @@
     "message": "Tu nie je žiadne video na stiahnutie"
   },
   "video_playlist": {
-    "message": "Zoznam videí: vyberte ich v Mister Download Manager"
+    "message": "Zoznam videí: vyberte ich v iDM"
   },
   "video_no_ytdlp": {
-    "message": "Mister Download Manager potrebuje pre toto video yt-dlp"
+    "message": "iDM potrebuje pre toto video yt-dlp"
   },
   "video_too_long": {
     "message": "Vyhľadávanie trvalo príliš dlho"
   },
   "video_busy": {
-    "message": "Mister Download Manager je zaneprázdnený inými videami"
+    "message": "iDM je zaneprázdnený inými videami"
   },
   "video_queued": {
     "message": "Pridané do radu"
@@ -228,7 +228,7 @@
     "message": "Tento počítač"
   },
   "popup_send_remote": {
-    "message": "Iný Mister Download Manager (server)"
+    "message": "Iný iDM (server)"
   },
   "popup_remote_code": {
     "message": "Párovací kód"
@@ -297,19 +297,19 @@
     "message": "Stiahnuť najlepšiu kvalitu"
   },
   "video_sending": {
-    "message": "Odosiela sa do MDM..."
+    "message": "Odosiela sa do iDM..."
   },
   "video_added": {
-    "message": "Pridané do MDM"
+    "message": "Pridané do iDM"
   },
   "video_show": {
     "message": "Zobraziť"
   },
   "video_no_answer": {
-    "message": "MDM neodpovedal"
+    "message": "iDM neodpovedal"
   },
   "video_get_mdm": {
-    "message": "Získať MDM"
+    "message": "Získať iDM"
   },
   "video_retry": {
     "message": "Znova"
@@ -324,7 +324,7 @@
     "message": "Všetky kvality a titulky..."
   },
   "video_failed": {
-    "message": "Mister Download Manager nie je nainštalovaný alebo sa nespustil"
+    "message": "iDM nie je nainštalovaný alebo sa nespustil"
   },
   "video_download_best": {
     "message": "Stiahnuť najlepšiu kvalitu"

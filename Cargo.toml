@@ -10,7 +10,7 @@ edition = "2024"
 rust-version = "1.98"
 license = "GPL-3.0-or-later"
 authors = ["Ahmed Nefzaoui", "DecoyINDIA"]
-repository = "https://github.com/DecoyINDIA/iDM-standalone"
+repository = "https://github.com/DecoyINDIA/iDM"
 publish = false
 
 [workspace.dependencies]

@@ -123,7 +123,7 @@ impl Properties {
             && item.torrent.is_none()
     }
 
-    /// OK closes the window: the address, when it can be replaced, is one MDM downloads.
+    /// OK closes the window: the address, when it can be replaced, is one iDM downloads.
     fn address_ok(&self, item: &Item) -> bool {
         !self.address_editable(item)
             || url::Url::parse(self.address.trim()).is_ok_and(|u| mdm_engine::supported(&u))
@@ -214,11 +214,11 @@ impl Properties {
             .and_then(|s| s.server.as_ref())
             .map(crate::whereis::Seen::from)
             .or_else(|| item.server.clone());
-        // A video's server is its file's once MDM's engine has downloaded it (#769, #795), as
+        // A video's server is its file's once iDM's engine has downloaded it (#769, #795), as
         // the progress window shows it; yt-dlp's own and gallery-dl's are theirs.
         let helpers = item.video.is_some() || item.gallery.is_some();
         if item.torrent.is_some() || helpers && seen.is_none() {
-            // i18n: Properties, where a download's server is: a torrent, a video or a gallery has no single server of MDM's own
+            // i18n: Properties, where a download's server is: a torrent, a video or a gallery has no single server of iDM's own
             fit(
                 ui,
                 col,

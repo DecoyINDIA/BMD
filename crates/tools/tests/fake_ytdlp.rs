@@ -12,7 +12,7 @@
 //! #769: with `page.json` beside it, the fake's page is that one (its formats' addresses on a lab
 //! server, `{EXPIRES}` replaced by a time a little ahead each look-up); asked for its choice
 //! (`-O "MDMJ %()j"`) it answers as yt-dlp does after choosing; and asked to download a choice
-//! whose streams are already there (MDM's engine downloaded them), it merges them as yt-dlp
+//! whose streams are already there (iDM's engine downloaded them), it merges them as yt-dlp
 //! does ("has already been downloaded"), downloading only what isn't there.
 //!
 //! #686: with `page-signed-in.json` beside it too, a look-up with the browser's cookies gets that
@@ -349,7 +349,7 @@ fn fake_ytdlp() -> ExitCode {
     }
     // #569: the format asked for, for the checks.
     std::fs::write(dir.join("format.txt"), &format).unwrap();
-    // #769: a choice whose streams MDM's engine downloaded: merged as yt-dlp merges them.
+    // #769: a choice whose streams iDM's engine downloaded: merged as yt-dlp merges them.
     if let Some(info) = after("--load-info-json")
         .and_then(|f| std::fs::read_to_string(f).ok())
         .and_then(|t| serde_json::from_str::<serde_json::Value>(&t).ok())
@@ -880,7 +880,7 @@ fn merge_checks(me: &Path) {
 fn job_checks(me: &Path) {
     let none = Subs::default();
 
-    // Silent for 30 s (ffmpeg merging a long video): no timeout of MDM's own ends it.
+    // Silent for 30 s (ffmpeg merging a long video): no timeout of iDM's own ends it.
     let (p, files, _o) = download_as(me, "quiet:30", &none, "b", "Talk");
     assert!(matches!(p.state, State::Done(_)), "quiet: {:?}", p.state);
     assert_eq!(files, ["Talk.mp4"]);
@@ -1235,7 +1235,7 @@ fn checks(me: &Path) {
     assert_eq!(p.sub_problems.len(), 1);
 }
 
-/// #769: MDM's engine downloads what yt-dlp chose, from a lab server: each stream over several
+/// #769: iDM's engine downloads what yt-dlp chose, from a lab server: each stream over several
 /// connections, within yt-dlp's `http_chunk_size`, into the files yt-dlp then merges; a stopped
 /// one goes on from where it stopped; an address that expires is asked of yt-dlp again; a new
 /// speed limit applies at once; and a stream in pieces stays yt-dlp's to download, said so.
@@ -1499,7 +1499,7 @@ fn engine_checks(me: &Path) {
 }
 
 /// #1102: an X post with a long text, as the report's: its video saved in a deep folder (here,
-/// under the build's own folder) under a name shortened so that every file MDM's engine and
+/// under the build's own folder) under a name shortened so that every file iDM's engine and
 /// yt-dlp make for it stays within Windows' 259 (and names within 255 everywhere), both when the
 /// engine downloads its streams (an HLS sound in pieces) and when yt-dlp does (its `.part` and
 /// `.ytdl`). A name not shortened is refused at once, and a path yt-dlp couldn't make is named
@@ -2043,11 +2043,11 @@ fn signed_in_checks(
 ///
 ///   MDM_LIVE_YTDLP=…\yt-dlp.exe MDM_LIVE_PAGE=https://www.youtube.com/watch?v=jNQXAC9IVRw cargo test -p mdm-tools --test fake_ytdlp
 ///
-/// The real yt-dlp looks the video up without cookies, as MDM does (no account, signed in
+/// The real yt-dlp looks the video up without cookies, as iDM does (no account, signed in
 /// nowhere). The fake then stands in for it with that answer: as is for a look-up without the
 /// browser's cookies, and with every stream's address expired for one with them, which
 /// googlevideo.com really refuses with 403, as it refuses a signed-in viewer's. The made-up
-/// cookies go to the fake only. MDM's engine downloads the video from YouTube's servers once the
+/// cookies go to the fake only. iDM's engine downloads the video from YouTube's servers once the
 /// download has gone without the cookies.
 fn live_checks(me: &Path) {
     let Some(real) = std::env::var_os("MDM_LIVE_YTDLP").map(PathBuf::from) else {

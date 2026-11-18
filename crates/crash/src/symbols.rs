@@ -30,7 +30,7 @@ pub fn platform() -> &'static str {
 
 /// The release asset holding `version`'s symbols for this system.
 pub fn asset_name(version: &str) -> String {
-    format!("MisterDownloadManager-{version}-symbols-{}.zip", platform())
+    format!("iDM-{version}-symbols-{}.zip", platform())
 }
 
 pub fn asset_url(version: &str) -> String {
@@ -64,7 +64,7 @@ pub fn have(data: &Path, version: &str) -> bool {
     any_sym(&store(data, version), 3)
 }
 
-/// Fetch `version`'s symbols into the store with MDM's own engine (`net`); `progress(done,
+/// Fetch `version`'s symbols into the store with iDM's own engine (`net`); `progress(done,
 /// total)` as it downloads. A download cut off resumes next time. Earlier versions' symbols are
 /// removed (only the running version's are useful).
 pub async fn fetch(
@@ -122,7 +122,7 @@ mod tests {
 
     #[test]
     fn names_follow_the_release() {
-        assert!(asset_name("0.2.3").starts_with("MisterDownloadManager-0.2.3-symbols-"));
+        assert!(asset_name("0.2.3").starts_with("iDM-0.2.3-symbols-"));
         assert!(asset_url("0.2.3").contains("/releases/download/v0.2.3/"));
     }
 

@@ -1,7 +1,7 @@
-//! Mister Download Manager's browser native messaging host (Chrome, Edge, Brave, Firefox).
+//! iDM's browser native messaging host (Chrome, Edge, Brave, Firefox).
 //!
 //! - Started by the browser: reads native messages (u32 LE length + JSON) from stdin, hands each
-//!   download to the running Mister Download Manager over mdm-ipc (starting Mister Download Manager if needed), answers
+//!   download to the running iDM over mdm-ipc (starting iDM if needed), answers
 //!   `{"ok": …}`. A download Options says to leave to the browser (file type, excluded site or
 //!   address, browser, integration off: `mdm_ipc::capture`) is answered `{"ok": false}` without
 //!   starting anything, and the extension lets the browser have it. `{"rules": true}` asks for
@@ -110,7 +110,7 @@ struct Message {
     proxy: Option<String>,
     proxy_pac: Option<String>,
     proxy_login: bool,
-    /// The user asked for this download (right-click → Download with Mister Download Manager):
+    /// The user asked for this download (right-click → Download with iDM):
     /// Options' automatic-capture rules don't apply, as IDM's "Download with IDM" takes any link.
     explicit: bool,
     /// May the download button show over videos on page `url`? With `referrer`: the tab's
@@ -147,10 +147,10 @@ struct Message {
     exclude_site: Option<String>,
     /// The popup's Undo (#404): take this host name off the excluded sites again.
     include_site: Option<String>,
-    /// The toolbar button: bring Mister Download Manager's window up.
+    /// The toolbar button: bring iDM's window up.
     open: bool,
     /// The extension left a download to the browser by Options' rules (it has them from
-    /// `rules`) without asking about it: for MDM's log. Under its own key, with no `url`: an
+    /// `rules`) without asking about it: for iDM's log. Under its own key, with no `url`: an
     /// older host takes it for an address it can't download, and hands nothing over.
     declined: Option<Notice>,
     /// The video button's quality menu: look this video up (with the message's `cookies`,
@@ -252,7 +252,7 @@ struct Reply {
     /// (docs/browser-help.md): `not-running`, `too-large`, `refused`, `options`.
     #[serde(skip_serializing_if = "Option::is_none")]
     why: Option<&'static str>,
-    /// Mister Download Manager's version (this host comes with it).
+    /// iDM's version (this host comes with it).
     #[serde(skip_serializing_if = "Option::is_none")]
     version: Option<&'static str>,
     /// For `rules`: Options → File types.
@@ -277,7 +277,7 @@ struct Reply {
     #[serde(skip_serializing_if = "Option::is_none")]
     capture_off: Option<&'static str>,
     /// For `rules`: whether a .torrent is taken (Torrent settings → "Open magnet links and
-    /// .torrent files with Mister Download Manager", #1058); false, the extension leaves one to
+    /// .torrent files with iDM", #1058); false, the extension leaves one to
     /// the browser (`torrents`). A host before it doesn't say: the extension takes them as listed.
     #[serde(skip_serializing_if = "Option::is_none")]
     torrents: Option<bool>,
@@ -290,7 +290,7 @@ struct Reply {
     #[serde(skip_serializing_if = "Option::is_none")]
     video_lookup: Option<bool>,
     /// The quality menu's answer: where the look-up is, or what became of the choice. Its
-    /// states are never a `why`: they say nothing of whether MDM is reachable.
+    /// states are never a `why`: they say nothing of whether iDM is reachable.
     #[serde(skip_serializing_if = "Option::is_none")]
     lookup: Option<mdm_ipc::api::VideoLookupAnswer>,
     /// For `panel` when it may show (#1278): Options → Download panels → Button size is
@@ -325,7 +325,7 @@ impl Reply {
     }
 }
 
-/// The right-click menu's links (a page's, a selection's) as the app's command: those MDM
+/// The right-click menu's links (a page's, a selection's) as the app's command: those iDM
 /// downloads, with the page's referrer and cookies; or why not (the reply's `why` and `error`).
 fn links_command(m: &Message) -> Result<mdm_ipc::Command, (&'static str, &'static str)> {
     let links: Vec<String> = m
@@ -337,10 +337,10 @@ fn links_command(m: &Message) -> Result<mdm_ipc::Command, (&'static str, &'stati
     if m.links_part.as_ref().is_some_and(|p| !p.valid()) {
         return Err(("refused", "a part of a page's links that doesn't fit"));
     }
-    // A part goes to the app even with nothing in it MDM downloads: the list is complete only
+    // A part goes to the app even with nothing in it iDM downloads: the list is complete only
     // with all its parts.
     if links.is_empty() && m.links_part.is_none() {
-        return Err(("refused", "no link MDM downloads"));
+        return Err(("refused", "no link iDM downloads"));
     }
     Ok(mdm_ipc::Command {
         links,
@@ -557,11 +557,11 @@ fn log_left(browser: &str, site: &str, name: &str, reason: impl AsRef<str>, priv
     log_line(&left_line(browser, site, name, reason.as_ref(), private));
 }
 
-/// A line in MDM's log (`<data>/logs/mdm.log`, crates/crash/src/logs.rs), dated as the app's
+/// A line in iDM's log (`<data>/logs/mdm.log`, crates/crash/src/logs.rs), dated as the app's
 /// own lines: the host runs apart from the app, which may not be running at all. Appended
 /// whole, so it never splits a line the app writes at the same time.
 fn log_line(message: &str) {
-    // Unit tests run without a data folder of their own: never into the real MDM's log
+    // Unit tests run without a data folder of their own: never into the real iDM's log
     // (tests/host.rs runs the program with its own and reads what it wrote).
     if cfg!(test) {
         return;
@@ -744,7 +744,7 @@ fn menu_command(
 }
 
 /// One of the quality menu's messages, asked of the running app (never started for it: a menu
-/// over a video isn't worth starting MDM unseen; the button's click does that).
+/// over a video isn't worth starting iDM unseen; the button's click does that).
 fn quality_menu(
     ask: MenuAsk,
     m: &Message,
@@ -965,7 +965,7 @@ fn to_command(m: Message) -> mdm_ipc::Command {
         post_type: m.post.as_ref().and(some(m.post_type)),
         post: m.post,
         private: m.private,
-        // The browser's own download handed over, not the user's explicit "Download with MDM"
+        // The browser's own download handed over, not the user's explicit "Download with iDM"
         // (right-click menu, toolbar list): that is an add of its own.
         browser_handoff: !m.explicit,
         proxy: m.proxy.as_deref().and_then(browser_proxy),
@@ -1020,7 +1020,7 @@ enum Undelivered {
     Refused(String),
 }
 
-/// How long a Mister Download Manager just started gets to open its channel (a first start, a
+/// How long a iDM just started gets to open its channel (a first start, a
 /// slow disk or an antivirus scan can take a while); the browser's download waits meanwhile.
 const START_WAIT: Duration = Duration::from_secs(20);
 
@@ -1036,7 +1036,7 @@ fn bundle_of(exe: &std::path::Path) -> Option<PathBuf> {
         .map(PathBuf::from)
 }
 
-/// Hand `cmd` to Mister Download Manager, starting it only if none is running.
+/// Hand `cmd` to iDM, starting it only if none is running.
 fn deliver(cmd: &mdm_ipc::Command) -> Result<(), Undelivered> {
     // Whatever it asks may open a window: the app may bring it to the front (Windows only: Linux
     // and macOS have no foreground lock for a host to lift).
@@ -1096,9 +1096,7 @@ fn deliver(cmd: &mdm_ipc::Command) -> Result<(), Undelivered> {
             break;
         }
     }
-    Err(Undelivered::NotRunning(
-        "Mister Download Manager did not start".into(),
-    ))
+    Err(Undelivered::NotRunning("iDM did not start".into()))
 }
 
 /// Start the app outside the browser's reach: browsers end a host's whole process tree (on
@@ -1185,7 +1183,7 @@ fn this_program() -> Result<PathBuf, String> {
 fn chromium_manifest(program: &std::path::Path) -> serde_json::Value {
     serde_json::json!({
         "name": HOST_NAME,
-        "description": "Mister Download Manager",
+        "description": "iDM",
         "path": program,
         "type": "stdio",
         "allowed_origins": chromium_ids().into_iter().map(origin).collect::<Vec<_>>(),
@@ -1196,7 +1194,7 @@ fn chromium_manifest(program: &std::path::Path) -> serde_json::Value {
 fn firefox_manifest(program: &std::path::Path) -> serde_json::Value {
     serde_json::json!({
         "name": HOST_NAME,
-        "description": "Mister Download Manager",
+        "description": "iDM",
         "path": program,
         "type": "stdio",
         "allowed_extensions": [FIREFOX_ID],
@@ -1215,7 +1213,7 @@ fn portable_refused() -> Result<(), String> {
     if mdm_ipc::portable_dir().is_some() {
         return Err(
             "portable mode: browser integration is not registered (nothing is written outside \
-             its folder); install Mister Download Manager to use it"
+             its folder); install iDM to use it"
                 .into(),
         );
     }
@@ -1231,7 +1229,7 @@ fn temporary_refused() -> Result<(), String> {
     if mdm_ipc::browsers::in_temporary_folder(&program) {
         return Err(format!(
             "{} is a temporary folder, deleted once it quits (an archive run without extracting \
-             it first): browser integration is not registered. Extract Mister Download Manager \
+             it first): browser integration is not registered. Extract iDM \
              to a folder of its own and run it from there",
             program.parent().unwrap_or(&program).display()
         ));
@@ -1445,7 +1443,7 @@ fn register(all_users: bool) -> Result<(), String> {
 }
 
 /// Linux and macOS, at the app's start (#818): `--register` for this user, but a manifest that
-/// works naming another copy of MDM is left alone (two copies are both legitimate; neither takes
+/// works naming another copy of iDM is left alone (two copies are both legitimate; neither takes
 /// the other's at each start). A browser without one, or with one that leads nowhere (a copy
 /// moved or deleted, run from a temporary folder, an AppImage gone), gets this program's.
 #[cfg(not(windows))]
@@ -1474,7 +1472,7 @@ fn register_as(all_users: bool, at_start: bool) -> Result<(), String> {
     // A browser that reads the package's manifest for everyone, naming this program, needs none
     // in the home folder: one written there before is taken away, so uninstalling the package
     // leaves nothing behind (#266). The browser reads a user's manifest first, so one naming
-    // another program (an earlier MDM, an AppImage's copy) would win over the package's: Set it
+    // another program (an earlier iDM, an AppImage's copy) would win over the package's: Set it
     // up takes it away too (at a start, one that works stays, #818).
     let mut covered = 0;
     if !all_users {
@@ -1604,9 +1602,7 @@ fn main() {
         // Browsers start the host naming the caller: serve only our own extension (the
         // manifests' allowed_origins / allowed_extensions say the same; this is a second check).
         _ if our_caller(&args) => serve().map_err(|e| e.to_string()),
-        _ => Err(format!(
-            "refusing caller {args:?}: not the Mister Download Manager extension"
-        )),
+        _ => Err(format!("refusing caller {args:?}: not the iDM extension")),
     };
     if let Err(e) = result {
         eprintln!("misterdownloadmanager-nmhost: {e}");
@@ -1614,7 +1610,7 @@ fn main() {
     }
 }
 
-/// The addresses MDM downloads (mdm_engine::supported): http(s), and ftp links sent from a page
+/// The addresses iDM downloads (mdm_engine::supported): http(s), and ftp links sent from a page
 /// (browsers no longer download ftp themselves).
 fn downloadable(url: &str) -> bool {
     let scheme = url.split_once("://").map_or("", |(s, _)| s);
@@ -1631,12 +1627,9 @@ mod tests {
     #[test]
     fn safari_helper_finds_its_app() {
         let exe = std::path::Path::new(
-            "/Applications/Mister Download Manager.app/Contents/PlugIns/Mister Download Manager.appex/Contents/MacOS/misterdownloadmanager-nmhost",
+            "/Applications/iDM.app/Contents/PlugIns/iDM.appex/Contents/MacOS/misterdownloadmanager-nmhost",
         );
-        assert_eq!(
-            bundle_of(exe),
-            Some(PathBuf::from("/Applications/Mister Download Manager.app"))
-        );
+        assert_eq!(bundle_of(exe), Some(PathBuf::from("/Applications/iDM.app")));
         assert_eq!(bundle_of(std::path::Path::new("/usr/bin/nmhost")), None);
     }
 
@@ -1722,7 +1715,7 @@ mod tests {
         );
         assert!(r.ok && r.types.unwrap().contains("ZIP"));
         assert_eq!(file_name_of(&msg("https://x.org/f/b.rar?x=1", "")), "b.rar");
-        // Right-click → Download with Mister Download Manager: any link, whatever Options say.
+        // Right-click → Download with iDM: any link, whatever Options say.
         let mut page = msg("https://example.com/page.html", "");
         assert!(verdict(&page, &rules).is_err());
         page.explicit = true;
@@ -2680,7 +2673,7 @@ mod tests {
 
     /// A page's links: a whole list as before (an older extension's, or a short one), and a
     /// long one's parts, each handed over with its place and the page's referrer and cookies,
-    /// even a part with nothing MDM downloads (the app waits for every part). A part that
+    /// even a part with nothing iDM downloads (the app waits for every part). A part that
     /// doesn't add up is refused.
     #[test]
     fn a_pages_links_in_parts_reach_the_app_as_parts() {
@@ -2710,7 +2703,7 @@ mod tests {
             })
         );
         assert!(cmd.private && cmd.referer.is_some() && cmd.cookies.is_some());
-        // Nothing MDM downloads in it: still handed over, to complete the list.
+        // Nothing iDM downloads in it: still handed over, to complete the list.
         let none = Message {
             links: vec!["mailto:a@b".into()],
             links_part: Some(mdm_ipc::LinksPart {
@@ -2722,7 +2715,7 @@ mod tests {
         };
         let cmd = links_command(&none).ok().unwrap();
         assert!(cmd.links.is_empty() && cmd.links_part.is_some());
-        // A whole list with nothing MDM downloads is refused, as before.
+        // A whole list with nothing iDM downloads is refused, as before.
         let r = links_command(&Message {
             links: vec!["mailto:a@b".into()],
             ..Default::default()
@@ -2808,17 +2801,14 @@ mod tests {
         assert_eq!(c.referer.as_deref(), Some("https://x/"));
         assert_eq!(c.cookies.as_deref(), Some("a=1"));
         assert_eq!(c.user_agent.as_deref(), Some("UA"));
-        assert_eq!(
-            c.name, None,
-            "empty filename means: let Mister Download Manager decide"
-        );
+        assert_eq!(c.name, None, "empty filename means: let iDM decide");
         assert!(!c.later && !c.silent);
         assert_eq!((c.proxy, c.proxy_pac, c.proxy_login), (None, None, false));
         assert_eq!(c.video_title, None);
     }
 
     /// #948: a name that is only the address's (Chromium's, for a video its rule made a
-    /// download) still passes Options' file types, and reaches the app as no name, so MDM names
+    /// download) still passes Options' file types, and reaches the app as no name, so iDM names
     /// the file from the server's answer (its Content-Disposition).
     #[test]
     fn a_guessed_name_is_checked_but_not_given() {

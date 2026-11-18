@@ -31,7 +31,7 @@ pub enum Family {
     Gecko,
 }
 
-/// A browser MDM knows by name.
+/// A browser iDM knows by name.
 #[derive(Debug)]
 pub struct Browser {
     /// Its name in the app (the offer window, Options).
@@ -160,7 +160,7 @@ const fn gecko(
     }
 }
 
-/// Every browser MDM names, Chromium's first.
+/// Every browser iDM names, Chromium's first.
 pub const BROWSERS: &[Browser] = &[
     // Each channel keeps its own folder (Chromium's chrome_paths_linux.cc and chrome_paths_mac.mm).
     chromium(
@@ -713,7 +713,7 @@ impl Holder {
             return Holder::ProgramGone(program);
         }
         // The AppImage's copy of the helper (crates/app/src/unix.rs) starts the AppImage named
-        // in `app-path` beside it when MDM isn't running.
+        // in `app-path` beside it when iDM isn't running.
         #[cfg(unix)]
         if let Ok(app) = std::fs::read(program.with_file_name("app-path")) {
             use std::os::unix::ffi::OsStrExt;
@@ -731,7 +731,7 @@ impl Holder {
     }
 }
 
-/// What a copy of MDM does at its start with one browser's registry entries on Windows (#818).
+/// What a copy of iDM does at its start with one browser's registry entries on Windows (#818).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Repair {
     /// Nothing: they work (whichever copy they name: two copies are both legitimate, and
@@ -758,7 +758,7 @@ pub fn windows_repair(user: Option<&Holder>, machine: Option<&Holder>) -> Repair
     }
 }
 
-/// Linux and macOS, at MDM's start: whether `program` writes its manifest where `existing` is
+/// Linux and macOS, at iDM's start: whether `program` writes its manifest where `existing` is
 /// (None: there is none yet). One that works naming another copy is left alone; one naming this
 /// program is written again (its allowed extensions may have changed), and one that leads
 /// nowhere is taken over (#818).
@@ -1197,7 +1197,7 @@ mod tests {
     }
 
     /// #685: Helium alone, on Linux, reads the package's manifest for everyone in Chromium's
-    /// folder (or Chrome's): no file of MDM's left in its own folder in the home.
+    /// folder (or Chrome's): no file of iDM's left in its own folder in the home.
     #[cfg(unix)]
     #[test]
     fn a_manifest_for_everyone_covers_helium() {
@@ -1369,9 +1369,9 @@ mod tests {
         assert!(temporary(&at(temp), &temps));
         // An archive tool's folder outside the temporary folder (WinRAR's own setting).
         assert!(temporary(&at(&format!("{home}/rt/Rar$EXa1.2")), &temps));
-        assert!(!temporary(&at(&format!("{home}/MDM")), &temps));
-        assert!(!temporary(&at(&format!("{home}/Temporary/MDM")), &temps));
-        assert!(!temporary(&at(&format!("{temp}x/MDM")), &temps));
+        assert!(!temporary(&at(&format!("{home}/iDM")), &temps));
+        assert!(!temporary(&at(&format!("{home}/Temporary/iDM")), &temps));
+        assert!(!temporary(&at(&format!("{temp}x/iDM")), &temps));
         if cfg!(windows) {
             let upper = r"C:\USERS\X\APPDATA\LOCAL\TEMP\mdm";
             assert!(temporary(&at(upper), &temps), "Windows' paths ignore case");
@@ -1438,7 +1438,7 @@ mod tests {
                 .join("browser-host")
                 .join("misterdownloadmanager-nmhost");
             program(&copy);
-            let image = d.path().join("MDM.AppImage");
+            let image = d.path().join("iDM.AppImage");
             program(&image);
             std::fs::write(
                 copy.with_file_name("app-path"),

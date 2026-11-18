@@ -12,16 +12,14 @@ use crate::dialogs::{Outcome, window};
 use crate::winui::{self, ButtonKind, r};
 
 /// The repository: problem reports, releases, source, licences.
-pub const REPO: &str = "https://github.com/DecoyINDIA/iDM-standalone";
-/// The upstream creator's GitHub Sponsors page, linked from Help and About.
-pub const SPONSORS: &str = "https://github.com/sponsors/anefzaoui";
-const LATEST: &str = "https://api.github.com/repos/DecoyINDIA/iDM-standalone/releases/latest";
+pub const REPO: &str = "https://github.com/DecoyINDIA/iDM";
+const LATEST: &str = "https://api.github.com/repos/DecoyINDIA/iDM/releases/latest";
 /// The repository on GitHub (`owner/name`): its release pages when GitHub's API refuses for its
 /// rate limit (#1337).
-const REPO_PATH: &str = "DecoyINDIA/iDM-standalone";
+const REPO_PATH: &str = "DecoyINDIA/iDM";
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const COMMIT: &str = env!("MDM_COMMIT");
-/// While MDM runs, the automatic check comes again this often (it also checks at every start).
+/// While iDM runs, the automatic check comes again this often (it also checks at every start).
 pub const CHECK_EVERY: i64 = 24 * 3600;
 /// The check at start waits this long (the window, the list and the downloads first).
 pub const CHECK_AFTER_START: std::time::Duration = std::time::Duration::from_secs(5);
@@ -60,7 +58,7 @@ pub fn page_url(doc: &str, lang: &str) -> String {
         None => (doc, String::new()),
     };
     let path = match file {
-        "" => "/".to_owned(),
+        "" => return REPO.to_owned(),
         "README.md" => "/help/".to_owned(),
         page => format!("/help/{}.html", page.strip_suffix(".md").unwrap_or(page)),
     };
@@ -86,17 +84,17 @@ pub fn open_page(doc: &str) {
     }
 }
 
-/// Help → Support MDM and About's link: the Sponsors page in the browser. Asked for only: MDM
+/// Help → Support iDM and About's link: the project on GitHub. Asked for only: iDM
 /// never brings it up by itself, and never in an off-screen test run (MDM_OFFSCREEN), whose
 /// clicks come from scripts, not from a person at the browser.
 pub fn support() {
     if !crate::offscreen() {
-        crate::launch::open(SPONSORS);
+        crate::launch::open(REPO);
     }
 }
 
 /// A new GitHub issue on the Bug report form (.github/ISSUE_TEMPLATE/bug.yml), filled with
-/// what MDM knows: its version, the system and its version, how it was installed, the
+/// what iDM knows: its version, the system and its version, how it was installed, the
 /// language. The parameters are the form's field ids (all text fields: GitHub's page drops a
 /// dropdown's value from the address).
 pub fn report_problem() {
@@ -115,7 +113,7 @@ pub fn report_problem() {
         });
 }
 
-/// The Bug report form's fields MDM fills in: (field id, value).
+/// The Bug report form's fields iDM fills in: (field id, value).
 fn report_fields() -> Vec<(&'static str, String)> {
     #[cfg(windows)]
     let os_version = crate::win32::windows_version();
@@ -201,7 +199,7 @@ pub fn check(rt: &tokio::runtime::Handle, ctx: &egui::Context) -> Slot {
 fn settled(joined: Result<Result<Found, String>, tokio::task::JoinError>) -> Result<Found, String> {
     joined.unwrap_or_else(|e| {
         tracing::warn!("the update check stopped: {e}");
-        Err(crate::i18n::t("Mister Download Manager hit an internal error").to_owned())
+        Err(crate::i18n::t("iDM hit an internal error").to_owned())
     })
 }
 
@@ -237,7 +235,7 @@ async fn latest() -> Result<Found, String> {
     };
     let client = builder(&sources.feed)?.build().map_err(|e| e.to_string())?;
     // GitHub's pages are read without following their redirects: where `releases/latest` sends
-    // MDM is the answer (mdm_tools::github::latest_tag).
+    // iDM is the answer (mdm_tools::github::latest_tag).
     let pages = |url: &str| {
         builder(url)?
             .redirect(reqwest::redirect::Policy::none())
@@ -369,7 +367,7 @@ fn changelog_section(text: &str, version: &str) -> Option<(String, String)> {
 /// The version a release's tag names (`v0.5.2` → `0.5.2`), or why there is none.
 fn version_of(tag: &str) -> Result<&str, String> {
     let version = tag.trim().trim_start_matches(['v', 'V']);
-    // A number MDM can't read ("next", "1.x") would compare as 0 and pass for older: no answer
+    // A number iDM can't read ("next", "1.x") would compare as 0 and pass for older: no answer
     // is better than a wrong one.
     let numeric = version
         .split_once('-')
@@ -437,7 +435,7 @@ pub struct Updates {
     result: Option<Result<Found, String>>,
     /// Update now: the release file on its way (crate::update).
     job: Option<crate::update::Job>,
-    /// What Update now came to, when it didn't close MDM.
+    /// What Update now came to, when it didn't close iDM.
     status: Option<UpdateStatus>,
     /// Update now pressed by a test (`/show update-now`, feature `test-update`).
     press: bool,
@@ -479,7 +477,7 @@ impl Updates {
     }
 
     /// `weekly`: the automatic check (its switch is here, under the answer). `Done(true)`:
-    /// the update is going in place, MDM closes for it (and starts again).
+    /// the update is going in place, iDM closes for it (and starts again).
     pub fn show(
         &mut self,
         ctx: &egui::Context,
@@ -491,7 +489,7 @@ impl Updates {
             self.slot = None;
         }
         let install = mdm_tools::update::Install::detect();
-        // The release file arrived (checked) and is in place (on the job's thread): MDM closes
+        // The release file arrived (checked) and is in place (on the job's thread): iDM closes
         // once the new copy (or the installer) has started.
         if let Some(res) = self.job.as_ref().and_then(crate::update::Job::result) {
             self.job = None;
@@ -534,9 +532,7 @@ impl Updates {
                     }
                     Some(Ok(Found::Latest)) => {
                         let line = crate::i18n::fmt(
-                            crate::i18n::t(
-                                "You have the latest version of Mister Download Manager ({version}).",
-                            ),
+                            crate::i18n::t("You have the latest version of iDM ({version})."),
                             &[("version", VERSION)],
                         );
                         winui::paragraph(&p, o.x + 11.0, o.y + 24.0, &line, ink, right, 13.0);
@@ -554,9 +550,7 @@ impl Updates {
                     }
                     Some(Ok(Found::Newer(rel))) => {
                         let line = crate::i18n::fmt(
-                            crate::i18n::t(
-                                "Mister Download Manager {version} is available (released {date}).",
-                            ),
+                            crate::i18n::t("iDM {version} is available (released {date})."),
                             &[("version", &rel.version), ("date", &rel.date)],
                         );
                         winui::fit(
@@ -572,7 +566,7 @@ impl Updates {
                         // A package of another package manager (pacman, …): that one updates it.
                         let have = if install == mdm_tools::update::Install::System {
                             crate::i18n::fmt(
-                                // i18n: Check for updates, under the new version's line, when MDM was installed by the Linux system's package manager (pacman, ...), which MDM can't update itself
+                                // i18n: Check for updates, under the new version's line, when iDM was installed by the Linux system's package manager (pacman, ...), which iDM can't update itself
                                 crate::i18n::t(
                                     "You have version {version}, from your system's package manager: update it there.",
                                 ),
@@ -726,7 +720,7 @@ impl Updates {
                         ui,
                         o + vec2(11.0, bottom + 4.0),
                         weekly,
-                        // i18n: check box in the update window: look for a new version every time MDM starts
+                        // i18n: check box in the update window: look for a new version every time iDM starts
                         "Check for updates at every start",
                         true,
                         Some(o.x + status_right),
@@ -877,7 +871,7 @@ impl About {
         window(
             ctx,
             "about",
-            "About Mister Download Manager",
+            "About iDM",
             [420.0, 236.0 + extra],
             false,
             winui::BG(),
@@ -889,13 +883,7 @@ impl About {
                     include_bytes!("../assets/icons/app/mdm-48.png"),
                 )
                 .paint_at(ui, winui::r(o, 16.0, 16.0, 48.0, 48.0));
-                winui::text(
-                    &p,
-                    o.x + 80.0,
-                    o.y + 28.0,
-                    crate::i18n::t("Mister Download Manager"),
-                    ink,
-                );
+                winui::text(&p, o.x + 80.0, o.y + 28.0, crate::i18n::t("iDM"), ink);
                 let version = crate::i18n::fmt(
                     crate::i18n::t("Version {version} ({commit})"),
                     &[("version", VERSION), ("commit", COMMIT)],
@@ -955,16 +943,9 @@ impl About {
                 ) {
                     crate::launch::open(format!("{REPO}/blob/main/ATTRIBUTION.md"));
                 }
-                // Its own row under them: the creator's Sponsors page (Help → Support MDM).
+                // Its own row under them: the project's GitHub page (Help → Support iDM).
                 y += 22.0;
-                if winui::link(
-                    ui,
-                    &p,
-                    o.x + 80.0,
-                    y,
-                    "Support MDM on GitHub Sponsors",
-                    "support",
-                ) {
+                if winui::link(ui, &p, o.x + 80.0, y, "Support iDM on GitHub", "support") {
                     support();
                 }
                 // The last row ends above OK (at 204 when it fits as planned).
@@ -1131,9 +1112,9 @@ impl TellFriend {
     fn message() -> String {
         crate::i18n::fmt(
             crate::i18n::t(
-                "I download with Mister Download Manager: fast, free, and it looks like the download manager you already know. {link}",
+                "I download with iDM: fast, free, and it looks like the download manager you already know. {link}",
             ),
-            &[("link", SITE)],
+            &[("link", REPO)],
         )
     }
 
@@ -1250,7 +1231,7 @@ impl TellFriend {
                             .collect::<String>()
                             .replace('+', "%20")
                     };
-                    let subject = crate::i18n::t("Mister Download Manager");
+                    let subject = crate::i18n::t("iDM");
                     let opened = open::that_detached(format!(
                         "mailto:?subject={}&body={}",
                         enc(subject),
@@ -1650,8 +1631,8 @@ mod tests {
             at("queues-and-scheduler.md#the-scheduler-window", "ar"),
             "https://misterdownloadmanager.com/ar/help/queues-and-scheduler.html#the-scheduler-window"
         );
-        assert_eq!(at("", "fr"), "https://misterdownloadmanager.com/fr/");
-        assert_eq!(at("", "en"), "https://misterdownloadmanager.com/");
+        assert_eq!(at("", "fr"), REPO);
+        assert_eq!(at("", "en"), REPO);
         // The site's folders: its own codes, a region read as its language, else English.
         for (lang, folder) in [
             ("pt-br", "/pt-br"),

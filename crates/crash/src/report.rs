@@ -1,8 +1,8 @@
 //! The text of a report, in the manner of Minecraft's: what happened, the stack of the thread that
-//! crashed or froze, what MDM was doing, the system, then every other thread and the modules.
-//! English on purpose: it is read by whoever fixes the bug, whatever language MDM speaks.
+//! crashed or froze, what iDM was doing, the system, then every other thread and the modules.
+//! English on purpose: it is read by whoever fixes the bug, whatever language iDM speaks.
 //!
-//! Nothing personal on purpose: the home folder shows as `~`, and MDM's state is counts only (no
+//! Nothing personal on purpose: the home folder shows as `~`, and iDM's state is counts only (no
 //! addresses or file names). A panic's message and the log can hold text the user typed; the
 //! report window shows all of it before anything is sent.
 
@@ -40,7 +40,7 @@ const SORRY: &[&str] = &[
 pub fn text(input: &Input, home: Option<&Path>) -> String {
     let kind = input.kind.unwrap_or(Kind::Crash);
     let mut s = String::new();
-    let _ = writeln!(s, "---- Mister Download Manager crash report ----");
+    let _ = writeln!(s, "---- iDM crash report ----");
     let n = input.time.bytes().map(usize::from).sum::<usize>();
     let _ = writeln!(s, "// {}", SORRY[n % SORRY.len()]);
     let _ = writeln!(s);
@@ -109,7 +109,7 @@ pub fn text(input: &Input, home: Option<&Path>) -> String {
                             secs(b.wall_ms)
                         ),
                         (Some(Stuck::Starved), Some(b)) => format!(
-                            ". Its thread ran only {} of {} s, and not in a wait: the computer was too busy to run MDM, or slow to load it from disk{}. Most likely not a bug in MDM.",
+                            ". Its thread ran only {} of {} s, and not in a wait: the computer was too busy to run iDM, or slow to load it from disk{}. Most likely not a bug in iDM.",
                             secs(b.cpu_ms),
                             secs(b.wall_ms),
                             b.faults
@@ -132,7 +132,7 @@ pub fn text(input: &Input, home: Option<&Path>) -> String {
                 _ => {
                     let _ = writeln!(
                         s,
-                        "A dump asked for while MDM was running (a freeze or a panic): the window thread first."
+                        "A dump asked for while iDM was running (a freeze or a panic): the window thread first."
                     );
                 }
             }
@@ -162,7 +162,7 @@ pub fn text(input: &Input, home: Option<&Path>) -> String {
         Kind::Exit => {
             let _ = writeln!(
                 s,
-                "MDM ended without closing normally, and no crash was caught (it may have been ended from outside, or the system stopped it)."
+                "iDM ended without closing normally, and no crash was caught (it may have been ended from outside, or the system stopped it)."
             );
         }
     }
@@ -193,9 +193,9 @@ pub fn text(input: &Input, home: Option<&Path>) -> String {
         let _ = writeln!(s);
     }
 
-    // What MDM was doing.
+    // What iDM was doing.
     if !input.log_tail.is_empty() {
-        let _ = writeln!(s, "-- What MDM was doing (its log) --");
+        let _ = writeln!(s, "-- What iDM was doing (its log) --");
         for l in &input.log_tail {
             let _ = writeln!(s, "{l}");
         }
@@ -205,7 +205,7 @@ pub fn text(input: &Input, home: Option<&Path>) -> String {
     // The system.
     let _ = writeln!(s, "-- System details --");
     if let Some(ss) = &input.notes.session {
-        let _ = writeln!(s, "MDM: {} ({})", ss.version, ss.commit);
+        let _ = writeln!(s, "iDM: {} ({})", ss.version, ss.commit);
         let _ = writeln!(s, "Installed with: {}", ss.install);
         let _ = writeln!(s, "System: {} ({})", ss.os_version, ss.arch);
         let _ = writeln!(s, "Language: {}", ss.language);
@@ -371,16 +371,16 @@ pub fn make(
 /// The kind in a sentence.
 pub fn description(kind: Kind, notes: &Notes) -> &'static str {
     match kind {
-        Kind::Crash => "MDM crashed",
-        Kind::Panic => "MDM hit an internal error and closed",
+        Kind::Crash => "iDM crashed",
+        Kind::Panic => "iDM hit an internal error and closed",
         Kind::Freeze if notes.recovered => "The window stopped responding (it recovered)",
         Kind::Freeze => "The window stopped responding",
-        Kind::Exit => "MDM closed unexpectedly",
+        Kind::Exit => "iDM closed unexpectedly",
     }
 }
 
 /// A short, stable name for the problem, the same for every report of it (it finds the issue
-/// already filed for it): the kind and the first of MDM's own functions on the stack that
+/// already filed for it): the kind and the first of iDM's own functions on the stack that
 /// matters ("freeze in misterdownloadmanager::winui::combo_edit").
 pub fn signature(kind: Kind, input: &Input) -> String {
     let main_module = main_module(input);
@@ -389,7 +389,7 @@ pub fn signature(kind: Kind, input: &Input) -> String {
     if over_before_snapshot(kind, input) {
         return format!("{} over before the snapshot", kind.word());
     }
-    // A computer too busy to run MDM: one name for all of them, wherever the thread happened to be.
+    // A computer too busy to run iDM: one name for all of them, wherever the thread happened to be.
     if let Some(f) = input.notes.freeze.as_ref().filter(|_| kind == Kind::Freeze) {
         let top = key_thread(kind, input).and_then(|t| t.frames.first());
         if stuck(f, top, main_module) == Some(Stuck::Starved) {
@@ -443,7 +443,7 @@ pub enum Stuck {
     /// It hardly ran and sits in a wait: a deadlock, or a wait on the disk or the network.
     Waiting,
     /// It hardly ran, yet sits in ordinary code: the computer didn't give it time, or was loading
-    /// MDM's code from disk (a page fault stops a thread wherever it is).
+    /// iDM's code from disk (a page fault stops a thread wherever it is).
     Starved,
 }
 
@@ -469,7 +469,7 @@ pub fn stuck(
     match top.function.as_deref() {
         Some(n) if is_wait(n) => Some(Stuck::Waiting),
         Some(_) => (share <= STARVED_SHARE).then_some(Stuck::Starved),
-        // Unnamed (no symbols): MDM's own module is ordinary code; a system module where the
+        // Unnamed (no symbols): iDM's own module is ordinary code; a system module where the
         // thread hardly ran is almost always a wait (the system's waits live there).
         None if share > STARVED_SHARE => None,
         None if main.is_some() && top.module.as_deref() == main => Some(Stuck::Starved),
@@ -590,7 +590,7 @@ fn in_sleep_after_a_frame(frames: &[Frame]) -> bool {
 
 /// The first frame in the program's own code, past the system, Rust's standard library, locks,
 /// panics and the crash reporter itself: a function of the program's own crates first (named as
-/// its main module, the dump's first: "misterdownloadmanager", or MDM's `mdm_*` crates), else
+/// its main module, the dump's first: "misterdownloadmanager", or iDM's `mdm_*` crates), else
 /// of any crate linked into it (egui, winit…).
 fn first_own_frame(frames: &[Frame], main_module: Option<&str>) -> Option<String> {
     let own_crate = main_module
@@ -791,7 +791,7 @@ mod tests {
                 }),
                 session: Some(Session {
                     version: "0.2.3".into(),
-                    exe: r"C:\Users\Someone\AppData\Local\MDM\mdm.exe".into(),
+                    exe: r"C:\Users\Someone\AppData\Local\iDM\mdm.exe".into(),
                     started: 1_793_505_000,
                     ..Default::default()
                 }),
@@ -807,7 +807,7 @@ mod tests {
         let t = text(&input, Some(Path::new(r"C:\Users\Someone")));
         assert!(t.contains("-- Window thread (frozen): main (1) --"));
         assert!(t.contains("at crates/app/src/winui.rs:2088"));
-        assert!(t.contains(r"Program: ~\AppData\Local\MDM\mdm.exe"));
+        assert!(t.contains(r"Program: ~\AppData\Local\iDM\mdm.exe"));
         assert!(!t.contains("Someone"));
         // The watchdog's thread is listed among the others.
         assert!(t.contains("-- Thread watchdog (2) --"));
@@ -867,7 +867,7 @@ mod tests {
         }
     }
 
-    /// The window thread stopped in ordinary code of MDM's (#57: App::dialogs, 0 downloads).
+    /// The window thread stopped in ordinary code of iDM's (#57: App::dialogs, 0 downloads).
     fn stopped_in_own_code() -> Analysis {
         let mut a = frozen();
         a.threads[0].frames = vec![
@@ -888,8 +888,8 @@ mod tests {
         let t = text(&input, None);
         assert!(t.contains("Its thread ran only 0.4 of 7.5 s, and not in a wait"));
         assert!(t.contains("(12000 page faults meanwhile)"));
-        assert!(t.contains("Most likely not a bug in MDM."));
-        // Without symbols, MDM's own module counts as ordinary code, a system one as a wait.
+        assert!(t.contains("Most likely not a bug in iDM."));
+        // Without symbols, iDM's own module counts as ordinary code, a system one as a wait.
         let mut bare = stopped_in_own_code();
         bare.modules = vec![crate::analyze::ModuleInfo {
             name: "misterdownloadmanager.exe".into(),
@@ -907,7 +907,7 @@ mod tests {
             stuck(&f, bare.threads[0].frames.first(), main),
             Some(Stuck::Waiting)
         );
-        // #663: in the C runtime's memcmp, under MDM's own code: no wait there, so starved.
+        // #663: in the C runtime's memcmp, under iDM's own code: no wait there, so starved.
         bare.threads[0].frames[0].module = Some("VCRUNTIME140.dll".into());
         assert_eq!(
             stuck(&f, bare.threads[0].frames.first(), main),
@@ -1009,7 +1009,7 @@ mod tests {
             "freeze over before the snapshot"
         );
 
-        // A sleep of MDM's own, inside a frame, is the frame's: still a freeze in MDM.
+        // A sleep of iDM's own, inside a frame, is the frame's: still a freeze in iDM.
         a.threads[0].frames = vec![
             frame("std::thread::functions::sleep()"),
             frame("misterdownloadmanager::app::App::tick()"),
@@ -1053,7 +1053,7 @@ mod tests {
             t.contains("finished. Its thread ran 3.5 of 7.5 s.\n"),
             "{t}"
         );
-        // Not measured (an older MDM, macOS): the old sentence.
+        // Not measured (an older iDM, macOS): the old sentence.
         let mut input = freeze_with(&a, 0);
         input.notes.freeze.as_mut().unwrap().busy = None;
         assert!(text(&input, None).contains("never finished (a deadlock or an endless loop)."));

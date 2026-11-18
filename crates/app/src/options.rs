@@ -120,7 +120,7 @@ impl DnsEdit {
 }
 
 /// Sites Logins → Cookies for video sites' browser at first (#229): the one chosen, else the
-/// first browser whose extension reached MDM when yt-dlp reads it (MDM doesn't know the
+/// first browser whose extension reached iDM when yt-dlp reads it (iDM doesn't know the
 /// system's default browser), else Firefox, which yt-dlp reads on every system.
 fn cookie_browser_at(s: &Settings) -> usize {
     let browsers = mdm_tools::proc::cookie_browsers();
@@ -357,7 +357,7 @@ impl OptionsDialog {
         let outcome = window(
             ctx,
             "options",
-            "Mister Download Manager Configuration",
+            "iDM Configuration",
             [430.0, 506.0],
             false,
             LIGHT_BG(),
@@ -490,7 +490,7 @@ impl OptionsDialog {
             (
                 94.0,
                 &mut s.launch_on_startup,
-                crate::i18n::mark("Launch Mister Download Manager on startup"),
+                crate::i18n::mark("Launch iDM on startup"),
             ),
             (
                 113.0,
@@ -507,71 +507,71 @@ impl OptionsDialog {
                 &mut s.advanced_integration,
                 crate::i18n::mark("Use advanced browser integration"),
             ),
-            // MDM's: turns back on the delete confirmation that "Don't show this dialog again"
+            // iDM's: turns back on the delete confirmation that "Don't show this dialog again"
             // turned off. The browsers' group below starts a row lower for it.
             (
                 172.0,
                 &mut s.confirm_delete,
                 crate::i18n::mark("Confirm before deleting downloads"),
             ),
-            // MDM's: a private window's downloads saved in the list like any other (off: memory
-            // only, gone when MDM closes). The rows below, and the browsers' group, a row lower,
+            // iDM's: a private window's downloads saved in the list like any other (off: memory
+            // only, gone when iDM closes). The rows below, and the browsers' group, a row lower,
             // its list a row shorter again (it scrolls).
             (
                 191.0,
                 &mut s.keep_private_downloads,
-                // i18n: checkbox: downloads started from a browser's private (incognito) window are saved in MDM's download list like any other, so they are still there after MDM restarts
+                // i18n: checkbox: downloads started from a browser's private (incognito) window are saved in iDM's download list like any other, so they are still there after iDM restarts
                 crate::i18n::mark("Keep private-window downloads in the list"),
             ),
-            // MDM's (#63): Minimize hides the main window and progress windows in the tray too.
+            // iDM's (#63): Minimize hides the main window and progress windows in the tray too.
             // The browsers' group starts a row lower again, its list a row shorter (it scrolls).
             (
                 210.0,
                 &mut s.minimize_to_tray,
-                // i18n: checkbox: the Minimize button hides MDM's windows to the notification area (system tray) instead of the taskbar
+                // i18n: checkbox: the Minimize button hides iDM's windows to the notification area (system tray) instead of the taskbar
                 crate::i18n::mark("Minimize to the notification area"),
             ),
-            // MDM's: the × hides the window in the notification area, or quits.
+            // iDM's: the × hides the window in the notification area, or quits.
             (
                 229.0,
                 &mut s.close_to_tray,
-                // i18n: checkbox: closing keeps MDM running, in the notification area when available or else the taskbar, instead of quitting
+                // i18n: checkbox: closing keeps iDM running, in the notification area when available or else the taskbar, instead of quitting
                 crate::i18n::mark("Keep running when closing the window"),
             ),
         ];
-        // Greyed where no tray shows MDM's icon (some Linux desktops): nothing could bring the
+        // Greyed where no tray shows iDM's icon (some Linux desktops): nothing could bring the
         // window back from there.
         let tray = crate::tray::available();
         for (i, (y, v, label)) in checks.into_iter().enumerate() {
             // Portable: nothing is written to the registry, so no start with Windows. Manifest 2
-            // extensions: an IDM-era Chrome policy with no meaning for MDM's extension (MV3):
+            // extensions: an IDM-era Chrome policy with no meaning for iDM's extension (MV3):
             // shown as IDM has it, greyed (D-021).
             let enabled = !(portable && i == 0) && i != 2 && (i < 6 || tray);
             let check = winui::checkbox_light(ui, o + vec2(30.0, y), v, label, enabled);
             // Where a start with the session leaves the window (#226).
             if i == 0 && enabled && check.hovered() {
                 check.on_hover_text(if crate::can_start_in_tray() {
-                    // i18n: tooltip of "Launch Mister Download Manager on startup": started with the computer, MDM's window stays hidden, its icon in the notification area (system tray)
+                    // i18n: tooltip of "Launch iDM on startup": started with the computer, iDM's window stays hidden, its icon in the notification area (system tray)
                     crate::i18n::t("Started with the computer, it waits in the notification area")
                 } else {
-                    // i18n: the same tooltip where no notification area (system tray) shows MDM's icon (some Linux desktops): its window starts minimized instead
+                    // i18n: the same tooltip where no notification area (system tray) shows iDM's icon (some Linux desktops): its window starts minimized instead
                     crate::i18n::t(
                         "Started with the computer, it starts minimized: no notification area shows its icon here",
                     )
                 });
             } else if i == 5 && check.hovered() {
-                // i18n: tooltip of "Keep private-window downloads in the list": checked, downloads from a browser's private (incognito) window are saved in the list and survive MDM closing or restarting; unchecked, they are kept in memory only and are gone when MDM closes. Their cookies are never saved.
+                // i18n: tooltip of "Keep private-window downloads in the list": checked, downloads from a browser's private (incognito) window are saved in the list and survive iDM closing or restarting; unchecked, they are kept in memory only and are gone when iDM closes. Their cookies are never saved.
                 check.on_hover_text(crate::i18n::t(
-                    "Checked, downloads from a browser's private window are saved in the list and are still there when MDM restarts; unchecked, they are kept in memory only and are gone when MDM closes. Their cookies are never saved",
+                    "Checked, downloads from a browser's private window are saved in the list and are still there when iDM restarts; unchecked, they are kept in memory only and are gone when iDM closes. Their cookies are never saved",
                 ));
             } else if i == 7 && check.hovered() {
-                // i18n: tooltip of the close-setting: checked keeps MDM running when the window closes, in the notification area when available or else the taskbar; downloads continue; unchecked closing quits
+                // i18n: tooltip of the close-setting: checked keeps iDM running when the window closes, in the notification area when available or else the taskbar; downloads continue; unchecked closing quits
                 check.on_hover_text(crate::i18n::t(
-                    "Checked, closing the window keeps MDM running: it hides in the notification area when available, or minimizes to the taskbar otherwise, and downloads continue; unchecked, closing quits MDM",
+                    "Checked, closing the window keeps iDM running: it hides in the notification area when available, or minimizes to the taskbar otherwise, and downloads continue; unchecked, closing quits iDM",
                 ));
             }
         }
-        // MDM's (#558): global keyboard shortcut (2-key or 3-key combination) to show or hide
+        // iDM's (#558): global keyboard shortcut (2-key or 3-key combination) to show or hide
         // the main window (Windows and macOS).
         let hk_supported = cfg!(any(windows, target_os = "macos"));
         let hk_taken = hk_supported
@@ -582,7 +582,7 @@ impl OptionsDialog {
             winui::buttons_to_right(&p, 392.0, 0.0, &[("Clear", 56.0)], 110.0)[0];
         let box_w = 126.0;
         let box_x = clear_x - 6.0 - box_w;
-        // i18n: Options → General: label for the global keyboard shortcut that shows or hides MDM's main window (#558)
+        // i18n: Options → General: label for the global keyboard shortcut that shows or hides iDM's main window (#558)
         let base_hk_label = crate::i18n::t("Shortcut to show or hide window:");
         // i18n: Options → General: shown when the chosen global shortcut is already registered by another program (#558)
         let taken_msg = crate::i18n::t("This shortcut is already in use");
@@ -795,7 +795,7 @@ impl OptionsDialog {
             r(o, add_at.0, 328.0, add_at.1, 21.0),
             crate::i18n::mark("Add browser..."),
         );
-        // MDM's: what stands between a browser and MDM, checked in order.
+        // iDM's: what stands between a browser and iDM, checked in order.
         if winui::button_light(
             ui,
             r(o, test_at.0, 328.0, test_at.1, 21.0),
@@ -815,7 +815,7 @@ impl OptionsDialog {
         let fit_right =
             |label: &str| winui::buttons_to_right(&p, 392.0, 0.0, &[(label, 73.0)], 160.0)[0];
         let keys_at = fit_right("Keys...");
-        let label = crate::i18n::t("Customize keys to prevent or force downloading with MDM");
+        let label = crate::i18n::t("Customize keys to prevent or force downloading with iDM");
         // Inside the browsers' group box: it starts no further out than the group's frame.
         let (rect, cut) = winui::text_right_within(
             &p,
@@ -839,7 +839,7 @@ impl OptionsDialog {
         {
             self.sub = Some(Sub::Keys(self.s.capture_opened));
         }
-        let label = crate::i18n::t("Customize MDM menu items in context menu of browsers");
+        let label = crate::i18n::t("Customize iDM menu items in context menu of browsers");
         let (rect, cut) = winui::text_right(&p, o.x + 313.0, o.y + 419.0, label, LIGHT_DISABLED());
         if cut {
             winui::full_on_hover(ui, rect, ("general-right", 419), label);
@@ -847,7 +847,7 @@ impl OptionsDialog {
         // i18n: verb: edit the item
         off(ui, r(o, 289.0, 406.0, 103.0, 21.0), "Edit...");
         // The download button over videos in the browsers (our own panel, Sub::Panels).
-        let label = crate::i18n::t("Customize MDM Download panels in browsers");
+        let label = crate::i18n::t("Customize iDM Download panels in browsers");
         let panels_at = fit_right("Edit...");
         let (rect, cut) = winui::text_right(
             &p,
@@ -980,7 +980,7 @@ impl OptionsDialog {
         {
             self.sub = Some(Sub::Addresses(self.s.excluded_addresses.join("\n")));
         }
-        // MDM's: a receipt or an icon isn't worth a download window.
+        // iDM's: a receipt or an icon isn't worth a download window.
         let label = crate::i18n::t("Don't take files smaller than (KB, 0 = any size):");
         // Before its box: a longer translation is cut with "..." and shown whole on hover.
         let (rect, cut) = winui::label_into(
@@ -1190,7 +1190,7 @@ impl OptionsDialog {
             o.x + 30.0,
             o.y + 409.0,
             crate::i18n::t(
-                "Mister Download Manager writes every connection straight into the final\nfile (a sparse part file next to it), so no temporary directory and no\nassembling step are needed.",
+                "iDM writes every connection straight into the final\nfile (a sparse part file next to it), so no temporary directory and no\nassembling step are needed.",
             ),
             LIGHT_TEXT(),
             o.x + 426.0,
@@ -1408,7 +1408,7 @@ impl OptionsDialog {
                 &[("browser", &browser)],
             ),
             None if mdm_engine::agent::looked_for() => crate::i18n::t(
-                "Your default browser isn't one MDM knows: a current Chrome's User-Agent",
+                "Your default browser isn't one iDM knows: a current Chrome's User-Agent",
             )
             .to_owned(),
             None => crate::i18n::t("Looking for your default browser...").to_owned(),
@@ -1419,7 +1419,7 @@ impl OptionsDialog {
             ui,
             o + vec2(auto_x, 378.0),
             &mut self.ua_auto,
-            // i18n: checkbox: the User-Agent is the default browser's, which MDM finds itself
+            // i18n: checkbox: the User-Agent is the default browser's, which iDM finds itself
             "Automatic",
             true,
         )
@@ -1794,7 +1794,7 @@ impl OptionsDialog {
         winui::etched_h(&p, o.x + 22.0, o.y + 159.0, 380.0);
         winui::etched_h(&p, o.x + 21.0, o.y + 187.0, 380.0);
         winui::etched_h(&p, o.x + 21.0, o.y + 242.0, 380.0);
-        // The script's address (http, https or file): MDM fetches and runs it (pacfetch.rs,
+        // The script's address (http, https or file): iDM fetches and runs it (pacfetch.rs,
         // mdm_engine::pac).
         let script = s.proxy_mode == 2;
         // i18n: noun: the web address (URL)
@@ -2036,7 +2036,7 @@ impl OptionsDialog {
                         if vault.unread(&format!("debrid/{}", a.id))
                             && vault.kept() == crate::secrets::Kept::Locked
                         {
-                            // i18n: Options → Accounts: the account's sign-in is in the system's keyring (Linux), which is locked now; MDM never unlocks it
+                            // i18n: Options → Accounts: the account's sign-in is in the system's keyring (Linux), which is locked now; iDM never unlocks it
                             crate::i18n::t("in the locked keyring").to_owned()
                         } else {
                             // i18n: Options → Accounts: the account's sign-in can't be read (signed out, or the settings came from another computer)
@@ -2152,7 +2152,7 @@ impl OptionsDialog {
             ui,
             o + vec2(21.0, 324.0),
             &mut self.s.debrid_torrents,
-            // i18n: Options → Accounts: checkbox: magnet links and .torrent files go to the first account's service, which downloads them; MDM then downloads the files from it (no connections to peers)
+            // i18n: Options → Accounts: checkbox: magnet links and .torrent files go to the first account's service, which downloads them; iDM then downloads the files from it (no connections to peers)
             "Send torrents and magnet links to the first account instead of to peers",
             self.s.debrid_on,
         );
@@ -2163,7 +2163,7 @@ impl OptionsDialog {
             o.y + 358.0,
             // i18n: Options → Accounts: what these accounts are, and the services' rule against sharing
             crate::i18n::t(
-                "A debrid service downloads a file host's link with your own paid account and gives MDM a direct link. Use only your own account: sharing an account or its links breaks the services' terms and can get it suspended. Downloads the browser already started stay as they are.",
+                "A debrid service downloads a file host's link with your own paid account and gives iDM a direct link. Use only your own account: sharing an account or its links breaks the services' terms and can get it suspended. Downloads the browser already started stay as they are.",
             ),
             LIGHT_TEXT(),
             o.x + 404.0,
@@ -2747,7 +2747,7 @@ impl OptionsDialog {
             102.0,
             383.0,
             299.0,
-            "Select sounds for Mister Download Manager events",
+            "Select sounds for iDM events",
         );
         let list_on_screen = r(o, 33.0, 112.0, 366.0, 250.0);
         list_frame(&p, list_on_screen);
@@ -2924,7 +2924,7 @@ impl OptionsDialog {
             .unwrap_or_default()
     }
 
-    /// Remote's port as typed, or the one saved when it isn't a port MDM takes.
+    /// Remote's port as typed, or the one saved when it isn't a port iDM takes.
     fn remote_port(&self) -> u16 {
         self.port
             .trim()
@@ -2953,10 +2953,10 @@ impl OptionsDialog {
     }
 
     /// Remote (#141, ours): phones and computers on the local network add and control
-    /// downloads from a page MDM serves, once paired with a code shown here.
+    /// downloads from a page iDM serves, once paired with a code shown here.
     fn remote_page(&mut self, ui: &mut Ui, o: Pos2) {
         let p = ui.painter().clone();
-        // i18n: Options page title: control MDM from a phone or another computer on the local network
+        // i18n: Options page title: control iDM from a phone or another computer on the local network
         let title = crate::i18n::mark("Remote control");
         let w = winui::text_width_font(&p, winui::tahoma_bold(), title);
         header(ui, o, Icon::PageRemote, title, true, 406.0 - w, 61.0, 406.0);
@@ -2966,7 +2966,7 @@ impl OptionsDialog {
             o + vec2(21.0, 92.0),
             &mut self.s.remote_on,
             // i18n: Options → Remote check box (off by default)
-            "Let phones and computers on the local network control MDM",
+            "Let phones and computers on the local network control iDM",
             true,
         );
         let on = self.s.remote_on;
@@ -2975,7 +2975,7 @@ impl OptionsDialog {
             &p,
             o.x + 21.0,
             o.y + 131.0,
-            // i18n: Options → Remote: label before the choice of the address MDM listens on
+            // i18n: Options → Remote: label before the choice of the address iDM listens on
             crate::i18n::t("Listen on:"),
             color,
         );
@@ -3041,7 +3041,7 @@ impl OptionsDialog {
             ),
             None | Some(Status::Off) => (
                 // i18n: Options → Remote → Status: the remote control is off
-                crate::i18n::t("Off: nothing on the network can reach MDM.").to_owned(),
+                crate::i18n::t("Off: nothing on the network can reach iDM.").to_owned(),
                 true,
             ),
             Some(Status::Listening(_)) => (
@@ -3143,7 +3143,7 @@ impl OptionsDialog {
                 (crate::i18n::mark("Device"), 120.0),
                 // i18n: column title: when the device was paired
                 (crate::i18n::mark("Paired"), 256.0),
-                // i18n: column title: when the device last reached MDM
+                // i18n: column title: when the device last reached iDM
                 (crate::i18n::mark("Last seen"), 392.0),
             ],
             &rows,
@@ -3202,7 +3202,7 @@ impl OptionsDialog {
             o.y + 438.0,
             // i18n: Options → Remote, at the bottom of the page
             crate::i18n::t(
-                "Only paired devices see or change anything. The first time, the phone's browser warns about MDM's own certificate: its fingerprint is the one above.",
+                "Only paired devices see or change anything. The first time, the phone's browser warns about iDM's own certificate: its fingerprint is the one above.",
             ),
             LIGHT_TEXT(),
             o.x + 406.0,
@@ -3250,7 +3250,7 @@ impl OptionsDialog {
                         o.y + 30.0,
                         // i18n: Options → Remote → Pair a device: the remote control isn't listening (no network, port taken): the Remote page says why
                         crate::i18n::t(
-                            "MDM can't be reached on the network now: Options → Remote says why.",
+                            "iDM can't be reached on the network now: Options → Remote says why.",
                         ),
                         crate::theme::colors().error_strong,
                         o.x + 346.0,
@@ -3265,7 +3265,7 @@ impl OptionsDialog {
                 if let Some(name) = &paired {
                     let line = crate::i18n::fmt(
                         // i18n: Options → Remote → Pair a device: done; {device} = the name it was given
-                        crate::i18n::t("{device} is paired. It can control MDM now."),
+                        crate::i18n::t("{device} is paired. It can control iDM now."),
                         &[("device", &crate::i18n::isolate(name))],
                     );
                     winui::paragraph(
@@ -3774,7 +3774,7 @@ impl OptionsDialog {
                             o.y + 20.0,
                             // i18n: Archive passwords window: how the list is used
                             crate::i18n::t(
-                                "One password per line, tried in this order on an encrypted archive before MDM asks. The one that fits moves to the top.",
+                                "One password per line, tried in this order on an encrypted archive before iDM asks. The one that fits moves to the top.",
                             ),
                             LIGHT_TEXT(),
                             o.x + 406.0,
@@ -3847,7 +3847,7 @@ impl OptionsDialog {
                 let out = window(
                     ctx,
                     "opt-keys",
-                    // i18n: window title: the keys that force or prevent downloading with MDM
+                    // i18n: window title: the keys that force or prevent downloading with iDM
                     "Keys",
                     [400.0, 160.0],
                     false,
@@ -3859,7 +3859,7 @@ impl OptionsDialog {
                             o.x + 14.0,
                             o.y + 22.0,
                             crate::i18n::t(
-                                "Hold Alt while clicking a link to let the browser download it instead of Mister Download Manager.",
+                                "Hold Alt while clicking a link to let the browser download it instead of iDM.",
                             ),
                             LIGHT_TEXT(),
                             o.x + 386.0,
@@ -4009,7 +4009,7 @@ impl OptionsDialog {
                                 && winui::button_light(
                                     ui,
                                     r(o, set_up_at.0, y, set_up_at.1, 25.0),
-                                    // i18n: button in Test browser integration: register MDM's helper with the browsers
+                                    // i18n: button in Test browser integration: register iDM's helper with the browsers
                                     "Set it up",
                                     ButtonKind::Normal,
                                     false,
@@ -4426,7 +4426,7 @@ fn account_dialog(ui: &mut Ui, o: Pos2, e: &mut AccountEdit) -> Outcome<settings
             &crate::i18n::fmt(
                 // i18n: Options → Add an account: waiting while the user types the code at the service's page; {page} its address, {time} minutes:seconds left
                 crate::i18n::t(
-                    "Type this code at {page} and allow MDM; waiting for you (the code expires in {time}).",
+                    "Type this code at {page} and allow iDM; waiting for you (the code expires in {time}).",
                 ),
                 &[
                     ("page", &crate::i18n::ltr(page)),
@@ -4749,7 +4749,7 @@ fn tabs(ui: &mut Ui, o: Pos2, page: usize) -> Option<usize> {
         (4, crate::i18n::mark("Connection"), 330.0, 419.0, 349.0),
         (
             REMOTE_PAGE,
-            // i18n: tab title: control MDM from a phone or another computer on the local network
+            // i18n: tab title: control iDM from a phone or another computer on the local network
             crate::i18n::mark("Remote"),
             380.0,
             419.0,
@@ -5215,19 +5215,19 @@ fn kept_text(kept: crate::secrets::Kept) -> Option<&'static str> {
         Kept::Portable => crate::i18n::mark(
             "This portable copy keeps sign-ins and passwords in its own settings, which only you can read.",
         ),
-        // i18n: Options → Accounts (Linux): the system keyring is locked (MDM never unlocks it: that would ask for its password), so the sign-ins stay in MDM's settings folder, which only the user's account may read
+        // i18n: Options → Accounts (Linux): the system keyring is locked (iDM never unlocks it: that would ask for its password), so the sign-ins stay in iDM's settings folder, which only the user's account may read
         Kept::Locked => crate::i18n::mark(
-            "The system keyring is locked and MDM doesn't unlock it, so sign-ins and passwords are kept in MDM's settings, which only you can read.",
+            "The system keyring is locked and iDM doesn't unlock it, so sign-ins and passwords are kept in iDM's settings, which only you can read.",
         ),
         #[cfg(windows)]
-        // i18n: Options → Accounts: Windows Credential Manager didn't answer, so the sign-ins stay in MDM's settings, encrypted so that only this Windows account can read them
+        // i18n: Options → Accounts: Windows Credential Manager didn't answer, so the sign-ins stay in iDM's settings, encrypted so that only this Windows account can read them
         Kept::Missing => crate::i18n::mark(
-            "Windows Credential Manager didn't answer, so sign-ins and passwords are kept in MDM's settings, encrypted for your Windows account.",
+            "Windows Credential Manager didn't answer, so sign-ins and passwords are kept in iDM's settings, encrypted for your Windows account.",
         ),
         #[cfg(not(windows))]
-        // i18n: Options → Accounts: no system keyring/keychain answered (none runs, e.g. a desktop without one), so the sign-ins stay in MDM's settings folder, which only the user's account may read
+        // i18n: Options → Accounts: no system keyring/keychain answered (none runs, e.g. a desktop without one), so the sign-ins stay in iDM's settings folder, which only the user's account may read
         Kept::Missing => crate::i18n::mark(
-            "No system keyring answered, so sign-ins and passwords are kept in MDM's settings, which only you can read.",
+            "No system keyring answered, so sign-ins and passwords are kept in iDM's settings, which only you can read.",
         ),
     })
 }
@@ -5248,8 +5248,8 @@ fn snooze_line(ui: &mut Ui, p: &egui::Painter, o: Pos2, until: crate::finish::Un
             )
         }
         crate::finish::Until::Restart => {
-            // i18n: Options, Downloads, under "Show download complete dialog": snoozed with "Until MDM restarts"
-            crate::i18n::t("Download complete is snoozed until MDM restarts").to_owned()
+            // i18n: Options, Downloads, under "Show download complete dialog": snoozed with "Until iDM restarts"
+            crate::i18n::t("Download complete is snoozed until iDM restarts").to_owned()
         }
     };
     // i18n: link after "Download complete is snoozed until 14:30": ends the snooze now

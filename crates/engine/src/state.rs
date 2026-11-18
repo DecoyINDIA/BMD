@@ -43,7 +43,7 @@ pub struct ResumeState {
     /// browser's User-Agent (#372): a resume asks the same way.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub asked_as_mdm: bool,
-    /// Only MDM's own name (`Options::own_agent`) got past the site's bot check (#1422): a
+    /// Only iDM's own name (`Options::own_agent`) got past the site's bot check (#1422): a
     /// resume asks under it too.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub asked_as_own: bool,

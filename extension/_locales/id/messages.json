@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "Mister Download Manager"
+    "message": "iDM"
   },
   "description": {
-    "message": "Menyerahkan unduhan dari browser ke Mister Download Manager."
+    "message": "Menyerahkan unduhan dari browser ke iDM."
   },
   "menu": {
-    "message": "Unduh dengan Mister Download Manager"
+    "message": "Unduh dengan iDM"
   },
   "video_download": {
     "message": "Unduh video"
@@ -30,19 +30,19 @@
     "message": "Pengaturan tombol..."
   },
   "video_sent": {
-    "message": "Dikirim ke Mister Download Manager"
+    "message": "Dikirim ke iDM"
   },
   "menu_selected": {
-    "message": "Unduh tautan yang dipilih dengan Mister Download Manager"
+    "message": "Unduh tautan yang dipilih dengan iDM"
   },
   "menu_all": {
-    "message": "Unduh semua tautan dengan Mister Download Manager"
+    "message": "Unduh semua tautan dengan iDM"
   },
   "status_connected": {
-    "message": "Terhubung ke Mister Download Manager"
+    "message": "Terhubung ke iDM"
   },
   "status_connected_version": {
-    "message": "Terhubung ke Mister Download Manager $version$",
+    "message": "Terhubung ke iDM $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Dijeda: unduhan tetap di browser"
   },
   "status_not_installed": {
-    "message": "Mister Download Manager tidak terinstal, atau integrasi browsernya tidak diatur"
+    "message": "iDM tidak terinstal, atau integrasi browsernya tidak diatur"
   },
   "status_forbidden": {
-    "message": "Mister Download Manager tidak menerima salinan ekstensi ini"
+    "message": "iDM tidak menerima salinan ekstensi ini"
   },
   "status_not_running": {
-    "message": "Mister Download Manager tidak dimulai tepat waktu"
+    "message": "iDM tidak dimulai tepat waktu"
   },
   "status_host_failed": {
-    "message": "Koneksi ke Mister Download Manager gagal"
+    "message": "Koneksi ke iDM gagal"
   },
   "status_too_large": {
     "message": "Detail unduhan ini terlalu besar untuk diserahkan"
   },
   "status_update_app": {
-    "message": "Perbarui Mister Download Manager untuk menggunakan semua yang ditawarkan ekstensi ini"
+    "message": "Perbarui iDM untuk menggunakan semua yang ditawarkan ekstensi ini"
   },
   "popup_take": {
     "message": "Ambil unduhan dari browser ini"
@@ -78,10 +78,10 @@
     "message": "Kirim unduhan melalui proxy atau ekstensi VPN browser ini"
   },
   "popup_proxy_title": {
-    "message": "Mister Download Manager kemudian mengunduh melalui proxy yang sama dengan browser ini. Browser meminta Anda sekali untuk mengizinkannya; mematikan ini akan membatalkannya."
+    "message": "iDM kemudian mengunduh melalui proxy yang sama dengan browser ini. Browser meminta Anda sekali untuk mengizinkannya; mematikan ini akan membatalkannya."
   },
   "popup_proxy_title_chromium": {
-    "message": "Mister Download Manager kemudian mengunduh melalui proxy yang sama dengan browser ini. Saat opsi ini nonaktif, ekstensi tidak membaca proxy browser."
+    "message": "iDM kemudian mengunduh melalui proxy yang sama dengan browser ini. Saat opsi ini nonaktif, ekstensi tidak membaca proxy browser."
   },
   "popup_exclude_site": {
     "message": "Jangan pernah mengambil unduhan dari $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Buka Mister Download Manager"
+    "message": "Buka iDM"
   },
   "popup_options": {
     "message": "Opsi..."
@@ -114,7 +114,7 @@
     "message": "Bantuan"
   },
   "popup_support": {
-    "message": "Dukung MDM"
+    "message": "Dukung iDM"
   },
   "popup_fix": {
     "message": "Cara memperbaikinya"
@@ -150,7 +150,7 @@
     "message": "Integrasi browser lanjutan tidak aktif di Opsi → Umum."
   },
   "declined_torrents": {
-    "message": "Ini adalah torrent, dan Buka tautan magnet dan file .torrent dengan Mister Download Manager tidak aktif di pengaturan Torrent."
+    "message": "Ini adalah torrent, dan Buka tautan magnet dan file .torrent dengan iDM tidak aktif di pengaturan Torrent."
   },
   "declined_site_access": {
     "message": "Ekstensi tidak diizinkan untuk membaca situs ini (akses situs browser)."
@@ -195,16 +195,16 @@
     "message": "Tidak ada video untuk diunduh di sini"
   },
   "video_playlist": {
-    "message": "Daftar video: pilih di Mister Download Manager"
+    "message": "Daftar video: pilih di iDM"
   },
   "video_no_ytdlp": {
-    "message": "Mister Download Manager memerlukan yt-dlp untuk video ini"
+    "message": "iDM memerlukan yt-dlp untuk video ini"
   },
   "video_too_long": {
     "message": "Pencarian memakan waktu terlalu lama"
   },
   "video_busy": {
-    "message": "Mister Download Manager sedang sibuk dengan video lain"
+    "message": "iDM sedang sibuk dengan video lain"
   },
   "video_queued": {
     "message": "Ditambahkan ke antrean"
@@ -228,7 +228,7 @@
     "message": "Komputer ini"
   },
   "popup_send_remote": {
-    "message": "Mister Download Manager lain (server)"
+    "message": "iDM lain (server)"
   },
   "popup_remote_code": {
     "message": "Kode pemasangan"
@@ -297,19 +297,19 @@
     "message": "Unduh kualitas terbaik"
   },
   "video_sending": {
-    "message": "Mengirim ke MDM..."
+    "message": "Mengirim ke iDM..."
   },
   "video_added": {
-    "message": "Ditambahkan ke MDM"
+    "message": "Ditambahkan ke iDM"
   },
   "video_show": {
     "message": "Tampilkan"
   },
   "video_no_answer": {
-    "message": "MDM tidak menjawab"
+    "message": "iDM tidak menjawab"
   },
   "video_get_mdm": {
-    "message": "Dapatkan MDM"
+    "message": "Dapatkan iDM"
   },
   "video_retry": {
     "message": "Coba lagi"
@@ -324,7 +324,7 @@
     "message": "Semua kualitas dan subtitel..."
   },
   "video_failed": {
-    "message": "Mister Download Manager tidak terinstal atau tidak dimulai"
+    "message": "iDM tidak terinstal atau tidak dimulai"
   },
   "video_download_best": {
     "message": "Unduh terbaik"

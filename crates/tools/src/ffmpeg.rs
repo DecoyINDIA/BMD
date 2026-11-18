@@ -45,7 +45,7 @@ pub fn build() -> Option<&'static str> {
     build_for(std::env::consts::OS, std::env::consts::ARCH)
 }
 
-/// Whether MDM downloads an ffmpeg of its own on this system ([`build`]). Where it doesn't, the
+/// Whether iDM downloads an ffmpeg of its own on this system ([`build`]). Where it doesn't, the
 /// person's own (chosen in Helpers) or the system's is used.
 pub fn available() -> bool {
     build().is_some()
@@ -147,7 +147,7 @@ fn date_digits(http: &str) -> Option<String> {
         .then(|| format!("{year:04}{month:02}{day:02}"))
 }
 
-/// The ffmpeg to use: the person's own (`chosen`, #51), else MDM's install in `dir`
+/// The ffmpeg to use: the person's own (`chosen`, #51), else iDM's install in `dir`
 /// (`dir/ffmpeg/current.json`), if any and still there; else the system's own. Its `exe` is
 /// `ffmpeg(.exe)`; yt-dlp is given its folder.
 pub fn installed(dir: &Path) -> Option<Installed> {
@@ -155,7 +155,7 @@ pub fn installed(dir: &Path) -> Option<Installed> {
     own.or_else(|| crate::system::installed("ffmpeg"))
 }
 
-/// MDM's own install in `dir`.
+/// iDM's own install in `dir`.
 fn own(dir: &Path) -> Option<Installed> {
     std::fs::read(dir.join("ffmpeg").join("current.json"))
         .ok()
@@ -164,7 +164,7 @@ fn own(dir: &Path) -> Option<Installed> {
 }
 
 /// Install the newest stable LGPL build into `dir` unless the installed one is as new, the zip
-/// downloaded with MDM's engine (`net`), counted into `progress`.
+/// downloaded with iDM's engine (`net`), counted into `progress`.
 pub async fn install_latest(
     dir: &Path,
     net: &mdm_engine::Options,

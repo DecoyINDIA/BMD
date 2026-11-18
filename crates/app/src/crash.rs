@@ -1,15 +1,15 @@
-//! Crash and freeze reports, the app's side (mdm-crash has the rest). At start MDM launches its
-//! monitor (itself with `--crash-monitor`), which writes a minidump when MDM:
+//! Crash and freeze reports, the app's side (mdm-crash has the rest). At start iDM launches its
+//! monitor (itself with `--crash-monitor`), which writes a minidump when iDM:
 //! - crashes natively (win32.rs / unix.rs catch it through crash-handler),
 //! - panics (the hook here sends the message, then asks for the dump),
 //! - or freezes: a watchdog thread sees a frame of the window run past [`FREEZE_AFTER`] and asks
-//!   for a dump of every thread while MDM is still stuck (a deadlock, an endless loop). A frame
+//!   for a dump of every thread while iDM is still stuck (a deadlock, an endless loop). A frame
 //!   is two timed stretches: the app's logic (commands and the clock, which egui runs alone while
 //!   the main window is minimized) and its UI. The waits between frames aren't timed, nor, on
 //!   macOS, the time a system Open or Save dialog is open ([`system_dialog`]).
 //!
 //! The monitor then shows the report window (crashui.rs). Without a monitor (it couldn't start)
-//! MDM runs on, and a panic still leaves a text report.
+//! iDM runs on, and a panic still leaves a text report.
 
 use std::cell::RefCell;
 use std::collections::BTreeSet;
@@ -29,10 +29,10 @@ pub const FREEZE_AFTER: Duration = Duration::from_secs(8);
 const SLOW_FRAME: Duration = Duration::from_millis(500);
 
 /// The first minute after the computer wakes is the computer's: its disk, its network and its
-/// screen come back, and MDM's memory, given back while it waited in the notification area
+/// screen come back, and iDM's memory, given back while it waited in the notification area
 /// (#72), is read back in. Two windows hidden there didn't answer for 16 and 23 s right after a
 /// wake, and the separate monitor process couldn't even take their dump until the same moment
-/// (#574, #613): most likely the computer wasn't running MDM yet. A frame stalled then is
+/// (#574, #613): most likely the computer wasn't running iDM yet. A frame stalled then is
 /// logged, and reported only if it is still stuck [`FREEZE_AFTER`] past this.
 const WAKE_GRACE: Duration = Duration::from_secs(60);
 
@@ -40,18 +40,18 @@ const WAKE_GRACE: Duration = Duration::from_secs(60);
 /// the login starts (the system's own services, the other programs in the notification area,
 /// their updates) wants the disk and the processor at the same time. A window started with
 /// Windows didn't answer for 8 s a minute after its start, its thread ran 0.0 s of those 8, and
-/// the snapshot found it back waiting for messages (#1126): the computer wasn't running MDM. A
+/// the snapshot found it back waiting for messages (#1126): the computer wasn't running iDM. A
 /// frame stalled then is logged, and reported only if it is still stuck [`FREEZE_AFTER`] past
-/// this (counted from MDM's start).
+/// this (counted from iDM's start).
 /// A first frame late then is taken for the busy login's, once (renderer.rs, #1205).
 pub(crate) const LOGIN_GRACE: Duration = Duration::from_secs(180);
 
-/// A stall while every window of MDM's is hidden (in the notification area, nothing of MDM's on
+/// A stall while every window of iDM's is hidden (in the notification area, nothing of iDM's on
 /// screen) and its thread barely runs ([`IDLE_SHARE`]) is the computer's for this long, counted
 /// from the stall's start. Windows that started with the session or were closed to the
 /// notification area hours before stopped answering for 8 s in one of the hidden window's small
 /// ticks, their thread running 0 ms of the 8 with a few dozen page faults in the whole process,
-/// back 0.2 to 57 s later with no sleep in between (#1126): the computer kept MDM waiting (most
+/// back 0.2 to 57 s later with no sleep in between (#1126): the computer kept iDM waiting (most
 /// likely its memory, given back while hidden (#72), read back from a busy or sleeping disk),
 /// and nobody could see the window stuck. Logged, and reported only if it is still stuck
 /// [`FREEZE_AFTER`] past this, or [`FREEZE_AFTER`] after a window was asked for ([`asked`]).
@@ -59,7 +59,7 @@ const HIDDEN_GRACE: Duration = Duration::from_secs(60);
 
 /// The window thread barely ran during a stall when it ran less than 1/IDLE_SHARE of it (5 %):
 /// it waited on the computer (a disk, the memory it reads back). A thread that runs more is busy
-/// with MDM's own work, and its stall is a freeze, hidden or not.
+/// with iDM's own work, and its stall is a freeze, hidden or not.
 const IDLE_SHARE: u64 = 20;
 
 /// A window asked for this long (ms) before a stall began is still waited for in it ([`asked`]).
@@ -84,7 +84,7 @@ static FROZEN: AtomicBool = AtomicBool::new(false);
 static GRACED: AtomicU8 = AtomicU8::new(0);
 /// A panic was reported: later ones (a burst on worker threads) are logged, not dumped again.
 static PANICKED: AtomicBool = AtomicBool::new(false);
-/// Every window of MDM's is hidden: the main window in the notification area, no other open
+/// Every window of iDM's is hidden: the main window in the notification area, no other open
 /// ([`hidden`]).
 static HIDDEN: AtomicBool = AtomicBool::new(false);
 /// When a window was last asked for from outside the window thread (ms since EPOCH, + 1); 0
@@ -116,7 +116,7 @@ fn now_ms() -> u64 {
 }
 
 /// Start the monitor and catch crashes, panics and freezes. Called on the window thread, after
-/// this process became MDM's instance; `at_login` when the session started it (the startup
+/// this process became iDM's instance; `at_login` when the session started it (the startup
 /// entry, #226): its first minutes are the computer's ([`LOGIN_GRACE`]).
 pub fn start(data: &Path, session: Session, at_login: bool) {
     let _ = EPOCH.set(Instant::now());
@@ -169,7 +169,7 @@ fn dump_now() -> bool {
 }
 
 /// A panic: its message and Rust's backtrace to the monitor, then a dump; then the default hook
-/// (the message on stderr) and the panic goes on (on the window thread it ends MDM).
+/// (the message on stderr) and the panic goes on (on the window thread it ends iDM).
 fn hook_panics() {
     let default = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |info| {
@@ -189,7 +189,7 @@ fn hook_panics() {
         // In the file before the report reads the log's end (the log writes on its own thread).
         mdm_crash::logs::flush(LOG_FOR_A_REPORT);
         // Linux: winit's calls on an X server that went away (logout) panic on the window's
-        // thread: the session's end, saved as one (MDM ends there), or, the app busy in its
+        // thread: the session's end, saved as one (iDM ends there), or, the app busy in its
         // frame, by the app's drop as the panic unwinds; not a crash.
         #[cfg(target_os = "linux")]
         if crate::unix::display_lost_panic(&p.thread) {
@@ -351,7 +351,7 @@ pub fn step(s: Step) {
     STEP.store(s as u8, Ordering::Relaxed);
 }
 
-/// Whether every window of MDM's is hidden now (the main window in the notification area and no
+/// Whether every window of iDM's is hidden now (the main window in the notification area and no
 /// other window open): set by the window thread at each frame's logic and as the window comes
 /// back. A stall then is felt by nobody, and while the window thread barely runs it is the
 /// computer's ([`HIDDEN_GRACE`]).
@@ -466,7 +466,7 @@ pub fn window(id: &str) {
     });
 }
 
-/// What MDM has open and running, for the report (sent when it changes).
+/// What iDM has open and running, for the report (sent when it changes).
 pub fn state(downloads: usize, running: usize, queues: usize, scale: f32) {
     let Some(r) = REPORTER.get() else { return };
     let windows = WINDOWS.with(|w| w.borrow().1.iter().cloned().collect());
@@ -479,16 +479,16 @@ pub fn state(downloads: usize, running: usize, queues: usize, scale: f32) {
     });
 }
 
-/// MDM has started closing normally: what panics on the runtime's own threads now (a task's
+/// iDM has started closing normally: what panics on the runtime's own threads now (a task's
 /// timer once the runtime is shutting down, #422) is the runtime going away, not a problem.
 static CLOSING: AtomicBool = AtomicBool::new(false);
 
-/// Is this panic worth a report? Not one on a runtime worker while MDM is closing (#422).
+/// Is this panic worth a report? Not one on a runtime worker while iDM is closing (#422).
 fn panic_reported(closing: bool, thread: &str) -> bool {
     !(closing && thread.starts_with("tokio"))
 }
 
-/// MDM is closing normally: the monitor leaves without a report. Once: macOS's own quit says so
+/// iDM is closing normally: the monitor leaves without a report. Once: macOS's own quit says so
 /// as the app goes (`App`'s drop), before `main` would.
 pub fn clean_exit() {
     if CLOSING.swap(true, Ordering::AcqRel) {
@@ -547,8 +547,8 @@ impl After {
     fn since(self) -> &'static str {
         match self {
             After::Wake => "since the computer woke",
-            After::Login => "since MDM started with the session",
-            After::Hidden => "with every window of MDM's hidden and its thread waiting",
+            After::Login => "since iDM started with the session",
+            After::Hidden => "with every window of iDM's hidden and its thread waiting",
         }
     }
 
@@ -556,7 +556,7 @@ impl After {
     fn mark(self) -> &'static str {
         match self {
             After::Wake => "the wake",
-            After::Login => "MDM's start",
+            After::Login => "iDM's start",
             After::Hidden => "the stall's start",
         }
     }
@@ -565,14 +565,14 @@ impl After {
     fn had_just(self) -> &'static str {
         match self {
             After::Wake => "the computer had just woken",
-            After::Login => "MDM had just started with the session",
+            After::Login => "iDM had just started with the session",
             After::Hidden => "every window was hidden, and the computer kept its thread waiting",
         }
     }
 }
 
-/// The computer's time: from `from` (ms since MDM's start), `grace` ms in which a stall is the
-/// computer's rather than MDM's, after a wake or a start with the session ([`After`]).
+/// The computer's time: from `from` (ms since iDM's start), `grace` ms in which a stall is the
+/// computer's rather than iDM's, after a wake or a start with the session ([`After`]).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct Computers {
     from: u64,
@@ -590,7 +590,7 @@ impl Computers {
         }
     }
 
-    /// MDM started with the session: its first [`LOGIN_GRACE`] aren't counted.
+    /// iDM started with the session: its first [`LOGIN_GRACE`] aren't counted.
     fn login() -> Computers {
         Computers {
             from: 0,
@@ -670,7 +670,7 @@ fn watchdog(at_login: bool) {
     let tick = Duration::from_millis(500);
     let freeze_after = FREEZE_AFTER.as_millis() as u64;
     let (mut last, mut last_wall) = (now_ms(), wall_ms());
-    // The computer's time: MDM's start with the session, then the last wake.
+    // The computer's time: iDM's start with the session, then the last wake.
     let mut computers = at_login.then(Computers::login);
     let mut reported_frame = 0u64;
     // The frame whose stall in the computer's time was logged.
@@ -844,7 +844,7 @@ pub fn session(language: &str, dark: bool) -> Session {
     }
 }
 
-/// MDM_CRASH_TEST=1 lets `/show crash-test:<what>` crash MDM on purpose (the crash reports'
+/// MDM_CRASH_TEST=1 lets `/show crash-test:<what>` crash iDM on purpose (the crash reports'
 /// own end-to-end check): panic, crash (an access violation / SIGSEGV), freeze (a deadlock on
 /// the window thread), spin (the window thread busy for 12 s, then it answers again), abort.
 /// With the window hidden in the notification area first ([`testing`], app.rs), a few seconds
@@ -941,7 +941,7 @@ mod watchdog_tests {
     }
 
     /// #574, #613: a window hidden in the notification area didn't answer for 16 and 23 s right
-    /// after the computer woke. Not a freeze of MDM's during the minute after a wake; still one
+    /// after the computer woke. Not a freeze of iDM's during the minute after a wake; still one
     /// past it, and at any other time.
     #[test]
     fn the_minute_after_a_wake_is_the_computers() {
@@ -966,9 +966,9 @@ mod watchdog_tests {
         assert_eq!(counted(late, late + freeze, wake), freeze);
     }
 
-    /// #1126: started with Windows, the window didn't answer for 8 s a minute after MDM's start,
+    /// #1126: started with Windows, the window didn't answer for 8 s a minute after iDM's start,
     /// its thread idle all along (what else the login started had the computer). Not a freeze of
-    /// MDM's during the first three minutes of a start with the session; still one past them, at
+    /// iDM's during the first three minutes of a start with the session; still one past them, at
     /// any other time, and in a start by hand.
     #[test]
     fn the_first_minutes_of_a_start_with_the_session_are_the_computers() {
@@ -1025,7 +1025,7 @@ mod watchdog_tests {
         // A window on screen, or the thread running: a freeze, as before.
         assert_eq!(computers_for(stall, None, false, 0), None);
         assert!(!idle(8_006, 8_006));
-        assert!(!idle(500, 8_006), "6 % is MDM's own work");
+        assert!(!idle(500, 8_006), "6 % is iDM's own work");
         assert!(idle(300, 8_006), "under 5 % is waiting");
         // A window asked for 20 s into the stall (the tray, a second launch, the browser):
         // counted from the ask.
@@ -1051,12 +1051,12 @@ mod watchdog_tests {
     fn the_log_says_whose_time_it_was() {
         assert_eq!(
             Computers::login().after.since(),
-            "since MDM started with the session"
+            "since iDM started with the session"
         );
         assert_eq!(Computers::wake(1).after.since(), "since the computer woke");
         assert_eq!(
             Computers::hidden(1, 0).after.since(),
-            "with every window of MDM's hidden and its thread waiting"
+            "with every window of iDM's hidden and its thread waiting"
         );
         for a in [After::Wake, After::Login, After::Hidden] {
             assert_eq!(After::from_u8(a as u8), Some(a));
@@ -1131,7 +1131,7 @@ mod watchdog_tests {
 
 #[cfg(test)]
 mod closing_tests {
-    /// #422: a Tokio task panicking while MDM closes is no crash; the window thread's would be.
+    /// #422: a Tokio task panicking while iDM closes is no crash; the window thread's would be.
     #[test]
     fn a_runtime_panic_while_closing_is_not_reported() {
         use super::panic_reported;

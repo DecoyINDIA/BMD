@@ -1,6 +1,6 @@
 //! Supervised helper processes (yt-dlp, gallery-dl): every child is in a Windows Job Object of
 //! its own that kills it when we exit (even on a crash), or on Linux and macOS in a process group
-//! of its own that MDM's end kills ([`end_all`]), runs without a console window, gets its
+//! of its own that iDM's end kills ([`end_all`]), runs without a console window, gets its
 //! arguments in fixed layers (the user's extras, ours, then the fixed ones and `--` before the
 //! URL) with CR / LF / NUL refused, keeps only a short stderr tail for messages, and goes through
 //! the chosen network adapter (#35, `crate::relay`).
@@ -267,7 +267,7 @@ pub fn look_up(
 static SYSTEM_CERTS: AtomicBool = AtomicBool::new(false);
 
 /// yt-dlp's arguments for the certificates it checks sites with: its own list (Mozilla's, from
-/// Python's `certifi`), or the system's (`system`). The system's is what MDM's own connections
+/// Python's `certifi`), or the system's (`system`). The system's is what iDM's own connections
 /// and the browsers trust (rustls-platform-verifier, #668): there an antivirus's web filter or a
 /// proxy that reads HTTPS adds the certificate it signs sites with, and yt-dlp's own list,
 /// without it, said `CERTIFICATE_VERIFY_FAILED` for every page the browser opened (#955). Not
@@ -415,7 +415,7 @@ pub fn cookie_trouble(line: &str) -> bool {
 }
 
 /// Options -> Proxy / Socks for the helpers (#363): yt-dlp and gallery-dl go through the same proxy
-/// as MDM's downloads. The app shares it as it changes ([`set_proxy`]).
+/// as iDM's downloads. The app shares it as it changes ([`set_proxy`]).
 static PROXY: std::sync::RwLock<mdm_engine::Proxy> =
     std::sync::RwLock::new(mdm_engine::Proxy::None);
 
@@ -606,7 +606,7 @@ const FFMPEG_PROTOCOLS: &str = "file,crypto,data,http,https,tls,tcp,httpproxy";
 /// ones (no configuration file of the person's, never a question on the console), then `--` and
 /// the address. Its output is read as UTF-8, as yt-dlp's is (#79). With an adapter chosen it goes
 /// through the relay (#35, [`through_adapter`]). Only options `tool`'s version accepts
-/// (`gallery::Accepts`, #236: a distribution's may be older than MDM's own copy).
+/// (`gallery::Accepts`, #236: a distribution's may be older than iDM's own copy).
 pub fn gallery_dl(
     tool: &crate::Installed,
     ours: &[String],
@@ -679,7 +679,7 @@ impl FromBrowser {
         if let Some(ua) = given(&self.user_agent) {
             args.extend(["--user-agent".to_owned(), safe(ua)?.to_owned()]);
         }
-        // yt-dlp sends it with the address and keeps it in each format's headers, which MDM's
+        // yt-dlp sends it with the address and keeps it in each format's headers, which iDM's
         // engine sends with the stream's playlists and each of its pieces (#769).
         if let Some(origin) = given(&self.origin) {
             args.extend([
@@ -833,13 +833,13 @@ fn cookie_file(text: &str) -> std::io::Result<CookieFile> {
 const UTF8: [&str; 2] = ["--encoding", "utf-8"];
 
 /// yt-dlp's or gallery-dl's program, built as it will run: output in UTF-8 ([`UTF8`]), and in
-/// the helpers' folder with it as TEMP, TMP and TMPDIR ([`crate::workdir`]), never MDM's own
-/// working folder, which is whatever started MDM gave it: the install folder from the Start
+/// the helpers' folder with it as TEMP, TMP and TMPDIR ([`crate::workdir`]), never iDM's own
+/// working folder, which is whatever started iDM gave it: the install folder from the Start
 /// menu or the browser (#834: Chrome starts its host in the host's folder), and
 /// `C:\Windows\System32` when Windows starts it with the session (#1216). On Windows yt-dlp
 /// makes the small file it tries a format with (a YouTube video put online in the last two
 /// days, a stream marked as protected) in its working folder: its `get_output_path('temp')` is
-/// `.` there when MDM gives no `-P temp:`. [`spawn`] gives the same to any other program.
+/// `.` there when iDM gives no `-P temp:`. [`spawn`] gives the same to any other program.
 fn helper_command(exe: &Path) -> Command {
     let mut cmd = Command::new(exe);
     cmd.env("PYTHONIOENCODING", "utf-8");
@@ -880,7 +880,7 @@ fn program_in(dirs: &[PathBuf], name: &str) -> Option<PathBuf> {
 }
 
 /// `file` in one of `dirs`, the absolute ones only: a relative PATH entry (`.`, `bin`) is a
-/// folder under wherever MDM was started, so a program found there is one anybody who could
+/// folder under wherever iDM was started, so a program found there is one anybody who could
 /// put a file in that folder chose.
 fn file_in(dirs: &[PathBuf], file: &str) -> Option<PathBuf> {
     dirs.iter()
@@ -912,7 +912,7 @@ fn nvm_node(home: &Path) -> Option<PathBuf> {
 /// enabled by default — every other runtime is passed as `--js-runtimes name:path`. Deno on the
 /// PATH (`dirs`): nothing to say. Else Deno where its own installer puts it (`~/.deno/bin`,
 /// #852: no PATH of a program started from the desktop has it), or in `more` (folders a runtime
-/// installed after MDM started is in, [`runtime_dirs`], which on Windows also carries
+/// installed after iDM started is in, [`runtime_dirs`], which on Windows also carries
 /// `~/.deno/bin` and `~/.bun/bin`); else Node.js (≥ 22) on the PATH, under nvm, or in `more`;
 /// else QuickJS (`qjs`, the executable must be named so); else Bun — deprecated in yt-dlp and
 /// unsupported past 1.3.14, so only a last resort.
@@ -947,8 +947,8 @@ fn js_runtime(
 }
 
 /// Where installers put a JavaScript runtime (#852): winget's links (Deno, Node.js) and Node.js's
-/// own installer. They add these to the PATH of programs started after them, not to MDM's own,
-/// so a runtime installed while MDM runs is found here when the video is looked up again.
+/// own installer. They add these to the PATH of programs started after them, not to iDM's own,
+/// so a runtime installed while iDM runs is found here when the video is looked up again.
 /// None elsewhere: a package manager's folder is on the PATH already ([`usable_dirs`]).
 fn runtime_dirs() -> Vec<PathBuf> {
     #[cfg(windows)]
@@ -966,14 +966,14 @@ fn runtime_dirs() -> Vec<PathBuf> {
 /// The folders of `path` (a PATH value) a helper can walk, in their order (#508): yt-dlp looks
 /// through the PATH folders, and one Windows refused to open ("[WinError 448] The path cannot be
 /// traversed because it contains an untrusted mount point": a junction Redirection Guard
-/// doesn't trust) ended the look-up. A folder MDM can't open (gone, refused, not a folder) is
+/// doesn't trust) ended the look-up. A folder iDM can't open (gone, refused, not a folder) is
 /// left out; one reached through a junction or link is given as the folder it leads to, so the
 /// helper crosses no mount point on its way, even when Windows holds the helper to stricter
-/// rules than MDM. Every other folder stays as it was written.
+/// rules than iDM. Every other folder stays as it was written.
 ///
 /// On Linux and macOS the package managers' folders follow, when the PATH lacks them (#659): a
 /// helper found there ([`crate::system`]) looks there for its own tools too (yt-dlp for Deno
-/// and ffmpeg), even when MDM was opened from Finder, whose PATH has no Homebrew.
+/// and ffmpeg), even when iDM was opened from Finder, whose PATH has no Homebrew.
 fn usable_dirs(path: &std::ffi::OsStr) -> Vec<PathBuf> {
     #[allow(unused_mut)]
     let mut dirs: Vec<PathBuf> = std::env::split_paths(path)
@@ -1034,7 +1034,7 @@ fn child_path(path: &std::ffi::OsStr) -> Option<std::ffi::OsString> {
     std::env::join_paths(usable_dirs(path)).ok()
 }
 
-/// Give `cmd` the PATH of [`child_path`]: of the one it was given, else of MDM's own. Every
+/// Give `cmd` the PATH of [`child_path`]: of the one it was given, else of iDM's own. Every
 /// helper starts here ([`spawn`]), and ffmpeg, started by yt-dlp, inherits it.
 fn with_usable_path(cmd: &mut Command) {
     let is_path = |k: &std::ffi::OsStr| {
@@ -1060,8 +1060,8 @@ fn with_usable_path(cmd: &mut Command) {
 /// This computer's JavaScript runtime for yt-dlp ([`js_runtime`]): `Some` with the arguments
 /// that tell yt-dlp of it (none for Deno where yt-dlp finds it itself), in the PATH folders a
 /// helper gets ([`usable_dirs`]: a node.exe behind a junction is named by its real folder) and
-/// in MDM's own tools folder (per the EJS guide, a runtime beside `yt-dlp.exe` counts too; only
-/// MDM's, never a folder a chosen program sits in, where a node.exe nobody meant could land and
+/// in iDM's own tools folder (per the EJS guide, a runtime beside `yt-dlp.exe` counts too; only
+/// iDM's, never a folder a chosen program sits in, where a node.exe nobody meant could land and
 /// be run, cached for the session). Kept once found; while there is none it is looked for again
 /// at each run, so one installed meanwhile counts at the next look-up (#852).
 fn js_runtime_found(exe: &Path) -> Option<Vec<String>> {
@@ -1147,7 +1147,7 @@ pub fn ytdlp_info(
 
 /// A job of its own for one helper and every process it starts (#61): on Windows `yt-dlp.exe`
 /// is a launcher whose child does the work, and ffmpeg runs under that child. Closing the job
-/// (`Spawned::kill`, or MDM ending in any way) ends them all; ending the launcher alone left the
+/// (`Spawned::kill`, or iDM ending in any way) ends them all; ending the launcher alone left the
 /// download running, holding its file and the bandwidth.
 #[cfg(windows)]
 fn new_job() -> Option<win32job::Job> {
@@ -1156,7 +1156,7 @@ fn new_job() -> Option<win32job::Job> {
     win32job::Job::create_with_limit_info(&info).ok()
 }
 
-/// The helpers that run (#1301), and whether MDM is ending ([`end_all`]): after that, no helper
+/// The helpers that run (#1301), and whether iDM is ending ([`end_all`]): after that, no helper
 /// starts.
 struct Running {
     ended: bool,
@@ -1172,10 +1172,10 @@ static RUNNING: Mutex<Running> = Mutex::new(Running {
     groups: Vec::new(),
 });
 
-/// MDM ends (an Exit, the session's end, a command line's Ctrl+C or SIGTERM): every helper that
-/// runs ends with all it started, and none starts after. Windows' job objects end them with MDM
+/// iDM ends (an Exit, the session's end, a command line's Ctrl+C or SIGTERM): every helper that
+/// runs ends with all it started, and none starts after. Windows' job objects end them with iDM
 /// in any case; on Linux and macOS each helper's process group is killed here, as nothing ends it
-/// when MDM's process goes (#1301).
+/// when iDM's process goes (#1301).
 pub fn end_all() {
     let mut running = RUNNING.lock().unwrap_or_else(|e| e.into_inner());
     running.ended = true;
@@ -1197,7 +1197,7 @@ fn kill_group(group: u32) {
     if let Some(pid) = i32::try_from(group)
         .ok()
         .and_then(rustix::process::Pid::from_raw)
-        // Never "every process MDM may signal" (`kill(-1)`).
+        // Never "every process iDM may signal" (`kill(-1)`).
         .filter(|pid| *pid != rustix::process::Pid::INIT)
     {
         let _ = rustix::process::kill_process_group(pid, rustix::process::Signal::KILL);
@@ -1330,7 +1330,7 @@ fn with_cookie_trouble(message: String, warnings: &[String], tail: &VecDeque<Str
 
 /// Start `cmd` supervised: no window, in the job, stdout piped for the caller, stderr kept as a
 /// tail, with a PATH it can walk ([`with_usable_path`], #508), in a folder it can write that is
-/// also its TEMP ([`crate::workdir`], #834: never MDM's install folder).
+/// also its TEMP ([`crate::workdir`], #834: never iDM's install folder).
 pub fn spawn(mut cmd: Command, name: &str) -> Result<Spawned, ProcError> {
     with_usable_path(&mut cmd);
     crate::workdir::apply(&mut cmd, crate::workdir::folders());
@@ -1343,8 +1343,8 @@ pub fn spawn(mut cmd: Command, name: &str) -> Result<Spawned, ProcError> {
         const CREATE_NO_WINDOW: u32 = 0x0800_0000;
         cmd.creation_flags(CREATE_NO_WINDOW);
     }
-    // A process group of its own, which `kill` and MDM's end kill whole (#1301). Not MDM's: a
-    // Ctrl+C in MDM's terminal no longer reaches it, MDM ends it instead (`end_all`).
+    // A process group of its own, which `kill` and iDM's end kill whole (#1301). Not iDM's: a
+    // Ctrl+C in iDM's terminal no longer reaches it, iDM ends it instead (`end_all`).
     #[cfg(unix)]
     {
         use std::os::unix::process::CommandExt;
@@ -1356,7 +1356,7 @@ pub fn spawn(mut cmd: Command, name: &str) -> Result<Spawned, ProcError> {
     if running.ended {
         return Err(ProcError::Start(
             name.to_owned(),
-            std::io::Error::other("Mister Download Manager is closing"),
+            std::io::Error::other("iDM is closing"),
         ));
     }
     let mut child = cmd
@@ -1501,7 +1501,7 @@ mod tests {
         });
         assert_eq!(tried, 2);
         assert!(r.unwrap_err().to_string().contains("try 2"));
-        // Any other failure, or MDM's own limit on the whole run: not made again.
+        // Any other failure, or iDM's own limit on the whole run: not made again.
         for e in [
             failed("ERROR: [youtube] x: Video unavailable"),
             ProcError::Timeout("yt-dlp".into()),
@@ -1545,7 +1545,7 @@ mod tests {
         }
     }
 
-    /// A program is looked for in absolute folders only: `.` on the PATH would be wherever MDM
+    /// A program is looked for in absolute folders only: `.` on the PATH would be wherever iDM
     /// was started from.
     #[test]
     fn a_relative_folder_is_never_searched() {
@@ -1998,7 +1998,7 @@ mod tests {
             path.join(format!("node{}", std::env::consts::EXE_SUFFIX))
         );
         // #852: Deno from its own installer (`~/.deno/bin`), or one in a folder a runtime
-        // installed after MDM started is in (Windows: winget's links), named to yt-dlp; Node.js
+        // installed after iDM started is in (Windows: winget's links), named to yt-dlp; Node.js
         // there when there is nothing else.
         let more = root.path().join("winget-links");
         let exe =
@@ -2045,7 +2045,7 @@ mod tests {
             "../tests/fixtures/ytdlp-js-runtime/with-node.stderr"
         ));
         assert_eq!((none.len(), unsolved.len(), node.len()), (1, 3, 1));
-        // Its own words say it, whatever MDM found.
+        // Its own words say it, whatever iDM found.
         assert!(missing_js_runtime(&none, false));
         assert!(missing_js_runtime(&none, true));
         // A challenge left unsolved is a runtime's want only when this computer has none: with
@@ -2104,7 +2104,7 @@ mod tests {
         );
     }
 
-    /// #659: MDM opened from Finder has no Homebrew on its PATH, yet finds yt-dlp there; the
+    /// #659: iDM opened from Finder has no Homebrew on its PATH, yet finds yt-dlp there; the
     /// helper gets the package folders after its own, once each, so yt-dlp finds Deno and
     /// ffmpeg where Homebrew put them.
     #[cfg(unix)]
@@ -2131,7 +2131,7 @@ mod tests {
     /// #508 as it happened: Windows refuses a junction to a process held to Redirection Guard
     /// ("[WinError 448] ... untrusted mount point"). A stand-in for yt-dlp (PowerShell turning
     /// the guard on for itself, then opening each PATH folder) fails on a PATH through a
-    /// junction made here, and passes once started as MDM starts helpers: given the junction's
+    /// junction made here, and passes once started as iDM starts helpers: given the junction's
     /// real folder, in the same place.
     #[cfg(windows)]
     #[test]
@@ -2468,7 +2468,7 @@ foreach ($d in $env:PATH.Split(';')) {
     }
 
     /// #834: a helper (here a stand-in that prints where it runs and its temporary folders)
-    /// starts in the helpers' folder, not in MDM's own working folder, and has it as TEMP, TMP
+    /// starts in the helpers' folder, not in iDM's own working folder, and has it as TEMP, TMP
     /// and TMPDIR.
     #[test]
     fn a_helper_runs_in_the_helpers_folder() {
@@ -2504,7 +2504,7 @@ foreach ($d in $env:PATH.Split(';')) {
     }
 
     /// #1216: yt-dlp's and gallery-dl's commands are built to start in the helpers' folder, with
-    /// it as TEMP, TMP and TMPDIR, whatever folder MDM itself was started in
+    /// it as TEMP, TMP and TMPDIR, whatever folder iDM itself was started in
     /// (`C:\Windows\System32` when Windows starts it with the session): yt-dlp made the file
     /// it tries a format with there, and Windows refused it.
     #[test]
@@ -2530,7 +2530,7 @@ foreach ($d in $env:PATH.Split(';')) {
                 let value = cmd.get_envs().find(|(k, _)| *k == var).and_then(|(_, v)| v);
                 assert_eq!(value, Some(dir.as_os_str()), "{program} {var}");
             }
-            // And nothing it inherits is taken away: the rest of MDM's environment goes too.
+            // And nothing it inherits is taken away: the rest of iDM's environment goes too.
             assert!(cmd.get_envs().all(|(_, v)| v.is_some()), "{program}");
         }
     }

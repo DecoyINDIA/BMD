@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "Mister Download Manager"
+    "message": "iDM"
   },
   "description": {
-    "message": "Menyerahkan muat turun daripada pelayar kepada Mister Download Manager."
+    "message": "Menyerahkan muat turun daripada pelayar kepada iDM."
   },
   "menu": {
-    "message": "Muat turun dengan Mister Download Manager"
+    "message": "Muat turun dengan iDM"
   },
   "video_download": {
     "message": "Muat turun video"
@@ -30,19 +30,19 @@
     "message": "Tetapan butang..."
   },
   "video_sent": {
-    "message": "Dihantar ke Mister Download Manager"
+    "message": "Dihantar ke iDM"
   },
   "menu_selected": {
-    "message": "Muat turun pautan terpilih dengan Mister Download Manager"
+    "message": "Muat turun pautan terpilih dengan iDM"
   },
   "menu_all": {
-    "message": "Muat turun semua pautan dengan Mister Download Manager"
+    "message": "Muat turun semua pautan dengan iDM"
   },
   "status_connected": {
-    "message": "Bersambung ke Mister Download Manager"
+    "message": "Bersambung ke iDM"
   },
   "status_connected_version": {
-    "message": "Bersambung ke Mister Download Manager $version$",
+    "message": "Bersambung ke iDM $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Dijeda: muat turun kekal bersama penyemak imbas"
   },
   "status_not_installed": {
-    "message": "Mister Download Manager tidak dipasang, atau penyepaduan penyemak imbasnya tidak disediakan"
+    "message": "iDM tidak dipasang, atau penyepaduan penyemak imbasnya tidak disediakan"
   },
   "status_forbidden": {
-    "message": "Mister Download Manager tidak menerima salinan sambungan ini"
+    "message": "iDM tidak menerima salinan sambungan ini"
   },
   "status_not_running": {
-    "message": "Mister Download Manager tidak bermula tepat pada masanya"
+    "message": "iDM tidak bermula tepat pada masanya"
   },
   "status_host_failed": {
-    "message": "Sambungan ke Mister Download Manager gagal"
+    "message": "Sambungan ke iDM gagal"
   },
   "status_too_large": {
     "message": "Butiran muat turun ini terlalu besar untuk diserahkan"
   },
   "status_update_app": {
-    "message": "Kemas kini Mister Download Manager untuk menggunakan semua yang ditawarkan oleh sambungan ini"
+    "message": "Kemas kini iDM untuk menggunakan semua yang ditawarkan oleh sambungan ini"
   },
   "popup_take": {
     "message": "Ambil muat turun daripada penyemak imbas ini"
@@ -78,10 +78,10 @@
     "message": "Hantar muat turun melalui proksi atau sambungan VPN pelayar ini"
   },
   "popup_proxy_title": {
-    "message": "Mister Download Manager kemudian memuat turun melalui proksi yang sama seperti pelayar ini. Pelayar meminta anda sekali untuk membenarkannya; mematikan ini akan menarik balik kebenaran itu."
+    "message": "iDM kemudian memuat turun melalui proksi yang sama seperti pelayar ini. Pelayar meminta anda sekali untuk membenarkannya; mematikan ini akan menarik balik kebenaran itu."
   },
   "popup_proxy_title_chromium": {
-    "message": "Mister Download Manager kemudian memuat turun melalui proksi yang sama dengan pelayar ini. Apabila pilihan ini dimatikan, sambungan tidak membaca proksi pelayar."
+    "message": "iDM kemudian memuat turun melalui proksi yang sama dengan pelayar ini. Apabila pilihan ini dimatikan, sambungan tidak membaca proksi pelayar."
   },
   "popup_exclude_site": {
     "message": "Jangan sekali-kali mengambil muat turun daripada $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Buka Mister Download Manager"
+    "message": "Buka iDM"
   },
   "popup_options": {
     "message": "Pilihan..."
@@ -114,7 +114,7 @@
     "message": "Bantuan"
   },
   "popup_support": {
-    "message": "Sokong MDM"
+    "message": "Sokong iDM"
   },
   "popup_fix": {
     "message": "Cara membetulkannya"
@@ -150,7 +150,7 @@
     "message": "Guna penyepaduan penyemak imbas lanjutan dimatikan dalam Pilihan → Umum."
   },
   "declined_torrents": {
-    "message": "Ia adalah torrent, dan Buka pautan magnet dan fail .torrent dengan Mister Download Manager dimatikan dalam Tetapan Torrent."
+    "message": "Ia adalah torrent, dan Buka pautan magnet dan fail .torrent dengan iDM dimatikan dalam Tetapan Torrent."
   },
   "declined_site_access": {
     "message": "Sambungan tidak dibenarkan membaca tapak ini (akses tapak penyemak imbas)."
@@ -195,19 +195,19 @@
     "message": "Tiada video untuk dimuat turun di sini"
   },
   "video_playlist": {
-    "message": "Senarai video: pilih video dalam Mister Download Manager"
+    "message": "Senarai video: pilih video dalam iDM"
   },
   "video_no_ytdlp": {
-    "message": "Mister Download Manager memerlukan yt-dlp untuk video ini"
+    "message": "iDM memerlukan yt-dlp untuk video ini"
   },
   "video_too_long": {
     "message": "Pencarian mengambil masa terlalu lama"
   },
   "video_busy": {
-    "message": "Mister Download Manager sedang sibuk dengan video lain"
+    "message": "iDM sedang sibuk dengan video lain"
   },
   "video_queued": {
-    "message": "Ditambah pada giliran"
+    "message": "Ditambah pada baris gilir"
   },
   "video_failed_lookup": {
     "message": "Tidak dapat mencarinya"
@@ -228,7 +228,7 @@
     "message": "Komputer ini"
   },
   "popup_send_remote": {
-    "message": "Mister Download Manager lain (pelayan)"
+    "message": "iDM lain (pelayan)"
   },
   "popup_remote_code": {
     "message": "Kod pasangan"
@@ -297,19 +297,19 @@
     "message": "Muat turun kualiti terbaik"
   },
   "video_sending": {
-    "message": "Menghantar ke MDM..."
+    "message": "Menghantar ke iDM..."
   },
   "video_added": {
-    "message": "Ditambah ke MDM"
+    "message": "Ditambah ke iDM"
   },
   "video_show": {
     "message": "Tunjuk"
   },
   "video_no_answer": {
-    "message": "MDM tidak menjawab"
+    "message": "iDM tidak menjawab"
   },
   "video_get_mdm": {
-    "message": "Dapatkan MDM"
+    "message": "Dapatkan iDM"
   },
   "video_retry": {
     "message": "Cuba lagi"
@@ -324,7 +324,7 @@
     "message": "Semua kualiti dan sari kata..."
   },
   "video_failed": {
-    "message": "Mister Download Manager tidak dipasang atau tidak bermula"
+    "message": "iDM tidak dipasang atau tidak bermula"
   },
   "video_download_best": {
     "message": "Muat turun terbaik"

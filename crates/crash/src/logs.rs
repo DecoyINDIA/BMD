@@ -1,7 +1,7 @@
-//! The log MDM keeps in release builds too: `<data>/logs/mdm.log`, rolled over at a size into
+//! The log iDM keeps in release builds too: `<data>/logs/mdm.log`, rolled over at a size into
 //! `mdm.1.log` … `mdm.3.log` (the crash monitor keeps `monitor.log` the same way). Each line is
 //! handed to the log's own thread, which writes it at once. A report takes the last lines of
-//! MDM's: [`flush`] first, so the file has them all, or, when the disk didn't let them through in
+//! iDM's: [`flush`] first, so the file has them all, or, when the disk didn't let them through in
 //! time, the last lines the app kept in memory ([`recent`], sent with a panic or a freeze).
 //!
 //! The thread that logs never writes the file itself, nor waits for it (#513, #1354): while
@@ -307,7 +307,7 @@ impl Write for Rolling {
 static LOG: std::sync::OnceLock<Rolling> = std::sync::OnceLock::new();
 
 /// Wait, up to `within`, until every line logged so far is in the file: before a report reads
-/// the log's end, and as MDM ends (lines still on their way would be lost with the process).
+/// the log's end, and as iDM ends (lines still on their way would be lost with the process).
 /// True when they are, or when there is no log.
 pub fn flush(within: Duration) -> bool {
     LOG.get().is_none_or(|log| log.flush_within(within))
@@ -326,9 +326,9 @@ impl<'a> tracing_subscriber::fmt::MakeWriter<'a> for Rolling {
     }
 }
 
-/// Start logging into `<data>/logs`: MDM's own crates at `info`, everything else (egui, winit,
+/// Start logging into `<data>/logs`: iDM's own crates at `info`, everything else (egui, winit,
 /// the network stack) at `warn`; `MDM_LOG` overrides it with an `EnvFilter` (e.g.
-/// `MDM_LOG=debug`). Returns false when the folder can't be written (MDM runs on without a log).
+/// `MDM_LOG=debug`). Returns false when the folder can't be written (iDM runs on without a log).
 pub fn init(data: &Path, name: &'static str) -> bool {
     use tracing_subscriber::EnvFilter;
     let Ok(writer) = Rolling::new(dir(data), name) else {
@@ -622,7 +622,7 @@ mod tests {
         assert_eq!(disk.text(), "in pieces\ntwo\r\nlines\n");
     }
 
-    /// A count with no line after it is written by a flush (MDM ending, a report).
+    /// A count with no line after it is written by a flush (iDM ending, a report).
     #[test]
     fn a_flush_writes_the_count_too() {
         let disk = Held::new(false);

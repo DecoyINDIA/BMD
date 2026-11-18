@@ -219,12 +219,12 @@ jobs:
           node tools/extension/check-pack.mjs
           $v = [regex]::Match((Get-Content Cargo.toml -Raw), '(?m)^version\s*=\s*"([^"]+)"').Groups[1].Value
           New-Item -ItemType Directory -Force target/dist | Out-Null
-          Copy-Item target/extension/mdm-chromium.zip "target/dist/MisterDownloadManager-$v-extension-chromium.zip"
-          Copy-Item target/extension/mdm-firefox.xpi "target/dist/MisterDownloadManager-$v-extension-firefox.xpi"
+          Copy-Item target/extension/mdm-chromium.zip "target/dist/iDM-$v-extension-chromium.zip"
+          Copy-Item target/extension/mdm-firefox.xpi "target/dist/iDM-$v-extension-firefox.xpi"
           # For the Chrome Web Store (the next step, or its dashboard by hand): kept with the
           # build, not the release.
           New-Item -ItemType Directory -Force target/store | Out-Null
-          Copy-Item target/extension/mdm-chrome-store.zip "target/store/MisterDownloadManager-$v-chrome-web-store.zip"
+          Copy-Item target/extension/mdm-chrome-store.zip "target/store/iDM-$v-chrome-web-store.zip"
 
       # The stores' tools, at the exact versions and hashes of tools/release/package-lock.json.
       - name: Store tools
@@ -426,7 +426,7 @@ jobs:
       # (Windows, Linux, macOS and the extension: everything the release ships but the checksums.)
       - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
         with:
-          subject-path: dist/MisterDownloadManager-*
+          subject-path: dist/iDM-*
 
       - name: Publish release
         env:
@@ -437,7 +437,7 @@ jobs:
           # The release waits for x64 Windows (the names every copy before had): its files or none.
           $v = "${{ github.ref_name }}".TrimStart("v")
           foreach ($f in "setup.exe", "portable.zip", "x64.zip") {
-            if (-not (Test-Path "dist/MisterDownloadManager-$v-$f")) { throw "x64 Windows' $f isn't there: no release" }
+            if (-not (Test-Path "dist/iDM-$v-$f")) { throw "x64 Windows' $f isn't there: no release" }
           }
           # One SHA256SUMS.txt for every file (each build wrote its own).
           Remove-Item dist/SHA256SUMS*.txt -ErrorAction SilentlyContinue
