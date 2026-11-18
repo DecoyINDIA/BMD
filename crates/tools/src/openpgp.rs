@@ -506,7 +506,7 @@ mod tests {
         };
         assert_eq!(
             fingerprint(MDM_KEY),
-            "5826D399249DE856EA087D802E293C28E8A69D74"
+            "ED4D65B61F3809DA1AF22D954EFF92B31405DDFB"
         );
         assert_eq!(
             fingerprint(YTDLP_KEY),
