@@ -65,6 +65,7 @@ pub fn parse(xml: &str) -> Result<Parsed, String> {
     let opts = roxmltree::ParsingOptions {
         allow_dtd: false,
         nodes_limit: 200_000,
+        ..Default::default()
     };
     let doc = roxmltree::Document::parse_with_options(xml, opts).map_err(|e| e.to_string())?;
     let root = doc.root_element();
