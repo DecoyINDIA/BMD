@@ -24,8 +24,8 @@ use std::collections::HashMap;
 use std::sync::{Arc, Mutex, RwLock};
 use std::time::{Duration, Instant};
 
-use futures::future::BoxFuture;
 use bmd_engine::{ServiceFault, Unlocked};
+use futures::future::BoxFuture;
 use serde::{Deserialize, Serialize};
 use tokio_util::sync::CancellationToken;
 use url::Url;
@@ -1141,13 +1141,7 @@ pub mod signin {
             }
             assert!(own_page(ad, "https://real-debrid.com/device").is_err());
             let tb = ServiceKind::TorBox;
-            assert!(
-                own_page(
-                    tb,
-                    "https://torbox.app/oauth/device?app=BMD"
-                )
-                .is_ok()
-            );
+            assert!(own_page(tb, "https://torbox.app/oauth/device?app=BMD").is_ok());
             assert!(own_page(tb, "https://real-debrid.com/device").is_err());
         }
     }

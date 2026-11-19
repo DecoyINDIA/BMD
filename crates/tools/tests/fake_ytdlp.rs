@@ -1366,7 +1366,7 @@ fn engine_checks(me: &Path) {
         std::fs::read_dir(out.path())
             .unwrap()
             .filter_map(Result::ok)
-            .all(|e| !e.file_name().to_string_lossy().contains(".bmd.")),
+            .all(|e| !e.file_name().to_string_lossy().contains(".mdm.")),
         "no part file or state left"
     );
 

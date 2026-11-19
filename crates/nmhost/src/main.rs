@@ -1054,11 +1054,7 @@ fn deliver(cmd: &bmd_ipc::Command) -> Result<(), Undelivered> {
     // written next to this copy.
     let app = match std::fs::read_to_string(dir.join("app-path")) {
         Ok(path) if !path.trim().is_empty() => PathBuf::from(path.trim()),
-        _ => dir.join(if cfg!(windows) {
-            "bmd.exe"
-        } else {
-            "bmd"
-        }),
+        _ => dir.join(if cfg!(windows) { "bmd.exe" } else { "bmd" }),
     };
     let safari = SAFARI.load(std::sync::atomic::Ordering::Relaxed);
     let mut child = if safari {

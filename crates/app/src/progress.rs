@@ -1,9 +1,9 @@
 //! The per-download progress dialog, painted to IDM 6.42's pixels
 //! (notes/ui-spec/progress-dialog.md). Coordinates are client pixels from the spec.
 
-use egui::{Color32, Pos2, Ui, ViewportId, vec2};
 use bmd_engine::Snapshot;
 use bmd_engine::download::ConnStatus;
+use egui::{Color32, Pos2, Ui, ViewportId, vec2};
 
 use crate::dialogs::display_path;
 use crate::model::{self, Item, Status, size3};

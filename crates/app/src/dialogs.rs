@@ -5,8 +5,8 @@
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 
-use egui::{Pos2, Ui, ViewportId, vec2};
 use bmd_engine::ProbeInfo;
+use egui::{Pos2, Ui, ViewportId, vec2};
 use url::Url;
 
 use crate::model::{self, Category};

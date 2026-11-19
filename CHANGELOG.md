@@ -5,6 +5,10 @@ Each release's notes on GitHub come from its section here (`## [X.Y.Z]`, see
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-19
+
+The first release as BMD (Black Marlin Downloader), signed with BMD's own release key.
+
 ### Added
 
 - **Most compatible (H.264 + AAC)** among a video's qualities: in the Download video window, second in the list after the best, and in the menu over a video. It takes the best H.264 picture the site has (YouTube's usually go up to 1080p) with AAC sound, in an MP4 that Premiere Pro and other editors, older TVs and phones open as it is, and says its resolution (`Most compatible (H.264 + AAC) · 1080p`). YouTube's best qualities are AV1 or VP9 with Opus sound, which some of them can't read, so such files had to be converted afterwards. Nothing is converted: the line is there only when the site has such streams, and isn't listed twice when the best one already is. A playlist's **Quality** offers it for every video, and the command line's `video-get -q compatible` takes it ([#1439](https://github.com/anefzaoui/misterdownloadmanager/issues/1439)).
@@ -68,6 +72,8 @@ Each release's notes on GitHub come from its section here (`## [X.Y.Z]`, see
 
 ### Fixed
 
+- Windows: **Options → Launch on startup** sees, changes and removes the entry the installer's **Start when Windows starts** writes. Since the rename to BMD they used two different names, so the option showed off after such an install, ticking it started BMD twice at sign-in, and uninstalling left one entry behind.
+- Adding a video again with **overwrite** removes what BMD's own downloader left of its streams (their part files and resume state) as well as yt-dlp's, as it did before the rename to BMD.
 - **A file is named as the browser names it, when its server percent-encodes the name.** A server that writes the name in its answer as `filename="My%20Report.pdf"` (or `filename=My%20Report.pdf`) gets `My Report.pdf` in Chrome and Firefox, and got `My%20Report.pdf` in BMD: only an encoded name that held letters beyond ASCII was decoded, so spaces, `%25` and the like stayed encoded. BMD now decodes it whenever it decodes to readable text, as both browsers do, and also reads a name written in encoded words (`=?UTF-8?B?…?=`), which both browsers read too. An escape that isn't one (`50%off.zip`) stays as it is. This goes for every way a download comes to BMD: **Add URL** and **Download File Info**, the command line, and downloads the Firefox extension takes from the page's answer. A link whose first address only redirects to the file was already named by the file's own answer, through relative and several redirects, and still is ([#1427](https://github.com/anefzaoui/misterdownloadmanager/issues/1427)).
 - **SourceForge downloads from the browser no longer stop at "this site lets only browsers through".** SourceForge's bot check refuses anything that calls itself a browser without connecting exactly like one, BMD's browser-like connection too, and lets a program that says what it is through. When a site's check refuses the browser's User-Agent and that connection both, BMD now asks once more under its own name (`BMD/` and its version, or the User-Agent typed in **Options → Downloads**), with the same cookies and referrer, and remembers the site until BMD closes: its next downloads, and a paused one when it resumes, go that way at once. A site whose check every visitor has to answer in a browser still refuses, and BMD still says so ([#1422](https://github.com/anefzaoui/misterdownloadmanager/issues/1422)).
 

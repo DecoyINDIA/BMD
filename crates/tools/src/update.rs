@@ -699,10 +699,7 @@ Connection: close
             app_bundle(exe).as_deref(),
             Some(Path::new("/Applications/BMD.app"))
         );
-        assert_eq!(
-            app_bundle(Path::new("/usr/bin/bmd")),
-            None
-        );
+        assert_eq!(app_bundle(Path::new("/usr/bin/bmd")), None);
     }
 
     #[test]

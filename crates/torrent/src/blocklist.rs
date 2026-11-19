@@ -119,7 +119,7 @@ mod tests {
                 .unwrap();
         assert_eq!(
             c.text,
-            "bmd:1.2.3.0-1.2.3.255\nmdm:2001:db8::-2001:db8::ffff\n"
+            "bmd:1.2.3.0-1.2.3.255\nbmd:2001:db8::-2001:db8::ffff\n"
         );
         assert_eq!((c.ranges, c.skipped), (2, 0));
         // A name with a comma is still P2P.

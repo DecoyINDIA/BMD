@@ -8,8 +8,8 @@ use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
-use egui::{Color32, Pos2, Rect, Stroke, Ui, pos2, vec2};
 use bmd_torrent::{Lookup, LookupStatus, Meta, Source};
+use egui::{Color32, Pos2, Rect, Stroke, Ui, pos2, vec2};
 
 use crate::dialogs::{Outcome, window};
 use crate::model::{Category, category_folder};

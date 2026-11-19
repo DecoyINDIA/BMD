@@ -6,9 +6,9 @@ use std::path::PathBuf;
 use std::time::{Duration, Instant};
 
 use base64::Engine as _;
-use egui::{Pos2, Ui, pos2};
 use bmd_engine::state::state_path;
 use bmd_engine::{Destination, Download, Options, Request};
+use egui::{Pos2, Ui, pos2};
 use reqwest::header::{AUTHORIZATION, HeaderMap, HeaderValue};
 
 use crate::chrome::{

@@ -5835,8 +5835,13 @@ fn run_value() -> Option<String> {
             .ok()
             .filter(|v| v.starts_with("MisterDownloadManagerTest"));
     }
-    Some("BMD".to_owned())
+    // The name before the rebrand, kept: the installer writes (and its uninstaller removes) this
+    // one, and every existing installation's entry has it.
+    Some(RUN_VALUE.to_owned())
 }
+
+/// The Run value's name, the same in tools/installer/bmd.iss (`the_installer_writes_the_same_entry`).
+const RUN_VALUE: &str = "MisterDownloadManager";
 
 const RUN_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Run";
 
@@ -5942,7 +5947,7 @@ pub fn set_run_at_startup(on: bool) {
 
 #[cfg(test)]
 mod startup_tests {
-    use super::{startup_command, startup_outdated};
+    use super::{RUN_VALUE, startup_command, startup_outdated};
     use std::path::Path;
 
     const EXE: &str = r"C:\Program Files\BMD\bmd.exe";
@@ -5969,10 +5974,7 @@ mod startup_tests {
         // Options before 0.5.0, and the installer's: the program alone, quoted.
         assert!(startup_outdated(&format!("\"{EXE}\""), exe));
         // Written by hand: unquoted, in another case, with other slashes.
-        assert!(startup_outdated(
-            r"c:\program files\idm\MISTERDOWNLOADMANAGER.EXE",
-            exe
-        ));
+        assert!(startup_outdated(r"c:\program files\bmd\BMD.EXE", exe));
         assert!(startup_outdated(
             &format!("\"{}\"", EXE.replace('\\', "/").to_uppercase()),
             exe
@@ -5982,10 +5984,7 @@ mod startup_tests {
         assert!(!startup_outdated(&format!("\"{EXE}\" /startup"), exe));
         assert!(!startup_outdated(&format!("\"{EXE}\" /STARTUP"), exe));
         // Another copy's (a portable one, a build elsewhere).
-        assert!(!startup_outdated(
-            r#""D:\bmd\bmd.exe""#,
-            exe
-        ));
+        assert!(!startup_outdated(r#""D:\bmd\bmd.exe""#, exe));
         assert!(!startup_outdated("", exe));
     }
 
@@ -5993,9 +5992,9 @@ mod startup_tests {
     #[test]
     fn the_installer_writes_the_same_entry() {
         let iss = include_str!("../../../tools/installer/bmd.iss");
-        assert!(iss.contains(
-            r#"ValueName: "MisterDownloadManager"; ValueData: """{app}\{#AppExe}"" /startup""#
-        ));
+        let entry =
+            format!(r#"ValueName: "{RUN_VALUE}"; ValueData: """{{app}}\{{#AppExe}}"" /startup""#);
+        assert!(iss.contains(&entry), "{entry}");
     }
 }
 

@@ -3,8 +3,8 @@ use std::net::SocketAddr;
 use std::sync::{Arc, Mutex};
 
 use anyhow::Context;
-use clap::Parser;
 use bmd_labserver::{Config, Faults, LabServer};
+use clap::Parser;
 
 /// HTTP Range test server with a request log and fault injection.
 #[derive(Parser)]
