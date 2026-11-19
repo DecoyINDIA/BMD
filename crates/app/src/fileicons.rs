@@ -174,7 +174,7 @@ fn to_shown(ctx: &egui::Context, what: &What, px: u32, got: Option<Native>) -> S
         Some(Native::File(path)) => match std::fs::read(&path) {
             Ok(bytes) => Shown::Image(ImageSource::Bytes {
                 // The file's own name ends the address: the loaders go by its extension.
-                uri: format!("bytes://mdm/file-icon/system/{}", path.display()).into(),
+                uri: format!("bytes://bmd/file-icon/system/{}", path.display()).into(),
                 bytes: egui::load::Bytes::Shared(bytes.into()),
             }),
             Err(_) => Shown::Fallback,
@@ -376,7 +376,7 @@ fn tango_source(name: &str, px: u32) -> ImageSource<'static> {
         _ => (icon.svg, format!("scalable/{name}.svg")),
     };
     ImageSource::Bytes {
-        uri: format!("bytes://mdm/file-icon/tango/{file}").into(),
+        uri: format!("bytes://bmd/file-icon/tango/{file}").into(),
         bytes: egui::load::Bytes::Static(bytes),
     }
 }
@@ -482,7 +482,7 @@ mod tests {
     #[test]
     fn a_lookup_is_asked_once_and_answers_later() {
         let ctx = egui::Context::default();
-        let what = What::File(Some("mdm-test-type".into()));
+        let what = What::File(Some("bmd-test-type".into()));
         // First ask: nothing yet (Tango's is drawn), the lookup queued.
         assert!(shown(&ctx, &what, 16).is_none());
         assert!(cache().icons.contains_key(&(what.clone(), 16)));
@@ -502,7 +502,7 @@ mod tests {
         assert!(matches!(shown(&ctx, &what, 16), Some(Shown::Texture(_))));
         assert!(matches!(shown(&ctx, &what, 24), Some(Shown::Texture(_))));
         // A system with nothing for a type: Tango's, for good.
-        let none = What::File(Some("mdm-test-none".into()));
+        let none = What::File(Some("bmd-test-none".into()));
         cache()
             .icons
             .insert((none.clone(), 16), Some(to_shown(&ctx, &none, 16, None)));

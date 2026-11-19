@@ -1,4 +1,4 @@
-﻿; iDM's installer in Filipino: tools/installer/languages.py
+﻿; BMD's installer in Filipino: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Ina-uninstall ang %1.
 
 [CustomMessages]
 TaskBrowser=I-set up ang pagsasama ng &browser (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Buksan ang mga .&torrent file at magnet link gamit ang iDM
-TaskStartup=Simulan ang iDM kapag nagsimula ang &Windows
+TaskTorrents=Buksan ang mga .&torrent file at magnet link gamit ang BMD
+TaskStartup=Simulan ang BMD kapag nagsimula ang &Windows
 TaskGroupOther=Iba pa:
-Launch=Simulan ang iDM
+Launch=Simulan ang BMD
 KeepData=Burahin din ang iyong listahan ng download at mga setting?%n%nAng iyong mga na-download na file ay hindi maaapektuhan.

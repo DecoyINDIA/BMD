@@ -1,4 +1,4 @@
-﻿; iDM's installer in Valencian: tools/installer/languages.py
+﻿; BMD's installer in Valencian: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Desinstal·lant %1.
 
 [CustomMessages]
 TaskBrowser=Configura la integració del &navegador (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Obri fitxers .&torrent i enllaços magnet amb iDM
-TaskStartup=Inicia iDM quan s'inicia &Windows
+TaskTorrents=Obri fitxers .&torrent i enllaços magnet amb BMD
+TaskStartup=Inicia BMD quan s'inicia &Windows
 TaskGroupOther=Altres:
-Launch=Inicia iDM
+Launch=Inicia BMD
 KeepData=Vols esborrar també la llista de descàrregues i la configuració?%n%nEls fitxers descarregats no es toquen de cap manera.

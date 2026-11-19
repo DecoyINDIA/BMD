@@ -1,4 +1,4 @@
-﻿; iDM's installer in Urdu: tools/installer/languages.py
+﻿; BMD's installer in Urdu: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -292,8 +292,8 @@ ShutdownBlockReasonUninstallingApp=%1 ان انسٹال ہو رہا ہے۔
 
 [CustomMessages]
 TaskBrowser=براؤزر انٹیگریشن سیٹ اپ کریں (&B) (Chrome, Edge, Brave, Firefox)
-TaskTorrents=۔torrent فائلیں اور مقناطیسی لنکس iDM کے ساتھ کھولیں(&T)
-TaskStartup=جب Windows شروع ہو تو iDM شروع کریں(&W)
+TaskTorrents=۔torrent فائلیں اور مقناطیسی لنکس BMD کے ساتھ کھولیں(&T)
+TaskStartup=جب Windows شروع ہو تو BMD شروع کریں(&W)
 TaskGroupOther=دیگر:
-Launch=شروع کریں iDM
+Launch=شروع کریں BMD
 KeepData=کیا آپ اپنی ڈاؤن لوڈ کی فہرست اور ترتیبات کو بھی حذف کرنا چاہتے ہیں؟%n%nآپ کی ڈاؤن لوڈ کردہ فائلوں کو کسی بھی صورت میں نہیں چھوا جائے گا۔

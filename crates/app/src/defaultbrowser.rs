@@ -1,13 +1,13 @@
-//! The default browser of this computer and its version (#668), found once when iDM starts, on a
+//! The default browser of this computer and its version (#668), found once when BMD starts, on a
 //! thread of its own (reading a version can start a program: `--version`, bounded in time): its
-//! User-Agent becomes the one iDM sends for links added by hand (`mdm_engine::agent`). Where to
+//! User-Agent becomes the one BMD sends for links added by hand (`bmd_engine::agent`). Where to
 //! look is each system's (`win32::default_browser`, `unix::default_browser`); reading what they
 //! find (a command line, a `.desktop` file, a version's output) is here, the same everywhere.
 
 use std::sync::mpsc;
 use std::time::Duration;
 
-use mdm_engine::agent::Found;
+use bmd_engine::agent::Found;
 
 /// Look for the default browser on a thread of its own; the automatic User-Agent is a current
 /// Chrome's until it is found. Returns a receiver told when it is done (`wait`).
@@ -18,19 +18,19 @@ pub fn start() -> mpsc::Receiver<()> {
         .spawn(move || {
             let started = std::time::Instant::now();
             let found = find();
-            let browser = found.as_ref().map_or("none iDM knows".to_owned(), |f| {
+            let browser = found.as_ref().map_or("none BMD knows".to_owned(), |f| {
                 format!("{:?} {}", f.browser, f.version.as_deref().unwrap_or("?"))
             });
-            mdm_engine::agent::set_automatic(found);
+            bmd_engine::agent::set_automatic(found);
             tracing::info!(
                 "default browser: {browser} ({} ms); links added by hand go as {:?}",
                 started.elapsed().as_millis(),
-                mdm_engine::agent::automatic()
+                bmd_engine::agent::automatic()
             );
             let _ = tx.send(());
         });
     if spawned.is_err() {
-        mdm_engine::agent::set_automatic(None);
+        bmd_engine::agent::set_automatic(None);
     }
     rx
 }

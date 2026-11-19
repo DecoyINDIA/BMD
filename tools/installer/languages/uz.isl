@@ -1,4 +1,4 @@
-﻿; iDM's installer in Uzbek: tools/installer/languages.py
+﻿; BMD's installer in Uzbek: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=%1 oʻchirilmoqda.
 
 [CustomMessages]
 TaskBrowser=Brauzer integratsiyasini sozlash (&Chrome, Edge, Brave, Firefox)
-TaskTorrents=.&torrent fayllarini va magnit havolalarni iDM bilan ochish
-TaskStartup=&Windows ishga tushganda iDMni ishga tushirish
+TaskTorrents=.&torrent fayllarini va magnit havolalarni BMD bilan ochish
+TaskStartup=&Windows ishga tushganda BMDni ishga tushirish
 TaskGroupOther=Boshqa:
-Launch=iDMni ishga tushirish
+Launch=BMDni ishga tushirish
 KeepData=Yuklab olish roʻyxati va sozlamalaringizni ham oʻchirib tashlaysizmi?%n%nYuklab olingan fayllaringizga hech qanday holatda tegmaydi.

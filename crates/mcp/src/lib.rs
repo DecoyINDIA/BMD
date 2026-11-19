@@ -1,37 +1,37 @@
-//! iDM's MCP server (Model Context Protocol). An AI assistant (Claude, Cursor,
+//! BMD's MCP server (Model Context Protocol). An AI assistant (Claude, Cursor,
 //! VS Code, …) starts it and, through it, lists the running app's downloads, adds new ones and
 //! pauses, resumes or removes them. A thin bridge to the app's automation API
 //! (docs/command-line.md): nothing here downloads by itself. Guide: docs/ai-assistants.md.
 
 use std::sync::Arc;
 
-use mdm_ipc::Command;
-use mdm_ipc::api::{API_OFF as API_OFF_CODE, ErrorAnswer, ListAnswer};
+use bmd_ipc::Command;
+use bmd_ipc::api::{API_OFF as API_OFF_CODE, ErrorAnswer, ListAnswer};
 use rmcp::handler::server::{router::tool::ToolRouter, wrapper::Parameters};
 use rmcp::{ServerHandler, tool, tool_handler, tool_router};
 use schemars::JsonSchema;
 use serde::Deserialize;
 
-/// How a tool reaches the app: [`mdm_ipc::request`] in the program, a stand-in in tests.
+/// How a tool reaches the app: [`bmd_ipc::request`] in the program, a stand-in in tests.
 pub type Ask = Arc<dyn Fn(&Command) -> Result<String, String> + Send + Sync>;
 
 /// Downloads listed when the assistant doesn't say how many.
 const DEFAULT_LIMIT: usize = 100;
 
-const NOT_RUNNING: &str = "iDM isn't running. Ask the user to start it, then \
+const NOT_RUNNING: &str = "BMD isn't running. Ask the user to start it, then \
                            try again.";
-const API_OFF: &str = "iDM's automation API is off. Ask the user to turn it \
-                       on once with `misterdownloadmanager-cli api on` (it stays on), then try \
+const API_OFF: &str = "BMD's automation API is off. Ask the user to turn it \
+                       on once with `bmd-cli api on` (it stays on), then try \
                        again.";
 
-const INSTRUCTIONS: &str = "Controls iDM, the download manager running on \
+const INSTRUCTIONS: &str = "Controls BMD, the download manager running on \
     this computer. list_downloads shows its downloads with their ids (and optional id, status, \
     category, queue, or search filtering); pause_downloads, resume_downloads and \
     remove_downloads act on those ids; add_download adds an address (http, https, ftp, ftps \
     or a magnet link); start_queue starts a download queue (the main queue by default, or \
     by name); stop_queue stops a download queue (the main queue by default, or by name). \
     Listing and acting on downloads, stopping a queue, and starting a named queue need \
-    the app's automation API, which the user turns on with `misterdownloadmanager-cli api on`. \
+    the app's automation API, which the user turns on with `bmd-cli api on`. \
     Sizes, free space and speeds are in bytes and bytes per second.";
 
 #[derive(Deserialize, JsonSchema, Default)]
@@ -145,7 +145,7 @@ impl Server {
 #[tool_router]
 impl Server {
     #[tool(
-        description = "Lists iDM's downloads, newest first: id, file, url, \
+        description = "Lists BMD's downloads, newest first: id, file, url, \
                        path, status (Queued, Downloading, Stopped, Complete or Error), category, \
                        size and downloaded (bytes; size null while unknown), speed (bytes per \
                        second), when it was added and, for a failed one, why (error); with the \
@@ -167,7 +167,7 @@ impl Server {
     }
 
     #[tool(
-        description = "Adds a download to iDM and starts it (or only queues \
+        description = "Adds a download to BMD and starts it (or only queues \
                        it, with later). If the list already has the address, the app asks the \
                        user what to do.",
         annotations(
@@ -180,7 +180,7 @@ impl Server {
         let url = args.url.trim().to_owned();
         if !addable(&url) {
             return Err(format!(
-                "{url:?} isn't an address iDM downloads: it takes http, \
+                "{url:?} isn't an address BMD downloads: it takes http, \
                  https, ftp and ftps addresses and magnet links."
             ));
         }
@@ -249,7 +249,7 @@ impl Server {
     }
 
     #[tool(
-        description = "Removes downloads from iDM's list by id, keeping \
+        description = "Removes downloads from BMD's list by id, keeping \
                        their files, or deleting them from the disk too with delete_files. A \
                        running download must be paused first. Answers {\"done\": [ids], \
                        \"skipped\": [{\"id\", \"why\"}]}.",
@@ -272,7 +272,7 @@ impl Server {
     }
 
     #[tool(
-        description = "Starts iDM's download queue (starts the main queue \
+        description = "Starts BMD's download queue (starts the main queue \
                        if omitted, or a queue by name).",
         annotations(
             read_only_hint = false,
@@ -304,7 +304,7 @@ impl Server {
     }
 
     #[tool(
-        description = "Stops iDM's download queue (stops the main queue \
+        description = "Stops BMD's download queue (stops the main queue \
                        if omitted, or a queue by name).",
         annotations(
             read_only_hint = false,
@@ -336,7 +336,7 @@ impl ServerHandler for Server {
                 .build(),
         )
         .with_server_info(rmcp::model::Implementation::new(
-            "misterdownloadmanager",
+            "bmd",
             env!("CARGO_PKG_VERSION"),
         ))
         .with_instructions(INSTRUCTIONS)
@@ -349,17 +349,17 @@ fn explain(answer: Result<String, String>) -> Result<String, String> {
     let answer = answer.map_err(|e| format!("{NOT_RUNNING} ({e})"))?;
     match answer.as_str() {
         "timeout" => {
-            return Err("iDM didn't answer in time (a dialog may be open \
+            return Err("BMD didn't answer in time (a dialog may be open \
                         in it); try again."
                 .into());
         }
         "denied" => {
-            return Err("iDM refused the request: its channel file \
+            return Err("BMD refused the request: its channel file \
                         (ipc.json) is from another start. Ask the user to restart the app."
                 .into());
         }
         "gone" => {
-            return Err("iDM is closing; try again once it has started.".into());
+            return Err("BMD is closing; try again once it has started.".into());
         }
         _ => {}
     }
@@ -367,13 +367,13 @@ fn explain(answer: Result<String, String>) -> Result<String, String> {
         return Err(if e.code.as_deref() == Some(API_OFF_CODE) {
             API_OFF.into()
         } else {
-            format!("iDM: {}", e.error)
+            format!("BMD: {}", e.error)
         });
     }
     Ok(answer)
 }
 
-/// What the app adds (`mdm_engine::supported`, and magnet links for Add torrent).
+/// What the app adds (`bmd_engine::supported`, and magnet links for Add torrent).
 fn addable(url: &str) -> bool {
     if url
         .get(..7)
@@ -389,7 +389,7 @@ fn addable(url: &str) -> bool {
 fn filter_list(answer: &str, args: &ListArgs) -> Result<String, String> {
     let list: ListAnswer =
         serde_json::from_str(answer).map_err(|e| format!("unreadable answer: {e}"))?;
-    let filter = mdm_ipc::api::ListFilter {
+    let filter = bmd_ipc::api::ListFilter {
         id: args.id,
         status: args.status.as_deref(),
         search: args.search.as_deref(),

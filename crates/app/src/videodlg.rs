@@ -7,9 +7,9 @@ use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
 use egui::{Pos2, Ui, pos2};
-use mdm_tools::declared::Declared;
-use mdm_tools::resolve::{Choice, Looked, SubChoice, Video};
-use mdm_tools::video::{ALL_UPLOADERS, Subs};
+use bmd_tools::declared::Declared;
+use bmd_tools::resolve::{Choice, Looked, SubChoice, Video};
+use bmd_tools::video::{ALL_UPLOADERS, Subs};
 
 use crate::dialogs::{Outcome, window};
 use crate::model::Category;
@@ -34,7 +34,7 @@ pub struct VideoAdd {
     pub start_now: bool,
     /// What the browser's request for the page carried (its button), for yt-dlp to ask the
     /// same; none for an address typed or edited here.
-    pub context: mdm_ipc::Command,
+    pub context: bmd_ipc::Command,
     /// The subtitles to save with it (#68; none for a sound-only choice).
     pub subs: Subs,
     /// The Subtitles choice to remember for the next video (settings.video_subs); none when
@@ -42,7 +42,7 @@ pub struct VideoAdd {
     pub remember: Option<Subs>,
     /// The browser's quality menu's look-up the choice was made from, for the download's first
     /// run (videolookup.rs); none from this window, whose download looks the page up itself.
-    pub preloaded: Option<mdm_tools::video::Preloaded>,
+    pub preloaded: Option<bmd_tools::video::Preloaded>,
     /// The user typed the file name (#1102): kept as typed; else it is the page's title, which
     /// is shortened to fit the path limits.
     pub named: bool,
@@ -69,11 +69,11 @@ enum Tool {
 pub struct VideoDialog {
     page: String,
     /// The browser's request context for `page` as it came (VideoAdd::context).
-    context: mdm_ipc::Command,
+    context: bmd_ipc::Command,
     from_browser: String,
     /// Save to.
     folder: String,
-    /// The Video and Music categories' folders iDM puts in Save to (#611): Music's while a
+    /// The Video and Music categories' folders BMD puts in Save to (#611): Music's while a
     /// sound-only choice is chosen, as long as Save to holds one of them (a folder typed or
     /// picked stays). No Music folder: the Music category was deleted, all goes as video.
     video_dir: String,
@@ -86,12 +86,12 @@ pub struct VideoDialog {
     /// (its address, the page as its Referer), while the address is still the one looked up.
     declared: Option<Declared>,
     /// The yt-dlp and the browser's context the look-up ran with (a list is listed with them).
-    looking: Option<(PathBuf, mdm_tools::proc::FromBrowser)>,
+    looking: Option<(PathBuf, bmd_tools::proc::FromBrowser)>,
     /// The page is a playlist or a channel: its videos (#69).
     list: Option<crate::playlistdlg::PlaylistView>,
     /// Adding that many was answered Yes: Download Now (true) or Later goes ahead.
     confirmed: Option<bool>,
-    install: Option<(Tool, Slot<mdm_tools::Installed>)>,
+    install: Option<(Tool, Slot<bmd_tools::Installed>)>,
     /// The helpers found (read again when an install ends, not every frame: it reads files).
     tools: Option<Tools>,
     /// The address the choices were looked up for (an edited one needs Look up again).
@@ -132,35 +132,35 @@ const BUTTONS_Y: f32 = 389.0;
 /// What is installed in the tools folder: (folder, yt-dlp, ffmpeg).
 type Tools = (
     Option<PathBuf>,
-    Option<mdm_tools::Installed>,
-    Option<mdm_tools::Installed>,
+    Option<bmd_tools::Installed>,
+    Option<bmd_tools::Installed>,
 );
 
 /// Keep yt-dlp current: video sites change often and an old yt-dlp is the usual reason a page
 /// stops working. Once per session, when the video window opens and yt-dlp is installed, the
-/// newest release is fetched in the background (mdm_tools::install_latest: signed by yt-dlp's
+/// newest release is fetched in the background (bmd_tools::install_latest: signed by yt-dlp's
 /// developers, never older, switched atomically, the previous version kept). Quiet: a failure
 /// leaves the installed version in use. A system copy is left to its package manager.
 pub fn refresh_ytdlp(rt: &tokio::runtime::Handle) {
     use std::sync::atomic::{AtomicBool, Ordering};
     static DONE: AtomicBool = AtomicBool::new(false);
-    let Some(dir) = mdm_tools::tools_dir() else {
+    let Some(dir) = bmd_tools::tools_dir() else {
         return;
     };
-    if !mdm_tools::refreshable(&dir) || DONE.swap(true, Ordering::SeqCst) {
+    if !bmd_tools::refreshable(&dir) || DONE.swap(true, Ordering::SeqCst) {
         return;
     }
     rt.spawn(async move {
-        if let Err(e) = mdm_tools::install_latest(&dir, &crate::settings::own_net(), None).await {
+        if let Err(e) = bmd_tools::install_latest(&dir, &crate::settings::own_net(), None).await {
             eprintln!("yt-dlp update check: {e}"); // not translated: a log line
         }
     });
 }
 
 fn tools() -> Tools {
-    let dir = mdm_tools::tools_dir();
-    let ytdlp = dir.as_deref().and_then(mdm_tools::installed);
-    let ffmpeg = dir.as_deref().and_then(mdm_tools::ffmpeg::installed);
+    let dir = bmd_tools::tools_dir();
+    let ytdlp = dir.as_deref().and_then(bmd_tools::installed);
+    let ffmpeg = dir.as_deref().and_then(bmd_tools::ffmpeg::installed);
     (dir, ytdlp, ffmpeg)
 }
 
@@ -245,8 +245,8 @@ impl VideoDialog {
 
     /// Opened for `page` (Add URL was given a video's page, or the browser's button was
     /// clicked with `context`): looks it up at once.
-    pub fn for_page(folder: PathBuf, page: &str, mut context: mdm_ipc::Command) -> Self {
-        let own = mdm_tools::pages::video_address(page);
+    pub fn for_page(folder: PathBuf, page: &str, mut context: bmd_ipc::Command) -> Self {
+        let own = bmd_tools::pages::video_address(page);
         // An embedded player taken to the video's own page (#359): the site that embedded it
         // isn't that page's referer, and Dailymotion refuses its own page asked with one (403).
         if own != page {
@@ -263,11 +263,11 @@ impl VideoDialog {
     }
 
     /// The browser's context, while the address is still the one it came with.
-    fn context(&self) -> mdm_ipc::Command {
+    fn context(&self) -> bmd_ipc::Command {
         if self.page.trim() == self.from_browser {
             self.context.clone()
         } else {
-            mdm_ipc::Command::default()
+            bmd_ipc::Command::default()
         }
     }
 
@@ -280,14 +280,14 @@ impl VideoDialog {
             v.title = title.to_owned();
         }
         let merge = self.tools.get_or_insert_with(tools).2.is_some();
-        let choices = mdm_tools::resolve::choices(&v, merge);
+        let choices = bmd_tools::resolve::choices(&v, merge);
         // The best, as `video-get` takes it by default (#1240).
-        self.chosen = mdm_tools::resolve::pick(&choices, None).map_or(0, |p| p.index);
+        self.chosen = bmd_tools::resolve::pick(&choices, None).map_or(0, |p| p.index);
         self.rows = Default::default();
         self.error = choices
             .is_empty()
             .then(|| crate::i18n::t("No video this can download on that page").into());
-        self.subs = mdm_tools::resolve::sub_choices(&v, crate::i18n::code());
+        self.subs = bmd_tools::resolve::sub_choices(&v, crate::i18n::code());
         self.sub_pick = pick_for(&self.subs, &self.pref);
         self.video = Some((v, choices));
         self.name_from_choice();
@@ -316,7 +316,7 @@ impl VideoDialog {
             "subtitles": {"de": [{"name": "German"}], "pt-PT": [{"name": "Portuguese (Portugal)"}],
                 "ar": [{"name": "Arabic"}]},
             "automatic_captions": {"en-orig": [{"name": "English (Original)"}], "en": [{"name": "English"}]}}"#;
-        if let Some(v) = mdm_tools::resolve::parse(SAMPLE.as_bytes()) {
+        if let Some(v) = bmd_tools::resolve::parse(SAMPLE.as_bytes()) {
             self.page = "https://video.example/talk".into();
             self.looked_up = self.page.clone();
             self.auto_look = false;
@@ -333,7 +333,7 @@ impl VideoDialog {
             {"format_id": "140", "ext": "m4a", "vcodec": "none", "acodec": "mp4a", "filesize": 29000000},
             {"format_id": "137", "ext": "mp4", "height": 1080, "vcodec": "avc1", "acodec": "none", "filesize": 412000000},
             {"format_id": "136", "ext": "mp4", "height": 720, "vcodec": "avc1", "acodec": "none", "filesize": 201000000}]}"#;
-        if let Some(mut v) = mdm_tools::resolve::parse(SAMPLE.as_bytes()) {
+        if let Some(mut v) = bmd_tools::resolve::parse(SAMPLE.as_bytes()) {
             v.needs_js_runtime = runtime_said;
             self.page = "https://video.example/talk".into();
             self.looked_up = self.page.clone();
@@ -462,7 +462,7 @@ impl VideoDialog {
         );
         // A playlist's quality chosen, a list or a video looked up: Save to follows (#611).
         self.follow_sound();
-        // Helpers... open: on Close, the helpers are read again (another program, or iDM's own).
+        // Helpers... open: on Close, the helpers are read again (another program, or BMD's own).
         if let Some(h) = &mut self.helpers
             && !matches!(h.show(ctx, rt), Outcome::Open)
         {
@@ -501,10 +501,10 @@ impl VideoDialog {
             return None;
         };
         let c = choices.get(self.chosen.min(choices.len().checked_sub(1)?))?;
-        let name = mdm_engine::naming::sanitize(self.name.trim());
+        let name = bmd_engine::naming::sanitize(self.name.trim());
         // Not the name the choice gave it (the page's title): the user's (#1102).
         let named = name
-            != mdm_engine::naming::sanitize(file_name(&self.video.as_ref()?.0.title, c).trim());
+            != bmd_engine::naming::sanitize(file_name(&self.video.as_ref()?.0.title, c).trim());
         let chosen = self.chosen_subs();
         // The video the page declares (#1076): its address, the page as its Referer.
         let declared = self
@@ -538,7 +538,7 @@ impl VideoDialog {
             return Some(list.sound_only());
         }
         let (_, choices) = self.video.as_ref()?;
-        choices.get(self.chosen).map(mdm_tools::resolve::is_audio)
+        choices.get(self.chosen).map(bmd_tools::resolve::is_audio)
     }
 
     /// The category the download is listed under (#611), and whose folder "Change folder for
@@ -552,7 +552,7 @@ impl VideoDialog {
     }
 
     /// Save to goes to the Music category's folder when the choice turns sound-only, back to
-    /// Video's when it turns video again, but only while it holds the folder iDM put there: a
+    /// Video's when it turns video again, but only while it holds the folder BMD put there: a
     /// folder the user typed or picked is theirs (#611).
     fn follow_sound(&mut self) {
         let Some(sound) = self.sound_only() else {
@@ -598,14 +598,14 @@ impl VideoDialog {
         rt: &tokio::runtime::Handle,
         ctx: &egui::Context,
     ) {
-        let slot: Slot<mdm_tools::Installed> = Arc::new(Mutex::new(None));
+        let slot: Slot<bmd_tools::Installed> = Arc::new(Mutex::new(None));
         let (out, ctx) = (slot.clone(), ctx.clone());
         let net = crate::settings::own_net();
         rt.spawn(async move {
             let (res, name) = match tool {
-                Tool::YtDlp => (mdm_tools::install_latest(&dir, &net, None).await, "yt-dlp"),
+                Tool::YtDlp => (bmd_tools::install_latest(&dir, &net, None).await, "yt-dlp"),
                 Tool::Ffmpeg => (
-                    mdm_tools::ffmpeg::install_latest(&dir, &net, None).await,
+                    bmd_tools::ffmpeg::install_latest(&dir, &net, None).await,
                     "ffmpeg",
                 ),
             };
@@ -669,7 +669,7 @@ impl VideoDialog {
             && let Some(tool) = &ytdlp
         {
             // A typed or pasted address too (#359); the box shows what is looked up.
-            self.page = mdm_tools::pages::video_address(self.page.trim());
+            self.page = bmd_tools::pages::video_address(self.page.trim());
             let slot: Slot<(Looked, Option<Declared>)> = Arc::new(Mutex::new(None));
             let (out, exe, page, ctx, rt) = (
                 slot.clone(),
@@ -705,10 +705,10 @@ impl VideoDialog {
                     "Video lookups use yt-dlp (about 23 MB, checked against its signature).",
                 ),
             )),
-            // iDM installs ffmpeg on 64-bit Windows only (its builds are Windows ones, x64 and
+            // BMD installs ffmpeg on 64-bit Windows only (its builds are Windows ones, x64 and
             // ARM64); elsewhere the system's package manager has it, and the note says so instead
             // of a button.
-            (Some(_), None) if mdm_tools::ffmpeg::available() => Some((
+            (Some(_), None) if bmd_tools::ffmpeg::available() => Some((
                 Tool::Ffmpeg,
                 // i18n: button: download and install the ffmpeg program
                 crate::i18n::mark("Install ffmpeg"),
@@ -717,9 +717,9 @@ impl VideoDialog {
             (Some(_), None) if cfg!(windows) => Some((
                 Tool::Ffmpeg,
                 "",
-                // i18n: in Download video, on 32-bit Windows (no button: no ffmpeg build iDM can check exists for it); Helpers... is the button below
+                // i18n: in Download video, on 32-bit Windows (no button: no ffmpeg build BMD can check exists for it); Helpers... is the button below
                 crate::i18n::t(
-                    "The best qualities, MP3, Opus and FLAC need ffmpeg, which iDM has no copy of for 32-bit Windows: choose your own with Helpers...",
+                    "The best qualities, MP3, Opus and FLAC need ffmpeg, which BMD has no copy of for 32-bit Windows: choose your own with Helpers...",
                 ),
             )),
             (Some(_), None) => Some((
@@ -747,7 +747,7 @@ impl VideoDialog {
         let merge_note = self
             .video
             .as_ref()
-            .filter(|(v, _)| ffmpeg.is_none() && mdm_tools::resolve::needs_merging(v))
+            .filter(|(v, _)| ffmpeg.is_none() && bmd_tools::resolve::needs_merging(v))
             .and(offer.as_ref())
             .map(|(_, _, msg)| *msg);
         // #852: YouTube looked up without a JavaScript runtime lists only some of its qualities
@@ -858,7 +858,7 @@ impl VideoDialog {
                 .video
                 .as_ref()
                 .and_then(|(_, c)| c.get(self.chosen))
-                .is_some_and(|c| c.selector == mdm_tools::resolve::FLAC)
+                .is_some_and(|c| c.selector == bmd_tools::resolve::FLAC)
         {
             // The honest word on FLAC (#70): the site's sound is compressed with losses already.
             winui::fit(
@@ -1062,11 +1062,11 @@ impl VideoDialog {
             &[("Helpers...", 90.0)],
             now_at.0 - 8.0 - 11.0,
         )[0];
-        // Where yt-dlp and ffmpeg come from: iDM's own copies or the person's (#51).
+        // Where yt-dlp and ffmpeg come from: BMD's own copies or the person's (#51).
         if winui::button(
             ui,
             r(o, helpers_at.0, BUTTONS_Y, helpers_at.1, 21.0),
-            // i18n: button in Download video: where iDM takes yt-dlp and ffmpeg from
+            // i18n: button in Download video: where BMD takes yt-dlp and ffmpeg from
             "Helpers...",
             ButtonKind::Normal,
             false,
@@ -1144,7 +1144,7 @@ impl VideoDialog {
                 .video
                 .as_ref()
                 .and_then(|(_, c)| c.get(self.chosen))
-                .is_some_and(|c| mdm_tools::resolve::audio_conversion(&c.selector).is_some()),
+                .is_some_and(|c| bmd_tools::resolve::audio_conversion(&c.selector).is_some()),
         };
         let can = ffmpeg && !converts;
         let mut on = self.chapters && can;
@@ -1166,7 +1166,7 @@ impl VideoDialog {
         winui::why_disabled(
             resp,
             ffmpeg && converts,
-            // i18n: why "Embed chapters" is greyed in Download video: the choice is a sound converted to MP3, Opus or FLAC, which iDM saves without chapters
+            // i18n: why "Embed chapters" is greyed in Download video: the choice is a sound converted to MP3, Opus or FLAC, which BMD saves without chapters
             "MP3, Opus and FLAC files are saved without chapters",
         );
         if can {
@@ -1189,7 +1189,7 @@ impl VideoDialog {
             .as_ref()
             .and_then(|(_, c)| c.get(self.chosen))
             .cloned();
-        let audio = choice.as_ref().is_some_and(mdm_tools::resolve::is_audio);
+        let audio = choice.as_ref().is_some_and(bmd_tools::resolve::is_audio);
         let on = !self.subs.is_empty() && !audio;
         let items = sub_items(&self.subs, self.video.is_some());
         let shown: Vec<&str> = items.iter().map(String::as_str).collect();
@@ -1207,7 +1207,7 @@ impl VideoDialog {
         let chosen = on && self.sub_pick > 0;
         let holds = choice
             .as_ref()
-            .is_some_and(mdm_tools::resolve::holds_subtitles);
+            .is_some_and(bmd_tools::resolve::holds_subtitles);
         let mut embed = self.embed && chosen && ffmpeg && holds;
         let resp = winui::checkbox_until(
             ui,
@@ -1242,7 +1242,7 @@ fn all_offered(subs: &[SubChoice]) -> bool {
     subs.iter().filter(|s| !s.automatic).count() >= 2
 }
 
-/// The Subtitles list (English where it is iDM's words; combo_light shows them translated):
+/// The Subtitles list (English where it is BMD's words; combo_light shows them translated):
 /// None, All the uploader's, then each language, the automatic ones marked.
 fn sub_items(subs: &[SubChoice], looked_up: bool) -> Vec<String> {
     let mut out = vec![if looked_up && subs.is_empty() {
@@ -1328,11 +1328,11 @@ fn subs_at(subs: &[SubChoice], pick: usize, embed: bool) -> Subs {
 /// sound-only choice; into the video only where its file type holds them (and with ffmpeg,
 /// which VideoJob checks).
 pub(crate) fn subs_for_choice(c: &Choice, chosen: &Subs) -> Subs {
-    if mdm_tools::resolve::is_audio(c) {
+    if bmd_tools::resolve::is_audio(c) {
         Subs::default()
     } else {
         Subs {
-            embed: chosen.embed && mdm_tools::resolve::holds_subtitles(c),
+            embed: chosen.embed && bmd_tools::resolve::holds_subtitles(c),
             ..chosen.clone()
         }
     }
@@ -1342,7 +1342,7 @@ pub(crate) fn subs_for_choice(c: &Choice, chosen: &Subs) -> Subs {
 /// the last video's choice (`pref`, settings.video_subs) where this video has that language
 /// ([`pick_for`]), else none. The browser's quality menu adds its choice with these.
 pub(crate) fn default_subs(v: &Video, c: &Choice, pref: &Subs) -> Subs {
-    let subs = mdm_tools::resolve::sub_choices(v, crate::i18n::code());
+    let subs = bmd_tools::resolve::sub_choices(v, crate::i18n::code());
     subs_for_choice(c, &subs_at(&subs, pick_for(&subs, pref), pref.embed))
 }
 
@@ -1358,7 +1358,7 @@ pub(crate) fn js_runtime_note() -> &'static str {
     )
 }
 
-/// The title of the page the browser played video `v` on (`mdm_ipc::Command::video_title`,
+/// The title of the page the browser played video `v` on (`bmd_ipc::Command::video_title`,
 /// trimmed), when yt-dlp knows `v` only by the address it looked up, `page` (on some servers
 /// that part is a long hash, #345), or only by the page's own title (`Video::page_titled`: it has
 /// no reader for the site, and a player embedded in another site's page has its own: "Watch
@@ -1370,7 +1370,7 @@ pub(crate) fn js_runtime_note() -> &'static str {
 /// listing: `Episode 31.mp4`): its video or sound extension is left out, as the choice's type
 /// follows the name (it was `Episode 31.mp4.mp4`, #622).
 pub(crate) fn page_title<'a>(
-    context: &'a mdm_ipc::Command,
+    context: &'a bmd_ipc::Command,
     v: &Video,
     page: &str,
 ) -> Option<&'a str> {
@@ -1380,7 +1380,7 @@ pub(crate) fn page_title<'a>(
         .map(|t| without_media_extension(t.trim()))
         .filter(|t| {
             !t.is_empty()
-                && (v.page_titled || mdm_tools::resolve::named_after_address(&v.title, page))
+                && (v.page_titled || bmd_tools::resolve::named_after_address(&v.title, page))
         })
 }
 
@@ -1388,7 +1388,7 @@ pub(crate) fn page_title<'a>(
 /// 31`); as it is otherwise, or when nothing would be left.
 fn without_media_extension(title: &str) -> &str {
     let media = |ext: &str| {
-        mdm_engine::naming::TYPES.iter().any(|(t, e)| {
+        bmd_engine::naming::TYPES.iter().any(|(t, e)| {
             e.eq_ignore_ascii_case(ext)
                 && (t.starts_with("video/") || t.starts_with("audio/") || *t == "application/ogg")
         })
@@ -1402,27 +1402,27 @@ fn without_media_extension(title: &str) -> &str {
 /// The file name a choice of type `c` gets for a video titled `title`: made safe, with the
 /// choice's type.
 pub(crate) fn file_name(title: &str, c: &Choice) -> String {
-    let stem = mdm_engine::naming::sanitize(title);
+    let stem = bmd_engine::naming::sanitize(title);
     format!("{stem}.{}", c.ext)
 }
 
 /// The Download video window's look-up of `page` with the browser's context: yt-dlp's, or, when
 /// yt-dlp read the page generically, the video the page declares its own (#1076,
-/// `mdm_tools::declared`, the page read as Options says iDM's own requests go), which the
+/// `bmd_tools::declared`, the page read as Options says BMD's own requests go), which the
 /// download then keeps as its address. A plain file's size is asked of its server, as yt-dlp
 /// doesn't say it (#320).
 pub(crate) fn look_up(
     exe: &std::path::Path,
     page: &str,
-    browser: &mdm_tools::proc::FromBrowser,
+    browser: &bmd_tools::proc::FromBrowser,
     rt: &tokio::runtime::Handle,
 ) -> Result<(Looked, Option<Declared>), String> {
-    let reader = mdm_tools::streams::Engine {
+    let reader = bmd_tools::streams::Engine {
         handle: rt.clone(),
         opts: crate::settings::own_net(),
     };
     let (mut looked, _, declared) =
-        mdm_tools::declared::look_up(exe, page, browser, &reader).map_err(|e| e.to_string())?;
+        bmd_tools::declared::look_up(exe, page, browser, &reader).map_err(|e| e.to_string())?;
     if let Looked::Video(v) = &mut looked
         && v.needs_size()
     {
@@ -1440,8 +1440,8 @@ pub(crate) fn look_up(
 /// The browser's request context `context` for the video a page declares (#1076, `d`), as its
 /// download keeps it: the page as its Referer, the browser's User-Agent and cookie jar, not the
 /// page's own Cookie header nor a stream's Origin (`Declared::browser`).
-fn declared_context(context: &mdm_ipc::Command, d: &Declared) -> mdm_ipc::Command {
-    mdm_ipc::Command {
+fn declared_context(context: &bmd_ipc::Command, d: &Declared) -> bmd_ipc::Command {
+    bmd_ipc::Command {
         referer: Some(d.page.clone()),
         origin: None,
         cookies: None,
@@ -1451,15 +1451,15 @@ fn declared_context(context: &mdm_ipc::Command, d: &Declared) -> mdm_ipc::Comman
 
 /// yt-dlp's look-up of `page` with the browser's context, as the browser's quality menu makes it
 /// (videolookup.rs), with its answer as it gave it, when it gave one (kept for the download
-/// chosen there, `mdm_tools::video::Preloaded`): a plain file's size is asked of its server, as
+/// chosen there, `bmd_tools::video::Preloaded`): a plain file's size is asked of its server, as
 /// yt-dlp doesn't say it (#320).
 pub(crate) fn look_up_kept(
     exe: &std::path::Path,
     page: &str,
-    browser: &mdm_tools::proc::FromBrowser,
+    browser: &bmd_tools::proc::FromBrowser,
     rt: &tokio::runtime::Handle,
-) -> (Result<Looked, String>, Option<mdm_tools::proc::LookedUp>) {
-    let (mut res, kept) = match mdm_tools::resolve::look_up_kept(exe, page, browser) {
+) -> (Result<Looked, String>, Option<bmd_tools::proc::LookedUp>) {
+    let (mut res, kept) = match bmd_tools::resolve::look_up_kept(exe, page, browser) {
         Ok((looked, out)) => (Ok(looked), Some(out)),
         Err(e) => (Err(e.to_string()), None),
     };
@@ -1473,8 +1473,8 @@ pub(crate) fn look_up_kept(
 }
 
 /// yt-dlp's view of the browser's request context.
-pub fn from_browser(c: &mdm_ipc::Command) -> mdm_tools::proc::FromBrowser {
-    mdm_tools::proc::FromBrowser {
+pub fn from_browser(c: &bmd_ipc::Command) -> bmd_tools::proc::FromBrowser {
+    bmd_tools::proc::FromBrowser {
         private: c.private,
         referer: c.referer.clone(),
         origin: c.origin.clone(),
@@ -1485,8 +1485,8 @@ pub fn from_browser(c: &mdm_ipc::Command) -> mdm_tools::proc::FromBrowser {
 }
 
 /// A saved row keeps its private origin when its memory-only browser context is gone.
-pub fn from_item(item: &crate::model::Item) -> mdm_tools::proc::FromBrowser {
-    mdm_tools::proc::FromBrowser {
+pub fn from_item(item: &crate::model::Item) -> bmd_tools::proc::FromBrowser {
+    bmd_tools::proc::FromBrowser {
         private: item.is_private_window(),
         ..from_browser(&item.context)
     }
@@ -1503,7 +1503,7 @@ pub(crate) fn private_auth_error(e: &str) -> Option<String> {
     .any(|s| lower.contains(s))
     .then(|| {
         let hint = crate::i18n::t(
-            // i18n: a private-window video's authentication failure: only cookies supplied by that private window may be used, even after restarting iDM
+            // i18n: a private-window video's authentication failure: only cookies supplied by that private window may be used, even after restarting BMD
             "Private-window downloads do not use Cookies for video sites from Options. Open the page in a private window, sign in there, and use its Download video button again.",
         );
         format!("{e}\n\n{hint}")
@@ -1511,7 +1511,7 @@ pub(crate) fn private_auth_error(e: &str) -> Option<String> {
 }
 
 /// Whose cookies a look-up actually used, for its error message as well as its arguments.
-pub(crate) fn request_error(e: &str, browser: &mdm_tools::proc::FromBrowser) -> String {
+pub(crate) fn request_error(e: &str, browser: &bmd_tools::proc::FromBrowser) -> String {
     if browser.private
         && let Some(message) = private_auth_error(e)
     {
@@ -1523,7 +1523,7 @@ pub(crate) fn request_error(e: &str, browser: &mdm_tools::proc::FromBrowser) -> 
             .as_deref()
             .is_some_and(|c| !c.trim().is_empty());
     let store = (!browser.private && !sent)
-        .then(mdm_tools::proc::browser_cookies)
+        .then(bmd_tools::proc::browser_cookies)
         .flatten();
     lookup_error(e, sent, store.as_ref())
 }
@@ -1534,7 +1534,7 @@ pub(crate) fn request_error(e: &str, browser: &mdm_tools::proc::FromBrowser) -> 
 fn direct_size(
     rt: &tokio::runtime::Handle,
     page: &str,
-    browser: &mdm_tools::proc::FromBrowser,
+    browser: &bmd_tools::proc::FromBrowser,
 ) -> Option<u64> {
     use reqwest::header::{COOKIE, HeaderMap, HeaderValue, ORIGIN, REFERER};
     let url = url::Url::parse(page).ok()?;
@@ -1552,7 +1552,7 @@ fn direct_size(
     if let Some(agent) = &browser.user_agent {
         opts.speak_as(agent.clone());
     }
-    rt.block_on(mdm_engine::probe(url, headers, &opts))
+    rt.block_on(bmd_engine::probe(url, headers, &opts))
         .ok()?
         .size
 }
@@ -1579,14 +1579,14 @@ pub fn browser_label(name: &str) -> &'static str {
 pub(crate) fn lookup_error(
     e: &str,
     sent: bool,
-    store: Option<&mdm_tools::proc::BrowserCookies>,
+    store: Option<&bmd_tools::proc::BrowserCookies>,
 ) -> String {
     let lower = e.to_ascii_lowercase();
     let browser = store.map_or("?", |b| browser_label(&b.browser));
     let named = |text: &str| crate::i18n::fmt(crate::i18n::t(text), &[("browser", browser)]);
     // The browser's cookies yt-dlp couldn't read come first: the site's "sign in" that follows
     // is only their result.
-    if store.is_some() && mdm_tools::proc::cookie_trouble(&lower) {
+    if store.is_some() && bmd_tools::proc::cookie_trouble(&lower) {
         return if lower.contains("could not copy chrome cookie database") {
             // i18n: the Download video window: yt-dlp couldn't read the cookies of the browser chosen in Options (Chrome, Edge...), which holds them while it runs; {browser} = its name
             named(
@@ -1635,7 +1635,7 @@ pub(crate) fn lookup_error(
             // i18n: the Download video window: the site's bot check (Cloudflare) turned yt-dlp away and no browser cookies were used
             "The site's bot check (Cloudflare) refused yt-dlp. If the page opens in your browser, choose that browser in Options → Sites Logins → Cookies for video sites and look the page up again, or use the Download video button over the video."
         }
-    } else if mdm_tools::proc::untrusted_certificate(e) {
+    } else if bmd_tools::proc::untrusted_certificate(e) {
         // i18n: the Download video window: the site's certificate is trusted neither by yt-dlp nor by the computer (asked again with the computer's certificates, #955); usually an antivirus or a proxy that reads secure (HTTPS) connections signs sites with a certificate of its own
         "The site's certificate isn't trusted, by yt-dlp nor by this computer: an antivirus's web filter or a proxy that reads HTTPS may be in the way. Turn its HTTPS scanning off, or add its certificate to the computer's, then look the page up again."
     } else if lower.contains("drm") {
@@ -1692,7 +1692,7 @@ pub(crate) fn choice_size(c: &Choice) -> (String, String) {
 /// A choice's label in the user's language: the audio choice's words translated, the rest (a
 /// resolution, a type) as they are, kept left to right.
 pub(crate) fn choice_label(label: &str) -> String {
-    if let Some(rest) = label.strip_prefix(mdm_tools::resolve::COMPATIBLE) {
+    if let Some(rest) = label.strip_prefix(bmd_tools::resolve::COMPATIBLE) {
         let height = rest.trim_start_matches([' ', '·']).trim();
         return crate::i18n::fmt(
             // i18n: a choice in the Download video window: the best H.264 video with AAC sound, an MP4 that every video editor, TV and phone plays; keep "(H.264 + AAC)" as it is; {height} is the resolution (1080p)
@@ -1700,14 +1700,14 @@ pub(crate) fn choice_label(label: &str) -> String {
             &[("height", &crate::i18n::ltr(height))],
         );
     }
-    if let Some(kind) = label.strip_prefix(mdm_tools::resolve::AUDIO_ORIGINAL) {
+    if let Some(kind) = label.strip_prefix(bmd_tools::resolve::AUDIO_ORIGINAL) {
         return crate::i18n::fmt(
             // i18n: a choice in the Download video window: only the sound, the site's own file as it is (not converted); {type} is WEBM, M4A…
             crate::i18n::t("Audio only, original {type}"),
             &[("type", &crate::i18n::ltr(kind.trim()))],
         );
     }
-    match label.strip_prefix(mdm_tools::resolve::AUDIO_ONLY) {
+    match label.strip_prefix(bmd_tools::resolve::AUDIO_ONLY) {
         Some(kind) => crate::i18n::fmt(
             // i18n: a choice in the Download video window: only the sound; {type} is MP3, M4A…
             crate::i18n::t("Audio only {type}"),
@@ -1757,7 +1757,7 @@ mod tests {
                 private
             );
             if private {
-                let cmd = mdm_tools::proc::ytdlp(
+                let cmd = bmd_tools::proc::ytdlp(
                     std::path::Path::new("yt-dlp"),
                     &[],
                     &args,
@@ -1765,7 +1765,7 @@ mod tests {
                 )
                 .unwrap();
                 assert!(!cmd.get_args().any(|a| a == "--cookies-from-browser"));
-                assert!(!mdm_tools::proc::has_cookies(&args));
+                assert!(!bmd_tools::proc::has_cookies(&args));
             } else {
                 assert!(args.is_empty(), "normal rows still allow Options' fallback");
             }
@@ -1799,7 +1799,7 @@ mod tests {
     #[test]
     fn a_private_video_authentication_error_explains_its_cookie_policy() {
         let refusal = "ERROR: Private video. Sign in to watch.";
-        let browser = mdm_tools::proc::FromBrowser {
+        let browser = bmd_tools::proc::FromBrowser {
             private: true,
             ..Default::default()
         };
@@ -1816,7 +1816,7 @@ mod tests {
     #[test]
     fn an_embedded_player_taken_to_its_page_drops_the_embedding_sites_referer() {
         let from = |page: &str| {
-            let context = mdm_ipc::Command {
+            let context = bmd_ipc::Command {
                 referer: Some("https://news.test/article".into()),
                 ..Default::default()
             };
@@ -1841,7 +1841,7 @@ mod tests {
         assert!(none.contains("Cookies for video sites"), "{none}");
         let sent = lookup_error(check, true, None);
         assert!(sent.contains("even with your browser's cookies"), "{sent}");
-        let firefox = mdm_tools::proc::BrowserCookies::new("firefox", "").unwrap();
+        let firefox = bmd_tools::proc::BrowserCookies::new("firefox", "").unwrap();
         let chrome_had = lookup_error(check, false, Some(&firefox));
         assert!(
             chrome_had.contains("even with Firefox's cookies"),
@@ -1864,15 +1864,15 @@ mod tests {
         assert_eq!(lookup_error(expired, false, None), expired);
     }
 
-    /// #229: yt-dlp's refusals and its trouble with a browser's cookies, in iDM's words, saying
+    /// #229: yt-dlp's refusals and its trouble with a browser's cookies, in BMD's words, saying
     /// which cookies it had.
     #[test]
     fn cookie_and_sign_in_errors_in_plain_words() {
         let bot = "yt-dlp failed: [youtube] A1WG3x-Ebpk: Sign in to confirm you're not a bot. Use --cookies-from-browser or --cookies for the authentication.";
         assert!(lookup_error(bot, false, None).contains("Cookies for video sites"));
         assert!(lookup_error(bot, true, None).contains("even with your browser's cookies"));
-        let firefox = mdm_tools::proc::BrowserCookies::new("firefox", "").unwrap();
-        let chrome = mdm_tools::proc::BrowserCookies::new("chrome", "").unwrap();
+        let firefox = bmd_tools::proc::BrowserCookies::new("firefox", "").unwrap();
+        let chrome = bmd_tools::proc::BrowserCookies::new("chrome", "").unwrap();
         assert_eq!(
             lookup_error(bot, false, Some(&firefox)),
             "The site wants you signed in, even with Firefox's cookies. Sign in to it in Firefox, then look the page up again."
@@ -2007,9 +2007,9 @@ mod tests {
     fn a_streams_file_is_named_after_its_page() {
         const STREAM: &str = r#"{"title": "master", "formats": [
             {"format_id": "hls-720", "ext": "mp4", "height": 720, "vcodec": "avc1", "acodec": "mp4a"}]}"#;
-        let video = || mdm_tools::resolve::parse(STREAM.as_bytes()).unwrap();
+        let video = || bmd_tools::resolve::parse(STREAM.as_bytes()).unwrap();
         let src = "https://cdn.test/v/hls/master.m3u8";
-        let context = mdm_ipc::Command {
+        let context = bmd_ipc::Command {
             video_page: Some(src.into()),
             video_title: Some("A talk: about download managers? ".into()),
             ..Default::default()
@@ -2031,7 +2031,7 @@ mod tests {
             {"format_id": "18", "ext": "mp4", "height": 360, "vcodec": "avc1", "acodec": "mp4a"}]}"#;
         let page = "https://videos.test/watch?v=1";
         let mut d = VideoDialog::for_page(PathBuf::from("."), page, context);
-        d.set_video(mdm_tools::resolve::parse(TITLED.as_bytes()).unwrap());
+        d.set_video(bmd_tools::resolve::parse(TITLED.as_bytes()).unwrap());
         assert_eq!(d.name, "Its own title.mp4");
     }
 
@@ -2044,9 +2044,9 @@ mod tests {
             {"format_id": "43", "ext": "webm", "height": 480, "vcodec": "vp8", "acodec": "vorbis"},
             {"format_id": "18", "ext": "mp4", "height": 360, "vcodec": "avc1", "acodec": "mp4a", "filesize": 61000000}],
             "subtitles": {"de": [{"name": "German"}], "fr": [{"name": "French"}]}}"#;
-        let v = mdm_tools::resolve::parse(TALK.as_bytes()).unwrap();
+        let v = bmd_tools::resolve::parse(TALK.as_bytes()).unwrap();
         let page = "https://videos.test/talk";
-        let with_title = mdm_ipc::Command {
+        let with_title = bmd_ipc::Command {
             video_page: Some(page.into()),
             video_title: Some(" The page's title ".into()),
             ..Default::default()
@@ -2056,9 +2056,9 @@ mod tests {
             s
         };
         for merge in [false, true] {
-            let choices = mdm_tools::resolve::choices(&v, merge);
+            let choices = bmd_tools::resolve::choices(&v, merge);
             assert!(choices.len() >= 2);
-            for context in [mdm_ipc::Command::default(), with_title.clone()] {
+            for context in [bmd_ipc::Command::default(), with_title.clone()] {
                 for pref in [
                     Subs::default(),
                     want(&["de"], false),
@@ -2072,7 +2072,7 @@ mod tests {
                     // yt-dlp's title is the page's own, which no browser title replaces.
                     assert_eq!(page_title(&context, &v, page), None);
                     d.video = Some((v.clone(), choices.clone()));
-                    d.subs = mdm_tools::resolve::sub_choices(&v, crate::i18n::code());
+                    d.subs = bmd_tools::resolve::sub_choices(&v, crate::i18n::code());
                     d.sub_pick = pick_for(&d.subs, &d.pref);
                     for (i, c) in choices.iter().enumerate() {
                         d.chosen = i;
@@ -2087,12 +2087,12 @@ mod tests {
                 }
             }
         }
-        let choices = mdm_tools::resolve::choices(&v, false);
+        let choices = bmd_tools::resolve::choices(&v, false);
         let mp4 = choices.iter().find(|c| c.ext == "mp4").unwrap();
         let webm = choices.iter().find(|c| c.ext == "webm").unwrap();
         let audio = choices
             .iter()
-            .find(|c| mdm_tools::resolve::is_audio(c))
+            .find(|c| bmd_tools::resolve::is_audio(c))
             .unwrap();
         assert_eq!(default_subs(&v, mp4, &want(&["de"], false)).langs, ["de"]);
         let fr = default_subs(&v, webm, &embed(want(&["fr"], false)));
@@ -2122,7 +2122,7 @@ mod tests {
             Some("The page's title")
         );
         assert_eq!(
-            page_title(&mdm_ipc::Command::default(), &hashed, page),
+            page_title(&bmd_ipc::Command::default(), &hashed, page),
             None
         );
     }
@@ -2141,11 +2141,11 @@ mod tests {
                     "formats": [{{"format_id": "0", "ext": "mp4", "url": "https://cdn.test/v.mp4"}}]}}"#
             )
         };
-        let context = mdm_ipc::Command {
+        let context = bmd_ipc::Command {
             video_title: Some("Renegade Immortal Episodio 167 Sub Español".into()),
             ..Default::default()
         };
-        let generic = mdm_tools::resolve::parse(answer("Generic").as_bytes()).unwrap();
+        let generic = bmd_tools::resolve::parse(answer("Generic").as_bytes()).unwrap();
         assert!(generic.page_titled);
         let title = page_title(&context, &generic, frame).unwrap();
         assert_eq!(title, "Renegade Immortal Episodio 167 Sub Español");
@@ -2158,18 +2158,18 @@ mod tests {
             "Renegade Immortal Episodio 167 Sub Español.mp4"
         );
         // A page's plain `<video>` in the frame: yt-dlp's HTML5 reader, the page's title too.
-        let html5 = mdm_tools::resolve::parse(answer("HTML5MediaEmbed").as_bytes()).unwrap();
+        let html5 = bmd_tools::resolve::parse(answer("HTML5MediaEmbed").as_bytes()).unwrap();
         assert_eq!(
             page_title(&context, &html5, frame),
             Some("Renegade Immortal Episodio 167 Sub Español")
         );
         // Nothing from the browser: yt-dlp's title stays.
         assert_eq!(
-            page_title(&mdm_ipc::Command::default(), &generic, frame),
+            page_title(&bmd_ipc::Command::default(), &generic, frame),
             None
         );
         // A site yt-dlp has a reader for: its title stays.
-        let known = mdm_tools::resolve::parse(answer("Youtube").as_bytes()).unwrap();
+        let known = bmd_tools::resolve::parse(answer("Youtube").as_bytes()).unwrap();
         assert!(!known.page_titled);
         assert_eq!(page_title(&context, &known, frame), None);
     }
@@ -2203,7 +2203,7 @@ mod tests {
             ("Report v2.0", "Report v2.0"),
             (".mp4", ".mp4"),
         ] {
-            let context = mdm_ipc::Command {
+            let context = bmd_ipc::Command {
                 video_title: Some(title.into()),
                 ..Default::default()
             };
@@ -2226,15 +2226,15 @@ mod tests {
         let film: serde_json::Value =
             serde_json::from_str(include_str!("../tests/data/embedded-player-title.json")).unwrap();
         let text = |k: &str| film[k].as_str().unwrap().to_owned();
-        let v = mdm_tools::resolve::parse(film["ytdlp"].to_string().as_bytes()).unwrap();
+        let v = bmd_tools::resolve::parse(film["ytdlp"].to_string().as_bytes()).unwrap();
         assert_eq!(v.title, "playlist");
-        let context = mdm_ipc::Command {
+        let context = bmd_ipc::Command {
             video_title: Some(text("sent")),
             ..Default::default()
         };
         let title = page_title(&context, &v, &text("stream")).unwrap();
         assert_eq!(title, text("sent"));
-        let best = &mdm_tools::resolve::choices(&v, true)[0];
+        let best = &bmd_tools::resolve::choices(&v, true)[0];
         assert_eq!(best.height, Some(2160));
         assert_eq!(file_name(title, best), text("file"));
     }
@@ -2262,7 +2262,7 @@ mod tests {
 
     /// The Video and Music categories' folders (not made: only their names are compared).
     fn dirs() -> (PathBuf, PathBuf) {
-        let base = std::env::temp_dir().join("mdm-611");
+        let base = std::env::temp_dir().join("bmd-611");
         (base.join("Video"), base.join("Music"))
     }
 
@@ -2278,17 +2278,17 @@ mod tests {
         // No helpers looked for on this computer: no merged qualities.
         d.tools = Some((None, None, None));
         d.looked_up = d.page.clone();
-        d.set_video(mdm_tools::resolve::parse(SAMPLE.as_bytes()).unwrap());
+        d.set_video(bmd_tools::resolve::parse(SAMPLE.as_bytes()).unwrap());
         d
     }
 
     /// The choices' rows: (a sound-only one, a video one).
     fn rows(d: &VideoDialog) -> (usize, usize) {
         let choices = &d.video.as_ref().unwrap().1;
-        let sound = choices.iter().position(mdm_tools::resolve::is_audio);
+        let sound = choices.iter().position(bmd_tools::resolve::is_audio);
         let video = choices
             .iter()
-            .position(|c| !mdm_tools::resolve::is_audio(c));
+            .position(|c| !bmd_tools::resolve::is_audio(c));
         (sound.unwrap(), video.unwrap())
     }
 
@@ -2316,7 +2316,7 @@ mod tests {
         d.page = page.into();
         d.from_browser = page.into();
         d.looked_up = page.into();
-        d.context = mdm_ipc::Command {
+        d.context = bmd_ipc::Command {
             user_agent: Some("UA".into()),
             cookies: Some("session=1".into()),
             referer: Some("https://search.example/".into()),
@@ -2375,7 +2375,7 @@ mod tests {
     fn a_folder_the_user_chose_stays() {
         let mut d = looked_up(true);
         let (sound, film) = rows(&d);
-        let own = std::env::temp_dir().join("mdm-611").join("Talks");
+        let own = std::env::temp_dir().join("bmd-611").join("Talks");
         d.folder = own.display().to_string();
         choose(&mut d, sound);
         assert_eq!(d.save_folder(), own);
@@ -2427,7 +2427,7 @@ mod tests {
         // The sample's list has it second, picked by its name for the screenshots.
         let mut d = VideoDialog::blank(PathBuf::from("."));
         // ffmpeg there (never looked for on this computer): the merged qualities.
-        let ffmpeg = mdm_tools::Installed {
+        let ffmpeg = bmd_tools::Installed {
             version: "test".into(),
             exe: PathBuf::from("ffmpeg"),
         };

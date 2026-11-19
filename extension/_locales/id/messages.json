@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Menyerahkan unduhan dari browser ke iDM."
+    "message": "Menyerahkan unduhan dari browser ke BMD."
   },
   "menu": {
-    "message": "Unduh dengan iDM"
+    "message": "Unduh dengan BMD"
   },
   "video_download": {
     "message": "Unduh video"
@@ -30,19 +30,19 @@
     "message": "Pengaturan tombol..."
   },
   "video_sent": {
-    "message": "Dikirim ke iDM"
+    "message": "Dikirim ke BMD"
   },
   "menu_selected": {
-    "message": "Unduh tautan yang dipilih dengan iDM"
+    "message": "Unduh tautan yang dipilih dengan BMD"
   },
   "menu_all": {
-    "message": "Unduh semua tautan dengan iDM"
+    "message": "Unduh semua tautan dengan BMD"
   },
   "status_connected": {
-    "message": "Terhubung ke iDM"
+    "message": "Terhubung ke BMD"
   },
   "status_connected_version": {
-    "message": "Terhubung ke iDM $version$",
+    "message": "Terhubung ke BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Dijeda: unduhan tetap di browser"
   },
   "status_not_installed": {
-    "message": "iDM tidak terinstal, atau integrasi browsernya tidak diatur"
+    "message": "BMD tidak terinstal, atau integrasi browsernya tidak diatur"
   },
   "status_forbidden": {
-    "message": "iDM tidak menerima salinan ekstensi ini"
+    "message": "BMD tidak menerima salinan ekstensi ini"
   },
   "status_not_running": {
-    "message": "iDM tidak dimulai tepat waktu"
+    "message": "BMD tidak dimulai tepat waktu"
   },
   "status_host_failed": {
-    "message": "Koneksi ke iDM gagal"
+    "message": "Koneksi ke BMD gagal"
   },
   "status_too_large": {
     "message": "Detail unduhan ini terlalu besar untuk diserahkan"
   },
   "status_update_app": {
-    "message": "Perbarui iDM untuk menggunakan semua yang ditawarkan ekstensi ini"
+    "message": "Perbarui BMD untuk menggunakan semua yang ditawarkan ekstensi ini"
   },
   "popup_take": {
     "message": "Ambil unduhan dari browser ini"
@@ -78,10 +78,10 @@
     "message": "Kirim unduhan melalui proxy atau ekstensi VPN browser ini"
   },
   "popup_proxy_title": {
-    "message": "iDM kemudian mengunduh melalui proxy yang sama dengan browser ini. Browser meminta Anda sekali untuk mengizinkannya; mematikan ini akan membatalkannya."
+    "message": "BMD kemudian mengunduh melalui proxy yang sama dengan browser ini. Browser meminta Anda sekali untuk mengizinkannya; mematikan ini akan membatalkannya."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM kemudian mengunduh melalui proxy yang sama dengan browser ini. Saat opsi ini nonaktif, ekstensi tidak membaca proxy browser."
+    "message": "BMD kemudian mengunduh melalui proxy yang sama dengan browser ini. Saat opsi ini nonaktif, ekstensi tidak membaca proxy browser."
   },
   "popup_exclude_site": {
     "message": "Jangan pernah mengambil unduhan dari $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Buka iDM"
+    "message": "Buka BMD"
   },
   "popup_options": {
     "message": "Opsi..."
@@ -114,7 +114,7 @@
     "message": "Bantuan"
   },
   "popup_support": {
-    "message": "Dukung iDM"
+    "message": "Dukung BMD"
   },
   "popup_fix": {
     "message": "Cara memperbaikinya"
@@ -150,7 +150,7 @@
     "message": "Integrasi browser lanjutan tidak aktif di Opsi → Umum."
   },
   "declined_torrents": {
-    "message": "Ini adalah torrent, dan Buka tautan magnet dan file .torrent dengan iDM tidak aktif di pengaturan Torrent."
+    "message": "Ini adalah torrent, dan Buka tautan magnet dan file .torrent dengan BMD tidak aktif di pengaturan Torrent."
   },
   "declined_site_access": {
     "message": "Ekstensi tidak diizinkan untuk membaca situs ini (akses situs browser)."
@@ -195,16 +195,16 @@
     "message": "Tidak ada video untuk diunduh di sini"
   },
   "video_playlist": {
-    "message": "Daftar video: pilih di iDM"
+    "message": "Daftar video: pilih di BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM memerlukan yt-dlp untuk video ini"
+    "message": "BMD memerlukan yt-dlp untuk video ini"
   },
   "video_too_long": {
     "message": "Pencarian memakan waktu terlalu lama"
   },
   "video_busy": {
-    "message": "iDM sedang sibuk dengan video lain"
+    "message": "BMD sedang sibuk dengan video lain"
   },
   "video_queued": {
     "message": "Ditambahkan ke antrean"
@@ -228,7 +228,7 @@
     "message": "Komputer ini"
   },
   "popup_send_remote": {
-    "message": "iDM lain (server)"
+    "message": "BMD lain (server)"
   },
   "popup_remote_code": {
     "message": "Kode pemasangan"
@@ -240,7 +240,7 @@
     "message": "Pasangkan"
   },
   "popup_remote_help": {
-    "message": "Buka alamatnya sekali dan terima sertifikatnya, lalu masukkan kode dari Opsi, Jarak Jauh, Pasangkan perangkat (atau misterdownloadmanager-cli pair)."
+    "message": "Buka alamatnya sekali dan terima sertifikatnya, lalu masukkan kode dari Opsi, Jarak Jauh, Pasangkan perangkat (atau bmd-cli pair)."
   },
   "status_remote": {
     "message": "Unduhan masuk ke $address$",
@@ -297,19 +297,19 @@
     "message": "Unduh kualitas terbaik"
   },
   "video_sending": {
-    "message": "Mengirim ke iDM..."
+    "message": "Mengirim ke BMD..."
   },
   "video_added": {
-    "message": "Ditambahkan ke iDM"
+    "message": "Ditambahkan ke BMD"
   },
   "video_show": {
     "message": "Tampilkan"
   },
   "video_no_answer": {
-    "message": "iDM tidak menjawab"
+    "message": "BMD tidak menjawab"
   },
-  "video_get_mdm": {
-    "message": "Dapatkan iDM"
+  "video_get_bmd": {
+    "message": "Dapatkan BMD"
   },
   "video_retry": {
     "message": "Coba lagi"
@@ -324,7 +324,7 @@
     "message": "Semua kualitas dan subtitel..."
   },
   "video_failed": {
-    "message": "iDM tidak terinstal atau tidak dimulai"
+    "message": "BMD tidak terinstal atau tidak dimulai"
   },
   "video_download_best": {
     "message": "Unduh terbaik"

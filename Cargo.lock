@@ -4570,7 +4570,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-app"
+name = "bmd-app"
 version = "0.5.2"
 dependencies = [
  "arboard",
@@ -4589,18 +4589,18 @@ dependencies = [
  "egui_system_font_provider",
  "image",
  "libc",
- "mdm-cli",
- "mdm-cnl",
- "mdm-crash",
- "mdm-debrid",
- "mdm-engine",
- "mdm-extract",
- "mdm-geo",
- "mdm-ipc",
- "mdm-labserver",
- "mdm-remote",
- "mdm-tools",
- "mdm-torrent",
+ "bmd-cli",
+ "bmd-cnl",
+ "bmd-crash",
+ "bmd-debrid",
+ "bmd-engine",
+ "bmd-extract",
+ "bmd-geo",
+ "bmd-ipc",
+ "bmd-labserver",
+ "bmd-remote",
+ "bmd-tools",
+ "bmd-torrent",
  "objc2 0.6.5",
  "objc2-app-kit 0.3.2",
  "objc2-foundation 0.3.2",
@@ -4636,16 +4636,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-cli"
+name = "bmd-cli"
 version = "0.5.2"
 dependencies = [
  "anyhow",
  "clap",
  "ctrlc",
- "mdm-engine",
- "mdm-ipc",
- "mdm-tools",
- "mdm-torrent",
+ "bmd-engine",
+ "bmd-ipc",
+ "bmd-tools",
+ "bmd-torrent",
  "reqwest 0.13.5",
  "serde_json",
  "tempfile",
@@ -4655,7 +4655,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-cnl"
+name = "bmd-cnl"
 version = "0.5.2"
 dependencies = [
  "aes",
@@ -4668,14 +4668,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-crash"
+name = "bmd-crash"
 version = "0.5.2"
 dependencies = [
  "breakpad-symbols",
  "chrono",
  "crash-handler",
  "libc",
- "mdm-engine",
+ "bmd-engine",
  "minidump",
  "minidump-processor",
  "minidump-unwind",
@@ -4693,14 +4693,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-debrid"
+name = "bmd-debrid"
 version = "0.5.2"
 dependencies = [
  "bytes",
  "chrono",
  "futures",
- "mdm-engine",
- "mdm-labserver",
+ "bmd-engine",
+ "bmd-labserver",
  "reqwest 0.13.5",
  "serde",
  "serde_json",
@@ -4713,7 +4713,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-engine"
+name = "bmd-engine"
 version = "0.5.2"
 dependencies = [
  "base64 0.23.1",
@@ -4730,7 +4730,7 @@ dependencies = [
  "httpdate",
  "hyper-util",
  "md-5",
- "mdm-labserver",
+ "bmd-labserver",
  "network-interface",
  "percent-encoding",
  "proptest",
@@ -4763,12 +4763,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-extract"
+name = "bmd-extract"
 version = "0.5.2"
 dependencies = [
  "flate2",
  "lzma-rust2",
- "mdm-engine",
+ "bmd-engine",
  "tar",
  "tempfile",
  "tracing",
@@ -4776,7 +4776,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-geo"
+name = "bmd-geo"
 version = "0.5.2"
 dependencies = [
  "lzma-rust2",
@@ -4785,7 +4785,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-ipc"
+name = "bmd-ipc"
 version = "0.5.2"
 dependencies = [
  "craft-atomic",
@@ -4797,7 +4797,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-labserver"
+name = "bmd-labserver"
 version = "0.5.2"
 dependencies = [
  "anyhow",
@@ -4826,10 +4826,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-mcp"
+name = "bmd-mcp"
 version = "0.5.2"
 dependencies = [
- "mdm-ipc",
+ "bmd-ipc",
  "rmcp",
  "schemars 1.2.3",
  "serde",
@@ -4840,25 +4840,25 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-nmhost"
+name = "bmd-nmhost"
 version = "0.5.2"
 dependencies = [
  "chrono",
- "mdm-ipc",
+ "bmd-ipc",
  "serde",
  "serde_json",
  "windows-sys 0.61.2",
 ]
 
 [[package]]
-name = "mdm-remote"
+name = "bmd-remote"
 version = "0.5.2"
 dependencies = [
  "aws-lc-rs",
  "axum",
  "hex",
- "mdm-engine",
- "mdm-ipc",
+ "bmd-engine",
+ "bmd-ipc",
  "rcgen",
  "reqwest 0.13.5",
  "rustls",
@@ -4872,7 +4872,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-tools"
+name = "bmd-tools"
 version = "0.5.2"
 dependencies = [
  "aws-lc-rs",
@@ -4881,9 +4881,9 @@ dependencies = [
  "craft-atomic",
  "futures",
  "hex",
- "mdm-engine",
- "mdm-ipc",
- "mdm-labserver",
+ "bmd-engine",
+ "bmd-ipc",
+ "bmd-labserver",
  "percent-encoding",
  "reqwest 0.13.5",
  "rustix 1.1.6",
@@ -4901,14 +4901,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-torrent"
+name = "bmd-torrent"
 version = "0.5.2"
 dependencies = [
  "anyhow",
  "flate2",
  "librqbit",
  "librqbit-dualstack-sockets",
- "mdm-engine",
+ "bmd-engine",
  "serde_json",
  "tempfile",
  "thiserror 2.0.21",

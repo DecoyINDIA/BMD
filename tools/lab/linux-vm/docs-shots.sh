@@ -1,16 +1,16 @@
 #!/bin/bash
 # The README's, docs' and site's Linux screenshots, on a real desktop: GNOME, KDE Plasma,
 # Cinnamon or Xfce in a lab VM (docs-shots-host.ps1 runs this from the Windows host and makes the
-# WebP files). The Linux counterpart of tools/lab/docs-shots.ps1: an MDM of its own (its own data
+# WebP files). The Linux counterpart of tools/lab/docs-shots.ps1: an BMD of its own (its own data
 # folder, MDM_DATA_DIR, and download folders), its own lab server with neutral files, every window
-# opened through MDM's own command line (`/show <window>`), at 1x.
+# opened through BMD's own command line (`/show <window>`), at 1x.
 #
 #   docs-shots.sh <label> [out folder] [light,dark] [main,add-url,...]
 #
 # <label>: a build in ~/lab/bin/<label>/ (tools/lab/wsl/deploy.ps1). Shots land in
 # <out folder>/<mode>/<name>.png (default ~/lab/shots/docs-<label>). The list (default: all):
 #   main  add-url  progress  options  scheduler  add-torrent  browser-offer  tray
-# `tray` (light only) is the top right of the screen with MDM's icon in the desktop's tray and its
+# `tray` (light only) is the top right of the screen with BMD's icon in the desktop's tray and its
 # menu open, clicked as a person would: real input inside the VM, never on the host.
 #
 # Captured inside the guest (ImageMagick's `import -window root`, cropped to the window's frame,
@@ -18,7 +18,7 @@
 # the guests' kernel update. A shot is kept once two reads in a row are the same (a progress
 # window, which never settles, after a few tries).
 #
-# MDM_SUDO_PASSWORD (set by the host side): the lab server answers as http://downloads.example on
+# BMD_SUDO_PASSWORD (set by the host side): the lab server answers as http://downloads.example on
 # port 80 (a reserved name added to /etc/hosts, unprivileged ports from 80 for this boot only), so
 # the addresses in the shots are neutral; without it, http://127.0.0.1:8199.
 set -u
@@ -28,17 +28,17 @@ out=${2:-$HOME/lab/shots/docs-$label}
 modes=${3:-light,dark}
 only=${4:-}
 bin=$HOME/lab/bin/$label
-app=$bin/misterdownloadmanager
+app=$bin/bmd
 # The run's folder shows in some windows (Add torrent's): short and neutral, as docs-shots.ps1's
 # C:\Demo.
 run=$HOME/Demo
 torrent=$HOME/lab/docs-shots.torrent
 want() { [ -z "$only" ] || [[ ",$only," == *",$1,"* ]]; }
-sudo_() { echo "$MDM_SUDO_PASSWORD" | sudo -S -p '' "$@"; }
+sudo_() { echo "$BMD_SUDO_PASSWORD" | sudo -S -p '' "$@"; }
 
 # ---- The lab server, at a neutral address when it can be
 port=8199; host=127.0.0.1
-if [ -n "${MDM_SUDO_PASSWORD:-}" ] && ! ss -ltn | grep -q '127.0.0.1:80 '; then
+if [ -n "${BMD_SUDO_PASSWORD:-}" ] && ! ss -ltn | grep -q '127.0.0.1:80 '; then
   grep -q 'downloads\.example' /etc/hosts || sudo_ sh -c "echo '127.0.0.1 downloads.example' >> /etc/hosts"
   sudo_ sysctl -q net.ipv4.ip_unprivileged_port_start=80
   port=80; host=downloads.example
@@ -52,8 +52,8 @@ sleep 1
 # closed, the pointer at the screen's right edge (no hover or tooltip).
 banners=$(gsettings get org.gnome.desktop.notifications show-banners 2>/dev/null)
 gsettings set org.gnome.desktop.notifications show-banners false 2>/dev/null
-# The dark shots on a dark desktop, as someone in dark mode sees MDM: the window manager's title
-# bar follows the desktop's theme, not MDM's (GNOME; put back at the end).
+# The dark shots on a dark desktop, as someone in dark mode sees BMD: the window manager's title
+# bar follows the desktop's theme, not BMD's (GNOME; put back at the end).
 gtk_theme=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | tr -d "'")
 scheme=$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null | tr -d "'")
 desktop_mode() {
@@ -109,7 +109,7 @@ opened() {
   for _ in $(seq 40); do
     new=$(comm -13 <(echo "$before") <(mine | sort) | tail -1)
     # Not the main window under a new id (its title: the program's name and version).
-    [ -n "$new" ] && ! wmctrl -l | grep -i "^$new " | grep -q "Mister Download Manager [0-9]" && { echo "$new"; return 0; }
+    [ -n "$new" ] && ! wmctrl -l | grep -i "^$new " | grep -q "BMD [0-9]" && { echo "$new"; return 0; }
     sleep 0.5
   done
   return 1
@@ -141,16 +141,16 @@ json.dump({"next_id": 1, "items": [], "version": 2, "settings": settings},
           open(f"{work}/data/downloads.json", "w"))
 PY
   park
-  cd ~; setsid -f "$app" >"$work/mdm.log" 2>&1 </dev/null
+  cd ~; setsid -f "$app" >"$work/bmd.log" 2>&1 </dev/null
   PID=""; MAIN=""
   for _ in $(seq 60); do
     PID=$(pgrep -f "^$app$" | head -1)
     [ -n "$PID" ] && MAIN=$(mine | head -1) && [ -n "$MAIN" ] && break
     sleep 1
   done
-  [ -n "$MAIN" ] || { echo "no main window ($mode)"; tail -5 "$work/mdm.log"; continue; }
-  # MDM_MAIN_AT="x,y": the main window moved there (clear of a desktop's lasting notification).
-  [ -n "${MDM_MAIN_AT:-}" ] && wmctrl -i -r "$MAIN" -e "0,$MDM_MAIN_AT,-1,-1"
+  [ -n "$MAIN" ] || { echo "no main window ($mode)"; tail -5 "$work/bmd.log"; continue; }
+  # BMD_MAIN_AT="x,y": the main window moved there (clear of a desktop's lasting notification).
+  [ -n "${BMD_MAIN_AT:-}" ] && wmctrl -i -r "$MAIN" -e "0,$BMD_MAIN_AT,-1,-1"
   sleep 3
   # A list that looks used: finished files, one still coming in (rate-limited per connection).
   for f in big-buck-bunny-1080p.mp4:180M project-report-2026.pdf:4M holiday-photos.zip:64M \
@@ -176,21 +176,21 @@ PY
     if w=$(opened "$app" "$work/Open Movie Night.torrent"); then sleep 2; shoot "$w" add-torrent; else echo "  add-torrent: no window"; fi
     close_dialogs
   fi
-  # The tray: MDM's icon is the leftmost of the top bar's status icons that appeared with it. Its
-  # menu opens with a click; the shot is the screen's top right (MDM_TRAY_W x MDM_TRAY_H), with
-  # MDM's window hidden to the tray first, so only the desktop is behind the menu.
+  # The tray: BMD's icon is the leftmost of the top bar's status icons that appeared with it. Its
+  # menu opens with a click; the shot is the screen's top right (BMD_TRAY_W x BMD_TRAY_H), with
+  # BMD's window hidden to the tray first, so only the desktop is behind the menu.
   if want tray && [ "$mode" = light ]; then
-    tray=${MDM_TRAY_AT:-}
+    tray=${BMD_TRAY_AT:-}
     if [ -n "$tray" ]; then
       # Banners back (GNOME shows a "do not disturb" bell while they're off), then a moment.
       [ -n "$banners" ] && gsettings set org.gnome.desktop.notifications show-banners "$banners" 2>/dev/null
       "$app" /show tray >/dev/null 2>&1
       sleep 3
       xdotool mousemove ${tray% *} ${tray#* } click 1; sleep 2
-      grab $((SW - ${MDM_TRAY_W:-320})) 0 ${MDM_TRAY_W:-320} ${MDM_TRAY_H:-490} "$dir/tray.png"
+      grab $((SW - ${BMD_TRAY_W:-320})) 0 ${BMD_TRAY_W:-320} ${BMD_TRAY_H:-490} "$dir/tray.png"
       xdotool key Escape; park
     else
-      echo "  tray: MDM_TRAY_AT=\"x y\" (the icon's place in the top bar) not set"
+      echo "  tray: BMD_TRAY_AT=\"x y\" (the icon's place in the top bar) not set"
       import -silent -window root -crop "${SW}x40+0+0" +repage "$dir/topbar.png"
     fi
   fi
@@ -202,6 +202,6 @@ done
 pkill -f "$bin/labserver"
 [ -n "$banners" ] && gsettings set org.gnome.desktop.notifications show-banners "$banners" 2>/dev/null
 desktop_mode light
-# The downloads go; the last run's log stays (mdm.log) until the next run.
+# The downloads go; the last run's log stays (bmd.log) until the next run.
 rm -rf "$run/Downloads"
 echo "shots in $out"

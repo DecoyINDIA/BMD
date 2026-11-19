@@ -1,10 +1,10 @@
-﻿; iDM's installer in Slovak: tools/installer/languages.py
+﻿; BMD's installer in Slovak: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [CustomMessages]
 TaskBrowser=Nastaviť integráciu prehliadača (&B) (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Otvárať súbory .&torrent a magnetické odkazy pomocou aplikácie iDM
-TaskStartup=Spustiť aplikáciu iDM pri štarte &systému Windows
+TaskTorrents=Otvárať súbory .&torrent a magnetické odkazy pomocou aplikácie BMD
+TaskStartup=Spustiť aplikáciu BMD pri štarte &systému Windows
 TaskGroupOther=Iné:
-Launch=Spustiť aplikáciu iDM
+Launch=Spustiť aplikáciu BMD
 KeepData=Odstrániť aj zoznam stiahnutých súborov a nastavenia?%n%nVaše stiahnuté súbory sa v žiadnom prípade nedotknú.

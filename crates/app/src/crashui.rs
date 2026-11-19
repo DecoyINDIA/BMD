@@ -1,6 +1,6 @@
 //! The crash monitor's process (`--crash-monitor`, started by crash.rs) and its report window.
 //!
-//! The monitor waits without a window. When iDM crashes, panics or freezes, mdm-crash writes the
+//! The monitor waits without a window. When BMD crashes, panics or freezes, bmd-crash writes the
 //! dump and this window opens: what happened, a box for what the user was doing, the whole report
 //! to read, and Send on GitHub (the browser opens the Crash report form filled in; nothing is sent
 //! by itself). Behind it, the report is made readable: the release's symbols are fetched when the
@@ -13,18 +13,18 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use egui::{Pos2, Rect, Ui};
-use mdm_crash::MonitorArgs;
-use mdm_crash::github::{self, Found};
-use mdm_crash::monitor::{self, Event};
-use mdm_crash::protocol::{Kind, Notes};
-use mdm_crash::report::{self, Made};
+use bmd_crash::MonitorArgs;
+use bmd_crash::github::{self, Found};
+use bmd_crash::monitor::{self, Event};
+use bmd_crash::protocol::{Kind, Notes};
+use bmd_crash::report::{self, Made};
 
 use crate::winui::{self, ButtonKind, r};
 
 const CLIENT: [f32; 2] = [620.0, 540.0];
 
 pub fn monitor_main(m: MonitorArgs) -> eframe::Result {
-    mdm_crash::logs::init(&m.data, mdm_crash::logs::MONITOR);
+    bmd_crash::logs::init(&m.data, bmd_crash::logs::MONITOR);
     tracing::info!(
         "crash monitor (process {}) for {}",
         std::process::id(),
@@ -69,7 +69,7 @@ pub fn monitor_main(m: MonitorArgs) -> eframe::Result {
                 if !clean && notes.session.is_some() {
                     // Kept for a later look, without a window (a shutdown can look the same).
                     let made = report::make(None, Kind::Exit, notes, &m.data, &[]);
-                    tracing::warn!("iDM ended unexpectedly: {}", made.path.display());
+                    tracing::warn!("BMD ended unexpectedly: {}", made.path.display());
                 }
                 return Ok(());
             }
@@ -83,7 +83,7 @@ pub fn monitor_main(m: MonitorArgs) -> eframe::Result {
     };
     tracing::warn!("crash monitor: {} report", kind.word());
 
-    // The window speaks iDM's language and follows its theme. The language first: the title
+    // The window speaks BMD's language and follows its theme. The language first: the title
     // below is translated before the window exists, and Windows' caption is found by it
     // (`win32::caption_dark` in `update`).
     let settings = crate::store::load().settings;
@@ -94,14 +94,14 @@ pub fn monitor_main(m: MonitorArgs) -> eframe::Result {
     crate::theme::init_smooth_text(settings.smooth_text);
     let builder = crate::quiet(
         crate::window_builder()
-            .with_title(crate::i18n::os_text(crate::i18n::t("iDM crash report")))
+            .with_title(crate::i18n::os_text(crate::i18n::t("BMD crash report")))
             .with_inner_size([CLIENT[0] * zoom, CLIENT[1] * zoom])
             .with_resizable(false)
             .with_maximize_button(false)
             .with_icon(crate::app_icon()),
     );
     let builder = if crate::offscreen() {
-        // Where the main window goes too: on a runner's screen (MDM_OFFSCREEN_AT), whose software
+        // Where the main window goes too: on a runner's screen (BMD_OFFSCREEN_AT), whose software
         // OpenGL draws nothing off the screens (docs-shots.yml).
         builder.with_position(crate::offscreen_at())
     } else {
@@ -123,7 +123,7 @@ pub fn monitor_main(m: MonitorArgs) -> eframe::Result {
     plan.watch.clear();
     plan.gl_checked = false;
     let data = m.data.clone();
-    crate::renderer::run("misterdownloadmanager-crash", &plan, options, move |cc| {
+    crate::renderer::run("bmd-crash", &plan, options, move |cc| {
         crate::scale::start(&cc.egui_ctx, zoom);
         crate::theme::select(&crate::theme::startup_id(&settings.theme), &cc.egui_ctx);
         crate::theme::apply(&cc.egui_ctx);
@@ -240,10 +240,10 @@ fn prepare(job: &Job, shared: Arc<Mutex<Shared>>, ctx: egui::Context) {
         let from_source = notes
             .session
             .as_ref()
-            .is_some_and(|s| s.install == mdm_tools::update::Install::Source.label());
+            .is_some_and(|s| s.install == bmd_tools::update::Install::Source.label());
         let store = version
             .as_deref()
-            .map(|v| mdm_crash::symbols::store(&data, v));
+            .map(|v| bmd_crash::symbols::store(&data, v));
         let stores: Vec<PathBuf> = store.iter().cloned().collect();
         let made = report::make(dump.as_deref(), kind, notes.clone(), &data, &stores);
         note_gl_freeze(&made);
@@ -260,7 +260,7 @@ fn prepare(job: &Job, shared: Arc<Mutex<Shared>>, ctx: egui::Context) {
             return;
         };
         let Ok(http) = reqwest::Client::builder()
-            .user_agent(concat!("MisterDownloadManager/", env!("CARGO_PKG_VERSION")))
+            .user_agent(concat!("BMD/", env!("CARGO_PKG_VERSION")))
             .timeout(Duration::from_secs(120))
             .build()
         else {
@@ -268,7 +268,7 @@ fn prepare(job: &Job, shared: Arc<Mutex<Shared>>, ctx: egui::Context) {
         };
         // The release's symbols, when the stacks need them and they aren't here yet.
         if let (Some(v), true, false) = (version.as_deref(), missing, from_source)
-            && !mdm_crash::symbols::have(&data, v)
+            && !bmd_crash::symbols::have(&data, v)
             && dump.is_some()
         {
             set(&shared, &ctx, |s| s.fetching = Some((0, None)));
@@ -276,7 +276,7 @@ fn prepare(job: &Job, shared: Arc<Mutex<Shared>>, ctx: egui::Context) {
             let progress = move |done: u64, total: Option<u64>| {
                 set(&sh, &cx, |s| s.fetching = Some((done, total)));
             };
-            let fetched = rt.block_on(mdm_crash::symbols::fetch(
+            let fetched = rt.block_on(bmd_crash::symbols::fetch(
                 &data,
                 v,
                 crate::settings::own_net(),
@@ -324,9 +324,9 @@ fn note_gl_freeze(made: &Made) {
         return;
     };
     let modules = thread.frames.iter().map(|f| f.module.as_deref());
-    // MDM_TEST_GL_STALL=1 (off-screen test copies): the app's stall stands for a driver's.
+    // BMD_TEST_GL_STALL=1 (off-screen test copies): the app's stall stands for a driver's.
     let testing =
-        crate::offscreen() && std::env::var_os("MDM_TEST_GL_STALL").is_some_and(|v| v == "1");
+        crate::offscreen() && std::env::var_os("BMD_TEST_GL_STALL").is_some_and(|v| v == "1");
     if let Some(module) = crate::renderer::gl_driver_frame(modules, testing) {
         let seconds = made.notes.freeze.as_ref().map_or(0, |f| f.seconds);
         crate::renderer::remember_gl_froze(&module, seconds);
@@ -342,7 +342,7 @@ fn set(shared: &Mutex<Shared>, ctx: &egui::Context, f: impl FnOnce(&mut Shared))
 
 impl eframe::App for ReportWindow {
     fn ui(&mut self, ui: &mut Ui, _frame: &mut eframe::Frame) {
-        // The caption in the window's light or dark, as every iDM window's (Windows would draw
+        // The caption in the window's light or dark, as every BMD window's (Windows would draw
         // it in its own app mode).
         if !self.caption_set {
             // As the app logs its windows (crash.rs), for the log and the tests.
@@ -362,7 +362,7 @@ impl eframe::App for ReportWindow {
         #[cfg(windows)]
         if !self.caption_dwm {
             self.caption_dwm = crate::win32::caption_dark(
-                crate::i18n::t("iDM crash report"),
+                crate::i18n::t("BMD crash report"),
                 crate::theme::dark_surface(),
             );
         }
@@ -371,7 +371,7 @@ impl eframe::App for ReportWindow {
                 self.recovered = true;
             }
         }
-        // iDM's state is checked now and then (a frozen one may recover or be ended).
+        // BMD's state is checked now and then (a frozen one may recover or be ended).
         ui.ctx().request_repaint_after(Duration::from_secs(1));
         egui::CentralPanel::no_frame()
             .frame(egui::Frame::new().fill(winui::BG()))
@@ -388,14 +388,14 @@ impl eframe::App for ReportWindow {
 impl ReportWindow {
     fn heading(&self, alive: bool) -> &'static str {
         match self.job.kind {
-            // i18n: crash report window heading: the window of iDM stopped answering, then answered again
-            Kind::Freeze if self.recovered => crate::i18n::t("iDM stopped responding for a while"),
-            // i18n: crash report window heading: iDM's window doesn't answer (frozen)
-            Kind::Freeze => crate::i18n::t("iDM stopped responding"),
-            // i18n: crash report window heading: an internal error, iDM still running
-            Kind::Panic if alive => crate::i18n::t("iDM hit an internal error"),
-            // i18n: crash report window heading: iDM crashed and is gone
-            _ => crate::i18n::t("iDM closed unexpectedly"),
+            // i18n: crash report window heading: the window of BMD stopped answering, then answered again
+            Kind::Freeze if self.recovered => crate::i18n::t("BMD stopped responding for a while"),
+            // i18n: crash report window heading: BMD's window doesn't answer (frozen)
+            Kind::Freeze => crate::i18n::t("BMD stopped responding"),
+            // i18n: crash report window heading: an internal error, BMD still running
+            Kind::Panic if alive => crate::i18n::t("BMD hit an internal error"),
+            // i18n: crash report window heading: BMD crashed and is gone
+            _ => crate::i18n::t("BMD closed unexpectedly"),
         }
     }
 
@@ -545,7 +545,7 @@ impl ReportWindow {
                 ui,
                 o + egui::vec2(16.0, 462.0),
                 &mut self.attach,
-                // i18n: crash report window: checkbox; the .dmp file holds what iDM had in memory
+                // i18n: crash report window: checkbox; the .dmp file holds what BMD had in memory
                 "Also attach the crash data (.dmp): it may hold addresses, cookies and passwords",
                 true,
             );
@@ -561,14 +561,14 @@ impl ReportWindow {
             // i18n: crash report window button: open GitHub's crash report form filled in
             "Send on GitHub"
         };
-        // A frozen iDM can be ended; a gone one started again.
+        // A frozen BMD can be ended; a gone one started again.
         let frozen = self.job.kind == Kind::Freeze && alive && !self.recovered;
         let restart_label = if frozen {
-            // i18n: crash report window button: end the frozen iDM and start it again
-            "End and restart iDM"
+            // i18n: crash report window button: end the frozen BMD and start it again
+            "End and restart BMD"
         } else {
-            // i18n: crash report window button: start iDM again
-            "Restart iDM"
+            // i18n: crash report window button: start BMD again
+            "Restart BMD"
         };
         let [send_at, copy_at, folder_at, restart_at, close_at] = winui::button_row(
             &p,

@@ -6,7 +6,7 @@
 //! download chosen in the browser's quality menu, which takes the look-up the menu was made from
 //! ([`Preloaded`]): the page is then read once for the menu and the download together.
 //!
-//! The bytes come down through iDM's engine (#769, [`crate::streams`]): yt-dlp chooses the
+//! The bytes come down through BMD's engine (#769, [`crate::streams`]): yt-dlp chooses the
 //! formats, the engine downloads each stream into the file yt-dlp looks for, then yt-dlp merges
 //! them, saves the subtitles and the metadata as after its own download. What the engine can't
 //! download (a live stream, RTMP…) yt-dlp downloads itself, as before.
@@ -41,7 +41,7 @@ pub struct Progress {
     /// Subtitles that didn't come with the video, once it is done (#68): the video is saved all
     /// the same.
     pub sub_problems: Vec<SubProblem>,
-    /// While iDM's engine downloads the streams (#769): its segments, connections and server.
+    /// While BMD's engine downloads the streams (#769): its segments, connections and server.
     pub engine: Option<crate::streams::View>,
     /// Why yt-dlp downloads this one itself (#769), once a run has found out.
     pub helper: Option<crate::streams::Helper>,
@@ -76,10 +76,10 @@ pub enum SubReason {
 }
 
 /// How long to wait before asking once more for the subtitles a site refused. A site that
-/// answers "too many requests" wants a pause, not a quick retry. `MDM_SUBS_RETRY_SECS`
+/// answers "too many requests" wants a pause, not a quick retry. `BMD_SUBS_RETRY_SECS`
 /// shortens it for the tests (tests/fake_ytdlp.rs).
 fn subs_retry_delay() -> std::time::Duration {
-    let secs = std::env::var("MDM_SUBS_RETRY_SECS")
+    let secs = std::env::var("BMD_SUBS_RETRY_SECS")
         .ok()
         .and_then(|v| v.parse().ok())
         .unwrap_or(20);
@@ -221,7 +221,7 @@ pub fn set_chapters(on: bool) {
 }
 
 /// The chapters a video's page lists, put into the file (#827): `--embed-chapters` on yt-dlp's
-/// last run, the one that merges and fixes the file up (after iDM's engine too). Only with ffmpeg,
+/// last run, the one that merges and fixes the file up (after BMD's engine too). Only with ffmpeg,
 /// which writes them, and for a video or the sound as the site has it, not a conversion to MP3,
 /// Opus or FLAC. A video without chapters is left as it is.
 fn chapter_args(chapters: bool, ffmpeg: bool, converted: bool) -> Vec<String> {
@@ -445,7 +445,7 @@ impl InfoSlot {
 }
 
 /// The browser's quality menu's look-up for the download chosen there (its first run only):
-/// the look-up, and the choice as the menu offered it (iDM's selector, its label, untranslated,
+/// the look-up, and the choice as the menu offered it (BMD's selector, its label, untranslated,
 /// and whether the menu's list had merged qualities). The page yt-dlp read must offer that very
 /// choice, or the run looks the page up itself.
 pub struct Preloaded {
@@ -492,10 +492,10 @@ const SUBTITLES: [&str; 10] = [
 /// Whether `rest`, a file name after `<stem>.` (lower case), is one yt-dlp writes for a download
 /// saved as `<stem>.%(ext)s`: an unfinished run's (`<ext>.part`, `<ext>.ytdl`,
 /// `<ext>.part-Frag<N>[.part]`, each also for one stream of a merged choice as `f<id>.<ext>…`,
-/// that stream once whole, `f<id>.<ext>`, and a merge's `temp.<ext>`; iDM's engine's part file
+/// that stream once whole, `f<id>.<ext>`, and a merge's `temp.<ext>`; BMD's engine's part file
 /// and resume state for such a stream, `f<id>.<ext>.mdm.part` and `.mdm.json`, #769); with
 /// `outputs`, also the finished file (`<ext>`) and its subtitles (`<language>.<srt|vtt…>`).
-/// Nothing else: another download's files (iDM's own `.mdm.part`), a file merely named alike.
+/// Nothing else: another download's files (BMD's own `.mdm.part`), a file merely named alike.
 fn yt_dlp_leftover(rest: &str, outputs: bool) -> bool {
     let media = |s: &str| MEDIA.contains(&s);
     let word = |s: &str| {
@@ -529,7 +529,7 @@ fn yt_dlp_leftover(rest: &str, outputs: bool) -> bool {
     let working = match parts.as_slice() {
         ["temp", ext] => media(ext),
         [f, ext] if format(f) => media(ext),
-        [f, ext, "mdm", "part" | "json"] if format(f) => media(ext),
+        [f, ext, "bmd", "part" | "json"] if format(f) => media(ext),
         [f, tail @ ..] if format(f) => unfinished(tail),
         p => unfinished(p),
     };
@@ -575,7 +575,7 @@ fn info_file() -> PathBuf {
     use std::sync::atomic::{AtomicU64, Ordering};
     static N: AtomicU64 = AtomicU64::new(0);
     crate::workdir::temp_dir().join(format!(
-        "mdm-video-{}-{}.json",
+        "bmd-video-{}-{}.json",
         std::process::id(),
         N.fetch_add(1, Ordering::Relaxed)
     ))
@@ -707,7 +707,7 @@ fn supervise(
     retry: Option<&SubsRetry>,
     preloaded: Option<Preloaded>,
     engine: Option<&ByEngine>,
-    saved: Option<&mdm_engine::FileHook>,
+    saved: Option<&bmd_engine::FileHook>,
 ) {
     // The first run only: a run after it looks the page up afresh (links expire).
     let mut preloaded = preloaded;
@@ -1141,7 +1141,7 @@ fn run(
                 && quality.as_deref().is_some_and(several_streams)
             {
                 // Several streams: ffmpeg joins them now (#736). Told by this run's `MDMQ`, not
-                // by the meter: when iDM's engine downloaded the streams (#769) there is none,
+                // by the meter: when BMD's engine downloaded the streams (#769) there is none,
                 // and that is how most videos come down.
                 *merged.lock().unwrap() = Some(merge_file(Path::new(rest.trim())));
                 progress.lock().unwrap().merging = Some(None);
@@ -1472,7 +1472,7 @@ fn attempt(
         return failed(format!("Cannot write the video information: {e}"), rerouted);
     }
     let _cleanup = Remove(file.clone());
-    // iDM's engine downloads the streams (#769); yt-dlp then finds them in place.
+    // BMD's engine downloads the streams (#769); yt-dlp then finds them in place.
     let mut by_engine = false;
     if let Some(e) = engine {
         // With the run's selector: the nearest quality once the chosen one wasn't offered
@@ -1643,7 +1643,7 @@ fn choose(exe: &Path, args: &[String], file: &Path) -> Result<serde_json::Value,
 /// yt-dlp's choice as a line of JSON: `MDMJ {…}` (`filename` and the chosen formats in it).
 const CHOICE: &str = "MDMJ %()j";
 
-/// iDM's engine for a video's streams (#769): the engine itself, the arguments yt-dlp chooses
+/// BMD's engine for a video's streams (#769): the engine itself, the arguments yt-dlp chooses
 /// the formats with (`choose`), and the download's engine part under way.
 pub(crate) struct ByEngine {
     engine: crate::streams::Engine,
@@ -1751,7 +1751,7 @@ impl ByEngine {
         if let (crate::streams::Fetched::Done, Some(view)) = (&out, &mut p.engine) {
             view.connections
                 .iter_mut()
-                .for_each(mdm_engine::download::ConnView::finish);
+                .for_each(bmd_engine::download::ConnView::finish);
         }
         drop(p);
         match out {
@@ -1831,7 +1831,7 @@ pub fn too_long(error: &str) -> Option<PathBuf> {
     SAID.iter().find_map(|(said, always)| {
         let (_, rest) = error.split_once(said)?;
         let path = python_quoted(rest.split_once(": ")?.1)?;
-        (*always || !mdm_engine::naming::fits(&path)).then_some(path)
+        (*always || !bmd_engine::naming::fits(&path)).then_some(path)
     })
 }
 
@@ -1859,7 +1859,7 @@ fn template_text(s: &str) -> String {
     s.replace('%', "%%")
 }
 
-/// yt-dlp's speed when it downloads by itself (#708; iDM's engine downloads every other video,
+/// yt-dlp's speed when it downloads by itself (#708; BMD's engine downloads every other video,
 /// #769): at most `rate` bytes/s.
 pub fn limit_args(rate: Option<u64>) -> Vec<String> {
     rate.map(|r| vec!["--limit-rate".into(), r.to_string()])
@@ -1884,7 +1884,7 @@ impl VideoJob {
     /// choice was shown with (every stream), so the progress starts from the whole. `browser`:
     /// what the browser's request for the page carried (proc::FromBrowser). `subs`: the
     /// subtitles to save with it (#68; none for a sound alone, which has no picture to put them
-    /// on). `engine`: iDM's engine, which downloads the streams yt-dlp finds (#769; its options'
+    /// on). `engine`: BMD's engine, which downloads the streams yt-dlp finds (#769; its options'
     /// speed limit is the download's); without it, or for what it can't download, yt-dlp does.
     #[allow(clippy::too_many_arguments)]
     pub fn start(
@@ -1925,7 +1925,7 @@ impl VideoJob {
         subs: &Subs,
         preloaded: Option<Preloaded>,
         engine: Option<crate::streams::Engine>,
-        saved: Option<mdm_engine::FileHook>,
+        saved: Option<bmd_engine::FileHook>,
     ) -> Result<VideoJob, ProcError> {
         proc::safe(url)?;
         let preloaded = preloaded.filter(|p| p.selector == selector);
@@ -1933,7 +1933,7 @@ impl VideoJob {
         let folder = crate::workdir::absolute(dir);
         // Every file of the video within the path limits (#1102), or the download says so now:
         // yt-dlp would only say `[Errno 2] No such file or directory` once it has the page.
-        if !mdm_engine::naming::stem_fits(&folder, stem) {
+        if !bmd_engine::naming::stem_fits(&folder, stem) {
             return Err(ProcError::PathTooLong(folder.join(stem)));
         }
         let output = folder.join(format!("{}.%(ext)s", template_text(stem)));
@@ -2170,7 +2170,7 @@ mod tests {
 
     /// A video download's files that "overwrite" (a duplicate added again) removes: exactly what
     /// yt-dlp leaves for its stem, the finished file and subtitles only with `outputs`; never a
-    /// file merely named alike, another stem's, or iDM's own part files.
+    /// file merely named alike, another stem's, or BMD's own part files.
     #[test]
     fn a_videos_own_files_are_exactly_yt_dlps() {
         let dir = tempfile::tempdir().unwrap();
@@ -2210,7 +2210,7 @@ mod tests {
             "Clip.pdf.mdm.part",
             "Clip.v2.zip.mdm.part",
             "Clip.mp4.mdm.part",
-            "Clip.f137.mp4.mdm.zip",
+            "Clip.f137.mp4.bmd.zip",
             "Clip.f1.jpg.mdm.part",
             "Clip.zip",
             "Clip.notes.txt",
@@ -2315,25 +2315,25 @@ mod tests {
         assert_eq!(s(limit_args(Some(524_288))), "--limit-rate 524288");
     }
 
-    /// Live (network, yt-dlp): `MDM_LIVE_YTDLP=<yt-dlp.exe> MDM_LIVE_PAGE=<video page>
-    /// cargo test -p mdm-tools live_download -- --ignored --nocapture`. Downloads the smallest
+    /// Live (network, yt-dlp): `BMD_LIVE_YTDLP=<yt-dlp.exe> BMD_LIVE_PAGE=<video page>
+    /// cargo test -p bmd-tools live_download -- --ignored --nocapture`. Downloads the smallest
     /// audio and prints the log (a swapped server shows there).
     #[test]
     #[ignore]
     fn live_download() {
-        let exe = PathBuf::from(std::env::var("MDM_LIVE_YTDLP").expect("MDM_LIVE_YTDLP"));
-        let page = std::env::var("MDM_LIVE_PAGE").expect("MDM_LIVE_PAGE");
+        let exe = PathBuf::from(std::env::var("BMD_LIVE_YTDLP").expect("BMD_LIVE_YTDLP"));
+        let page = std::env::var("BMD_LIVE_PAGE").expect("BMD_LIVE_PAGE");
         let dir = tempfile::tempdir().unwrap();
-        let format = std::env::var("MDM_LIVE_FORMAT").unwrap_or_else(|_| "worstaudio".into());
-        let ffmpeg = std::env::var("MDM_LIVE_FFMPEG").ok().map(PathBuf::from);
-        // iDM's engine downloads the streams (#769), unless MDM_LIVE_YTDLP_ALONE is set.
+        let format = std::env::var("BMD_LIVE_FORMAT").unwrap_or_else(|_| "worstaudio".into());
+        let ffmpeg = std::env::var("BMD_LIVE_FFMPEG").ok().map(PathBuf::from);
+        // BMD's engine downloads the streams (#769), unless BMD_LIVE_YTDLP_ALONE is set.
         let rt = tokio::runtime::Runtime::new().unwrap();
         let engine =
-            std::env::var_os("MDM_LIVE_YTDLP_ALONE")
+            std::env::var_os("BMD_LIVE_YTDLP_ALONE")
                 .is_none()
                 .then(|| crate::streams::Engine {
                     handle: rt.handle().clone(),
-                    opts: mdm_engine::Options::default(),
+                    opts: bmd_engine::Options::default(),
                 });
         let job = VideoJob::start(
             &exe,
@@ -2382,15 +2382,15 @@ mod tests {
         );
     }
 
-    /// Live (#61): `MDM_LIVE_YTDLP=<yt-dlp.exe> MDM_LIVE_SLOW=<a slow file's address>
-    /// cargo test -p mdm-tools live_stop -- --ignored --nocapture` (the lab server:
+    /// Live (#61): `BMD_LIVE_YTDLP=<yt-dlp.exe> BMD_LIVE_SLOW=<a slow file's address>
+    /// cargo test -p bmd-tools live_stop -- --ignored --nocapture` (the lab server:
     /// `/gen/20M/clip.mp4?rate=50K`). Stopping a video download ends every yt-dlp process it
     /// started (Windows: the launcher and its child), and the part file stops growing.
     #[test]
     #[ignore]
     fn live_stop_ends_every_process() {
-        let exe = PathBuf::from(std::env::var("MDM_LIVE_YTDLP").expect("MDM_LIVE_YTDLP"));
-        let url = std::env::var("MDM_LIVE_SLOW").expect("MDM_LIVE_SLOW");
+        let exe = PathBuf::from(std::env::var("BMD_LIVE_YTDLP").expect("BMD_LIVE_YTDLP"));
+        let url = std::env::var("BMD_LIVE_SLOW").expect("BMD_LIVE_SLOW");
         let dir = tempfile::tempdir().unwrap();
         let job = VideoJob::start(
             &exe,

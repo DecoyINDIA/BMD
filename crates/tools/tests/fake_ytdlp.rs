@@ -5,14 +5,14 @@
 //!
 //! One program, three roles (no test harness, `harness = false`):
 //! - run as `fake-ytdlp[.exe]` (a copy of itself): it is yt-dlp;
-//! - run with `MDM_SUBS_RETRY_SECS` set (the retry's pause, shortened): it runs the checks;
+//! - run with `BMD_SUBS_RETRY_SECS` set (the retry's pause, shortened): it runs the checks;
 //! - run plainly (`cargo test`): it runs itself again with that variable, the way to set it
 //!   without touching its own environment.
 //!
 //! #769: with `page.json` beside it, the fake's page is that one (its formats' addresses on a lab
 //! server, `{EXPIRES}` replaced by a time a little ahead each look-up); asked for its choice
 //! (`-O "MDMJ %()j"`) it answers as yt-dlp does after choosing; and asked to download a choice
-//! whose streams are already there (iDM's engine downloaded them), it merges them as yt-dlp
+//! whose streams are already there (BMD's engine downloaded them), it merges them as yt-dlp
 //! does ("has already been downloaded"), downloading only what isn't there.
 //!
 //! #686: with `page-signed-in.json` beside it too, a look-up with the browser's cookies gets that
@@ -23,7 +23,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, ExitCode};
 use std::time::{Duration, Instant};
 
-use mdm_tools::video::{State, SubReason, Subs, VideoJob};
+use bmd_tools::video::{State, SubReason, Subs, VideoJob};
 
 fn main() -> ExitCode {
     let me = std::env::current_exe().expect("own path");
@@ -31,7 +31,7 @@ fn main() -> ExitCode {
     if name.as_deref() == Some("fake-ytdlp") {
         return fake_ytdlp();
     }
-    if std::env::var_os("MDM_SUBS_RETRY_SECS").is_some() {
+    if std::env::var_os("BMD_SUBS_RETRY_SECS").is_some() {
         private_cookie_checks(&me);
         checks(&me);
         job_checks(&me);
@@ -46,7 +46,7 @@ fn main() -> ExitCode {
         return ExitCode::SUCCESS;
     }
     let status = Command::new(&me)
-        .env("MDM_SUBS_RETRY_SECS", "1")
+        .env("BMD_SUBS_RETRY_SECS", "1")
         .status()
         .expect("run the checks");
     if status.success() {
@@ -349,7 +349,7 @@ fn fake_ytdlp() -> ExitCode {
     }
     // #569: the format asked for, for the checks.
     std::fs::write(dir.join("format.txt"), &format).unwrap();
-    // #769: a choice whose streams iDM's engine downloaded: merged as yt-dlp merges them.
+    // #769: a choice whose streams BMD's engine downloaded: merged as yt-dlp merges them.
     if let Some(info) = after("--load-info-json")
         .and_then(|f| std::fs::read_to_string(f).ok())
         .and_then(|t| serde_json::from_str::<serde_json::Value>(&t).ok())
@@ -577,7 +577,7 @@ fn fake_in(me: &Path, dir: &Path) -> PathBuf {
 /// Options' browser store is on: inspect arguments received by an actual child process for
 /// look-ups and downloads, both private (empty, own header, own jar) and ordinary requests.
 fn private_cookie_checks(me: &Path) {
-    use mdm_tools::proc::{BrowserCookies, FromBrowser, set_browser_cookies};
+    use bmd_tools::proc::{BrowserCookies, FromBrowser, set_browser_cookies};
     set_browser_cookies(BrowserCookies::new("firefox", "normal-profile"));
     let private = FromBrowser {
         private: true,
@@ -588,7 +588,7 @@ fn private_cookie_checks(me: &Path) {
         ..private.clone()
     };
     let jar = FromBrowser {
-        jar: vec![mdm_ipc::BrowserCookie {
+        jar: vec![bmd_ipc::BrowserCookie {
             name: "sid".into(),
             value: "private".into(),
             domain: "video.example".into(),
@@ -603,7 +603,7 @@ fn private_cookie_checks(me: &Path) {
         let exe = fake_in(me, tools.path());
         std::fs::write(tools.path().join("record-cookie-args"), "").unwrap();
         let url = "https://video.example/talk";
-        mdm_tools::resolve::look_up(&exe, url, &browser).unwrap();
+        bmd_tools::resolve::look_up(&exe, url, &browser).unwrap();
         let job = VideoJob::start(
             &exe,
             url,
@@ -670,7 +670,7 @@ fn private_cookie_checks(me: &Path) {
     let tools = tempfile::tempdir().unwrap();
     let exe = fake_in(me, tools.path());
     std::fs::write(tools.path().join("record-cookie-args"), "").unwrap();
-    let error = mdm_tools::resolve::look_up(
+    let error = bmd_tools::resolve::look_up(
         &exe,
         "https://www.youtube.com/watch?v=members0000",
         &private,
@@ -684,7 +684,7 @@ fn private_cookie_checks(me: &Path) {
 }
 
 /// Download with `subs` while the fake behaves as `mode`; the end state, its log and folder.
-fn download(me: &Path, mode: &str, subs: &Subs) -> (mdm_tools::video::Progress, Vec<String>) {
+fn download(me: &Path, mode: &str, subs: &Subs) -> (bmd_tools::video::Progress, Vec<String>) {
     let (p, files, _out) = download_as(me, mode, subs, "b", "Talk");
     (p, files)
 }
@@ -696,7 +696,7 @@ fn download_as(
     subs: &Subs,
     selector: &str,
     stem: &str,
-) -> (mdm_tools::video::Progress, Vec<String>, tempfile::TempDir) {
+) -> (bmd_tools::video::Progress, Vec<String>, tempfile::TempDir) {
     let tools = tempfile::tempdir().unwrap();
     let out = tempfile::tempdir().unwrap();
     std::fs::write(out.path().join("mode.txt"), mode).unwrap();
@@ -747,7 +747,7 @@ fn saved_checks(me: &Path) {
     let shown: Arc<Mutex<Vec<(PathBuf, Instant)>>> = Arc::default();
     let hook = {
         let shown = shown.clone();
-        mdm_engine::FileHook::new(move |p: &Path| {
+        bmd_engine::FileHook::new(move |p: &Path| {
             std::thread::sleep(Duration::from_secs(2));
             shown.lock().unwrap().push((p.to_owned(), Instant::now()));
         })
@@ -797,7 +797,7 @@ fn saved_checks(me: &Path) {
     println!("saved_checks: marked before done; the slowest look at the progress took {slowest:?}");
 }
 
-fn log_of(p: &mdm_tools::video::Progress) -> Vec<String> {
+fn log_of(p: &bmd_tools::video::Progress) -> Vec<String> {
     p.events.iter().map(|(_, t)| t.clone()).collect()
 }
 
@@ -880,7 +880,7 @@ fn merge_checks(me: &Path) {
 fn job_checks(me: &Path) {
     let none = Subs::default();
 
-    // Silent for 30 s (ffmpeg merging a long video): no timeout of iDM's own ends it.
+    // Silent for 30 s (ffmpeg merging a long video): no timeout of BMD's own ends it.
     let (p, files, _o) = download_as(me, "quiet:30", &none, "b", "Talk");
     assert!(matches!(p.state, State::Done(_)), "quiet: {:?}", p.state);
     assert_eq!(files, ["Talk.mp4"]);
@@ -974,7 +974,7 @@ fn job_checks(me: &Path) {
 /// when that look-up had to leave the cookies out. A look-up that doesn't offer the choice made,
 /// a failed one, and every run after the first read the page afresh.
 fn preloaded_checks(me: &Path) {
-    use mdm_tools::video::{InfoSlot, Preloaded};
+    use bmd_tools::video::{InfoSlot, Preloaded};
     let run = |mode: &str, preloaded: Option<Preloaded>| {
         let tools = tempfile::tempdir().unwrap();
         let out = tempfile::tempdir().unwrap();
@@ -1057,7 +1057,7 @@ fn preloaded_checks(me: &Path) {
     // moved to the alternative the site lists, as a fresh look-up's would be, and yt-dlp
     // downloads from that list without reading the page again. The servers are the test's
     // (`check_servers_with`): none is ever asked.
-    mdm_tools::video::check_servers_with(
+    bmd_tools::video::check_servers_with(
         |host| host.contains("sn-alive"),
         |link| link.contains("sn-alive"),
     );
@@ -1085,8 +1085,8 @@ fn preloaded_checks(me: &Path) {
 /// #69: a list is told from a video, listed whole as it comes (thousands, in order), a channel a
 /// page at a time, and a listing stops when asked, ending yt-dlp.
 fn list_checks(me: &Path) {
-    use mdm_tools::playlist::{Listing, PAGE};
-    use mdm_tools::resolve::{Looked, look_up};
+    use bmd_tools::playlist::{Listing, PAGE};
+    use bmd_tools::resolve::{Looked, look_up};
     let tools = tempfile::tempdir().unwrap();
     let exe = fake_in(me, tools.path());
     let none = Default::default();
@@ -1117,7 +1117,7 @@ fn list_checks(me: &Path) {
 
     // #352: cookies that leave yt-dlp nothing to offer: the same page without them.
     let page = "https://cookies.example/none";
-    let cookies = mdm_tools::proc::FromBrowser {
+    let cookies = bmd_tools::proc::FromBrowser {
         cookies: Some("LOGIN_INFO=l; SAPISID=s".into()),
         ..Default::default()
     };
@@ -1127,13 +1127,13 @@ fn list_checks(me: &Path) {
     ));
     let (args, _file) = cookies.args(page).unwrap();
     let out =
-        mdm_tools::proc::look_up(&exe, &["-J".to_owned()], page, Duration::from_secs(30)).unwrap();
+        bmd_tools::proc::look_up(&exe, &["-J".to_owned()], page, Duration::from_secs(30)).unwrap();
     assert!(!out.without_cookies, "no cookies, so nothing to retry");
     let first = ["-J".to_owned()]
         .into_iter()
         .chain(args)
         .collect::<Vec<_>>();
-    let out = mdm_tools::proc::look_up(&exe, &first, page, Duration::from_secs(30)).unwrap();
+    let out = bmd_tools::proc::look_up(&exe, &first, page, Duration::from_secs(30)).unwrap();
     assert!(out.without_cookies, "the second look-up, without them");
 
     // Six thousand, whole: all of them, in order, the private ones marked.
@@ -1235,17 +1235,17 @@ fn checks(me: &Path) {
     assert_eq!(p.sub_problems.len(), 1);
 }
 
-/// #769: iDM's engine downloads what yt-dlp chose, from a lab server: each stream over several
+/// #769: BMD's engine downloads what yt-dlp chose, from a lab server: each stream over several
 /// connections, within yt-dlp's `http_chunk_size`, into the files yt-dlp then merges; a stopped
 /// one goes on from where it stopped; an address that expires is asked of yt-dlp again; a new
 /// speed limit applies at once; and a stream in pieces stays yt-dlp's to download, said so.
 fn engine_checks(me: &Path) {
-    use mdm_labserver::{Config, LabServer, content};
+    use bmd_labserver::{Config, LabServer, content};
     let rt = tokio::runtime::Runtime::new().unwrap();
     let lab = rt.block_on(LabServer::start(Config::default())).unwrap();
-    let engine = |connections: u32| mdm_tools::streams::Engine {
+    let engine = |connections: u32| bmd_tools::streams::Engine {
         handle: rt.handle().clone(),
-        opts: mdm_engine::Options {
+        opts: bmd_engine::Options {
             max_connections: connections,
             retry_delay: Duration::from_millis(50),
             ..Default::default()
@@ -1366,7 +1366,7 @@ fn engine_checks(me: &Path) {
         std::fs::read_dir(out.path())
             .unwrap()
             .filter_map(Result::ok)
-            .all(|e| !e.file_name().to_string_lossy().contains(".mdm.")),
+            .all(|e| !e.file_name().to_string_lossy().contains(".bmd.")),
         "no part file or state left"
     );
 
@@ -1434,7 +1434,7 @@ fn engine_checks(me: &Path) {
     job.stop();
     let (p, _) = wait(&job);
     assert_eq!(p.state, State::Stopped);
-    let state = mdm_engine::state::state_path(&out.path().join("Talk.f137.mp4"));
+    let state = bmd_engine::state::state_path(&out.path().join("Talk.f137.mp4"));
     assert!(state.exists(), "the resume state is kept");
     let job = start(tools.path(), out.path(), 2);
     job.set_speed_limit(None);
@@ -1486,7 +1486,7 @@ fn engine_checks(me: &Path) {
     assert!(matches!(p.state, State::Done(_)), "{:?}: {log:?}", p.state);
     assert_eq!(
         p.helper,
-        Some(mdm_tools::streams::Helper::Protocol("rtmp".into()))
+        Some(bmd_tools::streams::Helper::Protocol("rtmp".into()))
     );
     assert!(
         log.iter()
@@ -1499,19 +1499,19 @@ fn engine_checks(me: &Path) {
 }
 
 /// #1102: an X post with a long text, as the report's: its video saved in a deep folder (here,
-/// under the build's own folder) under a name shortened so that every file iDM's engine and
+/// under the build's own folder) under a name shortened so that every file BMD's engine and
 /// yt-dlp make for it stays within Windows' 259 (and names within 255 everywhere), both when the
 /// engine downloads its streams (an HLS sound in pieces) and when yt-dlp does (its `.part` and
 /// `.ytdl`). A name not shortened is refused at once, and a path yt-dlp couldn't make is named
 /// as too long, not as a missing folder.
 fn long_name_checks(me: &Path) {
-    use mdm_labserver::{Config, LabServer};
+    use bmd_labserver::{Config, LabServer};
     const TITLE: &str = "Kira on X: \"This is f*cking insane. Nvidia CEO Jensen Huang on what he expects from an engineer he pays $500,000 a year: \"If that $500,000 engineer did not consume at least $250,000 worth of tokens\" He'd be deeply alarmed";
     let rt = tokio::runtime::Runtime::new().unwrap();
     let lab = rt.block_on(LabServer::start(Config::default())).unwrap();
-    let engine = mdm_tools::streams::Engine {
+    let engine = bmd_tools::streams::Engine {
         handle: rt.handle().clone(),
-        opts: mdm_engine::Options {
+        opts: bmd_engine::Options {
             max_connections: 2,
             retry_delay: Duration::from_millis(50),
             ..Default::default()
@@ -1542,7 +1542,7 @@ fn long_name_checks(me: &Path) {
         .max(1);
     let folder = base.path().join("d".repeat(pad));
     std::fs::create_dir_all(&folder).unwrap();
-    let name = format!("{}.mp4", mdm_engine::naming::sanitize(TITLE));
+    let name = format!("{}.mp4", bmd_engine::naming::sanitize(TITLE));
     let units = |p: &Path| {
         let s = p.to_string_lossy();
         if cfg!(windows) {
@@ -1575,11 +1575,11 @@ fn long_name_checks(me: &Path) {
             page(protocol, "audio-128000-Audio"),
         )
         .unwrap();
-        let dest = mdm_engine::naming::stem_destination(&dir, &name, |_| false);
+        let dest = bmd_engine::naming::stem_destination(&dir, &name, |_| false);
         let stem = dest.file_stem().unwrap().to_string_lossy().into_owned();
         assert!(stem.len() < 221, "shortened: {stem}");
         assert!(
-            mdm_engine::naming::sanitize(TITLE).starts_with(&stem),
+            bmd_engine::naming::sanitize(TITLE).starts_with(&stem),
             "{stem}"
         );
         let exe = fake_in(me, tools.path());
@@ -1628,7 +1628,7 @@ fn long_name_checks(me: &Path) {
 
     // The title's name, not shortened: refused before yt-dlp is asked anything.
     let dir = tempfile::tempdir_in(&folder).unwrap();
-    let whole = mdm_engine::naming::sanitize(TITLE);
+    let whole = bmd_engine::naming::sanitize(TITLE);
     let refused = VideoJob::start(
         Path::new("not-run"),
         "https://x.example/kira/status/1",
@@ -1643,7 +1643,7 @@ fn long_name_checks(me: &Path) {
         None,
     );
     assert!(
-        matches!(refused, Err(mdm_tools::proc::ProcError::PathTooLong(_))),
+        matches!(refused, Err(bmd_tools::proc::ProcError::PathTooLong(_))),
         "refused at once"
     );
 
@@ -1659,7 +1659,7 @@ fn long_name_checks(me: &Path) {
             page("rtmp", &"long-id-".repeat(10)),
         )
         .unwrap();
-        let dest = mdm_engine::naming::stem_destination(out.path(), &name, |_| false);
+        let dest = bmd_engine::naming::stem_destination(out.path(), &name, |_| false);
         let stem = dest.file_stem().unwrap().to_string_lossy().into_owned();
         let exe = fake_in(me, tools.path());
         let job = VideoJob::start(
@@ -1689,7 +1689,7 @@ fn long_name_checks(me: &Path) {
             panic!("{:?}", p.state);
         };
         assert!(error.contains("[Errno 2]"), "{error}");
-        let path = mdm_tools::video::too_long(error).expect("named as too long");
+        let path = bmd_tools::video::too_long(error).expect("named as too long");
         assert!(units(&path) > 259, "{}", path.display());
         assert!(path.starts_with(out.path()), "{}", path.display());
     }
@@ -1699,7 +1699,7 @@ fn long_name_checks(me: &Path) {
 /// The sound every page of the engine's checks has (format 140, the lab's `/gen/1M/a.m4a`).
 fn expected_audio() -> Vec<u8> {
     let mut a = vec![0; 1 << 20];
-    mdm_labserver::content::fill(2, 0, &mut a);
+    bmd_labserver::content::fill(2, 0, &mut a);
     a
 }
 
@@ -1710,8 +1710,8 @@ fn expected_audio() -> Vec<u8> {
 fn pieces_checks(
     me: &Path,
     rt: &tokio::runtime::Runtime,
-    lab: &mdm_labserver::LabServer,
-    engine: &dyn Fn(u32) -> mdm_tools::streams::Engine,
+    lab: &bmd_labserver::LabServer,
+    engine: &dyn Fn(u32) -> bmd_tools::streams::Engine,
     audio: &[u8],
 ) {
     let get = |path: &str| -> Vec<u8> {
@@ -1781,7 +1781,7 @@ fn pieces_checks(
             .unwrap()
             .filter_map(Result::ok)
             .map(|e| e.file_name().to_string_lossy().into_owned())
-            .filter(|n| n.contains(".mdm"))
+            .filter(|n| n.contains(".bmd"))
             .collect();
         assert!(left.is_empty(), "left behind: {left:?}");
         (saved, log, most)
@@ -1853,7 +1853,7 @@ fn pieces_checks(
     let want: Vec<u8> = (1..=4u64)
         .flat_map(|i| {
             let mut b = vec![0; 256 * 1024];
-            mdm_labserver::content::fill(20 + i, 0, &mut b);
+            bmd_labserver::content::fill(20 + i, 0, &mut b);
             b
         })
         .chain(audio.iter().copied())
@@ -1882,10 +1882,10 @@ fn pieces_checks(
 /// video's isn't.
 fn signed_in_checks(
     me: &Path,
-    lab: &mdm_labserver::LabServer,
-    engine: &dyn Fn(u32) -> mdm_tools::streams::Engine,
+    lab: &bmd_labserver::LabServer,
+    engine: &dyn Fn(u32) -> bmd_tools::streams::Engine,
 ) {
-    use mdm_tools::resolve::{Looked, look_up};
+    use bmd_tools::resolve::{Looked, look_up};
     let page = |video: &str, availability: &str| {
         format!(
             r#"{{"id": "jNQXAC9IVRw", "title": "Talk", "ext": "mp4", "availability": "{availability}",
@@ -1895,7 +1895,7 @@ fn signed_in_checks(
             lab.url(video)
         )
     };
-    let browser = mdm_tools::proc::FromBrowser {
+    let browser = bmd_tools::proc::FromBrowser {
         cookies: Some("SAPISID=made-up; LOGIN_INFO=made-up".into()),
         ..Default::default()
     };
@@ -1950,7 +1950,7 @@ fn signed_in_checks(
         (p, runs, saved)
     };
     let mut want = vec![0u8; 1 << 20];
-    mdm_labserver::content::fill(5, 0, &mut want);
+    bmd_labserver::content::fill(5, 0, &mut want);
 
     // A public YouTube video: refused with the cookies, downloaded without them, as a private
     // window gets it; every run after the refusal goes without them.
@@ -2022,7 +2022,7 @@ fn signed_in_checks(
     let bot = "https://www.youtube.com/watch?v=botcheck000";
     let (args, _file) = browser.args(bot).unwrap();
     let ours: Vec<String> = ["-J".to_owned()].into_iter().chain(args).collect();
-    let out = mdm_tools::proc::look_up(&exe, &ours, bot, Duration::from_secs(30)).unwrap();
+    let out = bmd_tools::proc::look_up(&exe, &ours, bot, Duration::from_secs(30)).unwrap();
     assert!(out.without_cookies, "the second look-up, without them");
     assert!(matches!(
         look_up(&exe, bot, &browser).unwrap(),
@@ -2038,28 +2038,28 @@ fn signed_in_checks(
     println!("fake_ytdlp: #686 checks ok");
 }
 
-/// #686, live, only with `MDM_LIVE_YTDLP=<yt-dlp>` (and `MDM_LIVE_PAGE=<a public YouTube video>`,
+/// #686, live, only with `BMD_LIVE_YTDLP=<yt-dlp>` (and `BMD_LIVE_PAGE=<a public YouTube video>`,
 /// a short one: its 360p format 18 is downloaded, then deleted):
 ///
-///   MDM_LIVE_YTDLP=…\yt-dlp.exe MDM_LIVE_PAGE=https://www.youtube.com/watch?v=jNQXAC9IVRw cargo test -p mdm-tools --test fake_ytdlp
+///   BMD_LIVE_YTDLP=…\yt-dlp.exe BMD_LIVE_PAGE=https://www.youtube.com/watch?v=jNQXAC9IVRw cargo test -p bmd-tools --test fake_ytdlp
 ///
-/// The real yt-dlp looks the video up without cookies, as iDM does (no account, signed in
+/// The real yt-dlp looks the video up without cookies, as BMD does (no account, signed in
 /// nowhere). The fake then stands in for it with that answer: as is for a look-up without the
 /// browser's cookies, and with every stream's address expired for one with them, which
 /// googlevideo.com really refuses with 403, as it refuses a signed-in viewer's. The made-up
-/// cookies go to the fake only. iDM's engine downloads the video from YouTube's servers once the
+/// cookies go to the fake only. BMD's engine downloads the video from YouTube's servers once the
 /// download has gone without the cookies.
 fn live_checks(me: &Path) {
-    let Some(real) = std::env::var_os("MDM_LIVE_YTDLP").map(PathBuf::from) else {
+    let Some(real) = std::env::var_os("BMD_LIVE_YTDLP").map(PathBuf::from) else {
         return;
     };
-    let page = std::env::var("MDM_LIVE_PAGE")
+    let page = std::env::var("BMD_LIVE_PAGE")
         .unwrap_or("https://www.youtube.com/watch?v=jNQXAC9IVRw".into());
     let t = Instant::now();
     let (looked, out) =
-        mdm_tools::resolve::look_up_kept(&real, &page, &Default::default()).expect("looked up");
+        bmd_tools::resolve::look_up_kept(&real, &page, &Default::default()).expect("looked up");
     assert!(!out.without_cookies);
-    let mdm_tools::resolve::Looked::Video(v) = looked else {
+    let bmd_tools::resolve::Looked::Video(v) = looked else {
         panic!("a list")
     };
     println!(
@@ -2106,7 +2106,7 @@ fn live_checks(me: &Path) {
     let exe = fake_in(me, tools.path());
     let out = tempfile::tempdir().unwrap();
     let rt = tokio::runtime::Runtime::new().unwrap();
-    let browser = mdm_tools::proc::FromBrowser {
+    let browser = bmd_tools::proc::FromBrowser {
         cookies: Some("SAPISID=made-up; LOGIN_INFO=made-up".into()),
         ..Default::default()
     };
@@ -2121,7 +2121,7 @@ fn live_checks(me: &Path) {
         None,
         &browser,
         &Subs::default(),
-        Some(mdm_tools::streams::Engine {
+        Some(bmd_tools::streams::Engine {
             handle: rt.handle().clone(),
             opts: Default::default(),
         }),

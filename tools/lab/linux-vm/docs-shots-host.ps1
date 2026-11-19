@@ -1,16 +1,16 @@
 <#
 The README's, docs' and site's Linux screenshots, from the Windows host: docs-shots.sh runs in a
-lab VM (GNOME in mdm-ubuntu; KDE Plasma, Cinnamon and Xfce in its clones), its PNGs come back into
+lab VM (GNOME in bmd-ubuntu; KDE Plasma, Cinnamon and Xfce in its clones), its PNGs come back into
 target\linux-shots\<vm>\, and -Publish writes them as lossless WebP where the docs and the site
 show them. The host's own screen, keyboard and mouse are never used.
 
-  tools\lab\wsl\deploy.ps1 main mdm-ubuntu                      # the build, from mdm-lab
+  tools\lab\wsl\deploy.ps1 main bmd-ubuntu                      # the build, from bmd-lab
   tools\lab\linux-vm\docs-shots-host.ps1 main                   # every shot, light and dark
   tools\lab\linux-vm\docs-shots-host.ps1 main -Only tray -TrayAt "1166 14"
   tools\lab\linux-vm\docs-shots-host.ps1 main -Publish          # into docs/images and the site
-  tools\lab\linux-vm\docs-shots-host.ps1 main -Vm mdm-kde -Desktop kde -Modes light -Only main -MainAt "40,30" -Publish
+  tools\lab\linux-vm\docs-shots-host.ps1 main -Vm bmd-kde -Desktop kde -Modes light -Only main -MainAt "40,30" -Publish
 
-What was taken for #186: GNOME (mdm-ubuntu) the whole list with -TrayAt "1153 16"; KDE Plasma,
+What was taken for #186: GNOME (bmd-ubuntu) the whole list with -TrayAt "1153 16"; KDE Plasma,
 Cinnamon and Xfce (the clones) their main window with -MainAt "40,30" (Plasma keeps a login
 notification at the bottom right). A shot taken while the VM is busy can show it (a far round
 trip, a window still opening): look at each one, and take that one again with -Only (the others
@@ -20,13 +20,13 @@ GNOME (-Desktop gnome, the default) publishes docs/images/<shot>-linux.webp (the
 as main-linux-dark.webp) and the site's pair website/assets/screens/main-linux-<light|dark>.webp;
 another desktop publishes its main window as docs/images/<desktop>-main-linux.webp.
 
-The tray's shot clicks MDM's icon in the top bar: -TrayAt "x y" is its place on the VM's screen
+The tray's shot clicks BMD's icon in the top bar: -TrayAt "x y" is its place on the VM's screen
 (a first run without it saves the top bar as topbar.png to find it). The VM's account comes from
-MDM_VM_USER / MDM_VM_PASSWORD or the local file deploy.ps1 reads, and is never printed.
+BMD_VM_USER / BMD_VM_PASSWORD or the local file deploy.ps1 reads, and is never printed.
 #>
 param(
     [Parameter(Position = 0, Mandatory)] [string] $Label,
-    [string] $Vm = 'mdm-ubuntu',
+    [string] $Vm = 'bmd-ubuntu',
     [ValidateSet('gnome', 'kde', 'cinnamon', 'xfce')] [string] $Desktop = 'gnome',
     [string] $Modes = 'light,dark',
     [string] $Only = '',
@@ -59,7 +59,7 @@ if (-not $NoShoot) {
     # The guest's errors on its standard output: Windows PowerShell stops at a native command's
     # stderr under ErrorActionPreference Stop.
     Install-VmSudo $account $Vm $vbox
-    $env_ = 'exec 2>&1; ' + $VmSudoEnv + "export MDM_TRAY_AT='$TrayAt' MDM_MAIN_AT='$MainAt'; "
+    $env_ = 'exec 2>&1; ' + $VmSudoEnv + "export BMD_TRAY_AT='$TrayAt' BMD_MAIN_AT='$MainAt'; "
     & $vbox guestcontrol $Vm run --exe /bin/bash @auth --timeout 1200000 --wait-stdout --wait-stderr -- -c `
         ($env_ + "rm -rf '$guestOut'; bash ~/lab/docs-shots.sh '$Label' '$guestOut' '$Modes' '$Only'")
     if ($LASTEXITCODE) { throw "docs-shots.sh failed ($LASTEXITCODE)" }

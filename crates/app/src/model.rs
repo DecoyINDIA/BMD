@@ -3,8 +3,8 @@
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
-use mdm_engine::Download;
-use mdm_engine::download::State;
+use bmd_engine::Download;
+use bmd_engine::download::State;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
@@ -370,7 +370,7 @@ impl Category {
         match self {
             Category::General => downloads.to_owned(),
             Category::Custom(id) => match custom(id) {
-                Some(c) => downloads.join(mdm_engine::naming::sanitize(&c.name)),
+                Some(c) => downloads.join(bmd_engine::naming::sanitize(&c.name)),
                 None => downloads.to_owned(),
             },
             // The shipped name, whatever it is called now: renaming doesn't move a folder.
@@ -401,13 +401,13 @@ pub fn default_downloads<'a>(
 }
 
 /// The name a download from `context` has before its server answers, when nobody named it: the
-/// address's ([`mdm_engine::naming::answer_name`]), typed by the browser's own type for it and,
+/// address's ([`bmd_engine::naming::answer_name`]), typed by the browser's own type for it and,
 /// for a page's media whose address names nothing (a script, a bare id), its page's title
 /// (#695, #800). The engine names it again from the server's answer as it starts.
-pub fn browser_guess(url: &url::Url, context: &mdm_ipc::Command) -> String {
-    mdm_engine::naming::answer_name(
+pub fn browser_guess(url: &url::Url, context: &bmd_ipc::Command) -> String {
+    bmd_engine::naming::answer_name(
         url,
-        &mdm_engine::naming::Answer {
+        &bmd_engine::naming::Answer {
             content_type: context.mime.as_deref(),
             title: context.video_title.as_deref(),
             ..Default::default()
@@ -458,7 +458,7 @@ pub struct Item {
     pub resumable: Option<bool>,
     /// The hash the finished file must have (Verify checksum…; beyond IDM, D-015).
     #[serde(default)]
-    pub checksum: Option<mdm_engine::verify::Hash>,
+    pub checksum: Option<bmd_engine::verify::Hash>,
     /// When the download was added ("Added" column), as `Last Try Date` is written. Downloads
     /// added before the column existed have none.
     #[serde(default)]
@@ -525,13 +525,13 @@ pub struct Item {
     /// download reaches `Status::Complete`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub rename_on_complete: Option<String>,
-    /// True when a folder download's destination already held files before iDM added it, so
+    /// True when a folder download's destination already held files before BMD added it, so
     /// folder-level deferred rename refuses to sweep untracked files along.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub preexisting_folder: bool,
-    /// Its file was dragged out of Download complete and moved to a place iDM couldn't learn
+    /// Its file was dragged out of Download complete and moved to a place BMD couldn't learn
     /// (#869): Open and Open folder say so while it isn't at `dest`. Cleared when it is placed
-    /// again (a move iDM follows, Move/Rename) or downloaded again.
+    /// again (a move BMD follows, Move/Rename) or downloaded again.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub moved_away: bool,
     /// The page it was found on, as the browser sent it (its Referer): kept with the list, so
@@ -559,7 +559,7 @@ pub struct Item {
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub private_window: bool,
     /// A video's (its `url` is the page): the address its file came from, the first stream of
-    /// its last run as yt-dlp gave it to iDM's engine (#795). The windows' "Address".
+    /// its last run as yt-dlp gave it to BMD's engine (#795). The windows' "Address".
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub file_url: Option<Url>,
     #[serde(skip)]
@@ -569,13 +569,13 @@ pub struct Item {
     pub torrent_check: Option<(u64, u64)>,
     /// The engine's last view of this download (segments, connections).
     #[serde(skip)]
-    pub snap: Option<mdm_engine::Snapshot>,
+    pub snap: Option<bmd_engine::Snapshot>,
     /// "Use authorization" login; kept in memory only, never written to disk.
     #[serde(skip)]
     pub login: Option<(String, String)>,
     /// Request context from the browser (Referer, Cookie, User-Agent); memory only.
     #[serde(skip)]
-    pub context: mdm_ipc::Command,
+    pub context: bmd_ipc::Command,
     /// What the Download complete window says besides (a video's subtitles the site refused,
     /// #68), in the interface language; memory only.
     #[serde(skip)]
@@ -583,7 +583,7 @@ pub struct Item {
     /// A video chosen in the browser's quality menu: the menu's look-up, for its first run only
     /// (taken then); memory only, never written (its links are signed).
     #[serde(skip)]
-    pub preloaded: Option<mdm_tools::video::Preloaded>,
+    pub preloaded: Option<bmd_tools::video::Preloaded>,
     /// A finished video's subtitles saved beside it (#68): a rename on completion takes them
     /// along (#655). Memory only.
     #[serde(skip)]
@@ -637,16 +637,16 @@ pub struct PackageTag {
 pub enum Job {
     File(Download),
     Video {
-        job: mdm_tools::video::VideoJob,
+        job: bmd_tools::video::VideoJob,
         url: Url,
     },
     Gallery {
-        job: mdm_tools::gallery::GalleryJob,
+        job: bmd_tools::gallery::GalleryJob,
         url: Url,
     },
     Torrent(crate::torrents::Run),
     /// A torrent through a debrid account, then its files over HTTP (#44).
-    Remote(mdm_debrid::torrents::RemoteTorrent),
+    Remote(bmd_debrid::torrents::RemoteTorrent),
 }
 
 /// A torrent sent to a debrid account (#44).
@@ -731,11 +731,11 @@ fn without_queries(text: &str) -> String {
 
 /// A helper's progress (yt-dlp's, gallery-dl's) as the engine's view: one segment when its size
 /// is known, one connection (theirs: neither opens more), its notes as events. A video whose
-/// streams iDM's engine downloads (#769) shows the engine's own: the streams' segments one after
+/// streams BMD's engine downloads (#769) shows the engine's own: the streams' segments one after
 /// another, the connections of the one under way, its server.
-fn tool_snapshot(p: mdm_tools::video::Progress, url: &Url) -> mdm_engine::Snapshot {
-    use mdm_engine::download::{ConnStatus, ConnView};
-    use mdm_tools::video::State as V;
+fn tool_snapshot(p: bmd_tools::video::Progress, url: &Url) -> bmd_engine::Snapshot {
+    use bmd_engine::download::{ConnStatus, ConnView};
+    use bmd_tools::video::State as V;
     let (state, file, error) = match p.state {
         // Every stream in, their file being joined (#736).
         V::Running if p.merging.is_some() => (State::Merging, None, None),
@@ -748,8 +748,8 @@ fn tool_snapshot(p: mdm_tools::video::Progress, url: &Url) -> mdm_engine::Snapsh
                 Some(kept) => merge_failure(&e, kept),
                 // A path yt-dlp couldn't make, too long for the system (#1102): said as such,
                 // not as Python's "No such file or directory".
-                None => match mdm_tools::video::too_long(&e) {
-                    Some(path) => crate::errors::describe(&mdm_engine::Error::PathTooLong(path)),
+                None => match bmd_tools::video::too_long(&e) {
+                    Some(path) => crate::errors::describe(&bmd_engine::Error::PathTooLong(path)),
                     None => e,
                 },
             }),
@@ -772,7 +772,7 @@ fn tool_snapshot(p: mdm_tools::video::Progress, url: &Url) -> mdm_engine::Snapsh
     let engine = p.engine.unwrap_or_default();
     let segments = if engine.segments.is_empty() {
         size.map(|t| {
-            vec![mdm_engine::download::SegmentView {
+            vec![bmd_engine::download::SegmentView {
                 start: 0,
                 cursor: p.downloaded.min(t),
                 end: t,
@@ -782,7 +782,7 @@ fn tool_snapshot(p: mdm_tools::video::Progress, url: &Url) -> mdm_engine::Snapsh
     } else {
         engine.segments
     };
-    mdm_engine::Snapshot {
+    bmd_engine::Snapshot {
         state,
         // The stream under way's own address once the engine downloads it (#795), else the
         // page's.
@@ -799,7 +799,7 @@ fn tool_snapshot(p: mdm_tools::video::Progress, url: &Url) -> mdm_engine::Snapsh
             .events
             .iter()
             .enumerate()
-            .map(|(i, (at, text))| mdm_engine::download::Event {
+            .map(|(i, (at, text))| bmd_engine::download::Event {
                 seq: i as u64 + 1,
                 at: *at,
                 text: text.clone(),
@@ -815,7 +815,7 @@ fn tool_snapshot(p: mdm_tools::video::Progress, url: &Url) -> mdm_engine::Snapsh
 
 impl Job {
     /// The engine's view, or one made from yt-dlp's progress (one segment, no connections).
-    pub fn snapshot(&self) -> mdm_engine::Snapshot {
+    pub fn snapshot(&self) -> bmd_engine::Snapshot {
         match self {
             Job::File(d) => d.snapshot(),
             Job::Torrent(t) => t.snapshot(),
@@ -837,7 +837,7 @@ impl Job {
 
     /// A helper program downloads it, and takes a speed limit only as it starts, so a new limit
     /// starts it again (#708, `App::reapply_helper_limits`): gallery-dl, and yt-dlp for a video
-    /// iDM's engine doesn't download (#769: a live stream, RTMP…).
+    /// BMD's engine doesn't download (#769: a live stream, RTMP…).
     pub fn is_helper(&self) -> bool {
         match self {
             Job::Video { job, .. } => job.helper().is_some(),
@@ -871,8 +871,8 @@ impl Job {
 }
 
 /// A subtitle language a video came without, in the interface language (#68).
-pub fn sub_notice(p: &mdm_tools::video::SubProblem, site: &str) -> String {
-    use mdm_tools::video::SubReason;
+pub fn sub_notice(p: &bmd_tools::video::SubProblem, site: &str) -> String {
+    use bmd_tools::video::SubReason;
     let language = p.name.as_str();
     if p.beside {
         return crate::i18n::fmt(
@@ -906,14 +906,14 @@ pub struct VideoSpec {
     pub selector: String,
     /// The subtitles saved with it (#68; none in a list saved before them).
     #[serde(default)]
-    pub subs: mdm_tools::video::Subs,
+    pub subs: bmd_tools::video::Subs,
     /// What its last run kept beside its file when joining its streams failed, for Resume
-    /// (`mdm_tools::video::Progress::merge_failed`): deleting it with its files removes them,
+    /// (`bmd_tools::video::Progress::merge_failed`): deleting it with its files removes them,
     /// whatever yt-dlp named them (`Talk.faud-English.mp4`).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub parts: Vec<PathBuf>,
     /// The user typed its file name (#1102): kept as typed, never shortened to fit the path
-    /// limits; one too long for its folder says so when it starts. A name iDM gave (the page's
+    /// limits; one too long for its folder says so when it starts. A name BMD gave (the page's
     /// title) is shortened instead.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub named: bool,
@@ -1226,8 +1226,8 @@ impl Item {
         {
             return *here;
         }
-        let state = mdm_engine::state::state_path(&self.dest);
-        mdm_engine::state::ResumeState::load(&state).is_ok_and(|s| s.url == self.url)
+        let state = bmd_engine::state::state_path(&self.dest);
+        bmd_engine::state::ResumeState::load(&state).is_ok_and(|s| s.url == self.url)
     }
 
     /// Whether this row has its place on the disk: running, part-way (its pieces and resume
@@ -1332,7 +1332,7 @@ impl Item {
                     && crate::freshlink::expiring_site(&self.url)
                     && s.failure
                         .as_ref()
-                        .is_some_and(mdm_engine::Error::wants_new_address)
+                        .is_some_and(bmd_engine::Error::wants_new_address)
                 {
                     self.waits_for_address = true;
                 }
@@ -1441,7 +1441,7 @@ impl Item {
         self.status == Status::Error
             && self.live.is_none()
             && self.snap.as_ref().is_some_and(|s| {
-                s.state == State::Failed && matches!(s.failure, Some(mdm_engine::Error::GotWebPage))
+                s.state == State::Failed && matches!(s.failure, Some(bmd_engine::Error::GotWebPage))
             })
     }
 
@@ -1491,7 +1491,7 @@ impl Item {
     pub fn page_to_open(&self) -> Option<String> {
         url::Url::parse(self.web_page()?.trim())
             .ok()
-            .filter(mdm_engine::supported)
+            .filter(bmd_engine::supported)
             .map(String::from)
     }
 
@@ -1502,9 +1502,9 @@ impl Item {
         self.context.referer = referer;
     }
 
-    /// Why yt-dlp downloads this running video itself (#769), once it has found out: iDM's engine
+    /// Why yt-dlp downloads this running video itself (#769), once it has found out: BMD's engine
     /// downloads every other one.
-    pub fn video_helper(&self) -> Option<mdm_tools::streams::Helper> {
+    pub fn video_helper(&self) -> Option<bmd_tools::streams::Helper> {
         match &self.live {
             Some(Live {
                 dl: Job::Video { job, .. },
@@ -1547,7 +1547,7 @@ impl Item {
         let total = self.size.filter(|t| *t > 0)?;
         let f = (self.downloaded as f64 / total as f64).clamp(0.0, 1.0);
         Some(if self.video.is_some() && self.status != Status::Complete {
-            f.min(mdm_tools::video::MAX_WHILE_RUNNING)
+            f.min(bmd_tools::video::MAX_WHILE_RUNNING)
         } else {
             f
         })
@@ -1567,7 +1567,7 @@ impl Item {
         };
         let service = service.as_str();
         Some(crate::i18n::fmt(
-            // i18n: a torrent's status while the user's debrid service downloads it, before iDM gets its files; {service} the service ("Real-Debrid"), {percent} how far it is ("45%")
+            // i18n: a torrent's status while the user's debrid service downloads it, before BMD gets its files; {service} the service ("Real-Debrid"), {percent} how far it is ("45%")
             crate::i18n::t("{percent} at {service}"),
             &[
                 ("service", service),
@@ -1697,8 +1697,8 @@ fn site_only(address: &str) -> bool {
 /// Every byte of a download is in (#736): the last of it is written out (its whole size
 /// received and no connection receiving or connecting, as the progress window's "Finishing..."),
 /// the file checked, a video's streams joined, or the file named. Nothing comes in any more.
-fn every_byte_in(s: &mdm_engine::Snapshot) -> bool {
-    use mdm_engine::download::ConnStatus;
+fn every_byte_in(s: &bmd_engine::Snapshot) -> bool {
+    use bmd_engine::download::ConnStatus;
     matches!(
         s.state,
         State::Verifying | State::Merging | State::Completing
@@ -2029,8 +2029,8 @@ mod file_address_tests {
     #[test]
     fn a_video_snapshot_has_its_streams_address() {
         let page: Url = PAGE.parse().unwrap();
-        let mut p = mdm_tools::video::Progress {
-            state: mdm_tools::video::State::Running,
+        let mut p = bmd_tools::video::Progress {
+            state: bmd_tools::video::State::Running,
             downloaded: 0,
             total: None,
             speed: 0.0,
@@ -2044,7 +2044,7 @@ mod file_address_tests {
         };
         // Looking the page up: no stream yet.
         assert_eq!(tool_snapshot(p.clone(), &page).url, page);
-        p.engine = Some(mdm_tools::streams::View {
+        p.engine = Some(bmd_tools::streams::View {
             address: Some(STREAM.parse().unwrap()),
             ..Default::default()
         });
@@ -2194,7 +2194,7 @@ mod tests {
     use super::*;
 
     /// #1088: a download replaces the file chosen in the Save dialog only while its place is that
-    /// file; the choice is kept with the list (a download queued with Later, iDM restarted).
+    /// file; the choice is kept with the list (a download queued with Later, BMD restarted).
     #[test]
     fn a_download_replaces_only_the_file_chosen_while_it_is_its_place() {
         let url = Url::parse("http://127.0.0.1:9/a.7z").unwrap();
@@ -2231,7 +2231,7 @@ mod tests {
                 .map(|i| PathBuf::from(format!("/gallery/image-{i:09}.jpg")))
                 .collect()
         };
-        mdm_labserver::growth::assert_linear(
+        bmd_labserver::growth::assert_linear(
             2_000,
             |n| (paths(0, n / 2), paths(n / 4, n)),
             |(mut list, more)| {
@@ -2265,8 +2265,8 @@ mod tests {
     #[test]
     fn a_failed_merge_says_what_stays() {
         let url = Url::parse("https://example.org/a.mp4").unwrap();
-        let mut p = mdm_tools::video::Progress {
-            state: mdm_tools::video::State::Failed("Postprocessing: Conversion failed!".into()),
+        let mut p = bmd_tools::video::Progress {
+            state: bmd_tools::video::State::Failed("Postprocessing: Conversion failed!".into()),
             merge_failed: Some(vec![
                 PathBuf::from("/v/Talk.f640.mp4"),
                 PathBuf::from("/v/Talk.faud-English.mp4"),
@@ -2298,7 +2298,7 @@ mod tests {
         let m = 1 << 20;
         let mut it = video_item(Some(100 * m), 100 * m, Status::Downloading);
         let url = Url::parse("https://example.org/a.mp4").unwrap();
-        let mut p = mdm_tools::video::Progress {
+        let mut p = bmd_tools::video::Progress {
             total: Some(100 * m),
             downloaded: 100 * m,
             merging: Some(Some(0.45)),
@@ -2469,7 +2469,7 @@ mod finished_file_gone_tests {
 
     #[test]
     fn only_a_finished_file_gone_from_a_folder_that_is_there() {
-        let dir = std::env::temp_dir().join(format!("mdm-342-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("bmd-342-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
         let there = dir.join("there.bin");
         std::fs::write(&there, b"x").unwrap();
@@ -2489,11 +2489,11 @@ mod finished_file_gone_tests {
 #[cfg(test)]
 mod helper_connection_tests {
     use super::*;
-    use mdm_engine::download::{ConnStatus, ConnView};
+    use bmd_engine::download::{ConnStatus, ConnView};
 
-    fn progress() -> mdm_tools::video::Progress {
-        mdm_tools::video::Progress {
-            state: mdm_tools::video::State::Running,
+    fn progress() -> bmd_tools::video::Progress {
+        bmd_tools::video::Progress {
+            state: bmd_tools::video::State::Running,
             downloaded: 0,
             total: None,
             speed: 0.0,
@@ -2508,7 +2508,7 @@ mod helper_connection_tests {
     }
 
     /// #793: a video yt-dlp downloads itself shows its one connection, not an empty list; one
-    /// iDM's engine downloads shows the engine's connections, every one of them.
+    /// BMD's engine downloads shows the engine's connections, every one of them.
     #[test]
     fn the_connections_list_is_never_empty_while_a_video_downloads() {
         let page: Url = "https://www.example.com/watch?v=abc".parse().unwrap();
@@ -2518,7 +2518,7 @@ mod helper_connection_tests {
         assert!(matches!(s.connections[0].status, ConnStatus::Connecting));
         p.downloaded = 5_000;
         p.speed = 1_000.0;
-        p.helper = Some(mdm_tools::streams::Helper::Live);
+        p.helper = Some(bmd_tools::streams::Helper::Live);
         let s = tool_snapshot(p.clone(), &page);
         assert_eq!(
             (s.connections[0].id, s.connections[0].downloaded),
@@ -2533,7 +2533,7 @@ mod helper_connection_tests {
             speed: 10,
         };
         p.helper = None;
-        p.engine = Some(mdm_tools::streams::View {
+        p.engine = Some(bmd_tools::streams::View {
             connections: (0..8).map(conn).collect(),
             ..Default::default()
         });
@@ -2545,7 +2545,7 @@ mod helper_connection_tests {
 
         // Done: no connection left.
         p.engine = None;
-        p.state = mdm_tools::video::State::Done("Clip.mp4".into());
+        p.state = bmd_tools::video::State::Done("Clip.mp4".into());
         assert!(tool_snapshot(p, &page).connections.is_empty());
     }
 }

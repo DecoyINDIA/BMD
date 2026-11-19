@@ -4,10 +4,10 @@
 blank_issues_enabled: false
 contact_links:
   - name: Suggest an idea
-    url: https://github.com/DecoyINDIA/iDM/discussions/new?category=ideas
-    about: Something iDM should do, or do differently. Ideas are talked over and voted on in Discussions.
+    url: https://github.com/DecoyINDIA/BMD/discussions/new?category=ideas
+    about: Something BMD should do, or do differently. Ideas are talked over and voted on in Discussions.
   - name: Security problem
-    url: https://github.com/DecoyINDIA/iDM/security/advisories/new
+    url: https://github.com/DecoyINDIA/BMD/security/advisories/new
     about: Report it privately, not as an issue.
   - name: Help and questions
     url: https://misterdownloadmanager.com/help/

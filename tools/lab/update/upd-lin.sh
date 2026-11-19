@@ -5,8 +5,8 @@
 # served by the lab server on 127.0.0.1. Needs a release-mode build with the `test-update`
 # feature (vmtest or release profile: debug builds are "built from source" and never update).
 #
-#   tools/lab/update/upd-lin.sh <folder with misterdownloadmanager and labserver> [scenario ...]
-#   e.g. upd-lin.sh ~/src/mdm/target/vmtest     (every scenario)
+#   tools/lab/update/upd-lin.sh <folder with bmd and labserver> [scenario ...]
+#   e.g. upd-lin.sh ~/src/bmd/target/vmtest     (every scenario)
 #
 # Scenarios and what each must show (the run fails otherwise, exit status 1):
 #   targz-good, appimage-good   put in place, the new copy started with /updated, the old ended
@@ -15,13 +15,13 @@
 #   targz-close-download        the window closed while it downloads (1 MB/s): nothing replaced or started
 #   appimage-close-install      the window closed during "Installing the update...": replaced, nothing started
 #
-# Work folder: $MDM_UPDATE_E2E_WORK, else /tmp/mdm-update-e2e (emptied first).
+# Work folder: $BMD_UPDATE_E2E_WORK, else /tmp/bmd-update-e2e (emptied first).
 set -uo pipefail
 bin=$(cd "${1:?usage: upd-lin.sh <build folder> [scenario ...]}" && pwd); shift
 here=$(cd "$(dirname "$0")" && pwd)
 all="targz-good appimage-good targz-bad-hash appimage-other-key targz-close-download appimage-close-install"
 want=${*:-$all}
-work=${MDM_UPDATE_E2E_WORK:-/tmp/mdm-update-e2e}
+work=${BMD_UPDATE_E2E_WORK:-/tmp/bmd-update-e2e}
 rm -rf "$work"; mkdir -p "$work"
 for t in Xvfb dbus-daemon metacity wmctrl python3 gpg; do
   command -v $t >/dev/null || { echo "needs $t"; exit 2; }
@@ -57,11 +57,11 @@ keys=$work/keys
 release() { # release <name> <kind targz|file> <asset> [mkrel args]
   local name=$1 kind=$2 asset=$3; shift 3
   python3 "$here/mkrel.py" --keys "$keys" --out "$work/rel-$name" --base "$base" --asset "$asset" \
-    --kind "$kind" --program "$bin/misterdownloadmanager" --program-name misterdownloadmanager "$@" |
+    --kind "$kind" --program "$bin/bmd" --program-name bmd "$@" |
     sed 's/^/  /' | tee -a "$work/log.txt"
 }
-TGZ=iDM-9.9.9-linux-x86_64.tar.gz
-APP=iDM-9.9.9-linux-x86_64.AppImage
+TGZ=BMD-9.9.9-linux-x86_64.tar.gz
+APP=BMD-9.9.9-linux-x86_64.AppImage
 log "making the fake releases (throwaway keys in $keys)"
 release targz-good targz $TGZ
 release targz-bad-hash targz $TGZ --sums bad
@@ -74,8 +74,8 @@ run() { # run <name> <targz|appimage> <release> <hold> <close: -|download|instal
   local name=$1 kind=$2 rel=$3 hold=$4 close=$5
   local w=$work/run-$1 prog srv slow="" pid upd before new
   mkdir -p "$w/copy" "$w/data" "$w/Downloads"
-  if [ "$kind" = appimage ]; then prog=$w/copy/MisterDownloadManager.AppImage; else prog=$w/copy/misterdownloadmanager; fi
-  cp "$bin/misterdownloadmanager" "$prog"
+  if [ "$kind" = appimage ]; then prog=$w/copy/BMD.AppImage; else prog=$w/copy/bmd; fi
+  cp "$bin/bmd" "$prog"
   local start_hash; start_hash=$(sha256sum "$prog" | cut -c1-16)
   python3 - "$w/data/downloads.json" "$w/Downloads" <<'PY'
 import json, sys
@@ -88,15 +88,15 @@ PY
   "$bin/labserver" --bind "127.0.0.1:$port" --files "$work/rel-$rel" >"$w/labserver.log" 2>&1 & srv=$!
   [ "$close" = download ] && { python3 "$here/slowserve.py" "$work/rel-$rel" $slowport 1000000 2>"$w/slow.log" & slow=$!; }
   (
-    export MDM_DATA_DIR=$w/data MDM_OFFSCREEN=1 MDM_UPDATE_FEED=$base/latest.json MDM_TEST_UPDATE_KEY=$keys/test-key.asc
-    [ "$hold" != 0 ] && export MDM_TEST_UPDATE_HOLD=$hold
+    export MDM_DATA_DIR=$w/data BMD_OFFSCREEN=1 BMD_UPDATE_FEED=$base/latest.json BMD_TEST_UPDATE_KEY=$keys/test-key.asc
+    [ "$hold" != 0 ] && export BMD_TEST_UPDATE_HOLD=$hold
     if [ "$kind" = appimage ]; then export APPIMAGE=$prog; else unset APPIMAGE; fi
     cd "$w" && setsid -f "$prog" >"$w/stdout.log" 2>&1 </dev/null
   )
   pid=""
   for _ in $(seq 300); do pid=$(pgrep -f "^$prog$" | head -1); [ -n "$pid" ] && [ -n "$(mine "$pid")" ] && break; sleep 0.1; done
   STARTED=no; ENDED=no; REPLACED=no
-  if [ -z "$pid" ]; then log "  MDM showed no window (see $w/stdout.log)"; kill $srv $slow 2>/dev/null; return; fi
+  if [ -z "$pid" ]; then log "  BMD showed no window (see $w/stdout.log)"; kill $srv $slow 2>/dev/null; return; fi
   sleep 2
   before=$(mine "$pid")
   ( export MDM_DATA_DIR=$w/data; [ "$kind" = appimage ] && export APPIMAGE=$prog; "$prog" /show updates >/dev/null 2>&1 )

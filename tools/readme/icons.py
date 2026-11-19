@@ -1,11 +1,11 @@
 """The README's four block icons (faster, languages, free, torrent), drawn in the art style of
-Mister Download Manager's own icon (art/Mister Download Manager.png, given to the model as the
+BMD's own icon (art/Black Marlin Downloader.png, given to the model as the
 reference): the same glossy 3D rendering, lighting, colours and its green arrow. Our own
 pictures; nothing taken from any other program.
 
     python tools/readme/icons.py [--variants 2] [--only faster,torrent]
 
-Uses OpenRouter (the key in %USERPROFILE%\\.mdm-dev\\openrouter.key, as tools/i18n/translate.py
+Uses OpenRouter (the key in %USERPROFILE%\\.bmd-dev\\openrouter.key, as tools/i18n/translate.py
 does) with OpenAI's GPT-5 Image Mini, which draws on a transparent background, about $0.04 a
 picture. Each variant goes to target/readme-icons/<name>-<n>.png; the chosen one is copied by
 hand to docs/images/icons/<name>.png.
@@ -23,7 +23,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "target" / "readme-icons"
-LOGO = ROOT / "art" / "Mister Download Manager.png"
+LOGO = ROOT / "art" / "Black Marlin Downloader.png"
 MODEL = "openai/gpt-5-image-mini"
 
 STYLE = (
@@ -49,7 +49,7 @@ ICONS = {
 
 
 def key():
-    return (Path(os.environ["USERPROFILE"]) / ".mdm-dev" / "openrouter.key").read_text().strip()
+    return (Path(os.environ["USERPROFILE"]) / ".bmd-dev" / "openrouter.key").read_text().strip()
 
 
 def logo_url():

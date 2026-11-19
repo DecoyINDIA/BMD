@@ -5,9 +5,9 @@
 use std::net::{IpAddr, Ipv4Addr};
 use std::time::{Duration, Instant};
 
-use mdm_engine::download::{State, probe};
-use mdm_engine::{Destination, Download, Options, Proxy, Request, Server};
-use mdm_labserver::{Config, Faults, LabServer};
+use bmd_engine::download::{State, probe};
+use bmd_engine::{Destination, Download, Options, Proxy, Request, Server};
+use bmd_labserver::{Config, Faults, LabServer};
 
 fn opts() -> Options {
     Options {
@@ -142,14 +142,14 @@ async fn a_resumed_download_is_told_its_server() {
         assert!(Instant::now() < deadline, "the download never started");
     };
     d.cancel();
-    assert!(matches!(d.wait().await, Err(mdm_engine::Error::Cancelled)));
+    assert!(matches!(d.wait().await, Err(bmd_engine::Error::Cancelled)));
     lab.set_faults(faults);
     tokio::time::timeout(Duration::from_secs(20), lab.settled())
         .await
         .expect("the stopped download's requests end");
 
     let d = Download::resume(
-        mdm_engine::state::state_path(&file),
+        bmd_engine::state::state_path(&file),
         Default::default(),
         opts(),
     )

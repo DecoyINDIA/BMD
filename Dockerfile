@@ -1,10 +1,10 @@
-# iDM on a server, without a window (#157): docs/server.md.
+# BMD on a server, without a window (#157): docs/server.md.
 #
-#   docker build -t misterdownloadmanager .
-#   docker run -d --name mdm -p 8463:8463 -v mdm-config:/config -v /srv/downloads:/downloads \
-#     misterdownloadmanager
-#   docker logs mdm                                  # the address and a pairing code
-#   docker exec mdm misterdownloadmanager-cli pair   # another code
+#   docker build -t bmd .
+#   docker run -d --name bmd -p 8463:8463 -v bmd-config:/config -v /srv/downloads:/downloads \
+#     bmd
+#   docker logs bmd                                  # the address and a pairing code
+#   docker exec bmd bmd-cli pair   # another code
 #
 # PROFILE=release (the default) is what ships: slow to build (whole-program optimisation);
 # `--build-arg PROFILE=dev` builds quicker, for a try.
@@ -29,9 +29,9 @@ COPY . .
 # mounts either, so the classic builder (Ubuntu's docker.io, some NAS systems) builds it too.
 ENV CARGO_PROFILE_RELEASE_DEBUG=false
 RUN set -e; \
-    cargo build --locked --profile "$PROFILE" -p mdm-app -p mdm-cli; \
+    cargo build --locked --profile "$PROFILE" -p bmd-app -p bmd-cli; \
     out="target/$PROFILE"; if [ "$PROFILE" = dev ]; then out=target/debug; fi; \
-    mkdir -p /out; cp "$out/misterdownloadmanager" "$out/misterdownloadmanager-cli" /out/; \
+    mkdir -p /out; cp "$out/bmd" "$out/bmd-cli" /out/; \
     strip /out/*; \
     rm -rf target /usr/local/cargo/registry /usr/local/cargo/git
 
@@ -49,5 +49,5 @@ VOLUME ["/config", "/downloads"]
 EXPOSE 8463
 # Any user works (`--user 99:100` on Unraid): it needs only to write /config and /downloads.
 USER 1000:1000
-# iDM handles docker stop's SIGTERM itself (it saves the list), so it runs as PID 1.
-ENTRYPOINT ["misterdownloadmanager", "--headless"]
+# BMD handles docker stop's SIGTERM itself (it saves the list), so it runs as PID 1.
+ENTRYPOINT ["bmd", "--headless"]

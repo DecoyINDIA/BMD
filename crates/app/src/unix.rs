@@ -62,7 +62,7 @@ pub async fn terminated() {
 
 // ---- The session's end (Linux: logging out, shutting down; a `kill`; the display going away) ---
 
-/// Linux: why iDM's session ends, as the system says it (Windows: `win32::SessionEnd`; macOS's
+/// Linux: why BMD's session ends, as the system says it (Windows: `win32::SessionEnd`; macOS's
 /// logout quits the app through AppKit, which `App`'s drop saves, main.rs).
 #[cfg(target_os = "linux")]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -70,9 +70,9 @@ pub enum SessionEnd {
     /// SIGTERM: logind ending the session's programs at logout or shutdown (systemd stops their
     /// scopes; SIGKILL follows 90 s later by default, sooner on some desktops), or a `kill`.
     Terminated,
-    /// SIGHUP: the terminal iDM was started from closed.
+    /// SIGHUP: the terminal BMD was started from closed.
     HungUp,
-    /// SIGINT: Ctrl+C in the terminal iDM was started from.
+    /// SIGINT: Ctrl+C in the terminal BMD was started from.
     Interrupted,
     /// The display went away: the X server's connection is lost (GNOME's X server ends at logout
     /// before logind's SIGTERM comes).
@@ -132,17 +132,17 @@ pub fn session_ending() -> Option<SessionEnd> {
     SessionEnd::of_code(END_ASKED.load(std::sync::atomic::Ordering::Acquire))
 }
 
-/// How long the window's thread has, once the end is asked for, before iDM ends without it: a
+/// How long the window's thread has, once the end is asked for, before BMD ends without it: a
 /// frame that never comes (the window's thread held up) must not hold the session's end until
 /// logind's SIGKILL. The end itself takes at most `App::end_session`'s 4 s and the log's 2 s.
 #[cfg(target_os = "linux")]
 const END_GRACE: std::time::Duration = std::time::Duration::from_secs(10);
 
-/// Linux: the session's end reaches iDM as a signal: logind's SIGTERM at logout and shutdown (and
+/// Linux: the session's end reaches BMD as a signal: logind's SIGTERM at logout and shutdown (and
 /// a `kill`), SIGHUP and SIGINT from the terminal it was started from. Each is run as Windows'
 /// session end is: `wake` brings the window's next frame, which saves as an Exit saves and ends
-/// iDM (main.rs). A signal ignored when iDM started (`nohup`'s SIGHUP, a background job's SIGINT)
-/// stays ignored. Ctrl+C once more ends iDM at once, and so does a window that hasn't ended
+/// BMD (main.rs). A signal ignored when BMD started (`nohup`'s SIGHUP, a background job's SIGINT)
+/// stays ignored. Ctrl+C once more ends BMD at once, and so does a window that hasn't ended
 /// within [`END_GRACE`]: then each download resumes from its last save, as before. Heard on
 /// `rt`, a signal handler itself only wakes it (tokio's).
 #[cfg(target_os = "linux")]
@@ -162,7 +162,7 @@ fn hear_signals(
     for why in SessionEnd::ALL {
         let Some(sig) = why.signal() else { continue };
         if ignored(sig) {
-            tracing::info!("{why:?}: its signal is ignored, as when iDM was started");
+            tracing::info!("{why:?}: its signal is ignored, as when BMD was started");
             continue;
         }
         let wake = wake.clone();
@@ -186,7 +186,7 @@ fn hear_signals(
 fn end_asked(why: SessionEnd, wake: &dyn Fn(), grace: Option<std::time::Duration>) {
     if !ask_end(why) {
         if again_ends_now(why) {
-            tracing::warn!("asked again to end ({why:?}): iDM ends now");
+            tracing::warn!("asked again to end ({why:?}): BMD ends now");
             end_now();
         }
         tracing::info!("asked again to end ({why:?}): the end is under way");
@@ -205,7 +205,7 @@ fn again_ends_now(why: SessionEnd) -> bool {
 }
 
 /// The end is asked of the window's thread: `wake` brings its next frame, which runs it; one
-/// that hasn't come within `grace` ends iDM without it.
+/// that hasn't come within `grace` ends BMD without it.
 #[cfg(target_os = "linux")]
 fn wait_for_the_window(wake: &dyn Fn(), grace: Option<std::time::Duration>) {
     wake();
@@ -214,7 +214,7 @@ fn wait_for_the_window(wake: &dyn Fn(), grace: Option<std::time::Duration>) {
         .name("session end".into())
         .spawn(move || {
             std::thread::sleep(grace);
-            tracing::warn!("the window didn't end within {grace:?}: iDM ends without it");
+            tracing::warn!("the window didn't end within {grace:?}: BMD ends without it");
             end_now();
         });
 }
@@ -234,16 +234,16 @@ pub fn exit_now(code: i32) -> ! {
     unsafe { libc::_exit(code) }
 }
 
-/// iDM ends at once, the list and the downloads as last saved: the session's end, not a crash.
+/// BMD ends at once, the list and the downloads as last saved: the session's end, not a crash.
 #[cfg(target_os = "linux")]
 fn end_now() -> ! {
     // yt-dlp and gallery-dl end with it (#1301).
-    mdm_tools::proc::end_all();
+    bmd_tools::proc::end_all();
     crate::crash::clean_exit();
     std::process::exit(1);
 }
 
-/// Whether the signal `sig` is ignored (SIG_IGN), as iDM was started.
+/// Whether the signal `sig` is ignored (SIG_IGN), as BMD was started.
 #[cfg(target_os = "linux")]
 #[allow(unsafe_code)]
 fn ignored(sig: libc::c_int) -> bool {
@@ -272,13 +272,13 @@ thread_local! {
 static XLIB_RETURNS: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
 /// Linux, X11 (XWayland too): when the X server of `display` (eframe's creation context) goes
-/// away (GNOME's at logout, before logind's SIGTERM comes), iDM saves as an Exit does and ends:
+/// away (GNOME's at logout, before logind's SIGTERM comes), BMD saves as an Exit does and ends:
 /// `end` runs on the window's thread between two frames, or, when the display's end is found in
 /// the middle of one, the end waits for the next frame (`session_ending`), as a SIGTERM's does.
 /// Call it on the window's thread once the window is open. It is found two ways, whichever comes
 /// first: winit's own calls on the lost connection fail and panic on the window's thread
 /// (`inner_size`'s unwrap: crash.rs asks [`display_lost_panic`]); or Xlib sees it and calls its
-/// I/O error handler, whose default ends the program (`exit(1)`). Either way iDM ended unsaved,
+/// I/O error handler, whose default ends the program (`exit(1)`). Either way BMD ended unsaved,
 /// or with a crash report. Wayland's windows: winit's event loop ends on its own when the
 /// connection is lost, and eframe drops the app, which saves as an Exit does.
 #[cfg(target_os = "linux")]
@@ -351,7 +351,7 @@ unsafe extern "C" fn xlib_lost_display(_display: *mut std::ffi::c_void) -> libc:
         // An older Xlib ends the program once this returns: before it, as it is.
         tracing::warn!("in the middle of a frame: nothing more is saved");
         crate::crash::clean_exit();
-        mdm_crash::logs::flush(std::time::Duration::from_secs(1));
+        bmd_crash::logs::flush(std::time::Duration::from_secs(1));
         // SAFETY: ends the process, as Xlib's own handler would (with exit).
         unsafe { libc::_exit(1) }
     }
@@ -363,7 +363,7 @@ unsafe extern "C" fn xlib_lost_display(_display: *mut std::ffi::c_void) -> libc:
 extern "C" fn xlib_returns(_display: *mut std::ffi::c_void, _data: *mut std::ffi::c_void) {}
 
 /// Linux: whether a panic on `thread` is winit's on a lost display ([`on_display_lost`]): on the
-/// window's thread, with iDM's windows on X11 and its X server gone (a new connection to it is
+/// window's thread, with BMD's windows on X11 and its X server gone (a new connection to it is
 /// refused). Then it's the session's end, not a crash: [`display_lost`] instead of a report.
 #[cfg(target_os = "linux")]
 pub fn display_lost_panic(thread: &str) -> bool {
@@ -372,7 +372,7 @@ pub fn display_lost_panic(thread: &str) -> bool {
         && x11rb::rust_connection::RustConnection::connect(None).is_err()
 }
 
-/// The display went away. Between two frames: the end now ([`on_display_lost`]'s), and iDM ends
+/// The display went away. Between two frames: the end now ([`on_display_lost`]'s), and BMD ends
 /// at once, without the libraries' exit handlers, which would only touch the lost display again.
 /// In the middle of a frame (the app busy in it): the end is asked of the next frame, as a
 /// SIGTERM's is, and this returns; a panic of winit's then unwinds, which drops the app, and its
@@ -401,12 +401,12 @@ pub fn run_at_startup() -> bool {
     startup_file().is_some_and(|f| f.is_file())
 }
 
-/// The startup entry for the program `exe`: started with the session, iDM waits in the
+/// The startup entry for the program `exe`: started with the session, BMD waits in the
 /// notification area (`/startup`, #226). A LaunchAgent on macOS, an XDG autostart entry on
 /// Linux.
 fn startup_entry(exe: &Path, macos: bool) -> String {
     let exe = exe.display().to_string();
-    let arg = mdm_ipc::STARTUP;
+    let arg = bmd_ipc::STARTUP;
     if macos {
         let exe = exe
             .replace('&', "&amp;")
@@ -433,8 +433,8 @@ fn startup_entry(exe: &Path, macos: bool) -> String {
             })
             .collect();
         format!(
-            "[Desktop Entry]\nType=Application\nName=iDM\n\
-             Exec=\"{quoted}\" {arg}\nIcon=misterdownloadmanager\nTerminal=false\n\
+            "[Desktop Entry]\nType=Application\nName=BMD\n\
+             Exec=\"{quoted}\" {arg}\nIcon=bmd\nTerminal=false\n\
              X-GNOME-Autostart-enabled=true\n"
         )
     }
@@ -443,7 +443,7 @@ fn startup_entry(exe: &Path, macos: bool) -> String {
 /// A startup entry written before #226 for the program `exe`: it names that program but passes
 /// no `/startup`. Another copy's entry (an AppImage elsewhere) is not this one's to rewrite.
 fn startup_outdated(text: &str, exe: &Path, macos: bool) -> bool {
-    !text.contains(mdm_ipc::STARTUP)
+    !text.contains(bmd_ipc::STARTUP)
         && entry_program(text, macos).is_some_and(|p| Path::new(&p) == exe)
 }
 
@@ -507,7 +507,7 @@ pub fn update_run_at_startup() {
 }
 
 /// The browsers' helper program (crates/nmhost), beside this one.
-const HOST: &str = "misterdownloadmanager-nmhost";
+const HOST: &str = "bmd-nmhost";
 /// The manifest it writes in each browser's folder.
 const MANIFEST: &str = "com.misterdownloadmanager.host.json";
 /// How long the helper's `--repair` has at a start (it writes a few small files).
@@ -516,12 +516,12 @@ const REGISTER_LIMIT: std::time::Duration = std::time::Duration::from_secs(20);
 /// Browser integration: the host's manifests in every installed browser's folder. There is no
 /// installer step on Linux and macOS, so this runs at each start, on a thread of its own: a
 /// moved app, a browser installed since, or a helper copy that went missing is repaired. A
-/// manifest that works naming another copy of iDM is left alone (the helper's `--repair`, #818):
+/// manifest that works naming another copy of BMD is left alone (the helper's `--repair`, #818):
 /// Set it up takes it.
 ///
 /// From an AppImage, whose programs sit in a mount that is gone once it quits, the host is first
 /// copied to the data folder with the AppImage's path beside it (`app-path`: the host starts
-/// that when iDM isn't running), and registered from there (#253).
+/// that when BMD isn't running), and registered from there (#253).
 pub fn register_browsers() {
     let started = std::thread::Builder::new()
         .name("register-browsers".into())
@@ -551,7 +551,7 @@ fn host_program() -> Result<PathBuf, String> {
             Err(format!("{}: not found", host.display()))
         };
     };
-    let data = mdm_ipc::data_dir().ok_or("no data folder to copy the helper to")?;
+    let data = bmd_ipc::data_dir().ok_or("no data folder to copy the helper to")?;
     install_host_copy(&host, &data.join("browser-host"), Path::new(&image))
 }
 
@@ -609,7 +609,7 @@ fn runs(path: &Path) -> bool {
 }
 
 /// Where browser integration stands (Options → General → Test browser integration): the
-/// manifests in the folders the browsers here read (mdm_ipc::browsers), for this user, or for
+/// manifests in the folders the browsers here read (bmd_ipc::browsers), for this user, or for
 /// everyone when no browser is there for this user, and the helper each names. A browser that
 /// reads the package's manifest for everyone naming this helper (#266) needs none of its own.
 pub fn host_registration() -> crate::extension::Registration {
@@ -620,10 +620,10 @@ pub fn host_registration() -> crate::extension::Registration {
         .unwrap_or_else(|| home.join(".config"));
     let mac = cfg!(target_os = "macos");
     let host = registered_host();
-    let user = mdm_ipc::browsers::host_dirs(&home, &config, mac, false, host.as_deref());
+    let user = bmd_ipc::browsers::host_dirs(&home, &config, mac, false, host.as_deref());
     if user.is_empty() {
         registration_in(
-            mdm_ipc::browsers::host_dirs(&home, &config, mac, true, None),
+            bmd_ipc::browsers::host_dirs(&home, &config, mac, true, None),
             true,
         )
     } else {
@@ -635,14 +635,14 @@ pub fn host_registration() -> crate::extension::Registration {
 /// from an AppImage its copy in the data folder.
 fn registered_host() -> Option<PathBuf> {
     if std::env::var_os("APPIMAGE").is_some_and(|i| !i.is_empty()) {
-        return mdm_ipc::data_dir().map(|d| d.join("browser-host").join(HOST));
+        return bmd_ipc::data_dir().map(|d| d.join("browser-host").join(HOST));
     }
     std::env::current_exe().ok().map(|e| e.with_file_name(HOST))
 }
 
 /// `host_registration` for the host folders `dirs`, everyone's (`all_users`) or one user's.
 fn registration_in(
-    dirs: Vec<(PathBuf, mdm_ipc::browsers::Family)>,
+    dirs: Vec<(PathBuf, bmd_ipc::browsers::Family)>,
     all_users: bool,
 ) -> crate::extension::Registration {
     registration_with(dirs, all_users, &|dir| {
@@ -650,9 +650,9 @@ fn registration_in(
     })
 }
 
-/// macOS refused to let iDM into the browser folder `dir` (#1218): its manifest, or the folder
+/// macOS refused to let BMD into the browser folder `dir` (#1218): its manifest, or the folder
 /// itself, can't be read, "Operation not permitted" (EPERM). macOS's protection of other apps'
-/// data says so; a folder that is simply not there, or not iDM's to read, says other errors.
+/// data says so; a folder that is simply not there, or not BMD's to read, says other errors.
 fn refused(dir: &Path) -> bool {
     let eperm = |e: std::io::Error| e.raw_os_error() == Some(libc::EPERM);
     std::fs::File::open(dir.join(MANIFEST))
@@ -664,7 +664,7 @@ fn refused(dir: &Path) -> bool {
 /// `registration_in`, with `refuses` telling a folder whose manifest is missing because the
 /// system refused it.
 fn registration_with(
-    dirs: Vec<(PathBuf, mdm_ipc::browsers::Family)>,
+    dirs: Vec<(PathBuf, bmd_ipc::browsers::Family)>,
     all_users: bool,
     refuses: &dyn Fn(&Path) -> bool,
 ) -> crate::extension::Registration {
@@ -676,10 +676,10 @@ fn registration_with(
     // that runs. Everyone's folders: one that works is enough.
     let (mut ready, mut missing, mut broken, mut refused) = (0, 0, None, None);
     for (dir, _) in dirs {
-        match mdm_ipc::browsers::Holder::of(&dir.join(MANIFEST)) {
-            mdm_ipc::browsers::Holder::Alive(_) => ready += 1,
-            mdm_ipc::browsers::Holder::ProgramGone(p) => broken = broken.or(Some(p)),
-            mdm_ipc::browsers::Holder::ManifestGone(_) => {
+        match bmd_ipc::browsers::Holder::of(&dir.join(MANIFEST)) {
+            bmd_ipc::browsers::Holder::Alive(_) => ready += 1,
+            bmd_ipc::browsers::Holder::ProgramGone(p) => broken = broken.or(Some(p)),
+            bmd_ipc::browsers::Holder::ManifestGone(_) => {
                 missing += 1;
                 if refused.is_none() && refuses(&dir) {
                     refused = Some(dir);
@@ -750,12 +750,12 @@ fn printed_within(cmd: &mut Command, secs: u64) -> Option<String> {
 /// The default browser (#668): the desktop's choice for web links (`xdg-settings`, else
 /// `mimeapps.list`), the program its `.desktop` file runs, and that program's version (Firefox's
 /// `application.ini` beside it, else its `--version`, on this thread, bounded in time). None when
-/// it isn't a browser iDM knows (iDM then speaks as Chrome).
+/// it isn't a browser BMD knows (BMD then speaks as Chrome).
 #[cfg(target_os = "linux")]
-pub fn default_browser() -> Option<mdm_engine::agent::Found> {
+pub fn default_browser() -> Option<bmd_engine::agent::Found> {
     use crate::defaultbrowser::{exec_program, mimeapps_https, version_in};
     use crate::xdgicons::{Dirs, ini_value};
-    use mdm_engine::agent::{Browser, Found};
+    use bmd_engine::agent::{Browser, Found};
     let var = |n: &str| std::env::var(n).ok().filter(|v| !v.is_empty());
     let home = var("HOME");
     let desktop = printed_within(
@@ -803,7 +803,7 @@ pub fn default_browser() -> Option<mdm_engine::agent::Found> {
     let browser = Browser::named(&desktop).or_else(|| base.as_deref().and_then(Browser::named))?;
     let firefox = matches!(browser, Browser::Firefox | Browser::FirefoxFork);
     // A Flatpak's launcher would start its sandbox, and its files are inside it: its version
-    // stays unknown (iDM's estimate of today's).
+    // stays unknown (BMD's estimate of today's).
     let program = program.filter(|_| base.as_deref() != Some("flatpak"));
     let install = program
         .as_deref()
@@ -861,11 +861,11 @@ fn firefox_install(program: &str, plain: bool) -> Option<PathBuf> {
 }
 
 /// The default browser (#668): the app macOS opens https links with (LaunchServices' handlers;
-/// none set is Safari), and its version (its Info.plist's). None when it isn't a browser iDM
-/// knows (iDM then speaks as Chrome).
+/// none set is Safari), and its version (its Info.plist's). None when it isn't a browser BMD
+/// knows (BMD then speaks as Chrome).
 #[cfg(target_os = "macos")]
-pub fn default_browser() -> Option<mdm_engine::agent::Found> {
-    use mdm_engine::agent::{Browser, Found};
+pub fn default_browser() -> Option<bmd_engine::agent::Found> {
+    use bmd_engine::agent::{Browser, Found};
     let handlers = printed_within(
         Command::new("defaults").args([
             "read",
@@ -970,7 +970,7 @@ pub fn show_in_folder(path: &Path) {
     });
 }
 
-/// Torrent settings → open magnet links and .torrent files with iDM: Linux
+/// Torrent settings → open magnet links and .torrent files with BMD: Linux
 /// records it with xdg-mime for the desktop entry the packages install, macOS with Launch
 /// Services for the app (`open_events::make_default`, #698). Turning it off leaves the choice to
 /// the desktop's settings (macOS: Finder's Get Info → Open with).
@@ -989,7 +989,7 @@ pub fn set_torrent_handlers(on: bool) {
     ]));
 }
 
-/// `win32::torrent_handler_is_ours`: is iDM what the desktop opens .torrent files with? Linux:
+/// `win32::torrent_handler_is_ours`: is BMD what the desktop opens .torrent files with? Linux:
 /// xdg-mime's default app for them is the packages' desktop entry; macOS: Launch Services'
 /// default for the type is this app (`open_events::is_default`). Asked once, to settle Torrent
 /// settings' switch (#1058).
@@ -1741,7 +1741,7 @@ const WAYLAND_LIBS: &[WindowLib] = &[
     },
 ];
 
-/// Linux: the display system iDM's windows use, decided once (`window_system`), and what the
+/// Linux: the display system BMD's windows use, decided once (`window_system`), and what the
 /// system lacks for it.
 #[cfg(target_os = "linux")]
 #[derive(Debug, Default, PartialEq, Eq)]
@@ -1749,9 +1749,9 @@ pub struct WindowSystem {
     /// Wayland's windows, not X11's (or XWayland's).
     pub wayland: bool,
     /// X11's windows in a Wayland session (XWayland): chosen there (winit is told so), or the only
-    /// display iDM was given, whose server is XWayland (`on_xwayland_server`).
+    /// display BMD was given, whose server is XWayland (`on_xwayland_server`).
     x11_over_wayland: bool,
-    /// X11 was iDM's choice, but these are missing: Wayland's windows instead.
+    /// X11 was BMD's choice, but these are missing: Wayland's windows instead.
     pub x11_missing: Vec<&'static WindowLib>,
     /// The chosen system lacks these: no window can open (#265).
     pub missing: Vec<&'static WindowLib>,
@@ -1762,8 +1762,8 @@ pub struct WindowSystem {
 }
 
 /// Who chose the window system for this start, strongest first (#624): `MDM_WAYLAND=1` or `0`,
-/// else View → Window system (saved, so every way iDM starts agrees: its menu entry, the
-/// browser's helper, the session's autostart), else iDM itself (`Pick::Auto`).
+/// else View → Window system (saved, so every way BMD starts agrees: its menu entry, the
+/// browser's helper, the session's autostart), else BMD itself (`Pick::Auto`).
 #[cfg(target_os = "linux")]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Pick {
@@ -1793,7 +1793,7 @@ impl Pick {
     }
 }
 
-/// How X11's windows would look in this Wayland session, for iDM's own choice (#624).
+/// How X11's windows would look in this Wayland session, for BMD's own choice (#624).
 #[cfg(target_os = "linux")]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum X11Fit {
@@ -1807,10 +1807,10 @@ pub enum X11Fit {
     Scaled,
 }
 
-/// The windows' system. In a Wayland session that runs XWayland too, `pick` decides; iDM's own
+/// The windows' system. In a Wayland session that runs XWayland too, `pick` decides; BMD's own
 /// choice (`Pick::Auto`) is X11 unless X11's windows would be scaled (`x11_fit`, #624):
 ///
-/// - X11 (XWayland) lets iDM place its menus and drop lists, windows of their own, under what
+/// - X11 (XWayland) lets BMD place its menus and drop lists, windows of their own, under what
 ///   was clicked (#50; override-redirect: exactly there on tiling compositors too, #267), and
 ///   hide its window in the notification area. Wayland lets no program place or hide its
 ///   windows, and winit 0.30 has no popup windows (xdg_popup) there: a menu opens where the
@@ -1907,7 +1907,7 @@ pub fn set_window_system_pick(saved: Option<crate::settings::WindowSystemPick>) 
     let _ = SAVED_PICK.set(saved);
 }
 
-/// Linux: the display system iDM's windows use (see `choose_window_system`), decided at the
+/// Linux: the display system BMD's windows use (see `choose_window_system`), decided at the
 /// first question, and said in the log.
 #[cfg(target_os = "linux")]
 pub fn window_system() -> &'static WindowSystem {
@@ -1944,7 +1944,7 @@ pub fn window_system() -> &'static WindowSystem {
 /// How X11's windows would look here (#624): looked after by the desktop (a settings daemon owns
 /// XSETTINGS on the X server, or the desktop is one that starts one with XWayland,
 /// `desktop_looks_after_x11`), else scaled when a Wayland screen has a scale above 1
-/// (`wayland_scaled`; unknown: as at scale 1, iDM's choice until now).
+/// (`wayland_scaled`; unknown: as at scale 1, BMD's choice until now).
 #[cfg(target_os = "linux")]
 fn x11_fit() -> X11Fit {
     let desktop = std::env::var("XDG_CURRENT_DESKTOP").unwrap_or_default();
@@ -2079,13 +2079,13 @@ pub fn event_loop_hook() -> Option<eframe::EventLoopBuilderHook> {
     }
 }
 
-/// Linux: iDM's windows are Wayland's (not X11's or XWayland's), as `window_system` decided.
+/// Linux: BMD's windows are Wayland's (not X11's or XWayland's), as `window_system` decided.
 #[cfg(target_os = "linux")]
 pub fn on_wayland() -> bool {
     window_system().wayland
 }
 
-/// Linux: iDM's windows are X11's in a Wayland session (XWayland), its default there.
+/// Linux: BMD's windows are X11's in a Wayland session (XWayland), its default there.
 #[cfg(target_os = "linux")]
 pub fn on_xwayland() -> bool {
     window_system().x11_over_wayland
@@ -2114,7 +2114,7 @@ pub fn set_main_window(cc: &eframe::CreationContext<'_>) {
 /// already unmapped it, and keeps it, minimized, in its list (XFCE's window buttons showed it
 /// beside the tray icon). ICCCM (4.1.4) asks for both to withdraw a window: the unmap, and a
 /// synthetic UnmapNotify sent to the root window, which Xlib's XWithdrawWindow does and winit
-/// doesn't. Both here, on a connection of iDM's own, in that order; winit's own unmap after them
+/// doesn't. Both here, on a connection of BMD's own, in that order; winit's own unmap after them
 /// finds the window unmapped already, and showing it maps it again, as a new window.
 #[cfg(target_os = "linux")]
 pub fn withdraw_main_window() {
@@ -2153,13 +2153,13 @@ fn withdraw(window: u32) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-/// Linux, XWayland only: a window of iDM's was clicked while it hasn't the keyboard (winit
+/// Linux, XWayland only: a window of BMD's was clicked while it hasn't the keyboard (winit
 /// saw it lose the X input focus, or never get it), so the X server's input focus goes to it:
-/// to the window under the pointer, when it is iDM's and the focus is elsewhere. A window manager
+/// to the window under the pointer, when it is BMD's and the focus is elsewhere. A window manager
 /// gives a clicked window the focus; Hyprland's (0.56) can leave the focus with another X11
 /// window than the one it shows active, and never sets it again since it takes that one for
 /// focused already: after another X11 program's window took the focus itself (Hyprland's revert
-/// then does nothing), or after iDM's main window was hidden in the notification area and shown
+/// then does nothing), or after BMD's main window was hidden in the notification area and shown
 /// again (the focus went with the window, and came back to none). Clicks kept working, keys went
 /// elsewhere: File Properties' boxes took the caret, but no typing and no Ctrl+V. Keys reach
 /// an X11 window only while the compositor gives XWayland the keyboard, so this never takes it
@@ -2187,7 +2187,7 @@ fn takes_keyboard_on_click(ws: &WindowSystem) -> bool {
     ws.x11_over_wayland && !ws.wayland
 }
 
-/// [`take_keyboard_on_click`]'s work, on a connection of iDM's own: the X input focus to this
+/// [`take_keyboard_on_click`]'s work, on a connection of BMD's own: the X input focus to this
 /// process's window under the pointer, unless it has it. Some(window) when it was given.
 #[cfg(target_os = "linux")]
 fn keyboard_to_window_under_pointer() -> Result<Option<u32>, Box<dyn std::error::Error>> {
@@ -2239,7 +2239,7 @@ pub fn gl_vendor(gl: &eframe::glow::Context) -> String {
     unsafe { gl.get_parameter_string(glow::VENDOR) }
 }
 
-/// Linux, X11 and XWayland (iDM's default): a menu's window as X11 menus are (GTK's, Qt's).
+/// Linux, X11 and XWayland (BMD's default): a menu's window as X11 menus are (GTK's, Qt's).
 /// Override-redirect: no window manager manages it, so it opens exactly where it's placed (a
 /// tiling compositor, sway, centred a managed one, #267), and compositors treat it as a menu:
 /// Hyprland gives it no border and doesn't slide or pop it in as it does a new window (it only
@@ -2299,7 +2299,7 @@ fn installer(os_release: &str) -> Option<(usize, &'static str)> {
 }
 
 /// The command that installs `libs` on the distribution /etc/os-release (`os_release`) names;
-/// None for one iDM doesn't know.
+/// None for one BMD doesn't know.
 #[cfg(target_os = "linux")]
 fn install_command(libs: &[&WindowLib], os_release: &str) -> Option<String> {
     let (family, command) = installer(os_release)?;
@@ -2321,11 +2321,11 @@ pub fn missing_text(libs: &[&WindowLib], opening: bool) -> String {
     let names = ltr(&names.join(", "));
     let what = if opening {
         // i18n: Linux, at start, on the terminal and in a message box: a library the window needs isn't installed; {libraries} = its file names (libxkbcommon-x11.so.0…), left as they are
-        t("iDM can't open its window: this system lacks {libraries}.")
+        t("BMD can't open its window: this system lacks {libraries}.")
     } else {
         // i18n: Linux, at start, on the terminal: the libraries an X11 window needs aren't installed, so the window opens through Wayland instead, where menus can't be placed under what was clicked; {libraries} = their file names, left as they are
         t(
-            "iDM's X11 window needs {libraries}, which this system lacks: it opens on Wayland instead, where its menus may open away from their titles.",
+            "BMD's X11 window needs {libraries}, which this system lacks: it opens on Wayland instead, where its menus may open away from their titles.",
         )
     };
     let what = fmt(what, &[("libraries", &names)]);
@@ -2336,19 +2336,19 @@ pub fn missing_text(libs: &[&WindowLib], opening: bool) -> String {
             t("To install what's missing: {command}"),
             &[("command", &ltr(&command))],
         ),
-        // i18n: Linux, after a missing library's name, on a distribution iDM doesn't know
+        // i18n: Linux, after a missing library's name, on a distribution BMD doesn't know
         None => t("Install what's missing from your distribution's packages.").to_owned(),
     };
     format!("{what}\n{how}")
 }
 
 /// Says `text` on the terminal, in the log and, when a display is there, in a message box
-/// (zenity or kdialog, the first there): iDM's own window can't open.
+/// (zenity or kdialog, the first there): BMD's own window can't open.
 #[cfg(target_os = "linux")]
 pub fn tell_window_failed(text: &str) {
     eprintln!("{text}");
     tracing::error!("{text}");
-    let title = "iDM";
+    let title = "BMD";
     // A program of the desktop's draws it: without isolates (#919).
     let text = &crate::i18n::os_text(text);
     let boxes: [(&str, Vec<&str>); 2] = [
@@ -2372,7 +2372,7 @@ pub fn tell_window_failed(text: &str) {
     }
 }
 
-/// Linux: a tray host is there to show iDM's icon (a StatusNotifierWatcher on the session bus:
+/// Linux: a tray host is there to show BMD's icon (a StatusNotifierWatcher on the session bus:
 /// KDE, waybar's tray, GNOME's AppIndicator extension), #59. Without one (MangoWC, plain
 /// window managers), closing the window would hide it where nothing can bring it back.
 ///
@@ -2565,14 +2565,14 @@ pub fn file_icon(what: &crate::fileicons::What, px: u32) -> Option<crate::fileic
 }
 
 /// macOS hands an app what it should open (a .torrent double-clicked in Finder or dropped on
-/// iDM's icon in the Dock, a magnet link clicked in a browser) as Apple events, not on its
-/// command line, also to an iDM already running (#698). These receive them and send each one
+/// BMD's icon in the Dock, a magnet link clicked in a browser) as Apple events, not on its
+/// command line, also to an BMD already running (#698). These receive them and send each one
 /// down the command channel, as a .torrent or magnet link on Windows' or Linux's command line
-/// goes (`mdm_ipc::parse_args`): Add torrent opens for it. The app's Info.plist
-/// (tools/installer/build-macos.sh) tells macOS that iDM opens them.
+/// goes (`bmd_ipc::parse_args`): Add torrent opens for it. The app's Info.plist
+/// (tools/installer/build-macos.sh) tells macOS that BMD opens them.
 ///
-/// The same goes for iDM opened again while it runs (#1125): a click on its icon in the Dock,
-/// or iDM.app opened from Finder, Launchpad or Spotlight. macOS starts no second copy for that:
+/// The same goes for BMD opened again while it runs (#1125): a click on its icon in the Dock,
+/// or BMD.app opened from Finder, Launchpad or Spotlight. macOS starts no second copy for that:
 /// it sends the running one a reopen event, which brings the main window back as a second start
 /// does on Windows and Linux. So a window closed into the Dock always has its way back.
 #[cfg(target_os = "macos")]
@@ -2600,11 +2600,11 @@ pub mod open_events {
     /// kAEReopenApplication: the app opened again while it runs (its icon in the Dock clicked).
     const REOPEN: u32 = u32::from_be_bytes(*b"rapp");
 
-    /// Whether iDM receives the reopen event (its handler is installed as the app starts).
+    /// Whether BMD receives the reopen event (its handler is installed as the app starts).
     static REOPENS: AtomicBool = AtomicBool::new(false);
 
     pub struct Ivars {
-        tx: Sender<mdm_ipc::Incoming>,
+        tx: Sender<bmd_ipc::Incoming>,
         wake: Arc<dyn Fn() + Send + Sync>,
     }
 
@@ -2624,7 +2624,7 @@ pub mod open_events {
             fn will_finish_launching(&self, _note: &NSNotification) {
                 let manager = NSAppleEventManager::sharedAppleEventManager();
                 // SAFETY: both selectors are this class's, taking (event, reply) as the manager
-                // calls them; the handler lives as long as iDM (`start`). The event codes are
+                // calls them; the handler lives as long as BMD (`start`). The event codes are
                 // AEEventClass and AEEventID, 32-bit codes.
                 unsafe {
                     let _: () = msg_send![&*manager, setEventHandler: self,
@@ -2665,8 +2665,8 @@ pub mod open_events {
             #[unsafe(method(reopen:withReplyEvent:))]
             fn reopen(&self, _event: &NSAppleEventDescriptor, _reply: &NSAppleEventDescriptor) {
                 tracing::info!("opened again from the system (the Dock): the window comes back");
-                let _ = self.ivars().tx.send(mdm_ipc::Incoming {
-                    cmd: mdm_ipc::Command::default(),
+                let _ = self.ivars().tx.send(bmd_ipc::Incoming {
+                    cmd: bmd_ipc::Command::default(),
                     reply: None,
                 });
                 (self.ivars().wake)();
@@ -2674,9 +2674,9 @@ pub mod open_events {
         }
     );
 
-    /// Whether a click on iDM's icon in the Dock brings a hidden main window back: the reopen
+    /// Whether a click on BMD's icon in the Dock brings a hidden main window back: the reopen
     /// event's handler is in place. Closing can then leave the window in the Dock, as Mac apps
-    /// do, whether the menu bar shows iDM's icon or not.
+    /// do, whether the menu bar shows BMD's icon or not.
     pub fn dock_reopens() -> bool {
         REOPENS.load(Ordering::Acquire)
     }
@@ -2684,10 +2684,10 @@ pub mod open_events {
     impl OpenEvents {
         /// A .torrent's path or a magnet link to the app, as its command line would.
         fn hand(&self, item: String) {
-            match mdm_ipc::parse_args(std::slice::from_ref(&item)) {
+            match bmd_ipc::parse_args(std::slice::from_ref(&item)) {
                 Some(cmd) => {
                     tracing::info!("opened from the system: {item}");
-                    let _ = self.ivars().tx.send(mdm_ipc::Incoming { cmd, reply: None });
+                    let _ = self.ivars().tx.send(bmd_ipc::Incoming { cmd, reply: None });
                     (self.ivars().wake)();
                 }
                 None => tracing::info!("opened from the system, not a torrent: {item}"),
@@ -2697,7 +2697,7 @@ pub mod open_events {
 
     /// Receive the open-documents and get-URL events from now on (`app` calls it on the main
     /// thread, before the window's event loop starts).
-    pub fn start(tx: Sender<mdm_ipc::Incoming>, wake: Arc<dyn Fn() + Send + Sync>) {
+    pub fn start(tx: Sender<bmd_ipc::Incoming>, wake: Arc<dyn Fn() + Send + Sync>) {
         let Some(mtm) = MainThreadMarker::new() else {
             return;
         };
@@ -2715,7 +2715,7 @@ pub mod open_events {
             );
         }
         // Neither the notification centre nor the event manager keeps its observer or handler:
-        // this one lives as long as iDM.
+        // this one lives as long as BMD.
         std::mem::forget(this);
     }
 
@@ -2753,7 +2753,7 @@ pub mod open_events {
         handler.is_some_and(|h| h.to_string().eq_ignore_ascii_case(BUNDLE_ID))
     }
 
-    /// iDM the default app for magnet links and .torrent files (Torrent settings' switch). A
+    /// BMD the default app for magnet links and .torrent files (Torrent settings' switch). A
     /// copy started outside its app (`cargo run`) has nothing to register: the log says so.
     pub fn make_default() {
         let id = NSString::from_str(BUNDLE_ID);
@@ -2770,7 +2770,7 @@ pub mod open_events {
         };
         if magnet != 0 || file != 0 {
             tracing::info!(
-                "torrents: Launch Services didn't take iDM for magnet links ({magnet}) or                  .torrent files ({file})"
+                "torrents: Launch Services didn't take BMD for magnet links ({magnet}) or                  .torrent files ({file})"
             );
         }
     }
@@ -2808,7 +2808,7 @@ pub mod open_events {
         use objc2_foundation::NSURL;
 
         /// #698: the files of an open-documents event, as Finder sends them, and a magnet
-        /// link's get-URL event become what iDM's command line takes.
+        /// link's get-URL event become what BMD's command line takes.
         #[test]
         fn finder_events_become_commands() {
             let list = NSAppleEventDescriptor::listDescriptor();
@@ -2833,31 +2833,31 @@ pub mod open_events {
                     "/tmp/a b/u\u{308}.torrent"
                 ]
             );
-            let cmd = mdm_ipc::parse_args(&paths[..1]).unwrap();
+            let cmd = bmd_ipc::parse_args(&paths[..1]).unwrap();
             assert_eq!(cmd.url.as_deref(), Some(files[0]));
 
             let magnet = "magnet:?xt=urn:btih:7acf8fb590b2060dd9c3146ef770169d593433b0&dn=x";
             let d = NSAppleEventDescriptor::descriptorWithString(&NSString::from_str(magnet));
             let got = link(&d).unwrap();
             assert_eq!(got, magnet);
-            let cmd = mdm_ipc::parse_args(&[got]).unwrap();
+            let cmd = bmd_ipc::parse_args(&[got]).unwrap();
             assert_eq!(cmd.url.as_deref(), Some(magnet));
             assert!(file_paths(&NSAppleEventDescriptor::listDescriptor()).is_empty());
         }
     }
 }
 
-// ---- Crash reports (crash.rs, mdm-crash) -------------------------------------------------------
+// ---- Crash reports (crash.rs, bmd-crash) -------------------------------------------------------
 
-static CRASH_HANDLER: std::sync::OnceLock<mdm_crash::crash_handler::CrashHandler> =
+static CRASH_HANDLER: std::sync::OnceLock<bmd_crash::crash_handler::CrashHandler> =
     std::sync::OnceLock::new();
 
 /// Catch native crashes (SIGSEGV, SIGBUS, SIGILL, SIGFPE, SIGABRT on Linux; Mach exceptions on
 /// macOS) and have `reporter`'s monitor dump this process when one comes. On Linux only the
 /// monitor may read this process (ptrace).
 #[allow(unsafe_code)]
-pub fn attach_crash_handler(reporter: std::sync::Arc<mdm_crash::client::Reporter>) -> bool {
-    use mdm_crash::crash_handler::{CrashEventResult, CrashHandler, make_crash_event};
+pub fn attach_crash_handler(reporter: std::sync::Arc<bmd_crash::client::Reporter>) -> bool {
+    use bmd_crash::crash_handler::{CrashEventResult, CrashHandler, make_crash_event};
     #[cfg(target_os = "linux")]
     let monitor = reporter.monitor_pid();
     // SAFETY: the closure runs in the signal / exception handler; it only sends the dump request
@@ -2888,7 +2888,7 @@ pub fn attach_crash_handler(reporter: std::sync::Arc<mdm_crash::client::Reporter
 // a copy of this module, from this line to the end mark, that crates/crash/tests/in_frame.rs
 // checks is the same.
 /// crash-handler's signal handler, kept inside the signal's frame where the kernel's is smaller
-/// than the context it copies (no XSAVE: mdm_crash::frame says how). Linux only: crash-handler
+/// than the context it copies (no XSAVE: bmd_crash::frame says how). Linux only: crash-handler
 /// takes Mach exceptions on macOS, with no signal frame.
 #[cfg(target_os = "linux")]
 #[allow(unsafe_code)]
@@ -2983,14 +2983,14 @@ pub mod in_frame {
         let on_alt_stack = unsafe { libc::sigaltstack(std::ptr::null(), &mut ss) } == 0
             && ss.ss_flags & libc::SS_ONSTACK != 0;
         let stack = on_alt_stack.then(|| ss.ss_sp as usize..ss.ss_sp as usize + ss.ss_size);
-        let len = mdm_crash::frame::context_len();
-        let readable = mdm_crash::frame::readable(uc as usize, len, stack);
+        let len = bmd_crash::frame::context_len();
+        let readable = bmd_crash::frame::readable(uc as usize, len, stack);
         if readable == len {
             // SAFETY: crash-handler's handler with the kernel's own arguments, as without this.
             unsafe { theirs(sig, info, uc) };
             return;
         }
-        mdm_crash::frame::with_copy(|copy| {
+        bmd_crash::frame::with_copy(|copy| {
             // SAFETY: the first `readable` bytes at `uc` are the kernel's frame, inside the
             // alternate stack; `copy` is a zeroed context of the type crash-handler reads, `len`
             // bytes, more than `readable`.
@@ -3006,7 +3006,7 @@ pub mod in_frame {
 /// Have the monitor dump this process now (a panic, a freeze): every thread, this one asking.
 /// The process goes on.
 pub fn dump_now() -> bool {
-    use mdm_crash::crash_handler::CrashEventResult;
+    use bmd_crash::crash_handler::CrashEventResult;
     CRASH_HANDLER.get().is_some_and(|h| {
         #[cfg(target_os = "linux")]
         return matches!(
@@ -3090,7 +3090,7 @@ pub fn to_trash(files: &[PathBuf]) -> bool {
         if run(Command::new("trash").args(files)) {
             return true;
         }
-        // The Finder moves them as a person would (it may ask once to let iDM drive it).
+        // The Finder moves them as a person would (it may ask once to let BMD drive it).
         let list: Vec<String> = files
             .iter()
             .map(|f| {
@@ -3193,14 +3193,14 @@ pub fn graphics_drivers() -> Option<Vec<(String, String, bool)>> {
     }
 }
 
-/// End process `pid` (a frozen iDM the user chose to close from the crash report).
+/// End process `pid` (a frozen BMD the user chose to close from the crash report).
 #[allow(unsafe_code)]
 pub fn end_process(pid: u32) -> bool {
     // SAFETY: a signal to a process id we were given.
     unsafe { libc::kill(pid as libc::pid_t, libc::SIGKILL) == 0 }
 }
 
-/// The crash test's segmentation fault (MDM_CRASH_TEST=1, `/show crash-test:crash`).
+/// The crash test's segmentation fault (BMD_CRASH_TEST=1, `/show crash-test:crash`).
 #[allow(unsafe_code)]
 pub fn crash_now() {
     // SAFETY: none: a write through a null pointer, on purpose, to test the crash reports.
@@ -3227,18 +3227,18 @@ pub fn browsers() -> Vec<(String, PathBuf)> {
             .unwrap_or_default()
     };
     // A Flatpak browser (`app.zen_browser.zen` …) isn't listed: its sandbox can't start the
-    // native host, so the extension couldn't reach iDM (docs/browser-help.md). Nor is a Chromium
+    // native host, so the extension couldn't reach BMD (docs/browser-help.md). Nor is a Chromium
     // browser that runs as a Snap (Ubuntu's Chromium): it starts the host inside its sandbox,
-    // which can't read iDM's data folder (~/.local/share is hidden from Snaps) and so started a
-    // second, sandboxed iDM. The Snap Firefox is listed: it starts the host through the desktop
+    // which can't read BMD's data folder (~/.local/share is hidden from Snaps) and so started a
+    // second, sandboxed BMD. The Snap Firefox is listed: it starts the host through the desktop
     // portal, outside its sandbox.
-    mdm_ipc::browsers::BROWSERS
+    bmd_ipc::browsers::BROWSERS
         .iter()
         .filter_map(|b| {
             let names = if mac { b.mac_apps } else { b.linux_cmds };
             found(names, &dirs).map(|p| (b, p))
         })
-        .filter(|(b, p)| mac || b.family == mdm_ipc::browsers::Family::Gecko || !is_snap(p))
+        .filter(|(b, p)| mac || b.family == bmd_ipc::browsers::Family::Gecko || !is_snap(p))
         .map(|(b, p)| (b.name.to_owned(), p))
         .collect()
 }
@@ -3275,7 +3275,7 @@ pub fn mark_downloaded(path: &Path, url: &str, referrer: Option<&str>) {
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map_or(0, |d| d.as_secs());
-        set_xattr(path, "com.apple.quarantine", &format!("0081;{now:x};iDM;"));
+        set_xattr(path, "com.apple.quarantine", &format!("0081;{now:x};BMD;"));
         let _ = url;
     }
     #[cfg(not(target_os = "macos"))]
@@ -3443,8 +3443,8 @@ pub fn macos_hide_window() {
     }
 }
 
-/// Whether bringing a dialog or progress window forward on macOS should activate iDM and order
-/// that window front: true when iDM is inactive, hidden, or that window isn't key yet.
+/// Whether bringing a dialog or progress window forward on macOS should activate BMD and order
+/// that window front: true when BMD is inactive, hidden, or that window isn't key yet.
 #[cfg(any(target_os = "macos", test))]
 fn macos_window_needs_lift(app_active: bool, app_hidden: bool, window_key: bool) -> bool {
     !app_active || app_hidden || !window_key
@@ -3472,7 +3472,7 @@ unsafe fn activate_nsapp(app: *mut objc2::runtime::AnyObject, all_windows: bool)
     }
 }
 
-/// macOS: activates iDM without pulling up minimized or tray-hidden windows (for `dialogs::raise`).
+/// macOS: activates BMD without pulling up minimized or tray-hidden windows (for `dialogs::raise`).
 #[cfg(target_os = "macos")]
 #[allow(unsafe_code)]
 pub fn macos_activate_app() {
@@ -3490,7 +3490,7 @@ pub fn macos_activate_app() {
     }
 }
 
-/// macOS: activates iDM and orders a newly shown visible window matching `title` (already stripped
+/// macOS: activates BMD and orders a newly shown visible window matching `title` (already stripped
 /// via [`crate::i18n::os_text`]) to the foreground in front of browsers and other apps without
 /// deminiaturizing or showing unrelated windows. Returns `Some(lifted)` once the window is
 /// visible, or `None` while winit has not yet applied `Visible(true)` (`keep_theme` retries across
@@ -3557,7 +3557,7 @@ pub fn macos_bring_window_forward(title: &str) -> Option<bool> {
     }
 }
 
-/// macOS: brings iDM and its windows to the topmost foreground in front of all other apps when
+/// macOS: brings BMD and its windows to the topmost foreground in front of all other apps when
 /// woken from the menu bar icon or the global hotkey (#558).
 #[cfg(target_os = "macos")]
 #[allow(unsafe_code)]
@@ -3913,7 +3913,7 @@ mod tests {
         lib.names[0] != X11_KEYBOARD
     }
 
-    /// iDM's own choice, with the desktop looking after X11 programs (GNOME, KDE Plasma).
+    /// BMD's own choice, with the desktop looking after X11 programs (GNOME, KDE Plasma).
     const CARED: fn() -> X11Fit = || X11Fit::CaredFor;
 
     /// #265: without libxkbcommon-x11, an X11 session can't open the window (said, not a
@@ -3943,8 +3943,8 @@ mod tests {
         assert_eq!(none.missing[0].names[0], "libxkbcommon.so.0");
     }
 
-    /// #624: MDM_WAYLAND first (1 or 0), then View → Window system's saved choice, then iDM's
-    /// own: the same however iDM is started, as the saved choice goes with every start.
+    /// #624: MDM_WAYLAND first (1 or 0), then View → Window system's saved choice, then BMD's
+    /// own: the same however BMD is started, as the saved choice goes with every start.
     #[test]
     fn the_window_system_is_picked_the_same_way_at_every_start() {
         use crate::settings::WindowSystemPick as Saved;
@@ -3969,12 +3969,12 @@ mod tests {
         assert!(matches!(Pick::of(env("0"), None), Pick::X11(_)));
     }
 
-    /// #624: iDM chooses X11 (XWayland: its menus placed under their titles, its window hidden in
+    /// #624: BMD chooses X11 (XWayland: its menus placed under their titles, its window hidden in
     /// the tray) unless X11's windows would be scaled up, blurry: a scaled screen, and nothing
     /// to tell X11 programs (Hyprland at 1.5, labwc or sway at 2). A choice made wins either
     /// way; the desktop is only asked when it decides.
     #[test]
-    fn mdm_chooses_wayland_where_x11_windows_would_be_scaled() {
+    fn bmd_chooses_wayland_where_x11_windows_would_be_scaled() {
         let ok = |_: &WindowLib| true;
         let scaled = choose_window_system(true, true, Pick::Auto, || X11Fit::Scaled, ok);
         assert!(scaled.wayland && scaled.both, "{scaled:?}");
@@ -3994,10 +3994,10 @@ mod tests {
         assert!(wayland_only.wayland && !wayland_only.both);
     }
 
-    /// Started without WAYLAND_DISPLAY in a Wayland session, iDM sees an X11 session only: its
+    /// Started without WAYLAND_DISPLAY in a Wayland session, BMD sees an X11 session only: its
     /// windows are XWayland's when the X server is (they swap without waiting there, so a dialog
     /// answers a click at once while the main window is out of sight). The server is asked only
-    /// for an X11-only session iDM can open its windows in.
+    /// for an X11-only session BMD can open its windows in.
     #[test]
     fn an_x11_only_session_on_xwayland_is_xwaylands() {
         let ok = |_: &WindowLib| true;
@@ -4251,7 +4251,7 @@ ID_LIKE=arch
     }
 
     /// The child of [`show_in_folder_never_waits_for_the_file_manager`]: the file it shows.
-    const SHOW_CHILD: &str = "MDM_TEST_SHOW_IN_FOLDER_CHILD";
+    const SHOW_CHILD: &str = "BMD_TEST_SHOW_IN_FOLDER_CHILD";
 
     /// #222: a file manager that never answers ShowItems (here a `gdbus` that hangs for 30 s)
     /// leaves `show_in_folder` returning at once, and the folder is opened instead after
@@ -4276,7 +4276,7 @@ ID_LIKE=arch
             }
             return;
         }
-        let root = std::env::temp_dir().join(format!("mdm-show-222-{}", std::process::id()));
+        let root = std::env::temp_dir().join(format!("bmd-show-222-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&root);
         let (bin, folder) = (root.join("bin"), root.join("Downloads"));
         std::fs::create_dir_all(&bin).unwrap();
@@ -4381,7 +4381,7 @@ mod session_end_tests {
     #[allow(unsafe_code)]
     fn a_signal_asks_for_the_end_and_wakes_the_window_once() {
         if ignored(libc::SIGHUP) {
-            // Run under nohup: iDM leaves an ignored SIGHUP ignored, so nothing would come.
+            // Run under nohup: BMD leaves an ignored SIGHUP ignored, so nothing would come.
             return;
         }
         assert_eq!(session_ending(), None);
@@ -4428,7 +4428,7 @@ mod session_end_tests {
 mod host_copy_tests {
     use super::{HOST, MANIFEST, install_host_copy, registration_in, registration_with, runs};
     use crate::extension::Registration;
-    use mdm_ipc::browsers::Family;
+    use bmd_ipc::browsers::Family;
     use std::path::Path;
 
     fn program(dir: &Path, name: &str, body: &str) -> std::path::PathBuf {
@@ -4446,18 +4446,18 @@ mod host_copy_tests {
         let t = tempfile::tempdir().unwrap();
         let from = program(t.path(), "mount-host", "echo one");
         let dir = t.path().join("data/browser-host");
-        let image = Path::new("/home/u/Apps/iDM.AppImage");
+        let image = Path::new("/home/u/Apps/BMD.AppImage");
         let copy = install_host_copy(&from, &dir, image).unwrap();
         assert_eq!(copy, dir.join(HOST));
         assert!(runs(&copy));
         assert_eq!(std::fs::read(&copy).unwrap(), std::fs::read(&from).unwrap());
         assert_eq!(
             std::fs::read_to_string(dir.join("app-path")).unwrap(),
-            "/home/u/Apps/iDM.AppImage"
+            "/home/u/Apps/BMD.AppImage"
         );
         // Moved by an AppImage manager, and the copy deleted: both put right.
         std::fs::remove_file(&copy).unwrap();
-        let moved = Path::new("/home/u/Applications/mdm.appimage");
+        let moved = Path::new("/home/u/Applications/bmd.appimage");
         install_host_copy(&from, &dir, moved).unwrap();
         assert!(runs(&copy));
         assert_eq!(
@@ -4554,7 +4554,7 @@ mod host_copy_tests {
         );
         write(&b, &helper);
         assert_eq!(registration_in(dirs(), false), Registration::Ready);
-        let gone = t.path().join("gone/misterdownloadmanager-nmhost");
+        let gone = t.path().join("gone/bmd-nmhost");
         write(&b, &gone);
         assert_eq!(
             registration_in(dirs(), false),
@@ -4611,14 +4611,14 @@ mod startup_tests {
         }
     }
 
-    /// The autostart entry and the LaunchAgent start iDM with `/startup` (#226), and name the
+    /// The autostart entry and the LaunchAgent start BMD with `/startup` (#226), and name the
     /// program as it is, quoting and all.
     #[test]
-    fn the_startup_entries_start_mdm_in_the_tray() {
+    fn the_startup_entries_start_bmd_in_the_tray() {
         for exe in [
-            "/home/ana/Apps/iDM.AppImage",
-            "/opt/mdm/misterdownloadmanager",
-            "/Applications/iDM.app/Contents/MacOS/misterdownloadmanager",
+            "/home/ana/Apps/BMD.AppImage",
+            "/opt/bmd/bmd",
+            "/Applications/BMD.app/Contents/MacOS/bmd",
             "/home/a\"b$c/m&d<m>",
         ] {
             for macos in [false, true] {
@@ -4628,18 +4628,18 @@ mod startup_tests {
                 assert!(!startup_outdated(&text, Path::new(exe), macos));
             }
         }
-        let desktop = startup_entry(Path::new("/opt/mdm/misterdownloadmanager"), false);
-        assert!(desktop.contains("Exec=\"/opt/mdm/misterdownloadmanager\" /startup\n"));
-        let plist = startup_entry(Path::new("/opt/mdm/misterdownloadmanager"), true);
+        let desktop = startup_entry(Path::new("/opt/bmd/bmd"), false);
+        assert!(desktop.contains("Exec=\"/opt/bmd/bmd\" /startup\n"));
+        let plist = startup_entry(Path::new("/opt/bmd/bmd"), true);
         assert!(plist.contains(
-            "<array><string>/opt/mdm/misterdownloadmanager</string><string>/startup</string></array>"
+            "<array><string>/opt/bmd/bmd</string><string>/startup</string></array>"
         ));
     }
 
     /// An entry of a version before 0.5.0 for this program is written again; another copy's is not.
     #[test]
     fn old_startup_entries_are_rewritten() {
-        let exe = "/home/ana/Apps/iDM.AppImage";
+        let exe = "/home/ana/Apps/BMD.AppImage";
         for macos in [false, true] {
             assert!(startup_outdated(
                 &old_entry(exe, macos),
@@ -4647,7 +4647,7 @@ mod startup_tests {
                 macos
             ));
             assert!(!startup_outdated(
-                &old_entry("/elsewhere/mdm.AppImage", macos),
+                &old_entry("/elsewhere/bmd.AppImage", macos),
                 Path::new(exe),
                 macos
             ));
@@ -4658,7 +4658,7 @@ mod startup_tests {
 
 // Sign-in secrets in the system's keychain (#44, secrets.rs). Linux: the Secret Service
 // (GNOME Keyring, KeePassXC, KDE's wallet in its Secret Service mode) over D-Bus, its default
-// collection only, and only while it is unlocked: iDM never unlocks it nor answers a prompt
+// collection only, and only while it is unlocked: BMD never unlocks it nor answers a prompt
 // (desktops that log in on their own often have a locked keyring, #164), so a locked or missing
 // keyring leaves the secrets in the owner-only settings. macOS: the login keychain's generic
 // passwords (SecItemAdd / SecItemCopyMatching, through security-framework).
@@ -4691,7 +4691,7 @@ mod secret_service {
     const COLLECTION: &str = "org.freedesktop.Secret.Collection";
     const ITEM: &str = "org.freedesktop.Secret.Item";
     const SESSION: &str = "org.freedesktop.Secret.Session";
-    /// Groups iDM's entries in Seahorse and the like.
+    /// Groups BMD's entries in Seahorse and the like.
     const SCHEMA: &str = "io.github.anefzaoui.misterdownloadmanager.Secret";
 
     /// The D-Bus error's kind; its text (the service's own words) is never kept.
@@ -4776,7 +4776,7 @@ mod secret_service {
             Ok(path)
         }
 
-        /// iDM's items of `service` (one account's, or all): (unlocked, locked).
+        /// BMD's items of `service` (one account's, or all): (unlocked, locked).
         fn find(
             &self,
             service: &str,
@@ -4967,7 +4967,7 @@ mod mac_keychain {
 #[cfg(target_os = "linux")]
 const WAKEALARM: &str = "/sys/class/rtc/rtc0/wakealarm";
 
-/// Whether iDM may wake this computer.
+/// Whether BMD may wake this computer.
 pub fn wake_support() -> crate::wake::Support {
     #[cfg(target_os = "linux")]
     {
@@ -4983,7 +4983,7 @@ pub fn wake_support() -> crate::wake::Support {
             Support::NeedsAdmin
         }
     }
-    // macOS: `pmset schedule wake` and IOPMSchedulePowerEvent need an administrator, and iDM
+    // macOS: `pmset schedule wake` and IOPMSchedulePowerEvent need an administrator, and BMD
     // never asks for one by itself.
     #[cfg(target_os = "macos")]
     {
@@ -5005,12 +5005,12 @@ fn rtc_offset() -> i64 {
     }
 }
 
-/// Wake the computer at `at` (seconds since 1970, UTC), or cancel iDM's wake (None).
+/// Wake the computer at `at` (seconds since 1970, UTC), or cancel BMD's wake (None).
 #[cfg(target_os = "linux")]
 pub fn wake_at(at: Option<i64>) -> Result<(), String> {
-    // The alarm iDM set (in the chip's time), to tell it from another program's: kept in the
-    // data folder, so an alarm left by an iDM that was killed (or signed out of) is still ours.
-    let file = mdm_ipc::data_dir().map(|d| d.join("wake-alarm"));
+    // The alarm BMD set (in the chip's time), to tell it from another program's: kept in the
+    // data folder, so an alarm left by an BMD that was killed (or signed out of) is still ours.
+    let file = bmd_ipc::data_dir().map(|d| d.join("wake-alarm"));
     let mut ours = file
         .as_ref()
         .and_then(|f| std::fs::read_to_string(f).ok())
@@ -5108,7 +5108,7 @@ pub fn keep_awake(reason: Option<&str>) -> bool {
             "/org/freedesktop/login1",
             "org.freedesktop.login1.Manager",
         )?;
-        logind.call("Inhibit", &("sleep", "iDM", reason, "block"))
+        logind.call("Inhibit", &("sleep", "BMD", reason, "block"))
     };
     match take() {
         Ok(fd) => {
@@ -5130,7 +5130,7 @@ pub fn keep_awake(reason: Option<&str>) -> bool {
     }
 }
 
-/// macOS: `caffeinate -i` (no idle sleep) for as long as iDM runs, ended when not needed.
+/// macOS: `caffeinate -i` (no idle sleep) for as long as BMD runs, ended when not needed.
 #[cfg(target_os = "macos")]
 pub fn keep_awake(reason: Option<&str>) -> bool {
     use std::sync::Mutex;

@@ -42,7 +42,7 @@ class Bidi {
   }
 }
 
-const profile = path.join(process.env.HOME, "snap/firefox/common/mdm-proxy-optin");
+const profile = path.join(process.env.HOME, "snap/firefox/common/bmd-proxy-optin");
 // A Firefox left from an earlier run would keep the profile locked.
 try {
   execFileSync("pkill", ["-f", "--", `-profile ${profile}`]);

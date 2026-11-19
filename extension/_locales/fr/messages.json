@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Transfère les téléchargements du navigateur vers iDM."
+    "message": "Transfère les téléchargements du navigateur vers BMD."
   },
   "menu": {
-    "message": "Télécharger avec iDM"
+    "message": "Télécharger avec BMD"
   },
   "video_download": {
     "message": "Télécharger la vidéo"
@@ -30,19 +30,19 @@
     "message": "Paramètres du bouton..."
   },
   "video_sent": {
-    "message": "Envoyé à iDM"
+    "message": "Envoyé à BMD"
   },
   "menu_selected": {
-    "message": "Télécharger les liens sélectionnés avec iDM"
+    "message": "Télécharger les liens sélectionnés avec BMD"
   },
   "menu_all": {
-    "message": "Télécharger tous les liens avec iDM"
+    "message": "Télécharger tous les liens avec BMD"
   },
   "status_connected": {
-    "message": "Connecté à iDM"
+    "message": "Connecté à BMD"
   },
   "status_connected_version": {
-    "message": "Connecté à iDM $version$",
+    "message": "Connecté à BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "En pause : les téléchargements restent dans le navigateur"
   },
   "status_not_installed": {
-    "message": "iDM n’est pas installé, ou son intégration au navigateur n’est pas configurée"
+    "message": "BMD n’est pas installé, ou son intégration au navigateur n’est pas configurée"
   },
   "status_forbidden": {
-    "message": "iDM n’accepte pas cette copie de l’extension"
+    "message": "BMD n’accepte pas cette copie de l’extension"
   },
   "status_not_running": {
-    "message": "iDM n’a pas démarré à temps"
+    "message": "BMD n’a pas démarré à temps"
   },
   "status_host_failed": {
-    "message": "La connexion à iDM a échoué"
+    "message": "La connexion à BMD a échoué"
   },
   "status_too_large": {
     "message": "Les détails de ce téléchargement étaient trop volumineux pour être transférés"
   },
   "status_update_app": {
-    "message": "Mettez à jour iDM pour utiliser toutes les fonctionnalités de cette extension"
+    "message": "Mettez à jour BMD pour utiliser toutes les fonctionnalités de cette extension"
   },
   "popup_take": {
     "message": "Prendre les téléchargements de ce navigateur"
@@ -78,10 +78,10 @@
     "message": "Envoyer les téléchargements via le proxy ou l’extension VPN de ce navigateur"
   },
   "popup_proxy_title": {
-    "message": "iDM télécharge alors via le même proxy que ce navigateur. Le navigateur vous demande une fois de l’autoriser ; la désactivation de cette option annule cette autorisation."
+    "message": "BMD télécharge alors via le même proxy que ce navigateur. Le navigateur vous demande une fois de l’autoriser ; la désactivation de cette option annule cette autorisation."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM télécharge alors via le même proxy que ce navigateur. Lorsque cette option est désactivée, l’extension ne lit pas le proxy du navigateur."
+    "message": "BMD télécharge alors via le même proxy que ce navigateur. Lorsque cette option est désactivée, l’extension ne lit pas le proxy du navigateur."
   },
   "popup_exclude_site": {
     "message": "Ne plus prendre les téléchargements de $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Ouvrir iDM"
+    "message": "Ouvrir BMD"
   },
   "popup_options": {
     "message": "Options..."
@@ -114,7 +114,7 @@
     "message": "Aide"
   },
   "popup_support": {
-    "message": "Soutenir iDM"
+    "message": "Soutenir BMD"
   },
   "popup_fix": {
     "message": "Comment le résoudre"
@@ -150,7 +150,7 @@
     "message": "L’option « Utiliser l’intégration avancée du navigateur » est désactivée dans Options → Général."
   },
   "declined_torrents": {
-    "message": "C’est un torrent, et « Ouvrir les liens magnet et les fichiers .torrent avec iDM » est désactivé dans les paramètres Torrent."
+    "message": "C’est un torrent, et « Ouvrir les liens magnet et les fichiers .torrent avec BMD » est désactivé dans les paramètres Torrent."
   },
   "declined_site_access": {
     "message": "L’extension n’est pas autorisée à lire ce site (accès au site du navigateur)."
@@ -195,16 +195,16 @@
     "message": "Aucune vidéo à télécharger ici"
   },
   "video_playlist": {
-    "message": "Une liste de vidéos : choisissez-les dans iDM"
+    "message": "Une liste de vidéos : choisissez-les dans BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM a besoin de yt-dlp pour cette vidéo"
+    "message": "BMD a besoin de yt-dlp pour cette vidéo"
   },
   "video_too_long": {
     "message": "La recherche a pris trop de temps"
   },
   "video_busy": {
-    "message": "iDM est occupé avec d’autres vidéos"
+    "message": "BMD est occupé avec d’autres vidéos"
   },
   "video_queued": {
     "message": "Ajouté à la file d’attente"
@@ -228,7 +228,7 @@
     "message": "Cet ordinateur"
   },
   "popup_send_remote": {
-    "message": "Un autre iDM (un serveur)"
+    "message": "Un autre BMD (un serveur)"
   },
   "popup_remote_code": {
     "message": "Code de jumelage"
@@ -240,7 +240,7 @@
     "message": "Jumeler"
   },
   "popup_remote_help": {
-    "message": "Ouvrez son adresse une fois et acceptez son certificat, puis entrez un code depuis ses Options, Distant, Jumeler un appareil (ou misterdownloadmanager-cli pair)."
+    "message": "Ouvrez son adresse une fois et acceptez son certificat, puis entrez un code depuis ses Options, Distant, Jumeler un appareil (ou bmd-cli pair)."
   },
   "status_remote": {
     "message": "Les téléchargements vont vers $address$",
@@ -297,19 +297,19 @@
     "message": "Télécharger la meilleure qualité"
   },
   "video_sending": {
-    "message": "Envoi vers iDM..."
+    "message": "Envoi vers BMD..."
   },
   "video_added": {
-    "message": "Ajouté à iDM"
+    "message": "Ajouté à BMD"
   },
   "video_show": {
     "message": "Afficher"
   },
   "video_no_answer": {
-    "message": "iDM n’a pas répondu"
+    "message": "BMD n’a pas répondu"
   },
-  "video_get_mdm": {
-    "message": "Obtenir iDM"
+  "video_get_bmd": {
+    "message": "Obtenir BMD"
   },
   "video_retry": {
     "message": "Réessayer"
@@ -324,7 +324,7 @@
     "message": "Toutes les qualités et les sous-titres..."
   },
   "video_failed": {
-    "message": "iDM n’est pas installé ou n’a pas démarré"
+    "message": "BMD n’est pas installé ou n’a pas démarré"
   },
   "video_download_best": {
     "message": "Télécharger la meilleure qualité"

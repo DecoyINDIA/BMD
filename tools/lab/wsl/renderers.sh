@@ -8,8 +8,8 @@
 # Runs: opengl (the reference), opengl again (what differs between two identical runs: a text
 # caret's blink), lavapipe (MDM_RENDERER: Vulkan forced onto the software driver), the saved
 # choice Vulkan (with no hardware driver: OpenGL, saying why), and the saved choice with
-# MDM_TEST_SOFTWARE_CARD=1 (an off-screen run that takes lavapipe for a card). Each run's
-# "drawing with" lines from MDM's log are printed under it.
+# BMD_TEST_SOFTWARE_CARD=1 (an off-screen run that takes lavapipe for a card). Each run's
+# "drawing with" lines from BMD's log are printed under it.
 label=${1:?usage: renderers.sh <label>}
 W=main,about,options-general=options:general,options-connection=options:connection,scheduler,add-url=addurl,speed-limiter=speedlimit,find,options-panels=options:panels
 out=$HOME/lab/vk/$label; rm -rf "$out"; mkdir -p "$out"
@@ -28,8 +28,8 @@ run() { # run <name> <VAR=value...>
 run opengl MDM_RENDERER=opengl
 run opengl-again MDM_RENDERER=opengl
 run lavapipe MDM_RENDERER=lavapipe
-run setting-vulkan 'MDM_SET={"renderer":"vulkan"}'
-run setting-vulkan-softcard 'MDM_SET={"renderer":"vulkan"}' MDM_OFFSCREEN=1 MDM_OFFSCREEN_AT=0,0 MDM_TEST_SOFTWARE_CARD=1
+run setting-vulkan 'BMD_SET={"renderer":"vulkan"}'
+run setting-vulkan-softcard 'BMD_SET={"renderer":"vulkan"}' BMD_OFFSCREEN=1 BMD_OFFSCREEN_AT=0,0 BMD_TEST_SOFTWARE_CARD=1
 for b in opengl-again lavapipe setting-vulkan setting-vulkan-softcard; do
   echo "== opengl against $b"
   python3 "$HOME/lab/tools/pixdiff.py" "$out/opengl/en-light" "$out/$b/en-light" "$out/diff-$b" | sed 's/^/    /'

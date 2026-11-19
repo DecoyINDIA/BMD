@@ -1,10 +1,10 @@
-﻿; iDM's installer in Japanese: tools/installer/languages.py
+﻿; BMD's installer in Japanese: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [CustomMessages]
 TaskBrowser=ブラウザー統合をセットアップする(&B) (Chrome、Edge、Brave、Firefox)
-TaskTorrents=iDM で .&torrent ファイルとマグネット リンクを開く
-TaskStartup=Windows の起動時に iDM を&開始する
+TaskTorrents=BMD で .&torrent ファイルとマグネット リンクを開く
+TaskStartup=Windows の起動時に BMD を&開始する
 TaskGroupOther=その他:
-Launch=iDM を起動する
+Launch=BMD を起動する
 KeepData=ダウンロード リストと設定も削除しますか?%n%nダウンロードされたファイルはどちらの場合も変更されません。

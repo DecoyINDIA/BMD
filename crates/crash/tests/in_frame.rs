@@ -1,7 +1,7 @@
 //! The end-to-end test's crashy keeps a copy of the app's handler in front of crash-handler's
 //! (#1239): the app keeps its `unsafe` code in its own unix.rs (CLAUDE.md, rule 3), so the two
 //! can't share one file. This checks the copy is the same, so the crashes crashy reports go
-//! through what iDM runs. (Text only: it runs on every system.)
+//! through what BMD runs. (Text only: it runs on every system.)
 
 const BEGIN: &str = "// ---- The handler in front of crash-handler's (#1239).";
 const END: &str = "// ---- End of the handler in front of crash-handler's.";

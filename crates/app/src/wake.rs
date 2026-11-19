@@ -2,15 +2,15 @@
 //! shortly before a queue's start time, and kept awake while that queue runs.
 //!
 //! The times are worked out here, the same on every system; the waking itself is the system's:
-//! - Windows: a waitable timer that resumes the computer (`win32::wake_at`), owned by iDM's
-//!   process, as the Scheduler's starts are (iDM has to be running, in the tray if need be).
+//! - Windows: a waitable timer that resumes the computer (`win32::wake_at`), owned by BMD's
+//!   process, as the Scheduler's starts are (BMD has to be running, in the tray if need be).
 //!   Windows' power options must allow wake timers; when they don't, the Scheduler says so.
 //! - Linux: the clock chip's wake alarm (`/sys/class/rtc/rtc0/wakealarm`), which only an
 //!   administrator may set unless they let users set it (the guide shows how). A systemd user
 //!   timer can't wake the system (`WakeSystem=` needs the system manager), nor can `rtcwake`
 //!   or a timer on an alarm clock without root or CAP_WAKE_ALARM.
 //! - macOS: `pmset schedule wake` and IOKit's scheduled power events need an administrator;
-//!   iDM never asks for one by itself, so the option says why.
+//!   BMD never asks for one by itself, so the option says why.
 //!
 //! While a queue with the option runs, and while any download runs (#939), the computer is kept
 //! from sleeping by itself (Windows: a power request; Linux: logind's sleep inhibitor; macOS:
@@ -28,7 +28,7 @@ use crate::queue::{Queue, Schedule};
 /// The computer is woken this long before the start, so the network is back by then.
 pub const LEAD: Duration = Duration::seconds(60);
 
-/// Whether this computer can be woken by iDM, and if not, why.
+/// Whether this computer can be woken by BMD, and if not, why.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Support {
     // macOS never can (see unix::wake_support).
@@ -133,14 +133,14 @@ pub fn support() -> Support {
     s
 }
 
-/// An off-screen test run (MDM_OFFSCREEN) may play another system's answer with MDM_TEST_WAKE
+/// An off-screen test run (BMD_OFFSCREEN) may play another system's answer with BMD_TEST_WAKE
 /// (`timers-off`, `battery-off`, `not-on-battery`, `needs-admin`, `no-alarm`, `mac-admin`), so
 /// every state of the Scheduler's line can be shown and checked on one computer.
 fn test_support() -> Option<Support> {
     if !crate::offscreen() {
         return None;
     }
-    Some(match std::env::var("MDM_TEST_WAKE").ok()?.as_str() {
+    Some(match std::env::var("BMD_TEST_WAKE").ok()?.as_str() {
         "timers-off" => Support::TimersOff { battery: false },
         "battery-off" => Support::TimersOff { battery: true },
         "not-on-battery" => Support::NotOnBattery,
@@ -188,12 +188,12 @@ impl Awake<'_> {
         match self {
             Awake::Queue(queue) => crate::i18n::fmt(
                 // i18n: why the computer isn't going to sleep, in the system's list of programs that keep it awake; {queue} = the queue's name
-                crate::i18n::t("iDM is running the queue \"{queue}\""),
+                crate::i18n::t("BMD is running the queue \"{queue}\""),
                 &[("queue", crate::i18n::t(queue))],
             ),
             Awake::Downloads => {
                 // i18n: why the computer isn't going to sleep, in the system's list of programs that keep it awake (Windows' power requests, Linux's inhibitors)
-                crate::i18n::t("iDM is downloading").to_owned()
+                crate::i18n::t("BMD is downloading").to_owned()
             }
         }
     }
@@ -355,8 +355,8 @@ impl Waker {
         self.refused = Some((std::time::Instant::now(), n + 1));
     }
 
-    /// Cancel the wake (iDM is quitting: Linux's alarm would outlive it). The computer may sleep
-    /// again: waited for at most [`QUIT_WAIT`] (the system lets go of it when iDM ends anyway).
+    /// Cancel the wake (BMD is quitting: Linux's alarm would outlive it). The computer may sleep
+    /// again: waited for at most [`QUIT_WAIT`] (the system lets go of it when BMD ends anyway).
     pub fn clear(&mut self) {
         self.clear_within(QUIT_WAIT);
     }
@@ -519,7 +519,7 @@ impl Holder {
                 Ok(_) => {}
                 Err(_) => {
                     tracing::warn!(
-                        "wake: the system hasn't answered within {limit:?}; iDM's hold ends with it"
+                        "wake: the system hasn't answered within {limit:?}; BMD's hold ends with it"
                     );
                     return false;
                 }
@@ -725,7 +725,7 @@ mod tests {
             ..Waker::default()
         };
         // The translations are read once, on the first text (the app has read them long before).
-        let _ = crate::i18n::t("iDM is running the queue \"{queue}\"");
+        let _ = crate::i18n::t("BMD is running the queue \"{queue}\"");
         let system = System {
             calls: calls_rx,
             answers: answers_tx,
@@ -839,7 +839,7 @@ mod tests {
     fn quitting_waits_for_a_hanging_system_at_most_a_second() {
         let (mut w, sys) = waker();
         w.keep_awake(Some(Awake::Queue(QUEUE)));
-        // The system takes the hold and never answers while iDM quits.
+        // The system takes the hold and never answers while BMD quits.
         assert!(sys.next().is_some());
         let t = Instant::now();
         w.clear();
@@ -882,8 +882,8 @@ mod tests {
         queues[1].schedule.wake = true;
         assert_eq!(why_awake(&queues, false), Some(Awake::Queue(QUEUE)));
         assert_eq!(why_awake(&queues, true), Some(Awake::Queue(QUEUE)));
-        let _ = crate::i18n::t("iDM is downloading");
-        assert_eq!(Awake::Downloads.reason(), "iDM is downloading");
+        let _ = crate::i18n::t("BMD is downloading");
+        assert_eq!(Awake::Downloads.reason(), "BMD is downloading");
     }
 
     /// The queue that woke the computer is done and its downloads go on: the hold is asked again
@@ -897,7 +897,7 @@ mod tests {
         tick_until(&mut w, Some(Awake::Queue(QUEUE)), |w| w.awake);
         // The queue is done, its downloads go on: asked again on the next tick, in their words.
         w.keep_awake(Some(Awake::Downloads));
-        assert_eq!(sys.next().as_deref(), Some("iDM is downloading"));
+        assert_eq!(sys.next().as_deref(), Some("BMD is downloading"));
         sys.answer(true);
         tick_until(&mut w, Some(Awake::Downloads), |w| !w.holder.asking());
         // More ticks with the same reason ask nothing more.

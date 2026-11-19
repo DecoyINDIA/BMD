@@ -1,4 +1,4 @@
-﻿; iDM's installer in Lithuanian: tools/installer/languages.py
+﻿; BMD's installer in Lithuanian: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Šalinama %1.
 
 [CustomMessages]
 TaskBrowser=Nustatyti naršyklės integravimą (&Chrome, Edge, Brave, Firefox)
-TaskTorrents=Atidaryti .&torrent failus ir magnet nuorodas naudojant „iDM“
-TaskStartup=Paleisti „iDM“, kai paleidžiama „&Windows“
+TaskTorrents=Atidaryti .&torrent failus ir magnet nuorodas naudojant „BMD“
+TaskStartup=Paleisti „BMD“, kai paleidžiama „&Windows“
 TaskGroupOther=Kita:
-Launch=Paleisti „iDM“
+Launch=Paleisti „BMD“
 KeepData=Ar taip pat ištrinti atsisiuntimų sąrašą ir nustatymus?%n%nJūsų atsisiųsti failai nebus paliesti.

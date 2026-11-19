@@ -9,10 +9,10 @@ import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-OURS = {"mdm-app", "mdm-cli", "mdm-nmhost", "mdm-engine", "mdm-ipc", "mdm-tools", "mdm-torrent"}
+OURS = {"bmd-app", "bmd-cli", "bmd-nmhost", "bmd-engine", "bmd-ipc", "bmd-tools", "bmd-torrent"}
 
 rows = set()
-for package in ("mdm-app", "mdm-cli", "mdm-nmhost"):
+for package in ("bmd-app", "bmd-cli", "bmd-nmhost"):
     out = subprocess.run(
         ["cargo", "tree", "-p", package, "-e", "normal,build", "--prefix", "none", "--target", "all",
          "-f", "{p}\t{l}\t{r}"],

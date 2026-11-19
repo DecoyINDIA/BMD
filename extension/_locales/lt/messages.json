@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Perduoda atsisiuntimus iš naršyklės į „iDM“."
+    "message": "Perduoda atsisiuntimus iš naršyklės į „BMD“."
   },
   "menu": {
-    "message": "Atsisiųsti naudojant „iDM“"
+    "message": "Atsisiųsti naudojant „BMD“"
   },
   "video_download": {
     "message": "Atsisiųsti vaizdo įrašą"
@@ -30,19 +30,19 @@
     "message": "Mygtuko parametrai..."
   },
   "video_sent": {
-    "message": "Išsiųsta į iDM"
+    "message": "Išsiųsta į BMD"
   },
   "menu_selected": {
-    "message": "Atsisiųsti pasirinktas nuorodas su iDM"
+    "message": "Atsisiųsti pasirinktas nuorodas su BMD"
   },
   "menu_all": {
-    "message": "Atsisiųsti visas nuorodas su iDM"
+    "message": "Atsisiųsti visas nuorodas su BMD"
   },
   "status_connected": {
-    "message": "Prijungta prie iDM"
+    "message": "Prijungta prie BMD"
   },
   "status_connected_version": {
-    "message": "Prijungta prie iDM $version$",
+    "message": "Prijungta prie BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Pristabdyta: atsisiuntimai lieka naršyklėje"
   },
   "status_not_installed": {
-    "message": "iDM neįdiegta arba jos naršyklės integracija nenustatyta"
+    "message": "BMD neįdiegta arba jos naršyklės integracija nenustatyta"
   },
   "status_forbidden": {
-    "message": "iDM nepriima šios plėtinio kopijos"
+    "message": "BMD nepriima šios plėtinio kopijos"
   },
   "status_not_running": {
-    "message": "iDM nepasileido laiku"
+    "message": "BMD nepasileido laiku"
   },
   "status_host_failed": {
-    "message": "Ryšys su iDM nepavyko"
+    "message": "Ryšys su BMD nepavyko"
   },
   "status_too_large": {
     "message": "Šio atsisiuntimo duomenys buvo per dideli, kad juos būtų galima perduoti"
   },
   "status_update_app": {
-    "message": "Atnaujinkite iDM, kad galėtumėte naudotis visomis šio plėtinio funkcijomis"
+    "message": "Atnaujinkite BMD, kad galėtumėte naudotis visomis šio plėtinio funkcijomis"
   },
   "popup_take": {
     "message": "Perimti atsisiuntimus iš šios naršyklės"
@@ -78,10 +78,10 @@
     "message": "Siųsti atsisiuntimus per šios naršyklės tarpinio serverio arba VPN plėtinį"
   },
   "popup_proxy_title": {
-    "message": "Tada „iDM“ atsisiunčia per tą patį tarpinį serverį, kurį naudoja ši naršyklė. Naršyklė vieną kartą paprašys jūsų tai leisti; išjungus šią parinktį, leidimas atšaukiamas."
+    "message": "Tada „BMD“ atsisiunčia per tą patį tarpinį serverį, kurį naudoja ši naršyklė. Naršyklė vieną kartą paprašys jūsų tai leisti; išjungus šią parinktį, leidimas atšaukiamas."
   },
   "popup_proxy_title_chromium": {
-    "message": "Tada iDM atsisiunčia naudodama tą patį tarpinį serverį kaip ir ši naršyklė. Kai ši funkcija išjungta, plėtinys neskaito naršyklės tarpinio serverio."
+    "message": "Tada BMD atsisiunčia naudodama tą patį tarpinį serverį kaip ir ši naršyklė. Kai ši funkcija išjungta, plėtinys neskaito naršyklės tarpinio serverio."
   },
   "popup_exclude_site": {
     "message": "Niekada nepaimti atsisiuntimų iš $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Atidaryti iDM"
+    "message": "Atidaryti BMD"
   },
   "popup_options": {
     "message": "Parinktys..."
@@ -114,7 +114,7 @@
     "message": "Žinynas"
   },
   "popup_support": {
-    "message": "Palaikykite iDM"
+    "message": "Palaikykite BMD"
   },
   "popup_fix": {
     "message": "Kaip tai ištaisyti"
@@ -150,7 +150,7 @@
     "message": "Parinktyse „Bendra“ išjungta „Naudoti išplėstinę naršyklės integraciją“."
   },
   "declined_torrents": {
-    "message": "Tai torrentas, o „Atidaryti magnetines nuorodas ir .torrent failus su iDM“ yra išjungta torrentų nustatymuose."
+    "message": "Tai torrentas, o „Atidaryti magnetines nuorodas ir .torrent failus su BMD“ yra išjungta torrentų nustatymuose."
   },
   "declined_site_access": {
     "message": "Plėtiniui neleidžiama skaityti šios svetainės (naršyklės prieiga prie svetainės)."
@@ -195,16 +195,16 @@
     "message": "Čia nėra vaizdo įrašo, kurį būtų galima atsisiųsti"
   },
   "video_playlist": {
-    "message": "Vaizdo įrašų sąrašas: pasirinkite juos programoje iDM"
+    "message": "Vaizdo įrašų sąrašas: pasirinkite juos programoje BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM šiam vaizdo įrašui reikia yt-dlp"
+    "message": "BMD šiam vaizdo įrašui reikia yt-dlp"
   },
   "video_too_long": {
     "message": "Paieška užtruko per ilgai"
   },
   "video_busy": {
-    "message": "iDM užsiėmusi kitais vaizdo įrašais"
+    "message": "BMD užsiėmusi kitais vaizdo įrašais"
   },
   "video_queued": {
     "message": "Pridėta į eilę"
@@ -228,7 +228,7 @@
     "message": "Šis kompiuteris"
   },
   "popup_send_remote": {
-    "message": "Kitas „iDM“ (serveris)"
+    "message": "Kitas „BMD“ (serveris)"
   },
   "popup_remote_code": {
     "message": "Susiejimo kodas"
@@ -240,7 +240,7 @@
     "message": "Susieti"
   },
   "popup_remote_help": {
-    "message": "Atidarykite jo adresą vieną kartą ir priimkite jo sertifikatą, tada įveskite kodą iš „Parinktys“, „Nuotolinis“, „Susieti įrenginį“ (arba „misterdownloadmanager-cli pair“)."
+    "message": "Atidarykite jo adresą vieną kartą ir priimkite jo sertifikatą, tada įveskite kodą iš „Parinktys“, „Nuotolinis“, „Susieti įrenginį“ (arba „bmd-cli pair“)."
   },
   "status_remote": {
     "message": "Atsisiuntimai siunčiami į $address$",
@@ -297,19 +297,19 @@
     "message": "Atsisiųsti geriausią kokybę"
   },
   "video_sending": {
-    "message": "Siunčiama į iDM..."
+    "message": "Siunčiama į BMD..."
   },
   "video_added": {
-    "message": "Pridėta į iDM"
+    "message": "Pridėta į BMD"
   },
   "video_show": {
     "message": "Rodyti"
   },
   "video_no_answer": {
-    "message": "iDM neatsakė"
+    "message": "BMD neatsakė"
   },
-  "video_get_mdm": {
-    "message": "Gauti iDM"
+  "video_get_bmd": {
+    "message": "Gauti BMD"
   },
   "video_retry": {
     "message": "Bandyti dar kartą"
@@ -324,7 +324,7 @@
     "message": "Visos kokybės ir subtitrai..."
   },
   "video_failed": {
-    "message": "iDM neįdiegta arba nepasileido"
+    "message": "BMD neįdiegta arba nepasileido"
   },
   "video_download_best": {
     "message": "Atsisiųsti geriausią"

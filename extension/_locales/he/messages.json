@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "מעביר הורדות מהדפדפן אל iDM."
+    "message": "מעביר הורדות מהדפדפן אל BMD."
   },
   "menu": {
-    "message": "הורד באמצעות iDM"
+    "message": "הורד באמצעות BMD"
   },
   "video_download": {
     "message": "הורד סרטון"
@@ -30,19 +30,19 @@
     "message": "הגדרות לחצן..."
   },
   "video_sent": {
-    "message": "נשלח אל iDM"
+    "message": "נשלח אל BMD"
   },
   "menu_selected": {
-    "message": "הורד את הקישורים שנבחרו באמצעות iDM"
+    "message": "הורד את הקישורים שנבחרו באמצעות BMD"
   },
   "menu_all": {
-    "message": "הורד את כל הקישורים באמצעות iDM"
+    "message": "הורד את כל הקישורים באמצעות BMD"
   },
   "status_connected": {
-    "message": "מחובר אל iDM"
+    "message": "מחובר אל BMD"
   },
   "status_connected_version": {
-    "message": "מחובר אל iDM $version$",
+    "message": "מחובר אל BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "מושהה: ההורדות נשארות בדפדפן"
   },
   "status_not_installed": {
-    "message": "iDM אינו מותקן, או ששילוב הדפדפן שלו אינו מוגדר"
+    "message": "BMD אינו מותקן, או ששילוב הדפדפן שלו אינו מוגדר"
   },
   "status_forbidden": {
-    "message": "iDM אינו מקבל עותק זה של ההרחבה"
+    "message": "BMD אינו מקבל עותק זה של ההרחבה"
   },
   "status_not_running": {
-    "message": "iDM לא הופעל בזמן"
+    "message": "BMD לא הופעל בזמן"
   },
   "status_host_failed": {
-    "message": "החיבור ל- iDM נכשל"
+    "message": "החיבור ל- BMD נכשל"
   },
   "status_too_large": {
     "message": "פרטי ההורדה הזו היו גדולים מדי למסירה"
   },
   "status_update_app": {
-    "message": "עדכן את iDM כדי להשתמש בכל מה שתוסף זה מציע"
+    "message": "עדכן את BMD כדי להשתמש בכל מה שתוסף זה מציע"
   },
   "popup_take": {
     "message": "קבל הורדות מדפדפן זה"
@@ -78,10 +78,10 @@
     "message": "שלח הורדות דרך שרת ה-Proxy או הרחבת ה-VPN של דפדפן זה"
   },
   "popup_proxy_title": {
-    "message": "iDM מוריד אז דרך אותו שרת Proxy כמו הדפדפן הזה. הדפדפן יבקש ממך פעם אחת לאפשר זאת; כיבוי אפשרות זו מבטל זאת."
+    "message": "BMD מוריד אז דרך אותו שרת Proxy כמו הדפדפן הזה. הדפדפן יבקש ממך פעם אחת לאפשר זאת; כיבוי אפשרות זו מבטל זאת."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM יוריד אז דרך אותו שרת proxy שבו משתמש הדפדפן הזה. כשהאפשרות הזו כבויה, התוסף לא קורא את שרת ה-proxy של הדפדפן."
+    "message": "BMD יוריד אז דרך אותו שרת proxy שבו משתמש הדפדפן הזה. כשהאפשרות הזו כבויה, התוסף לא קורא את שרת ה-proxy של הדפדפן."
   },
   "popup_exclude_site": {
     "message": "לעולם אל תיקח הורדות מ־$site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "פתח את iDM"
+    "message": "פתח את BMD"
   },
   "popup_options": {
     "message": "אפשרויות..."
@@ -114,7 +114,7 @@
     "message": "עזרה"
   },
   "popup_support": {
-    "message": "תמוך ב-iDM"
+    "message": "תמוך ב-BMD"
   },
   "popup_fix": {
     "message": "איך לתקן זאת"
@@ -150,7 +150,7 @@
     "message": "האפשרות 'השתמש בשילוב דפדפן מתקדם' כבויה ב'אפשרויות' ← 'כללי'."
   },
   "declined_torrents": {
-    "message": "זהו קובץ טורנט, והאפשרות ״פתיחת קישורי magnet וקובצי .torrent באמצעות iDM״ כבויה בהגדרות הטורנט."
+    "message": "זהו קובץ טורנט, והאפשרות ״פתיחת קישורי magnet וקובצי .torrent באמצעות BMD״ כבויה בהגדרות הטורנט."
   },
   "declined_site_access": {
     "message": "אין הרשאה להרחבה לקרוא אתר זה (גישת האתר של הדפדפן)."
@@ -195,16 +195,16 @@
     "message": "אין כאן סרטון להורדה"
   },
   "video_playlist": {
-    "message": "רשימת סרטונים: בחר אותם ב-iDM"
+    "message": "רשימת סרטונים: בחר אותם ב-BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM זקוק ל-yt-dlp עבור סרטון זה"
+    "message": "BMD זקוק ל-yt-dlp עבור סרטון זה"
   },
   "video_too_long": {
     "message": "החיפוש ארך זמן רב מדי"
   },
   "video_busy": {
-    "message": "iDM עסוק בסרטונים אחרים"
+    "message": "BMD עסוק בסרטונים אחרים"
   },
   "video_queued": {
     "message": "נוסף לתור"
@@ -228,7 +228,7 @@
     "message": "מחשב זה"
   },
   "popup_send_remote": {
-    "message": "iDM אחר (שרת)"
+    "message": "BMD אחר (שרת)"
   },
   "popup_remote_code": {
     "message": "קוד צימוד"
@@ -240,7 +240,7 @@
     "message": "צמד"
   },
   "popup_remote_help": {
-    "message": "פתח את הכתובת שלו פעם אחת וקבל את האישור שלו, ואז הזן קוד מ'אפשרויות', 'מרוחק', 'צמד התקן' (או misterdownloadmanager-cli pair)."
+    "message": "פתח את הכתובת שלו פעם אחת וקבל את האישור שלו, ואז הזן קוד מ'אפשרויות', 'מרוחק', 'צמד התקן' (או bmd-cli pair)."
   },
   "status_remote": {
     "message": "ההורדות עוברות אל $address$",
@@ -297,19 +297,19 @@
     "message": "הורד את האיכות הטובה ביותר"
   },
   "video_sending": {
-    "message": "שולח ל-iDM..."
+    "message": "שולח ל-BMD..."
   },
   "video_added": {
-    "message": "נוסף ל-iDM"
+    "message": "נוסף ל-BMD"
   },
   "video_show": {
     "message": "הצג"
   },
   "video_no_answer": {
-    "message": "iDM לא הגיב"
+    "message": "BMD לא הגיב"
   },
-  "video_get_mdm": {
-    "message": "קבל את iDM"
+  "video_get_bmd": {
+    "message": "קבל את BMD"
   },
   "video_retry": {
     "message": "נסה שוב"
@@ -324,7 +324,7 @@
     "message": "כל האיכויות והכתוביות..."
   },
   "video_failed": {
-    "message": "iDM אינו מותקן או לא הופעל"
+    "message": "BMD אינו מותקן או לא הופעל"
   },
   "video_download_best": {
     "message": "הורד את האיכות הטובה ביותר"

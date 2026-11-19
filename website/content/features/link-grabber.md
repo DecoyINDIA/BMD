@@ -3,8 +3,8 @@ name: Link grabber
 title: Link grabber and archive extraction
 headline: Every link on a page. Only the ones you tick.
 line: A page's links gathered, sorted into packages and checked online, then the archives unpacked when they arrive.
-lede: Link grabber collects many links at once, from the browser, a text file or the clipboard. It sorts them into packages, shows which ones are really there, and iDM can unpack the archives once they are downloaded.
-description: iDM's link grabber collects a page's links, sorts them into packages, checks which are online and extracts the archives they bring.
+lede: Link grabber collects many links at once, from the browser, a text file or the clipboard. It sorts them into packages, shows which ones are really there, and BMD can unpack the archives once they are downloaded.
+description: BMD's link grabber collects a page's links, sorts them into packages, checks which are online and extracts the archives they bring.
 group: downloading
 order: 70
 since: 0.5
@@ -16,8 +16,8 @@ help: link-grabber.md
 
 ## Links from anywhere
 
-Right-click a page in the browser for **Download all links with iDM**, or
-select part of it for **Download selected links with iDM**. The page's referrer and cookies go with each
+Right-click a page in the browser for **Download all links with BMD**, or
+select part of it for **Download selected links with BMD**. The page's referrer and cookies go with each
 link. You can also import a text file or an `.ef2` export with **Tasks → Import**, drop a list on
 the download list, or open **Tasks → Link grabber...** and paste any text with **Ctrl+V**: every
 web address in it is added. Copied a list of links, or a forum post with links in it?
@@ -38,7 +38,7 @@ adds them without starting.
 
 ## Checked before you download
 
-As links arrive, iDM asks each server about its file, a few at a time. Each link then shows its
+As links arrive, BMD asks each server about its file, a few at a time. Each link then shows its
 real name and size, and whether it is **Online**, **Offline (404)**, **Needs a login** or
 **Busy, try later**. Offline links come unticked, so you don't queue what isn't there. Links to
 web pages are hidden by default.
@@ -50,8 +50,8 @@ Some file hosts count a look-up as a download: turn the look-ups off in **Option
 ![Options on its Archives page: extracting archives when they are downloaded, and Link grabber's look-ups](images/help/options-archives.webp)
 *Options → Archives: extract every archive, or only the packages that ask.*
 
-iDM extracts ZIP (encrypted ones too), TAR, TAR.GZ, TAR.XZ, GZ and XZ itself. 7z and RAR need
-7-Zip, a free program: RAR's own extraction code can't be part of a free program like iDM. When
+BMD extracts ZIP (encrypted ones too), TAR, TAR.GZ, TAR.XZ, GZ and XZ itself. 7z and RAR need
+7-Zip, a free program: RAR's own extraction code can't be part of a free program like BMD. When
 7-Zip isn't installed, a window says so, with a button to get it.
 
 A split archive is extracted once its last volume is in. Extraction is careful: a name that

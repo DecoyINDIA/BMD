@@ -1,4 +1,4 @@
-﻿; iDM's installer in Maltese: tools/installer/languages.py
+﻿; BMD's installer in Maltese: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Qed tiddiżinstalla %1.
 
 [CustomMessages]
 TaskBrowser=Issettja l-integrazzjoni tal-&brawżer (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Iftaħ fajls .&torrent u links manjetiċi b'iDM
-TaskStartup=Ibda iDM meta tibda l-&Windows
+TaskTorrents=Iftaħ fajls .&torrent u links manjetiċi b'BMD
+TaskStartup=Ibda BMD meta tibda l-&Windows
 TaskGroupOther=Oħrajn:
-Launch=Ibda iDM
+Launch=Ibda BMD
 KeepData=Tħassar ukoll il-lista tat-tniżżil u s-settings tiegħek?%n%nIl-fajls imniżżla tiegħek ma jintmessux fi kwalunkwe każ.

@@ -1,21 +1,21 @@
 //! #174: while the main window is minimized (not to the notification area), egui runs only the
 //! app's logic, never its UI. The queues, the Scheduler's starts and the list's saving ran in the
-//! UI, so a minimized iDM started nothing until it was restored. The real app, off the screens
-//! (MDM_OFFSCREEN), with a data folder of its own and the lab server on 127.0.0.1: its main
+//! UI, so a minimized BMD started nothing until it was restored. The real app, off the screens
+//! (BMD_OFFSCREEN), with a data folder of its own and the lab server on 127.0.0.1: its main
 //! window minimized (`/show minimized`, no input), a queue of three files, one at a time,
 //! scheduled to start a few seconds ahead. Every file must come down, one after the other, and
 //! the Download complete windows open.
 //!
 //! It opens windows, which needs OpenGL or Direct3D, so it runs on request:
-//! `cargo test -p mdm-app --test minimized_clock -- --ignored`.
+//! `cargo test -p bmd-app --test minimized_clock -- --ignored`.
 
 use std::path::Path;
 use std::process::{Child, Command};
 use std::time::{Duration, Instant};
 
-use mdm_labserver::{Config, LabServer};
+use bmd_labserver::{Config, LabServer};
 
-const APP: &str = env!("CARGO_BIN_EXE_misterdownloadmanager");
+const APP: &str = env!("CARGO_BIN_EXE_bmd");
 
 /// The app's log so far (every file of `logs/`).
 fn log(data: &Path) -> String {
@@ -49,7 +49,7 @@ fn second_launch(data: &Path, args: &[&str]) {
     let status = Command::new(APP)
         .args(args)
         .env("MDM_DATA_DIR", data)
-        .env("MDM_OFFSCREEN", "1")
+        .env("BMD_OFFSCREEN", "1")
         .status()
         .unwrap();
     assert!(status.success(), "second launch {args:?}: {status}");
@@ -102,7 +102,7 @@ async fn a_scheduled_queue_runs_while_minimized() {
     let result = tokio::task::spawn_blocking(move || {
         let mut app = Command::new(APP)
             .env("MDM_DATA_DIR", &data)
-            .env("MDM_OFFSCREEN", "1")
+            .env("BMD_OFFSCREEN", "1")
             .spawn()
             .unwrap();
         let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
@@ -125,7 +125,7 @@ async fn a_scheduled_queue_runs_while_minimized() {
         let _ = Command::new(APP)
             .arg("/exit")
             .env("MDM_DATA_DIR", &data)
-            .env("MDM_OFFSCREEN", "1")
+            .env("BMD_OFFSCREEN", "1")
             .status();
         let until = Instant::now() + Duration::from_secs(15);
         while app.try_wait().unwrap().is_none() && Instant::now() < until {

@@ -1,4 +1,4 @@
-﻿; iDM's installer in Greek: tools/installer/languages.py
+﻿; BMD's installer in Greek: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Απεγκατάσταση %1.
 
 [CustomMessages]
 TaskBrowser=Ρύθμιση ενσωμάτωσης &προγράμματος περιήγησης (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Άνοιγμα αρχείων .&torrent και συνδέσεων magnet με το iDM
-TaskStartup=Εκκίνηση του iDM όταν ξεκινά το &Windows
+TaskTorrents=Άνοιγμα αρχείων .&torrent και συνδέσεων magnet με το BMD
+TaskStartup=Εκκίνηση του BMD όταν ξεκινά το &Windows
 TaskGroupOther=Άλλα:
-Launch=Εκκίνηση του iDM
+Launch=Εκκίνηση του BMD
 KeepData=Να διαγραφεί επίσης η λίστα λήψεων και οι ρυθμίσεις σας;%n%nΤα αρχεία που έχετε κατεβάσει δεν επηρεάζονται σε καμία περίπτωση.

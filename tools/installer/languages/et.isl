@@ -1,4 +1,4 @@
-﻿; iDM's installer in Estonian: tools/installer/languages.py
+﻿; BMD's installer in Estonian: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Eemaldan %1.
 
 [CustomMessages]
 TaskBrowser=Seadista &brauseri integreerimine (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Ava &torrent-failid ja magnetlingid rakendusega iDM
-TaskStartup=Käivita iDM &Windowsi käivitamisel
+TaskTorrents=Ava &torrent-failid ja magnetlingid rakendusega BMD
+TaskStartup=Käivita BMD &Windowsi käivitamisel
 TaskGroupOther=Muu:
-Launch=Käivita iDM
+Launch=Käivita BMD
 KeepData=Kas kustutada ka teie allalaadimiste loend ja sätted?%n%nTeie allalaaditud faile ei puudutata kummalgi juhul.

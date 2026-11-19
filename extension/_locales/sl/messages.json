@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Prenose iz brskalnika preda programu iDM."
+    "message": "Prenose iz brskalnika preda programu BMD."
   },
   "menu": {
-    "message": "Prenesi z iDM"
+    "message": "Prenesi z BMD"
   },
   "video_download": {
     "message": "Prenesi video"
@@ -30,19 +30,19 @@
     "message": "Nastavitve gumba..."
   },
   "video_sent": {
-    "message": "Poslano v iDM"
+    "message": "Poslano v BMD"
   },
   "menu_selected": {
-    "message": "Prenesi izbrane povezave z iDM"
+    "message": "Prenesi izbrane povezave z BMD"
   },
   "menu_all": {
-    "message": "Prenesi vse povezave z iDM"
+    "message": "Prenesi vse povezave z BMD"
   },
   "status_connected": {
-    "message": "Povezano z iDM"
+    "message": "Povezano z BMD"
   },
   "status_connected_version": {
-    "message": "Povezano z iDM $version$",
+    "message": "Povezano z BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Začasno ustavljeno: prenosi ostanejo v brskalniku"
   },
   "status_not_installed": {
-    "message": "iDM ni nameščen ali njegova integracija brskalnika ni nastavljena"
+    "message": "BMD ni nameščen ali njegova integracija brskalnika ni nastavljena"
   },
   "status_forbidden": {
-    "message": "iDM ne sprejema te kopije razširitve"
+    "message": "BMD ne sprejema te kopije razširitve"
   },
   "status_not_running": {
-    "message": "iDM se ni zagnal pravočasno"
+    "message": "BMD se ni zagnal pravočasno"
   },
   "status_host_failed": {
-    "message": "Povezava z iDM ni uspela"
+    "message": "Povezava z BMD ni uspela"
   },
   "status_too_large": {
     "message": "Podrobnosti tega prenosa so bile prevelike za predajo"
   },
   "status_update_app": {
-    "message": "Posodobite iDM, da boste lahko uporabljali vse, kar ponuja ta razširitev"
+    "message": "Posodobite BMD, da boste lahko uporabljali vse, kar ponuja ta razširitev"
   },
   "popup_take": {
     "message": "Prevzemi prenose iz tega brskalnika"
@@ -78,10 +78,10 @@
     "message": "Pošlji prenose prek posrednika ali razširitve VPN tega brskalnika"
   },
   "popup_proxy_title": {
-    "message": "iDM nato prenaša prek istega posrednika kot ta brskalnik. Brskalnik vas enkrat vpraša, ali to dovolite; če to izklopite, se dovoljenje prekliče."
+    "message": "BMD nato prenaša prek istega posrednika kot ta brskalnik. Brskalnik vas enkrat vpraša, ali to dovolite; če to izklopite, se dovoljenje prekliče."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM nato prenaša prek istega posrednika kot ta brskalnik. Ko je to izklopljeno, razširitev ne bere brskalnikovega posrednika."
+    "message": "BMD nato prenaša prek istega posrednika kot ta brskalnik. Ko je to izklopljeno, razširitev ne bere brskalnikovega posrednika."
   },
   "popup_exclude_site": {
     "message": "Nikoli ne prevzemi prenosov s spletnega mesta $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Odpri iDM"
+    "message": "Odpri BMD"
   },
   "popup_options": {
     "message": "Možnosti..."
@@ -114,7 +114,7 @@
     "message": "Pomoč"
   },
   "popup_support": {
-    "message": "Podprite iDM"
+    "message": "Podprite BMD"
   },
   "popup_fix": {
     "message": "Kako odpraviti težavo"
@@ -150,7 +150,7 @@
     "message": "Uporabi napredno integracijo brskalnika je izklopljeno v Možnosti → Splošno."
   },
   "declined_torrents": {
-    "message": "To je torrent, možnost »Odpri magnetne povezave in datoteke .torrent z iDM« pa je v nastavitvah torrentov izklopljena."
+    "message": "To je torrent, možnost »Odpri magnetne povezave in datoteke .torrent z BMD« pa je v nastavitvah torrentov izklopljena."
   },
   "declined_site_access": {
     "message": "Razširitvi ni dovoljeno brati tega spletnega mesta (dostop brskalnika do spletnega mesta)."
@@ -195,16 +195,16 @@
     "message": "Tu ni videa za prenos"
   },
   "video_playlist": {
-    "message": "Seznam videoposnetkov: izberite jih v programu iDM"
+    "message": "Seznam videoposnetkov: izberite jih v programu BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM potrebuje yt-dlp za ta videoposnetek"
+    "message": "BMD potrebuje yt-dlp za ta videoposnetek"
   },
   "video_too_long": {
     "message": "Iskanje je trajalo predolgo"
   },
   "video_busy": {
-    "message": "iDM je zaseden z drugimi videoposnetki"
+    "message": "BMD je zaseden z drugimi videoposnetki"
   },
   "video_queued": {
     "message": "Dodano v čakalno vrsto"
@@ -228,7 +228,7 @@
     "message": "Ta računalnik"
   },
   "popup_send_remote": {
-    "message": "Drugi iDM (strežnik)"
+    "message": "Drugi BMD (strežnik)"
   },
   "popup_remote_code": {
     "message": "Koda za seznanjanje"
@@ -240,7 +240,7 @@
     "message": "Seznani"
   },
   "popup_remote_help": {
-    "message": "Enkrat odprite njegov naslov in sprejmite njegovo potrdilo, nato vnesite kodo iz možnosti, oddaljeno, seznani napravo (ali misterdownloadmanager-cli pair)."
+    "message": "Enkrat odprite njegov naslov in sprejmite njegovo potrdilo, nato vnesite kodo iz možnosti, oddaljeno, seznani napravo (ali bmd-cli pair)."
   },
   "status_remote": {
     "message": "Prenosi gredo na $address$",
@@ -297,19 +297,19 @@
     "message": "Prenesi najboljšo kakovost"
   },
   "video_sending": {
-    "message": "Pošiljanje v iDM..."
+    "message": "Pošiljanje v BMD..."
   },
   "video_added": {
-    "message": "Dodano v iDM"
+    "message": "Dodano v BMD"
   },
   "video_show": {
     "message": "Pokaži"
   },
   "video_no_answer": {
-    "message": "iDM se ni odzval"
+    "message": "BMD se ni odzval"
   },
-  "video_get_mdm": {
-    "message": "Pridobi iDM"
+  "video_get_bmd": {
+    "message": "Pridobi BMD"
   },
   "video_retry": {
     "message": "Poskusi znova"
@@ -324,7 +324,7 @@
     "message": "Vse kakovosti in podnapisi..."
   },
   "video_failed": {
-    "message": "iDM ni nameščen ali se ni zagnal"
+    "message": "BMD ni nameščen ali se ni zagnal"
   },
   "video_download_best": {
     "message": "Prenesi najboljšo kakovost"

@@ -1,8 +1,8 @@
-// iDM's browser extension: the background part (Chrome, Edge, Brave, Opera
+// BMD's browser extension: the background part (Chrome, Edge, Brave, Opera
 // and Vivaldi run it as a service worker, Firefox as a background script; one file for both, see
 // manifest.json and manifest.firefox.json).
 //
-// Downloads of the file types iDM takes are handed to it: the browser's own
+// Downloads of the file types BMD takes are handed to it: the browser's own
 // download is cancelled, and the address, referrer, cookies, User-Agent, file name, size, type
 // and (for a form) the posted body go to the app through the native messaging host
 // (crates/nmhost). When it can't be reached the download stays with the browser, so nothing is
@@ -13,7 +13,7 @@
 const ext = globalThis.browser ?? globalThis.chrome;
 const HOST = "com.misterdownloadmanager.host";
 const VERSION = ext.runtime.getManifest().version;
-const HELP = "https://github.com/DecoyINDIA/iDM/blob/main/docs/browser-help.md";
+const HELP = "https://github.com/DecoyINDIA/BMD/blob/main/docs/browser-help.md";
 const action = ext.action ?? ext.browserAction;
 // Safari has no downloads API at all (nor proxy): it can't take a download from the browser, so
 // the links clicked in a page are handed over instead (`link`, below; page.js).
@@ -32,7 +32,7 @@ const t = (key, ...subs) => ext.i18n.getMessage(key, subs) || key;
 
 // ---- the native host ---------------------------------------------------------------------
 
-// How long an answer may take: the host starts iDM when it isn't running
+// How long an answer may take: the host starts BMD when it isn't running
 // and waits for it (crates/nmhost START_WAIT); the browser's download waits meanwhile.
 const HOST_WAIT = 30000;
 
@@ -66,7 +66,7 @@ async function stamped(message) {
 // browser's status, and the rules depend on the browser). Never throws: failures come back as
 // `{ok: false, why}`.
 async function native(message, ms = HOST_WAIT) {
-  // A download for another iDM (a server, #157): sent there, not to this computer's.
+  // A download for another BMD (a server, #157): sent there, not to this computer's.
   if (typeof message.url === "string" && message.url) {
     const target = await remoteTarget();
     if (target) return remoteSend(target, message);
@@ -83,15 +83,15 @@ async function native(message, ms = HOST_WAIT) {
     return reply;
   } catch (e) {
     const why = hostProblem(e);
-    // With another iDM chosen, this computer's needn't be there.
+    // With another BMD chosen, this computer's needn't be there.
     if (!(await remoteTarget())) await noteStatus(why);
     return { ok: false, why, error: String((e && e.message) || e) };
   }
 }
 
-// ---- another iDM (#157): a server's, through its remote control ------------------------------
+// ---- another BMD (#157): a server's, through its remote control ------------------------------
 
-// {url, token} while downloads go to another iDM instead of this computer's, else null.
+// {url, token} while downloads go to another BMD instead of this computer's, else null.
 async function remoteTarget() {
   const { remote } = await ext.storage.local.get({ remote: null });
   return remote && remote.url && remote.token ? remote : null;
@@ -125,7 +125,7 @@ async function remoteCall(base, path, body, token) {
   }
 }
 
-// A download handed to the other iDM: its address only (a site's sign-in stays in this browser).
+// A download handed to the other BMD: its address only (a site's sign-in stays in this browser).
 async function remoteSend(target, message) {
   const r = await remoteCall(target.url, "api/add", { url: message.url, start: true }, target.token);
   if (r.status === 200 && r.body && !r.body.error) return { ok: true };
@@ -133,12 +133,12 @@ async function remoteSend(target, message) {
   return { ok: false, why: "refused" };
 }
 
-// The file types the app takes by default (mdm_ipc::capture::DEFAULT_AUTO_TYPES; a test keeps
-// them the same): what is caught for another iDM when this computer has none to ask.
+// The file types the app takes by default (bmd_ipc::capture::DEFAULT_AUTO_TYPES; a test keeps
+// them the same): what is caught for another BMD when this computer has none to ask.
 const DEFAULT_TYPES =
   "00* 3DM 3DS 3GP 3MF 7Z AAB AAC ABC ACE AFDESIGN AFPHOTO AI AIF AIFF APE APK APKM APKS APPIMAGE APPX APPXBUNDLE ARJ ARROW ARW ASF AU AVI AVRO AZW AZW3 BAK BAM BIN BLEND BZ BZ2 C4D CAB CAF CBR CBZ CCD CHD CKPT CPIO CR2 CR3 CRAM CSO DAE DAT DCM DDS DEB DFF DIVX DJVU DMG DNG DOC DOCX DSF DWG DXF EPS EPUB EXE EXR F3D F4V FASTA FASTQ FB2 FBX FEATHER FIG FITS FLAC FLATPAK FQ GCODE GCZ GEM GGML GGUF GLB GLTF GPKG GRIB GRIB2 GZ GZIP H5 HDF5 HDR IGES IGS IMG INDD IPA ISO ISZ JAR JOBLIB JSONL KERAS KRA LAS LAZ LLAMAFILE LWO LZ LZ4 LZH LZMA M2T M2TS M2V M4A M4B M4V MA MAT MAX MB MBTILES MDF MDS MID MIDI MKA MKV MLMODEL MOBI MOV MP3 MP4 MPA MPE MPEG MPG MSI MSIX MSIXBUNDLE MSP MSU MTS MXF NC NDJSON NEF NEMO NII NPY NPZ NRG NSP NSZ NUPKG OBJ ODP ODS ODT OGG OGM OGV ONNX OPUS ORC ORF OTF OVA OVF PAK PARQUET PB PBF PDF PICKLE PK3 PK4 PKG PKL PLJ PLY POTX PPS PPSX PPT PPTX PSB PSD PT PTH QCOW QCOW2 QT R0* R1* R2* R3* R4* R5* R6* R7* R8* R9* RA RAF RAR RDS RM RMVB RPM RTF RUN RVZ RW2 SAFETENSORS SEA SF2 SFZ SHP SIT SITX SKETCH SKP SLDASM SLDPRT SNAP SQLITE SQLITE3 STEP STL STP TAR TBZ TBZ2 TFLITE TGA TGZ TIF TIFF TLZ TORRENT TTA TTC TTF TXZ TZST UNITYPACKAGE USD USDA USDC USDZ VDB VDI VHD VHDX VMDK VOB VPK VSIX WAV WBFS WEBM WHL WIM WMA WMV WRL WTV WUA WV X3D XAPK XCF XCI XLS XLSB XLSM XLSX XZ Z Z0* ZIP ZIPX ZPR ZST ZTL";
 
-// Pair with the iDM at `address` with a code it shows; {ok} or {ok: false, why, left}.
+// Pair with the BMD at `address` with a code it shows; {ok} or {ok: false, why, left}.
 async function remotePair(address, code) {
   let base;
   try {
@@ -203,7 +203,7 @@ async function noteStatus(why, app) {
   if (was !== (!why || why === "update-app")) await syncOpenedRule();
 }
 
-// Whether this computer's iDM looks videos up for the button over videos (its qualities listed in
+// Whether this computer's BMD looks videos up for the button over videos (its qualities listed in
 // the page, video.js), kept with the status beside the app's version: from every answer to
 // `rules`, and dropped when a lookup's answer says otherwise (an older host or app).
 async function noteLookup(on) {
@@ -265,7 +265,7 @@ async function askRules() {
     await syncOpenedRule();
     return rules;
   }
-  // No iDM on this computer, another one chosen: the app's default file types (the browser
+  // No BMD on this computer, another one chosen: the app's default file types (the browser
   // keeps the files it would open).
   if (await remoteTarget()) {
     rules = { types: DEFAULT_TYPES, capture: true, excludedSites: "", excludedAddresses: [], opened: false, minKb: 0, torrents: true, at: Date.now() };
@@ -294,7 +294,7 @@ function typePatterns(list) {
     .map((t) => new RegExp("^" + t.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$", "i"));
 }
 
-// A .torrent, as the app tells one (mdm_ipc::capture::is_torrent): its name or an address's
+// A .torrent, as the app tells one (bmd_ipc::capture::is_torrent): its name or an address's
 // path ends in .torrent, or its type is application/x-bittorrent.
 function isTorrent(name, urls, mime) {
   const ends = (s) => /\.torrent$/i.test(s || "");
@@ -314,7 +314,7 @@ function extensionOf(name) {
   return dot > 0 ? base.slice(dot + 1) : "";
 }
 
-// As the app matches them (mdm_ipc::capture): a pattern's `*` is any run of characters.
+// As the app matches them (bmd_ipc::capture): a pattern's `*` is any run of characters.
 function wildcard(pattern, text) {
   const re = new RegExp("^" + pattern.toLowerCase().split("*").map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*") + "$");
   return re.test(text.toLowerCase());
@@ -327,7 +327,7 @@ function addressMatches(pattern, url) {
   return wildcard(p, p.includes("://") ? url : url.replace(/^[a-z][a-z0-9+.-]*:\/\//i, ""));
 }
 
-// A site pattern against `host`, as the app reads one (mdm_ipc::capture::panel_site_matches):
+// A site pattern against `host`, as the app reads one (bmd_ipc::capture::panel_site_matches):
 // `*` matches anything (#759), and `*.example.com` the domain too; `example.com.` (the root's
 // dot) is `example.com`.
 function siteMatches(host, pattern) {
@@ -337,7 +337,7 @@ function siteMatches(host, pattern) {
   return (p.startsWith("*.") && wildcard(p.slice(2), host)) || wildcard(p, host);
 }
 
-// Whether `host` is on a site of Options' list (mdm_ipc::capture::site_listed): a name without
+// Whether `host` is on a site of Options' list (bmd_ipc::capture::site_listed): a name without
 // `*` takes its subdomains too, as the Download panels' list does (#1049).
 function siteListed(r, host) {
   return r.excludedSites.split(/\s+/).some((p) => p && (siteMatches(host, p) || (!p.startsWith("*") && siteMatches(host, `*.${p}`))));
@@ -368,10 +368,10 @@ function pageListed(r, page) {
   }
 }
 
-// ---- downloads left to the browser: why, for the popup and iDM's log (#208) ----------------
+// ---- downloads left to the browser: why, for the popup and BMD's log (#208) ----------------
 
 // A host's refusal by Options names the rule (`declined`); one before #208 says it only in its
-// error text, by the rule's Rust name (mdm_ipc::capture::Declined).
+// error text, by the rule's Rust name (bmd_ipc::capture::Declined).
 const DECLINED_NAMES = {
   IntegrationOff: "integration-off",
   Browser: "browser",
@@ -396,7 +396,7 @@ function siteOf(url) {
 
 // The last download left to the browser by Options (or because the extension may not read the
 // site): kept for the popup ({why, name, site, at}; a private window's without its name or
-// site), and, when the extension decided alone (`told` false), told to the host for iDM's log.
+// site), and, when the extension decided alone (`told` false), told to the host for BMD's log.
 // The host logs its own refusals itself. A download taken later clears it.
 async function noteLeft(why, name, url, incognito, told) {
   const declined = incognito ? { why, name: "", site: "", at: Date.now() } : { why, name, site: siteOf(url), at: Date.now() };
@@ -2025,7 +2025,7 @@ async function handOff(d) {
     cookies: await cookieHeader(d.url, d),
     filename: d.filename || "",
     // The browser's name is only its address's guess (#948, `addressNamed`): the host checks
-    // Options' file types by it, and iDM names the file from the server's own answer.
+    // Options' file types by it, and BMD names the file from the server's own answer.
     ...(d.nameGuessed ? { nameGuessed: true } : {}),
     ...(d.size > 0 ? { size: d.size } : {}),
     ...(d.mime ? { mime: d.mime } : {}),
@@ -2044,7 +2044,7 @@ async function handOff(d) {
 // worker, which fetches the file's encrypted pieces over the page's connection to Telegram and
 // hands the browser the result under an address of its own (`/k/d/…`, `/a/progressive/…`).
 // That address is nothing on Telegram's servers: outside the page it only redirects to the app
-// (302), so iDM can't fetch it and the download sat at 0 % (#1345). Every download from there is
+// (302), so BMD can't fetch it and the download sat at 0 % (#1345). Every download from there is
 // the browser's.
 function telegramWebStream(...urls) {
   return urls.some((value) => {
@@ -2059,7 +2059,7 @@ function telegramWebStream(...urls) {
 
 // Colab's runtime proxy uses an ephemeral token tied to the browser's partitioned session.
 // Only the actual proxy transfer URL is left to the browser: a normal file linked from a Colab
-// notebook must still be capturable by iDM (#603).
+// notebook must still be capturable by BMD (#603).
 function colabRuntimeProxy(...urls) {
   return urls.some((value) => {
     if (!value) return false;
@@ -2079,7 +2079,7 @@ function colabRuntimeProxy(...urls) {
 
 // The file name to offer the app the download under (`{name}`), or why Options leave it to
 // the browser (`{left, name}`), or null: the browser keeps it and there is nothing to say (not a
-// web address, paused, Alt held, a form that can't be posted again, iDM not reached).
+// web address, paused, Alt held, a form that can't be posted again, BMD not reached).
 // `clicked`: a link just clicked without Alt (Safari's `link`, see `altClicked`).
 async function candidate(item, url, clicked = false) {
   if (!/^https?:/i.test(url)) return null; // blob:, data:, file: stay the browser's
@@ -2107,7 +2107,7 @@ async function candidate(item, url, clicked = false) {
   return { name };
 }
 
-// Why it stays with the browser, said (the popup, iDM's log).
+// Why it stays with the browser, said (the popup, BMD's log).
 function leftAlone(c, item, url) {
   if (c && c.left) noteLeft(c.left, c.name, firstUrl(item) || url, item.incognito, false).catch(() => {});
 }
@@ -2233,7 +2233,7 @@ function noName(suggest) {
 // Content-Disposition to "attachment": an inline answer's own name (`inline; filename="Movie.mkv"`)
 // goes with it, and the browser names the file after its address (`main.mkv`). Such a download (a
 // type the rule takes, named after its address, give or take the extension the type adds) goes to
-// iDM unnamed: iDM reads the server's own name from its answer, as Firefox's way does here
+// BMD unnamed: BMD reads the server's own name from its answer, as Firefox's way does here
 // (`answerFile`). A name of its own (an attachment's, which the rule leaves alone; a link's
 // `download` name) stays the browser's.
 function addressNamed(item, url, name) {
@@ -2615,9 +2615,9 @@ function createMenus() {
   ext.contextMenus.removeAll(() => {
     const add = (id, contexts, key) =>
       ext.contextMenus.create({ id, title: t(key), contexts }, () => void ext.runtime.lastError);
-    add("mdm-link", ["link", "video", "audio", "image"], "menu");
-    add("mdm-selected", ["selection"], "menu_selected");
-    add("mdm-all", ["page"], "menu_all");
+    add("bmd-link", ["link", "video", "audio", "image"], "menu");
+    add("bmd-selected", ["selection"], "menu_selected");
+    add("bmd-all", ["page"], "menu_all");
   });
 }
 
@@ -2650,7 +2650,7 @@ function pageLinks(selectedOnly) {
 
 // The most the host takes in one message, as the browser writes it (crates/ipc MAX_MESSAGE). A
 // page's links past it (a folder's listing of 20,000 files) go in parts under it, each with the
-// page's referrer and cookies, and iDM puts them back together into one list for Link grabber.
+// page's referrer and cookies, and BMD puts them back together into one list for Link grabber.
 const MESSAGE_MAX = 1 << 20;
 // The most parts one list goes in (crates/ipc MAX_LINK_PARTS).
 const PARTS_MAX = 256;
@@ -2727,7 +2727,7 @@ async function sendLinks(message) {
 }
 
 // When the user asked and it couldn't be done: the help page's section opens beside (a link
-// iDM refused has none of its own: the connection's).
+// BMD refused has none of its own: the connection's).
 const SECTIONS = ["not-installed", "forbidden", "not-running", "host-failed", "too-large", "update-app", "options"];
 function explain(why) {
   const at = SECTIONS.includes(why) ? why : "host-failed";
@@ -2739,7 +2739,7 @@ function explain(why) {
 async function menuClicked(info, tab) {
   const incognito = Boolean(tab && tab.incognito);
   const storeId = tab && tab.cookieStoreId;
-  if (info.menuItemId === "mdm-link") {
+  if (info.menuItemId === "bmd-link") {
     const url = info.linkUrl || info.srcUrl;
     // The tab's title, as the button's click sends it: the app names a video yt-dlp knows only
     // by its address (a stream's `master`, a long hash) after it (#345).
@@ -2775,19 +2775,19 @@ async function menuClicked(info, tab) {
       if (!reply.ok && reply.why !== "options") explain(reply.why);
       return;
     }
-    // ftp links too: browsers no longer download them, iDM does.
+    // ftp links too: browsers no longer download them, BMD does.
     if (!url || !/^(https?|ftps?|ftpes):/i.test(url)) return;
     const reply = await handOff({ url, referrer: info.pageUrl, page: info.pageUrl, incognito, storeId, explicit: true });
     if (!reply.ok) explain(reply.why);
     return;
   }
-  if ((info.menuItemId === "mdm-selected" || info.menuItemId === "mdm-all") && tab) {
+  if ((info.menuItemId === "bmd-selected" || info.menuItemId === "bmd-all") && tab) {
     let links = [];
     try {
       const [res] = await ext.scripting.executeScript({
         target: { tabId: tab.id, frameIds: [info.frameId || 0] },
         func: pageLinks,
-        args: [info.menuItemId === "mdm-selected"],
+        args: [info.menuItemId === "bmd-selected"],
       });
       links = (res && res.result) || [];
     } catch {
@@ -3024,7 +3024,7 @@ async function videoTarget(m, page, sender) {
 // ---- the button's qualities: the app looks the video up, the page lists what it found --------
 // The click asks the app to look the video up (yt-dlp, in the background), video.js asks how it
 // is going until it is done, and the quality picked is downloaded without the app's window. Only
-// with an app that says it can (`videoLookup`, noteLookup) and never for another iDM: else
+// with an app that says it can (`videoLookup`, noteLookup) and never for another BMD: else
 // ({fallback: true}) the click opens the app's Download video window, as it always did. None of
 // these messages has `video` or a top-level `url`: an older host refuses them and does nothing.
 // What a lookup comes to travels in `lookup`, never in `why`: the toolbar button's status (and
@@ -3033,7 +3033,7 @@ async function videoTarget(m, page, sender) {
 async function videoLookup(m, page, sender) {
   if (await remoteTarget()) return { fallback: true };
   if (!(await readStatus()).videoLookup) {
-    // An iDM updated since its rules were last asked may look up now: they are asked again,
+    // An BMD updated since its rules were last asked may look up now: they are asked again,
     // for the next click.
     const r = await storedRules();
     if (!r || Date.now() - r.at > 60000) refreshRules();
@@ -3057,7 +3057,7 @@ async function videoLookup(m, page, sender) {
     ...(v.fetchedWith ? { fetchedWith: v.fetchedWith } : {}),
     private: Boolean(tab.incognito),
   });
-  // `show`: the address iDM lists a download of it under (the button's "Show"); `post`: the
+  // `show`: the address BMD lists a download of it under (the button's "Show"); `post`: the
   // post's own page, when the video sits in a feed (its "Open post").
   if (reply.lookup && typeof reply.lookup === "object") return { lookup: reply.lookup, show: v.src || v.own, ...(v.post ? { post: v.post } : {}) };
   // No `lookup`: a host or an app that can't look up after all (an older one refuses the message),
@@ -3092,8 +3092,8 @@ async function videoPick(m, sender) {
 }
 
 const isWeb = (u) => typeof u === "string" && /^https?:\/\//i.test(u);
-// Where the button's "Get iDM" goes.
-const GET_MDM = "https://github.com/DecoyINDIA/iDM/releases";
+// Where the button's "Get BMD" goes.
+const GET_BMD = "https://github.com/DecoyINDIA/BMD/releases";
 // A new tab next to `tab`, opened from it.
 const beside = (tab) => ({
   ...(Number.isInteger(tab.id) ? { openerTabId: tab.id } : {}),
@@ -3152,7 +3152,7 @@ async function pageMessage(m, sender) {
   if (m.type === "video-lookup" && page) return videoLookup(m, page, sender);
   // #1092: what the tab played for the video under the button, its page found nothing.
   if (m.type === "video-played" && page) return videoPlayed(m, sender);
-  // The button's "Show" (#703): iDM's window with that download selected.
+  // The button's "Show" (#703): BMD's window with that download selected.
   if (m.type === "show-download" && isWeb(m.address)) {
     return { ok: Boolean((await native({ showDownload: m.address })).ok) };
   }
@@ -3162,9 +3162,9 @@ async function pageMessage(m, sender) {
     for (const k of [...panelCache.keys()]) if (k.split(" ").includes(host)) panelCache.delete(k);
     return { ok: Boolean((await native({ showSite: host })).ok) };
   }
-  // The button's "Get iDM" (iDM didn't answer): its download page, beside this tab.
-  if (m.type === "get-mdm") {
-    await ext.tabs.create({ url: GET_MDM, ...beside(tab) });
+  // The button's "Get BMD" (BMD didn't answer): its download page, beside this tab.
+  if (m.type === "get-bmd") {
+    await ext.tabs.create({ url: GET_BMD, ...beside(tab) });
     return { ok: true };
   }
   // The button's "Open post": the post a video in a feed sits in (#689), on this page's site.

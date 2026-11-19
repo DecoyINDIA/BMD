@@ -1,4 +1,4 @@
-﻿; iDM's installer in Gujarati: tools/installer/languages.py
+﻿; BMD's installer in Gujarati: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=%1 અનઇન્સ્ટોલ કરી �
 
 [CustomMessages]
 TaskBrowser=બ્રાઉઝર ઇન્ટિગ્રેશન સેટ કરો (&B) (Chrome, Edge, Brave, Firefox)
-TaskTorrents=iDM સાથે .&torrent ફાઇલો અને મેગ્નેટ લિંક્સ ખોલો
-TaskStartup=જ્યારે &Windows શરૂ થાય ત્યારે iDM શરૂ કરો
+TaskTorrents=BMD સાથે .&torrent ફાઇલો અને મેગ્નેટ લિંક્સ ખોલો
+TaskStartup=જ્યારે &Windows શરૂ થાય ત્યારે BMD શરૂ કરો
 TaskGroupOther=અન્ય:
-Launch=iDM શરૂ કરો
+Launch=BMD શરૂ કરો
 KeepData=તમારી ડાઉનલોડ સૂચિ અને સેટિંગ્સ પણ કાઢી નાખવા છે?%n%nતમારી ડાઉનલોડ કરેલી ફાઇલોને કોઈપણ રીતે સ્પર્શ કરવામાં આવશે નહીં.

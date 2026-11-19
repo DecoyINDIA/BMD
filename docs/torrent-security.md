@@ -2,64 +2,64 @@
 
 [← Back to docs index](README.md)
 
-A torrent comes from other people's computers, not from one website. That changes what you can trust and what others can see. This page says plainly what iDM does and what it doesn't. The switches it mentions are in **Tasks → Torrent settings...**.
+A torrent comes from other people's computers, not from one website. That changes what you can trust and what others can see. This page says plainly what BMD does and what it doesn't. The switches it mentions are in **Tasks → Torrent settings...**.
 
 ## What other people can see
 
-- **Your IP address.** Everyone sharing the same torrent sees it, as do its trackers and the DHT (the network peers use to find each other). That's how BitTorrent works, and no setting in iDM changes it. To hide your address, use a VPN on your whole computer.
-- **What you download, on your local network.** iDM tells other computers on your network which torrents it has, so they can share faster. On public Wi-Fi, turn off **Find peers on the local network**.
-- **That you use iDM.** Peers see the name "MisterDownloadManager" and its major version, not the exact build.
+- **Your IP address.** Everyone sharing the same torrent sees it, as do its trackers and the DHT (the network peers use to find each other). That's how BitTorrent works, and no setting in BMD changes it. To hide your address, use a VPN on your whole computer.
+- **What you download, on your local network.** BMD tells other computers on your network which torrents it has, so they can share faster. On public Wi-Fi, turn off **Find peers on the local network**.
+- **That you use BMD.** Peers see the name "BMD" and its major version, not the exact build.
 
-iDM's torrents don't use **encryption** (sometimes called "protocol encryption"). That kind of encryption only hides the traffic from simple filters. It never hides who you are, so iDM doesn't claim to offer it. Some peers that require it won't connect.
+BMD's torrents don't use **encryption** (sometimes called "protocol encryption"). That kind of encryption only hides the traffic from simple filters. It never hides who you are, so BMD doesn't claim to offer it. Some peers that require it won't connect.
 
 ## What reaches your computer
 
-iDM starts its torrent engine the first time a torrent needs it. With **Stop the torrent engine when no torrent is running** on (the default), it stops again a minute after no torrent is running or sharing. While it runs, other peers can connect to iDM, over TCP and over uTP (UDP) on the same port, and iDM asks your router to forward its port (UPnP). Windows may ask whether to allow iDM through the firewall: allow it on private networks only.
+BMD starts its torrent engine the first time a torrent needs it. With **Stop the torrent engine when no torrent is running** on (the default), it stops again a minute after no torrent is running or sharing. While it runs, other peers can connect to BMD, over TCP and over uTP (UDP) on the same port, and BMD asks your router to forward its port (UPnP). Windows may ask whether to allow BMD through the firewall: allow it on private networks only.
 
-This is the only part of iDM that waits for connections from outside. Downloads, iDM's DNS choice (Options → Connection → DNS), its updates and its helpers only connect out, so they never need a firewall exception; the browser extension and the automation API reach iDM on this computer only (127.0.0.1).
+This is the only part of BMD that waits for connections from outside. Downloads, BMD's DNS choice (Options → Connection → DNS), its updates and its helpers only connect out, so they never need a firewall exception; the browser extension and the automation API reach BMD on this computer only (127.0.0.1).
 
-In Torrent settings you can turn off **Accept incoming connections**, **Map the port on the router (UPnP)** and **Connect over uTP too (UDP)**, or the DHT. Downloads still work, sometimes more slowly. With the **Port** box empty, iDM picks a port the first time and keeps it (another one if a program has taken it since), so firewall and router rules keep working; a port typed there is always the one used. These changes apply the next time the engine starts, so when no torrent is running.
+In Torrent settings you can turn off **Accept incoming connections**, **Map the port on the router (UPnP)** and **Connect over uTP too (UDP)**, or the DHT. Downloads still work, sometimes more slowly. With the **Port** box empty, BMD picks a port the first time and keeps it (another one if a program has taken it since), so firewall and router rules keep working; a port typed there is always the one used. These changes apply the next time the engine starts, so when no torrent is running.
 
-The torrent engine is written in Rust, which rules out many memory bugs, and iDM checks every piece against the torrent's fingerprint, so a peer can't slip in altered data. iDM keeps the engine up to date with the fixes its authors publish.
+The torrent engine is written in Rust, which rules out many memory bugs, and BMD checks every piece against the torrent's fingerprint, so a peer can't slip in altered data. BMD keeps the engine up to date with the fixes its authors publish.
 
 ## Trackers
 
-A torrent names the trackers iDM asks for peers. iDM doesn't contact a tracker on your own computer or your local network (`127.0.0.1`, `192.168.…`, `localhost` and the like), so a torrent can't make iDM send requests into the network it sits in. **Add trackers...** follows the same rule: it refuses such an address and tells you why, rather than keeping one that would never be asked.
+A torrent names the trackers BMD asks for peers. BMD doesn't contact a tracker on your own computer or your local network (`127.0.0.1`, `192.168.…`, `localhost` and the like), so a torrent can't make BMD send requests into the network it sits in. **Add trackers...** follows the same rule: it refuses such an address and tells you why, rather than keeping one that would never be asked.
 
-A `.torrent` file fetched from a web address goes through the same checks as one opened from disk, and iDM reads at most 10 MB of it.
+A `.torrent` file fetched from a web address goes through the same checks as one opened from disk, and BMD reads at most 10 MB of it.
 
 ## Peers
 
-Trackers, the DHT and other peers tell iDM where a torrent's peers are. iDM follows the same rule for them as for trackers: it only connects to a peer on the internet. An address on your own computer or your local network is left alone, whoever names it, so a list of peers can't point iDM at your router or another device at home.
+Trackers, the DHT and other peers tell BMD where a torrent's peers are. BMD follows the same rule for them as for trackers: it only connects to a peer on the internet. An address on your own computer or your local network is left alone, whoever names it, so a list of peers can't point BMD at your router or another device at home.
 
-Peers on your local network are still found: with **Find peers on the local network** on, each one announces itself there, and iDM connects to those.
+Peers on your local network are still found: with **Find peers on the local network** on, each one announces itself there, and BMD connects to those.
 
 ## Blocking addresses
 
-**Block the addresses in this list** takes the address of a public IP blocklist, in the P2P (PeerGuardian) or eMule `.dat` format, plain or gzipped. iDM downloads it with its own downloader (your Proxy / Socks settings apply), checks it, and fetches it again every 7 days. Peers in it are refused. A list iDM can't read is left out, and the last good one stays. The engine reads the list when it starts.
+**Block the addresses in this list** takes the address of a public IP blocklist, in the P2P (PeerGuardian) or eMule `.dat` format, plain or gzipped. BMD downloads it with its own downloader (your Proxy / Socks settings apply), checks it, and fetches it again every 7 days. Peers in it are refused. A list BMD can't read is left out, and the last good one stays. The engine reads the list when it starts.
 
 ## Files from a torrent
 
-- iDM refuses a torrent with file names your system can't write safely, says which name, and writes nothing.
-- iDM never writes into a file that's already there without asking.
+- BMD refuses a torrent with file names your system can't write safely, says which name, and writes nothing.
+- BMD never writes into a file that's already there without asking.
 - Files from torrents are marked as **downloaded from the internet**, like a browser's downloads. Windows SmartScreen checks a program before it first runs, and Office opens documents in Protected View. On a Mac, Gatekeeper checks apps. **Options → Save to → Mark downloaded files as coming from the internet** turns it off, and so does Windows' policy **Do not preserve zone information in file attachments**.
 - A torrent can contain anything, and anyone can make one. Only open programs from people you trust, and scan them if in doubt.
 
 ## Proxies
 
-iDM's Proxy / Socks settings are for web and FTP downloads. Torrents can use a SOCKS5 one too: set a `socks5://` proxy in **Options → Proxy / Socks** and turn on **Use the proxy** in Torrent settings. The proxy covers connections to peers and web trackers only, so with it iDM turns off the DHT, local peer discovery, incoming connections, uTP and UDP trackers; it opens no UDP socket toward the network at all. If the proxy is gone from Proxy / Socks while that switch is on, torrents don't start rather than go around it.
+BMD's Proxy / Socks settings are for web and FTP downloads. Torrents can use a SOCKS5 one too: set a `socks5://` proxy in **Options → Proxy / Socks** and turn on **Use the proxy** in Torrent settings. The proxy covers connections to peers and web trackers only, so with it BMD turns off the DHT, local peer discovery, incoming connections, uTP and UDP trackers; it opens no UDP socket toward the network at all. If the proxy is gone from Proxy / Socks while that switch is on, torrents don't start rather than go around it.
 
 To route *everything* through another network, use a VPN for the whole computer.
 
 ## A network adapter
 
-**Options → Proxy / Socks → Network adapter** holds iDM's connections to one adapter, usually a VPN's ([Options](options.md#proxy--socks)). The torrent engine binds every socket to it: peers (TCP, uTP, and through a SOCKS proxy), HTTP and UDP trackers, the DHT and the listening port. On Linux and macOS it binds the adapter itself. On Windows it binds the adapter's address (its IPv4 one when it has one), and Windows sends a packet only through the adapter that has its source address. UPnP and local peer discovery are turned off then, because they talk to the local network rather than through the adapter.
+**Options → Proxy / Socks → Network adapter** holds BMD's connections to one adapter, usually a VPN's ([Options](options.md#proxy--socks)). The torrent engine binds every socket to it: peers (TCP, uTP, and through a SOCKS proxy), HTTP and UDP trackers, the DHT and the listening port. On Linux and macOS it binds the adapter itself. On Windows it binds the adapter's address (its IPv4 one when it has one), and Windows sends a packet only through the adapter that has its source address. UPnP and local peer discovery are turned off then, because they talk to the local network rather than through the adapter.
 
-It works as a kill switch. When the adapter disconnects, running torrents stop with "… is not connected; it goes on when it is back", and they start again through the adapter when it is. Until iDM notices (within a second), the engine's sockets are still bound to an address that is gone, so nothing can leave another way. A torrent added while the adapter isn't connected doesn't start, and says why. Tracker names are still looked up by the system's DNS.
+It works as a kill switch. When the adapter disconnects, running torrents stop with "… is not connected; it goes on when it is back", and they start again through the adapter when it is. Until BMD notices (within a second), the engine's sockets are still bound to an address that is gone, so nothing can leave another way. A torrent added while the adapter isn't connected doesn't start, and says why. Tracker names are still looked up by the system's DNS.
 
 ## Reporting a problem
 
-Found a security issue? Please report it privately on GitHub (**Security → Report a vulnerability**, see [SECURITY.md](https://github.com/DecoyINDIA/iDM/blob/main/SECURITY.md)) rather than in a public issue.
+Found a security issue? Please report it privately on GitHub (**Security → Report a vulnerability**, see [SECURITY.md](https://github.com/DecoyINDIA/BMD/blob/main/SECURITY.md)) rather than in a public issue.
 
 ## Next steps
 

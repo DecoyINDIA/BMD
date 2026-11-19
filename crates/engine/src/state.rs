@@ -42,8 +42,8 @@ pub struct ResumeState {
     /// The first run got past a refusal by asking with `Options::agent_fallback` instead of the
     /// browser's User-Agent (#372): a resume asks the same way.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub asked_as_mdm: bool,
-    /// Only iDM's own name (`Options::own_agent`) got past the site's bot check (#1422): a
+    pub asked_as_bmd: bool,
+    /// Only BMD's own name (`Options::own_agent`) got past the site's bot check (#1422): a
     /// resume asks under it too.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub asked_as_own: bool,
@@ -70,7 +70,7 @@ impl ResumeState {
             segments: Vec::new(),
             content_type: None,
             checksum: None,
-            asked_as_mdm: false,
+            asked_as_bmd: false,
             asked_as_own: false,
             final_get: false,
             browser_like: false,

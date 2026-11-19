@@ -2114,7 +2114,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-cnl"
+name = "bmd-cnl"
 version = "0.5.2"
 dependencies = [
  "aes",
@@ -2126,7 +2126,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-engine"
+name = "bmd-engine"
 version = "0.5.2"
 dependencies = [
  "base64",
@@ -2167,35 +2167,35 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-extract"
+name = "bmd-extract"
 version = "0.5.2"
 dependencies = [
  "flate2",
  "lzma-rust2",
- "mdm-engine",
+ "bmd-engine",
  "tar",
  "tracing",
  "zip",
 ]
 
 [[package]]
-name = "mdm-fuzz"
+name = "bmd-fuzz"
 version = "0.0.0"
 dependencies = [
  "aes",
  "base64",
  "libfuzzer-sys",
- "mdm-cnl",
- "mdm-engine",
- "mdm-extract",
- "mdm-tools",
- "mdm-torrent",
+ "bmd-cnl",
+ "bmd-engine",
+ "bmd-extract",
+ "bmd-tools",
+ "bmd-torrent",
  "serde_json",
  "url",
 ]
 
 [[package]]
-name = "mdm-ipc"
+name = "bmd-ipc"
 version = "0.5.2"
 dependencies = [
  "craft-atomic",
@@ -2206,7 +2206,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-tools"
+name = "bmd-tools"
 version = "0.5.2"
 dependencies = [
  "aws-lc-rs",
@@ -2215,8 +2215,8 @@ dependencies = [
  "craft-atomic",
  "futures",
  "hex",
- "mdm-engine",
- "mdm-ipc",
+ "bmd-engine",
+ "bmd-ipc",
  "percent-encoding",
  "reqwest",
  "rustix",
@@ -2233,14 +2233,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "mdm-torrent"
+name = "bmd-torrent"
 version = "0.5.2"
 dependencies = [
  "anyhow",
  "flate2",
  "librqbit",
  "librqbit-dualstack-sockets",
- "mdm-engine",
+ "bmd-engine",
  "serde_json",
  "thiserror 2.0.21",
  "tokio",

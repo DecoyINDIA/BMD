@@ -1,6 +1,6 @@
 [package]
-name = "mdm-app"
-description = "iDM desktop app (egui)"
+name = "bmd-app"
+description = "BMD desktop app (egui)"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -10,20 +10,20 @@ repository.workspace = true
 publish.workspace = true
 
 [[bin]]
-name = "misterdownloadmanager"
+name = "bmd"
 path = "src/main.rs"
 
 [features]
 default = ["browser-connection"]
-# The engine's browser-like connection (#668), for sites that refuse iDM's own as a program's.
+# The engine's browser-like connection (#668), for sites that refuse BMD's own as a program's.
 # Built from BoringSSL's C sources: tools/dev/check-cross.ps1, which can't cross-compile those,
 # checks the workspace without it.
-browser-connection = ["mdm-engine/browser-connection"]
-# Update now's end-to-end tests only, never in a release (see mdm-tools): a test key for a fake
-# release (MDM_TEST_UPDATE_KEY), `/show update-now` (Update now in the window `/show updates`
-# opens), and MDM_TEST_UPDATE_HOLD (seconds the update waits before it's put in place, to see and
+browser-connection = ["bmd-engine/browser-connection"]
+# Update now's end-to-end tests only, never in a release (see bmd-tools): a test key for a fake
+# release (BMD_TEST_UPDATE_KEY), `/show update-now` (Update now in the window `/show updates`
+# opens), and BMD_TEST_UPDATE_HOLD (seconds the update waits before it's put in place, to see and
 # close the window meanwhile). tools/lab/update runs them.
-test-update = ["mdm-tools/test-update"]
+test-update = ["bmd-tools/test-update"]
 
 [dependencies]
 arboard.workspace = true
@@ -38,16 +38,16 @@ egui_extras.workspace = true
 skrifa.workspace = true
 image.workspace = true
 craft-i18n.workspace = true
-# misterdownloadmanager-cli's commands: its launcher runs this program for them (main.rs).
-mdm-cli.workspace = true
-mdm-engine.workspace = true
-mdm-extract.workspace = true
-mdm-geo.workspace = true
-mdm-ipc.workspace = true
+# bmd-cli's commands: its launcher runs this program for them (main.rs).
+bmd-cli.workspace = true
+bmd-engine.workspace = true
+bmd-extract.workspace = true
+bmd-geo.workspace = true
+bmd-ipc.workspace = true
 # The remote control (#141): a paired phone adds and controls downloads over the local network.
-mdm-remote.workspace = true
-mdm-tools.workspace = true
-mdm-torrent.workspace = true
+bmd-remote.workspace = true
+bmd-tools.workspace = true
+bmd-torrent.workspace = true
 open.workspace = true
 reqwest.workspace = true
 serde.workspace = true
@@ -61,12 +61,12 @@ rfd = "0.17.2"
 qrcodegen = "1.8.0"
 # Line breaks between characters keep a letter and its marks together (Thai, Khmer, Indic).
 unicode-segmentation = "1.13.3"
-# The text iDM hands to the system: isolates made into marks by each letter's direction (#919).
+# The text BMD hands to the system: isolates made into marks by each letter's direction (#919).
 unicode-bidi = "0.3.18"
 # Crash and freeze reports: the monitor, minidumps, symbolicated stacks, release logs.
-mdm-cnl.workspace = true
-mdm-crash.workspace = true
-mdm-debrid.workspace = true
+bmd-cnl.workspace = true
+bmd-crash.workspace = true
+bmd-debrid.workspace = true
 tracing.workspace = true
 # Unpacks the translation catalogs (i18n.rs, packed by build.rs); already in the tree through
 # reqwest's brotli support.
@@ -94,7 +94,7 @@ windows = { version = "0.62", default-features = false, features = ["Win32_Graph
 # The notification-area icon and its menu (tray.rs).
 [target.'cfg(not(target_os = "linux"))'.dependencies]
 tray-icon = "0.26.1"
-# Windows and macOS: the system's font for a script iDM's font lists don't name (theme.rs,
+# Windows and macOS: the system's font for a script BMD's font lists don't name (theme.rs,
 # #1125). Linux asks fontconfig for any script already (`fc-match :charset=`).
 egui_system_font_provider.workspace = true
 
@@ -115,7 +115,7 @@ zbus = { version = "5.19.0", default-features = false, features = ["async-io", "
 # The settings daemon's theme name (XSETTINGS) when the portal can't say dark or light (unix.rs,
 # #156); already in the tree through winit. Its pure-Rust connection, no extension.
 x11rb = { version = "0.14.0", default-features = false }
-# Whether a Wayland screen is scaled, for the windows' system iDM chooses (unix.rs x11_fit,
+# Whether a Wayland screen is scaled, for the windows' system BMD chooses (unix.rs x11_fit,
 # #624); already in the tree through winit.
 wayland-client = "0.31.15"
 # The Xlib display winit opened, for Xlib to return from a lost connection (unix.rs
@@ -155,7 +155,7 @@ tempfile.workspace = true
 # secrets.rs's test that no secret reaches the log.
 tracing-subscriber.workspace = true
 # The command line's tests (tests/cli_*.rs) download from it.
-mdm-labserver.workspace = true
+bmd-labserver.workspace = true
 
 [lints]
 workspace = true

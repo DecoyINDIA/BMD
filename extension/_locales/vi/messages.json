@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Chuyển các bản tải xuống từ trình duyệt sang iDM."
+    "message": "Chuyển các bản tải xuống từ trình duyệt sang BMD."
   },
   "menu": {
-    "message": "Tải xuống bằng iDM"
+    "message": "Tải xuống bằng BMD"
   },
   "video_download": {
     "message": "Tải xuống video"
@@ -30,19 +30,19 @@
     "message": "Cài đặt nút..."
   },
   "video_sent": {
-    "message": "Đã gửi đến iDM"
+    "message": "Đã gửi đến BMD"
   },
   "menu_selected": {
-    "message": "Tải xuống các liên kết đã chọn bằng iDM"
+    "message": "Tải xuống các liên kết đã chọn bằng BMD"
   },
   "menu_all": {
-    "message": "Tải xuống tất cả liên kết bằng iDM"
+    "message": "Tải xuống tất cả liên kết bằng BMD"
   },
   "status_connected": {
-    "message": "Đã kết nối với iDM"
+    "message": "Đã kết nối với BMD"
   },
   "status_connected_version": {
-    "message": "Đã kết nối với iDM $version$",
+    "message": "Đã kết nối với BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Đã tạm dừng: các bản tải xuống vẫn ở trong trình duyệt"
   },
   "status_not_installed": {
-    "message": "iDM chưa được cài đặt hoặc tích hợp trình duyệt chưa được thiết lập"
+    "message": "BMD chưa được cài đặt hoặc tích hợp trình duyệt chưa được thiết lập"
   },
   "status_forbidden": {
-    "message": "iDM không chấp nhận bản sao tiện ích mở rộng này"
+    "message": "BMD không chấp nhận bản sao tiện ích mở rộng này"
   },
   "status_not_running": {
-    "message": "iDM chưa khởi động kịp"
+    "message": "BMD chưa khởi động kịp"
   },
   "status_host_failed": {
-    "message": "Kết nối với iDM không thành công"
+    "message": "Kết nối với BMD không thành công"
   },
   "status_too_large": {
     "message": "Thông tin của lượt tải xuống này quá lớn để chuyển giao"
   },
   "status_update_app": {
-    "message": "Cập nhật iDM để sử dụng mọi tính năng mà tiện ích mở rộng này cung cấp"
+    "message": "Cập nhật BMD để sử dụng mọi tính năng mà tiện ích mở rộng này cung cấp"
   },
   "popup_take": {
     "message": "Nhận tải xuống từ trình duyệt này"
@@ -78,10 +78,10 @@
     "message": "Gửi các bản tải xuống qua proxy hoặc tiện ích VPN của trình duyệt này"
   },
   "popup_proxy_title": {
-    "message": "iDM sau đó tải xuống thông qua cùng một proxy với trình duyệt này. Trình duyệt sẽ hỏi bạn một lần để cho phép; tắt tùy chọn này sẽ thu hồi quyền đó."
+    "message": "BMD sau đó tải xuống thông qua cùng một proxy với trình duyệt này. Trình duyệt sẽ hỏi bạn một lần để cho phép; tắt tùy chọn này sẽ thu hồi quyền đó."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM sau đó tải xuống qua cùng một proxy với trình duyệt này. Khi tắt tùy chọn này, tiện ích sẽ không đọc proxy của trình duyệt."
+    "message": "BMD sau đó tải xuống qua cùng một proxy với trình duyệt này. Khi tắt tùy chọn này, tiện ích sẽ không đọc proxy của trình duyệt."
   },
   "popup_exclude_site": {
     "message": "Không nhận tải xuống từ $site$ nữa",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Mở iDM"
+    "message": "Mở BMD"
   },
   "popup_options": {
     "message": "Tùy chọn..."
@@ -114,7 +114,7 @@
     "message": "Trợ giúp"
   },
   "popup_support": {
-    "message": "Hỗ trợ iDM"
+    "message": "Hỗ trợ BMD"
   },
   "popup_fix": {
     "message": "Cách khắc phục"
@@ -150,7 +150,7 @@
     "message": "Tích hợp trình duyệt nâng cao đang tắt trong Tùy chọn → Chung."
   },
   "declined_torrents": {
-    "message": "Đây là torrent, và tùy chọn Mở liên kết magnet và tệp .torrent bằng iDM đang tắt trong cài đặt Torrent."
+    "message": "Đây là torrent, và tùy chọn Mở liên kết magnet và tệp .torrent bằng BMD đang tắt trong cài đặt Torrent."
   },
   "declined_site_access": {
     "message": "Tiện ích không được phép đọc trang web này (quyền truy cập trang web của trình duyệt)."
@@ -195,16 +195,16 @@
     "message": "Không có video nào để tải xuống ở đây"
   },
   "video_playlist": {
-    "message": "Danh sách video: hãy chọn chúng trong iDM"
+    "message": "Danh sách video: hãy chọn chúng trong BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM cần yt-dlp cho video này"
+    "message": "BMD cần yt-dlp cho video này"
   },
   "video_too_long": {
     "message": "Việc tìm kiếm mất quá nhiều thời gian"
   },
   "video_busy": {
-    "message": "iDM đang bận với các video khác"
+    "message": "BMD đang bận với các video khác"
   },
   "video_queued": {
     "message": "Đã thêm vào hàng đợi"
@@ -228,7 +228,7 @@
     "message": "Máy tính này"
   },
   "popup_send_remote": {
-    "message": "Một iDM khác (máy chủ)"
+    "message": "Một BMD khác (máy chủ)"
   },
   "popup_remote_code": {
     "message": "Mã ghép nối"
@@ -240,7 +240,7 @@
     "message": "Ghép nối"
   },
   "popup_remote_help": {
-    "message": "Mở địa chỉ của nó một lần và chấp nhận chứng chỉ của nó, sau đó nhập mã từ Tùy chọn, Từ xa, Ghép nối thiết bị (hoặc misterdownloadmanager-cli pair)."
+    "message": "Mở địa chỉ của nó một lần và chấp nhận chứng chỉ của nó, sau đó nhập mã từ Tùy chọn, Từ xa, Ghép nối thiết bị (hoặc bmd-cli pair)."
   },
   "status_remote": {
     "message": "Tải xuống chuyển đến $address$",
@@ -297,19 +297,19 @@
     "message": "Tải xuống chất lượng tốt nhất"
   },
   "video_sending": {
-    "message": "Đang gửi đến iDM..."
+    "message": "Đang gửi đến BMD..."
   },
   "video_added": {
-    "message": "Đã thêm vào iDM"
+    "message": "Đã thêm vào BMD"
   },
   "video_show": {
     "message": "Hiển thị"
   },
   "video_no_answer": {
-    "message": "iDM không phản hồi"
+    "message": "BMD không phản hồi"
   },
-  "video_get_mdm": {
-    "message": "Tải iDM"
+  "video_get_bmd": {
+    "message": "Tải BMD"
   },
   "video_retry": {
     "message": "Thử lại"
@@ -324,7 +324,7 @@
     "message": "Tất cả chất lượng và phụ đề..."
   },
   "video_failed": {
-    "message": "iDM chưa được cài đặt hoặc chưa khởi động"
+    "message": "BMD chưa được cài đặt hoặc chưa khởi động"
   },
   "video_download_best": {
     "message": "Tải xuống chất lượng tốt nhất"

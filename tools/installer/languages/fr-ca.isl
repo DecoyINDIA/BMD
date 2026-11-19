@@ -1,4 +1,4 @@
-﻿; iDM's installer in French (Canada): tools/installer/languages.py
+﻿; BMD's installer in French (Canada): tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Désinstallation de %1.
 
 [CustomMessages]
 TaskBrowser=Configurer l'intégration au &navigateur (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Ouvrir les fichiers .&torrent et les liens magnet avec iDM
-TaskStartup=Démarrer iDM au démarrage de &Windows
+TaskTorrents=Ouvrir les fichiers .&torrent et les liens magnet avec BMD
+TaskStartup=Démarrer BMD au démarrage de &Windows
 TaskGroupOther=Autre :
-Launch=Démarrer iDM
+Launch=Démarrer BMD
 KeepData=Supprimer également votre liste de téléchargements et vos paramètres?%n%nVos fichiers téléchargés ne sont pas affectés dans tous les cas.

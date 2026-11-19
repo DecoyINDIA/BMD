@@ -2,14 +2,14 @@
 # Checks the Safari extension's native half without Safari: builds its relay and helper as a
 # small sandboxed program (the same entitlements as the extension, a data folder of its own),
 # asks the helper for Options' rules through it, and expects them back.
-#   tools/safari/selftest.sh <misterdownloadmanager-nmhost>
+#   tools/safari/selftest.sh <bmd-nmhost>
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 helper="$1"
 work="$(mktemp -d)"
-trap 'rm -rf "$work" "$HOME/Library/Caches/mdm-safari-selftest"' EXIT
+trap 'rm -rf "$work" "$HOME/Library/Caches/bmd-safari-selftest"' EXIT
 app="$work/RelayTest.app"
-mkdir -p "$app/Contents/MacOS" "$HOME/Library/Caches/mdm-safari-selftest"
+mkdir -p "$app/Contents/MacOS" "$HOME/Library/Caches/bmd-safari-selftest"
 
 cat > "$app/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -24,11 +24,11 @@ PLIST
 xcrun swiftc -parse-as-library -module-name RelayTest -framework SafariServices \
   -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __info_plist -Xlinker "$app/Contents/Info.plist" \
   -o "$app/Contents/MacOS/RelayTest" "$here/SafariWebExtensionHandler.swift" "$here/selftest/RelayTest.swift"
-cp "$helper" "$app/Contents/MacOS/misterdownloadmanager-nmhost"
+cp "$helper" "$app/Contents/MacOS/bmd-nmhost"
 
 # The extension's entitlements, the data folder swapped for the test's own.
-sed 's|/Library/Application Support/misterdownloadmanager/|/Library/Caches/mdm-safari-selftest/|' \
+sed 's|/Library/Application Support/misterdownloadmanager/|/Library/Caches/bmd-safari-selftest/|' \
   "$here/extension.entitlements" > "$work/test.entitlements"
-codesign --force --sign "${MDM_SIGN:--}" --entitlements "$here/helper.entitlements" "$app/Contents/MacOS/misterdownloadmanager-nmhost"
+codesign --force --sign "${MDM_SIGN:--}" --entitlements "$here/helper.entitlements" "$app/Contents/MacOS/bmd-nmhost"
 codesign --force --sign "${MDM_SIGN:--}" --entitlements "$work/test.entitlements" "$app/Contents/MacOS/RelayTest"
-MDM_DATA_DIR="$HOME/Library/Caches/mdm-safari-selftest" "$app/Contents/MacOS/RelayTest"
+MDM_DATA_DIR="$HOME/Library/Caches/bmd-safari-selftest" "$app/Contents/MacOS/RelayTest"

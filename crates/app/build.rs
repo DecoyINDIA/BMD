@@ -23,11 +23,11 @@ fn main() {
     // Linux or macOS); winresource builds on Windows only.
     #[cfg(windows)]
     if windows {
-        println!("cargo:rerun-if-changed=assets/icons/app/mdm.ico");
+        println!("cargo:rerun-if-changed=assets/icons/app/bmd.ico");
         let mut res = winresource::WindowsResource::new();
-        res.set_icon("assets/icons/app/mdm.ico")
-            .set("ProductName", "iDM")
-            .set("FileDescription", "iDM")
+        res.set_icon("assets/icons/app/bmd.ico")
+            .set("ProductName", "BMD")
+            .set("FileDescription", "BMD")
             .set("CompanyName", "DecoyINDIA")
             .set(
                 "LegalCopyright",
@@ -134,7 +134,7 @@ fn languages(root: &std::path::Path) {
     std::fs::write(out, format!("&[\n{}\n]\n", rows.join("\n"))).unwrap();
 }
 
-/// The commit this is built from (`MDM_COMMIT`, "unknown" outside a git checkout), for Help →
+/// The commit this is built from (`BMD_COMMIT`, "unknown" outside a git checkout), for Help →
 /// About and problem reports.
 fn commit() {
     println!("cargo:rerun-if-changed=../../.git/HEAD");
@@ -147,5 +147,5 @@ fn commit() {
         .map(|o| String::from_utf8_lossy(&o.stdout).trim().to_owned())
         .filter(|h| !h.is_empty())
         .unwrap_or_else(|| "unknown".into());
-    println!("cargo:rustc-env=MDM_COMMIT={hash}");
+    println!("cargo:rustc-env=BMD_COMMIT={hash}");
 }

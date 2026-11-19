@@ -1,4 +1,4 @@
-//! `misterdownloadmanager --headless` (#157): iDM on a server (a NAS, Docker, Unraid), without a
+//! `bmd --headless` (#157): BMD on a server (a NAS, Docker, Unraid), without a
 //! window. The same app runs (its list, queues, Scheduler, limits, torrents, the automation API
 //! and the remote control), driven by a loop instead of the window's frames; downloads come from
 //! the remote control's page, the browser extension pointed at it, or the command line.
@@ -16,7 +16,7 @@
 //! | | `MDM_REMOTE_URL` | the page's address as people open it (a container's isn't) |
 //!
 //! The remote control is on (that is the point); `MDM_REMOTE=off` turns it off. With no device
-//! paired yet, a pairing code is printed at start; `misterdownloadmanager-cli pair` prints
+//! paired yet, a pairing code is printed at start; `bmd-cli pair` prints
 //! another.
 
 use std::path::PathBuf;
@@ -50,13 +50,13 @@ pub fn main(args: Vec<String>) -> ExitCode {
     #[cfg(windows)]
     crate::win32::cli_console(None);
     if let Some(dir) = setting(&args, "data", "MDM_DATA_DIR") {
-        mdm_ipc::set_data_dir(PathBuf::from(dir));
+        bmd_ipc::set_data_dir(PathBuf::from(dir));
     }
-    let Some(data) = mdm_ipc::data_dir() else {
+    let Some(data) = bmd_ipc::data_dir() else {
         eprintln!("No data folder: give one with --data <folder>.");
         return ExitCode::FAILURE;
     };
-    if let Err(e) = mdm_ipc::private_dir(&data) {
+    if let Err(e) = bmd_ipc::private_dir(&data) {
         eprintln!(
             "The data folder {} can't be used: {e}{}",
             data.display(),
@@ -64,16 +64,16 @@ pub fn main(args: Vec<String>) -> ExitCode {
         );
         return ExitCode::FAILURE;
     }
-    let Some(_instance) = mdm_ipc::instance_lock() else {
-        eprintln!("Another iDM uses the data folder {}.", data.display());
+    let Some(_instance) = bmd_ipc::instance_lock() else {
+        eprintln!("Another BMD uses the data folder {}.", data.display());
         return ExitCode::FAILURE;
     };
-    mdm_crash::logs::init(&data, mdm_crash::logs::APP);
+    bmd_crash::logs::init(&data, bmd_crash::logs::APP);
     // The default browser, looked for once on a thread of its own (logged): its User-Agent is
     // the one links added by hand go with (#668).
     crate::defaultbrowser::start();
     tracing::info!(
-        "iDM {} ({}) starting without a window",
+        "BMD {} ({}) starting without a window",
         crate::help::VERSION,
         crate::help::COMMIT
     );
@@ -85,9 +85,9 @@ pub fn main(args: Vec<String>) -> ExitCode {
     let wake: Arc<dyn Fn() + Send + Sync> = Arc::new(move || {
         let _ = wake_tx.try_send(());
     });
-    let sink = mdm_ipc::Sink::new(tx.clone(), wake.clone());
+    let sink = bmd_ipc::Sink::new(tx.clone(), wake.clone());
     let to_ipc = wake.clone();
-    if let Err(e) = mdm_ipc::serve(tx, move || to_ipc()) {
+    if let Err(e) = bmd_ipc::serve(tx, move || to_ipc()) {
         eprintln!("The command channel could not open: {e}");
     }
 
@@ -174,20 +174,20 @@ pub fn main(args: Vec<String>) -> ExitCode {
     ExitCode::SUCCESS
 }
 
-/// The folder, made if it isn't there, and a file written in it: a folder iDM can't write fails
+/// The folder, made if it isn't there, and a file written in it: a folder BMD can't write fails
 /// at start, not at each download.
 fn writable(dir: &std::path::Path) -> std::io::Result<()> {
     std::fs::create_dir_all(dir)?;
-    let probe = dir.join(format!(".mdm-write-test-{}", std::process::id()));
+    let probe = dir.join(format!(".bmd-write-test-{}", std::process::id()));
     std::fs::write(&probe, b"")?;
     std::fs::remove_file(&probe)
 }
 
 /// What to do when a folder belongs to another user: Docker makes a folder it mounts that isn't
-/// there yet (`-v /srv/mdm-config:/config`) as root's, and iDM runs as another user.
+/// there yet (`-v /srv/bmd-config:/config`) as root's, and BMD runs as another user.
 fn not_ours(e: &std::io::Error) -> &'static str {
     if e.kind() == std::io::ErrorKind::PermissionDenied {
-        "\nIt belongs to another user: make it before the first start, owned by the user iDM runs \
+        "\nIt belongs to another user: make it before the first start, owned by the user BMD runs \
          as (`mkdir`, then `chown` it or give Docker that user with `--user`)."
     } else {
         ""
@@ -202,11 +202,11 @@ fn tell(app: &mut crate::app::App) -> bool {
         return true;
     };
     match remote.status() {
-        mdm_remote::Status::Off => {
+        bmd_remote::Status::Off => {
             println!("The remote control is off (MDM_REMOTE=off).");
             true
         }
-        mdm_remote::Status::Listening(_) => {
+        bmd_remote::Status::Listening(_) => {
             let mut urls = remote.urls();
             if let Some(public) = crate::remote::public_url() {
                 urls.insert(0, public);
@@ -216,11 +216,11 @@ fn tell(app: &mut crate::app::App) -> bool {
                 println!("Its certificate's SHA-256 fingerprint: {fp}");
             }
             if remote.devices().is_empty() {
-                let answer: Result<mdm_ipc::api::PairAnswer, _> =
+                let answer: Result<bmd_ipc::api::PairAnswer, _> =
                     serde_json::from_str(&app.pair_answer());
                 if let Ok(a) = answer {
                     println!(
-                        "No device is paired yet. Open the address (or scan this) and enter the code {} {} (it works for {} minutes; `misterdownloadmanager-cli pair` shows a new one):\n{}",
+                        "No device is paired yet. Open the address (or scan this) and enter the code {} {} (it works for {} minutes; `bmd-cli pair` shows a new one):\n{}",
                         &a.code[..4],
                         &a.code[4..],
                         a.minutes,
@@ -230,17 +230,17 @@ fn tell(app: &mut crate::app::App) -> bool {
             }
             true
         }
-        mdm_remote::Status::NoAddress => {
+        bmd_remote::Status::NoAddress => {
             println!(
                 "The remote control has no local network address to listen on yet; it starts when one comes (--listen chooses one)."
             );
             true
         }
-        mdm_remote::Status::PortInUse(p) => {
+        bmd_remote::Status::PortInUse(p) => {
             println!("The port {p} is used by another program: choose another with --port.");
             true
         }
-        mdm_remote::Status::Failed(e) => {
+        bmd_remote::Status::Failed(e) => {
             println!("The remote control could not start: {e}");
             true
         }
@@ -260,17 +260,17 @@ mod tests {
         assert!(asked(&args));
         assert!(!asked(&["/d".into(), "x".into()]));
         assert_eq!(
-            setting(&args, "port", "MDM_TEST_UNSET_PORT").as_deref(),
+            setting(&args, "port", "BMD_TEST_UNSET_PORT").as_deref(),
             Some("9000")
         );
         assert_eq!(
-            setting(&args, "listen", "MDM_TEST_UNSET_LISTEN").as_deref(),
+            setting(&args, "listen", "BMD_TEST_UNSET_LISTEN").as_deref(),
             Some("127.0.0.1")
         );
-        assert_eq!(setting(&args, "hosts", "MDM_TEST_UNSET_HOSTS"), None);
+        assert_eq!(setting(&args, "hosts", "BMD_TEST_UNSET_HOSTS"), None);
         // An empty value is no value.
         let empty: Vec<String> = vec!["--downloads".into(), " ".into()];
-        assert_eq!(setting(&empty, "downloads", "MDM_TEST_UNSET_DL"), None);
+        assert_eq!(setting(&empty, "downloads", "BMD_TEST_UNSET_DL"), None);
     }
 
     /// A downloads folder is made and written to at start, leaving nothing behind; a folder of

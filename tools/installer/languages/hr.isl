@@ -1,4 +1,4 @@
-﻿; iDM's installer in Croatian: tools/installer/languages.py
+﻿; BMD's installer in Croatian: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Deinstaliranje programa %1.
 
 [CustomMessages]
 TaskBrowser=Postavi integraciju &preglednika (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Otvorite .&torrent datoteke i magnetne veze pomoću programa iDM
-TaskStartup=Pokrenite iDM kada se pokrene &Windows
+TaskTorrents=Otvorite .&torrent datoteke i magnetne veze pomoću programa BMD
+TaskStartup=Pokrenite BMD kada se pokrene &Windows
 TaskGroupOther=Ostalo:
-Launch=Pokreni iDM
+Launch=Pokreni BMD
 KeepData=Želite li izbrisati i popis preuzimanja i postavke?%n%nPreuzete datoteke neće biti dirane u svakom slučaju.

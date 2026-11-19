@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Transferă descărcările din browser către iDM."
+    "message": "Transferă descărcările din browser către BMD."
   },
   "menu": {
-    "message": "Descărcați cu iDM"
+    "message": "Descărcați cu BMD"
   },
   "video_download": {
     "message": "Descărcați videoclipul"
@@ -30,19 +30,19 @@
     "message": "Setări buton..."
   },
   "video_sent": {
-    "message": "Trimis la iDM"
+    "message": "Trimis la BMD"
   },
   "menu_selected": {
-    "message": "Descărcați linkurile selectate cu iDM"
+    "message": "Descărcați linkurile selectate cu BMD"
   },
   "menu_all": {
-    "message": "Descărcați toate linkurile cu iDM"
+    "message": "Descărcați toate linkurile cu BMD"
   },
   "status_connected": {
-    "message": "Conectat la iDM"
+    "message": "Conectat la BMD"
   },
   "status_connected_version": {
-    "message": "Conectat la iDM $version$",
+    "message": "Conectat la BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Întrerupt: descărcările rămân în browser"
   },
   "status_not_installed": {
-    "message": "iDM nu este instalat sau integrarea browserului nu este configurată"
+    "message": "BMD nu este instalat sau integrarea browserului nu este configurată"
   },
   "status_forbidden": {
-    "message": "iDM nu acceptă această copie a extensiei"
+    "message": "BMD nu acceptă această copie a extensiei"
   },
   "status_not_running": {
-    "message": "iDM nu a pornit la timp"
+    "message": "BMD nu a pornit la timp"
   },
   "status_host_failed": {
-    "message": "Conexiunea la iDM a eșuat"
+    "message": "Conexiunea la BMD a eșuat"
   },
   "status_too_large": {
     "message": "Detaliile acestei descărcări au fost prea mari pentru a fi transferate"
   },
   "status_update_app": {
-    "message": "Actualizați iDM pentru a utiliza tot ce oferă această extensie"
+    "message": "Actualizați BMD pentru a utiliza tot ce oferă această extensie"
   },
   "popup_take": {
     "message": "Preluare descărcări din acest browser"
@@ -78,10 +78,10 @@
     "message": "Trimiteți descărcările prin proxy-ul sau extensia VPN a acestui browser"
   },
   "popup_proxy_title": {
-    "message": "iDM descarcă apoi prin același proxy ca și acest browser. Browserul vă va cere o singură dată să permiteți acest lucru; dezactivarea acestei opțiuni anulează permisiunea."
+    "message": "BMD descarcă apoi prin același proxy ca și acest browser. Browserul vă va cere o singură dată să permiteți acest lucru; dezactivarea acestei opțiuni anulează permisiunea."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM descarcă apoi prin același proxy ca acest browser. Cât timp această opțiune este dezactivată, extensia nu citește setările proxy ale browserului."
+    "message": "BMD descarcă apoi prin același proxy ca acest browser. Cât timp această opțiune este dezactivată, extensia nu citește setările proxy ale browserului."
   },
   "popup_exclude_site": {
     "message": "Nu preluați niciodată descărcări de pe $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Deschideți iDM"
+    "message": "Deschideți BMD"
   },
   "popup_options": {
     "message": "Opțiuni..."
@@ -114,7 +114,7 @@
     "message": "Ajutor"
   },
   "popup_support": {
-    "message": "Susține iDM"
+    "message": "Susține BMD"
   },
   "popup_fix": {
     "message": "Cum se remediază"
@@ -150,7 +150,7 @@
     "message": "Opțiunea „Utilizare integrare avansată browser” este dezactivată în Opțiuni → General."
   },
   "declined_torrents": {
-    "message": "Este un torrent, iar „Deschideți linkurile magnet și fișierele .torrent cu iDM” este dezactivat în setările Torrent."
+    "message": "Este un torrent, iar „Deschideți linkurile magnet și fișierele .torrent cu BMD” este dezactivat în setările Torrent."
   },
   "declined_site_access": {
     "message": "Extensia nu are permisiunea de a citi acest site (accesul la site al browserului)."
@@ -195,16 +195,16 @@
     "message": "Nu există niciun videoclip de descărcat aici"
   },
   "video_playlist": {
-    "message": "O listă de videoclipuri: alegeți-le în iDM"
+    "message": "O listă de videoclipuri: alegeți-le în BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM are nevoie de yt-dlp pentru acest videoclip"
+    "message": "BMD are nevoie de yt-dlp pentru acest videoclip"
   },
   "video_too_long": {
     "message": "Căutarea a durat prea mult"
   },
   "video_busy": {
-    "message": "iDM este ocupat cu alte videoclipuri"
+    "message": "BMD este ocupat cu alte videoclipuri"
   },
   "video_queued": {
     "message": "Adăugat la coadă"
@@ -228,7 +228,7 @@
     "message": "Acest computer"
   },
   "popup_send_remote": {
-    "message": "Alt iDM (un server)"
+    "message": "Alt BMD (un server)"
   },
   "popup_remote_code": {
     "message": "Cod de asociere"
@@ -240,7 +240,7 @@
     "message": "Asociați"
   },
   "popup_remote_help": {
-    "message": "Deschideți adresa o dată și acceptați certificatul, apoi introduceți un cod din Opțiuni, la distanță, Asociați un dispozitiv (sau misterdownloadmanager-cli pair)."
+    "message": "Deschideți adresa o dată și acceptați certificatul, apoi introduceți un cod din Opțiuni, la distanță, Asociați un dispozitiv (sau bmd-cli pair)."
   },
   "status_remote": {
     "message": "Descărcările merg la $address$",
@@ -297,19 +297,19 @@
     "message": "Descărcați cea mai bună calitate"
   },
   "video_sending": {
-    "message": "Se trimite către iDM..."
+    "message": "Se trimite către BMD..."
   },
   "video_added": {
-    "message": "Adăugat la iDM"
+    "message": "Adăugat la BMD"
   },
   "video_show": {
     "message": "Afișați"
   },
   "video_no_answer": {
-    "message": "iDM nu a răspuns"
+    "message": "BMD nu a răspuns"
   },
-  "video_get_mdm": {
-    "message": "Obțineți iDM"
+  "video_get_bmd": {
+    "message": "Obțineți BMD"
   },
   "video_retry": {
     "message": "Reîncercați"
@@ -324,7 +324,7 @@
     "message": "Toate calitățile și subtitrările..."
   },
   "video_failed": {
-    "message": "iDM nu este instalat sau nu a pornit"
+    "message": "BMD nu este instalat sau nu a pornit"
   },
   "video_download_best": {
     "message": "Descărcați cea mai bună calitate"

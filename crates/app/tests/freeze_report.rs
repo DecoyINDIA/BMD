@@ -1,8 +1,8 @@
-//! #202: a freeze while iDM handles a command must still be reported. Since #176 the incoming
+//! #202: a freeze while BMD handles a command must still be reported. Since #176 the incoming
 //! commands and the clock run in the app's `logic`, which egui calls every frame (and alone while
 //! the main window is minimized); the freeze watchdog timed only `ui`, so a command that hung
 //! never opened the crash report window nor wrote a freeze report. The real app, off the screens
-//! (MDM_OFFSCREEN), with a data folder of its own: MDM_CRASH_TEST=1, then `/show crash-test:…`
+//! (BMD_OFFSCREEN), with a data folder of its own: BMD_CRASH_TEST=1, then `/show crash-test:…`
 //! (a deadlock, or 12 s of a busy window thread) with the main window visible or minimized. The
 //! crash monitor must open its window and write the freeze report, which names the kind of freeze.
 //! #1126: with every window hidden in the notification area, a stall whose thread runs nothing
@@ -10,13 +10,13 @@
 //! goes on once a window is asked for.
 //!
 //! It opens windows, which needs OpenGL or Direct3D, so it runs on request:
-//! `cargo test -p mdm-app --test freeze_report -- --ignored`.
+//! `cargo test -p bmd-app --test freeze_report -- --ignored`.
 
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command};
 use std::time::{Duration, Instant};
 
-const APP: &str = env!("CARGO_BIN_EXE_misterdownloadmanager");
+const APP: &str = env!("CARGO_BIN_EXE_bmd");
 
 /// The app's and its monitor's logs so far (every file of `logs/`).
 fn log(data: &Path) -> String {
@@ -62,8 +62,8 @@ fn second_launch(data: &Path, args: &[&str]) {
     let status = Command::new(APP)
         .args(args)
         .env("MDM_DATA_DIR", data)
-        .env("MDM_OFFSCREEN", "1")
-        .env("MDM_CRASH_TEST", "1")
+        .env("BMD_OFFSCREEN", "1")
+        .env("BMD_CRASH_TEST", "1")
         .status()
         .unwrap();
     assert!(status.success(), "second launch {args:?}: {status}");
@@ -111,8 +111,8 @@ fn start(data: &Path) -> Child {
     .unwrap();
     Command::new(APP)
         .env("MDM_DATA_DIR", data)
-        .env("MDM_OFFSCREEN", "1")
-        .env("MDM_CRASH_TEST", "1")
+        .env("BMD_OFFSCREEN", "1")
+        .env("BMD_CRASH_TEST", "1")
         .spawn()
         .unwrap()
 }
@@ -244,7 +244,7 @@ fn hidden_stall(what: &str, ask: Option<Duration>) -> (Option<Duration>, Option<
         let began = Instant::now();
         if let Some(ask) = ask {
             std::thread::sleep(ask);
-            // A second launch asks for the window (as a click on iDM's shortcut does).
+            // A second launch asks for the window (as a click on BMD's shortcut does).
             second_launch(data, &["/show", "about"]);
         }
         wait_until(
@@ -275,7 +275,7 @@ fn hidden_stall(what: &str, ask: Option<Duration>) -> (Option<Duration>, Option<
         let _ = Command::new(APP)
             .arg("/exit")
             .env("MDM_DATA_DIR", data)
-            .env("MDM_OFFSCREEN", "1")
+            .env("BMD_OFFSCREEN", "1")
             .status();
         let until = Instant::now() + Duration::from_secs(30);
         while app.try_wait().unwrap().is_none() && Instant::now() < until {
@@ -303,7 +303,7 @@ fn a_hidden_window_kept_waiting_is_logged_not_reported() {
     assert!(report.is_none());
 }
 
-/// The same window busy for 12 s (an endless loop of iDM's own) is a freeze, hidden or not.
+/// The same window busy for 12 s (an endless loop of BMD's own) is a freeze, hidden or not.
 #[test]
 #[ignore = "opens the app's windows (off-screen): needs OpenGL or Direct3D; run with --ignored"]
 fn a_hidden_window_busy_is_reported() {

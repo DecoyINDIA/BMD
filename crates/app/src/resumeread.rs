@@ -18,7 +18,7 @@ use std::path::{Component, Path, PathBuf};
 use std::sync::Arc;
 use std::sync::mpsc::{Receiver, TryRecvError, channel};
 
-use mdm_engine::state::{ResumeState, state_path};
+use bmd_engine::state::{ResumeState, state_path};
 
 /// What reading one row's state found.
 pub struct Read {
@@ -35,7 +35,7 @@ pub type Loader = Arc<dyn Fn(&Path) -> Option<ResumeState> + Send + Sync>;
 /// The state at `dest` on the disk; files started under the former codename are renamed first,
 /// so that they resume.
 pub fn from_disk(dest: &Path) -> Option<ResumeState> {
-    mdm_engine::state::migrate_legacy(dest);
+    bmd_engine::state::migrate_legacy(dest);
     ResumeState::load(&state_path(dest)).ok()
 }
 
@@ -176,7 +176,7 @@ mod tests {
     fn state(dest: &Path, done: u64) -> ResumeState {
         let url = url::Url::parse("http://127.0.0.1/a.bin").unwrap();
         let mut s = ResumeState::new(url.clone(), url, dest.to_owned(), 100, Default::default());
-        s.segments = vec![mdm_engine::planner::SavedSegment {
+        s.segments = vec![bmd_engine::planner::SavedSegment {
             start: 0,
             end: 100,
             cursor: done,

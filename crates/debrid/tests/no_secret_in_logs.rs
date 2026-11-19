@@ -1,4 +1,4 @@
-//! A debrid account's token never reaches a log (#44): iDM's own log at its most detailed
+//! A debrid account's token never reaches a log (#44): BMD's own log at its most detailed
 //! (every crate's `tracing` output, the HTTP client's included), the download's event log, its
 //! errors and debug dumps, while each service signs in, lists its hosts and unlocks a link
 //! downloaded end to end against the lab server's fakes.
@@ -7,9 +7,9 @@ use std::io::Write;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
-use mdm_debrid::{Account, Credential, Debrid, Http, ServiceKind, Services, check};
-use mdm_engine::{Destination, Download, Options, Request};
-use mdm_labserver::{Config, LabServer};
+use bmd_debrid::{Account, Credential, Debrid, Http, ServiceKind, Services, check};
+use bmd_engine::{Destination, Download, Options, Request};
+use bmd_labserver::{Config, LabServer};
 use url::Url;
 
 /// The token: distinctive, so finding it anywhere is a leak.
@@ -86,9 +86,9 @@ async fn no_token_in_any_log() {
                 let s = dl.snapshot();
                 if !matches!(
                     s.state,
-                    mdm_engine::download::State::Probing
-                        | mdm_engine::download::State::Downloading
-                        | mdm_engine::download::State::Completing
+                    bmd_engine::download::State::Probing
+                        | bmd_engine::download::State::Downloading
+                        | bmd_engine::download::State::Completing
                 ) {
                     break s;
                 }

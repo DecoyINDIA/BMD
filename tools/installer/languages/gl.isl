@@ -1,4 +1,4 @@
-﻿; iDM's installer in Galician: tools/installer/languages.py
+﻿; BMD's installer in Galician: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Desinstalando %1.
 
 [CustomMessages]
 TaskBrowser=Configurar a integración co &navegador (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Abrir ficheiros .&torrent e ligazóns magnet con iDM
-TaskStartup=Iniciar iDM cando se inicia &Windows
+TaskTorrents=Abrir ficheiros .&torrent e ligazóns magnet con BMD
+TaskStartup=Iniciar BMD cando se inicia &Windows
 TaskGroupOther=Outros:
-Launch=Iniciar iDM
+Launch=Iniciar BMD
 KeepData=Queres eliminar tamén a túa lista de descargas e a configuración?%n%nOs teus ficheiros descargados non se tocarán de ningún xeito.

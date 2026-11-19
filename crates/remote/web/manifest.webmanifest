@@ -1,6 +1,6 @@
 {
-  "name": "iDM",
-  "short_name": "iDM",
+  "name": "Black Marlin Downloader",
+  "short_name": "BMD",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

@@ -1,6 +1,6 @@
-//! Which of a torrent's trackers iDM lets librqbit contact (#40). A torrent names its trackers,
+//! Which of a torrent's trackers BMD lets librqbit contact (#40). A torrent names its trackers,
 //! and a tracker on this computer or the local network (`127.0.0.1`, `192.168.1.1`, `localhost`)
-//! lets a torrent make iDM send requests into the network it sits in: those are dropped. With a
+//! lets a torrent make BMD send requests into the network it sits in: those are dropped. With a
 //! proxy, UDP trackers are dropped too: librqbit sends them around the proxy.
 //!
 //! The list is changed in the torrent itself (`announce`, `announce-list`, outside the info
@@ -8,7 +8,7 @@
 
 use std::net::{IpAddr, Ipv4Addr};
 
-/// Whether iDM may contact `tracker`.
+/// Whether BMD may contact `tracker`.
 pub fn allowed(tracker: &str, proxied: bool) -> bool {
     let Ok(url) = url::Url::parse(tracker.trim()) else {
         return false;
@@ -88,7 +88,7 @@ pub fn in_magnet(magnet: &str) -> Vec<String> {
     out
 }
 
-/// A magnet link with only the trackers iDM may contact.
+/// A magnet link with only the trackers BMD may contact.
 pub fn filter_magnet(magnet: &str, proxied: bool) -> String {
     let Some((head, query)) = magnet.split_once('?') else {
         return magnet.to_owned();
@@ -109,7 +109,7 @@ pub fn filter_magnet(magnet: &str, proxied: bool) -> String {
     format!("{head}?{}", kept.join("&"))
 }
 
-/// A .torrent with only the trackers iDM may contact; everything else byte for byte, so its
+/// A .torrent with only the trackers BMD may contact; everything else byte for byte, so its
 /// info hash is the same. None when it isn't a bencoded dictionary.
 pub fn filter_torrent(bytes: &[u8], proxied: bool) -> Option<Vec<u8>> {
     let entries = top_level(bytes)?;
@@ -159,7 +159,7 @@ pub fn filter_torrent(bytes: &[u8], proxied: bool) -> Option<Vec<u8>> {
     Some(out)
 }
 
-/// An `announce-list`'s tiers with only the trackers iDM may contact, and only the tiers left
+/// An `announce-list`'s tiers with only the trackers BMD may contact, and only the tiers left
 /// with one. None when it isn't a list of lists.
 fn kept(value: &[u8], proxied: bool) -> Option<Vec<Vec<&[u8]>>> {
     Some(
@@ -509,7 +509,7 @@ mod tests {
     fn filtering_only_takes_trackers_away() {
         let s = |v: &str| format!("{}:{v}", v.len());
         let (public, local) = ("http://t.example/announce", "http://127.0.0.1/announce");
-        // The list names only trackers iDM won't ask: `announce` (not used) doesn't come back.
+        // The list names only trackers BMD won't ask: `announce` (not used) doesn't come back.
         let t = format!("d8:announce{}13:announce-listll{}eee", s(public), s(local));
         let out = filter_torrent(t.as_bytes(), false).unwrap();
         assert_eq!(listed(t.as_bytes()), [local]);

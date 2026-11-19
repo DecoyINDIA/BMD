@@ -22,7 +22,7 @@ pub mod resolve;
 pub mod servers;
 pub mod streams;
 // System helper discovery, on every system (#452): a copy found on the PATH (a package manager's,
-// Homebrew's, pip's or an installer's), used when iDM has none of its own.
+// Homebrew's, pip's or an installer's), used when BMD has none of its own.
 mod system;
 pub mod update;
 pub mod video;
@@ -36,12 +36,12 @@ use sha2::{Digest, Sha256};
 
 /// yt-dlp's release signing key, from its repository (`public.key`).
 const YTDLP_KEY: &str = include_str!("../keys/yt-dlp.asc");
-/// iDM's release signing key (Ed25519, fingerprint ED4D65B61F3809DA1AF22D954EFF92B31405DDFB),
+/// BMD's release signing key (Ed25519, fingerprint ED4D65B61F3809DA1AF22D954EFF92B31405DDFB),
 /// the key of the repository the app updates from (`help::LATEST`): release.yml signs each
 /// release's SHA256SUMS.txt with it (the MDM_RELEASE_KEY secret), and the app updates itself
 /// only from a list it signed. Replaced when this fork moved its releases to its own repository:
 /// the key before it (5826D399…) is upstream's, which never signs this fork's releases.
-const MDM_KEY: &str = include_str!("../keys/mdm-release.asc");
+const BMD_KEY: &str = include_str!("../keys/bmd-release.asc");
 /// Where releases come from: GitHub's API, else its pages (`github`, #1337).
 const RELEASES: &str = "https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest";
 /// yt-dlp's repository on GitHub.
@@ -66,48 +66,48 @@ pub enum Error {
     /// A program chosen as yt-dlp or ffmpeg (`chosen`) didn't answer as one.
     #[error("this program isn't {0}")]
     NotTheProgram(&'static str),
-    /// A program chosen as a helper is a release iDM can't drive (#236: gallery-dl before 1.20).
+    /// A program chosen as a helper is a release BMD can't drive (#236: gallery-dl before 1.20).
     #[error("{name} {version} is too old: it needs {oldest} or newer")]
     TooOld {
         name: &'static str,
         version: String,
         oldest: &'static str,
     },
-    /// iDM's engine could not download it from `host` (#816: which server, and why).
+    /// BMD's engine could not download it from `host` (#816: which server, and why).
     #[error("{host}: {error}")]
     Download {
         host: String,
-        error: mdm_engine::Error,
+        error: bmd_engine::Error,
     },
     /// The chosen network adapter is down or can't reach the server (#35).
     #[error(transparent)]
-    Adapter(#[from] mdm_engine::NetError),
+    Adapter(#[from] bmd_engine::NetError),
 }
 
 impl Error {
     /// The server a network failure was with, and its kind (#816); None for any other error.
-    pub fn network(&self) -> Option<(String, mdm_engine::fault::Fault)> {
+    pub fn network(&self) -> Option<(String, bmd_engine::fault::Fault)> {
         match self {
             Error::Http(e) => {
                 let host = e.url()?.host_str()?.to_owned();
-                Some((host, mdm_engine::fault::of_http(e)))
+                Some((host, bmd_engine::fault::of_http(e)))
             }
             Error::Download { host, error } => {
-                Some((host.clone(), mdm_engine::fault::of_engine(error)?))
+                Some((host.clone(), bmd_engine::fault::of_engine(error)?))
             }
             _ => None,
         }
     }
 }
 
-/// A client for iDM's own requests to `url`'s server (a release list, its checksums): through
+/// A client for BMD's own requests to `url`'s server (a release list, its checksums): through
 /// `net`'s proxy (Options → Proxy / Socks), DNS and network adapter, as the engine's downloads
 /// go (#816: the release list went past the proxy the download itself took).
-pub(crate) fn client(net: &mdm_engine::Options, url: &str) -> Result<reqwest::Client, Error> {
+pub(crate) fn client(net: &bmd_engine::Options, url: &str) -> Result<reqwest::Client, Error> {
     let parsed = url::Url::parse(url).map_err(|e| Error::BadRelease(e.to_string()))?;
     let host = parsed.host_str().unwrap_or_default().to_owned();
-    mdm_engine::http_client(net, &parsed).map_err(|e| match e {
-        mdm_engine::Error::Adapter(a) => Error::Adapter(a),
+    bmd_engine::http_client(net, &parsed).map_err(|e| match e {
+        bmd_engine::Error::Adapter(a) => Error::Adapter(a),
         error => Error::Download { host, error },
     })
 }
@@ -132,7 +132,7 @@ impl Installed {
 
 /// `<data dir>/tools`.
 pub fn tools_dir() -> Option<PathBuf> {
-    mdm_ipc::data_dir().map(|d| d.join("tools"))
+    bmd_ipc::data_dir().map(|d| d.join("tools"))
 }
 
 /// yt-dlp's file name for this system and processor in its releases; None where it publishes
@@ -165,15 +165,15 @@ pub fn signed_by_ytdlp(sums: &[u8], sig: &[u8]) -> bool {
 
 /// Whether `sums` (a release's SHA256SUMS.txt) carries a valid signature `sig` by Mister
 /// Download Manager's release key.
-pub fn signed_by_mdm(sums: &[u8], sig: &[u8]) -> bool {
-    if signed_by(MDM_KEY, sums, sig) {
+pub fn signed_by_bmd(sums: &[u8], sig: &[u8]) -> bool {
+    if signed_by(BMD_KEY, sums, sig) {
         return true;
     }
     // Update now's end-to-end tests (feature `test-update`, never in a release): a fake
     // release on a lab server, signed with a test key of their own.
     #[cfg(feature = "test-update")]
     if let Some(key) =
-        std::env::var_os("MDM_TEST_UPDATE_KEY").and_then(|p| std::fs::read_to_string(p).ok())
+        std::env::var_os("BMD_TEST_UPDATE_KEY").and_then(|p| std::fs::read_to_string(p).ok())
     {
         return signed_by(&key, sums, sig);
     }
@@ -214,13 +214,13 @@ pub(crate) async fn signed_list(
     Ok(String::from_utf8_lossy(&sums).into_owned())
 }
 
-/// iDM's own name, sent when it fetches its helpers and its updates.
-pub const USER_AGENT: &str = concat!("MisterDownloadManager/", env!("CARGO_PKG_VERSION"));
+/// BMD's own name, sent when it fetches its helpers and its updates.
+pub const USER_AGENT: &str = concat!("BMD/", env!("CARGO_PKG_VERSION"));
 
-/// How iDM downloads its helpers and its updates: through its own engine (several connections,
-/// resumable), as iDM itself, through `proxy` (Options → Proxy / Socks).
-pub fn net(proxy: mdm_engine::Proxy) -> mdm_engine::Options {
-    mdm_engine::Options {
+/// How BMD downloads its helpers and its updates: through its own engine (several connections,
+/// resumable), as BMD itself, through `proxy` (Options → Proxy / Socks).
+pub fn net(proxy: bmd_engine::Proxy) -> bmd_engine::Options {
+    bmd_engine::Options {
         user_agent: USER_AGENT.to_owned(),
         automatic_agent: false,
         proxy,
@@ -228,7 +228,7 @@ pub fn net(proxy: mdm_engine::Proxy) -> mdm_engine::Options {
     }
 }
 
-/// Download `url` into `path` with iDM's own engine (`net`: its connections, the user's proxy),
+/// Download `url` into `path` with BMD's own engine (`net`: its connections, the user's proxy),
 /// counting into `progress`, and accept it only when its SHA-256 is `expected` (the engine checks
 /// it, and so do we, on the finished file). An earlier attempt cut off is resumed from where it
 /// stopped. A file that doesn't match is removed.
@@ -236,20 +236,20 @@ pub(crate) async fn fetch_verified(
     url: &str,
     path: &Path,
     expected: [u8; 32],
-    net: &mdm_engine::Options,
+    net: &bmd_engine::Options,
     progress: Option<&update::Progress>,
 ) -> Result<(), Error> {
-    use mdm_engine::verify::{Algo, Hash};
+    use bmd_engine::verify::{Algo, Hash};
     let url = url::Url::parse(url).map_err(|e| Error::BadRelease(e.to_string()))?;
     let host = url.host_str().unwrap_or_default().to_owned();
-    let opts = mdm_engine::Options {
+    let opts = bmd_engine::Options {
         checksum: Some(Hash {
             algo: Algo::Sha256,
             value: expected.to_vec(),
         }),
         ..net.clone()
     };
-    let got = mdm_engine::fetch(url, path, opts, |done, total| {
+    let got = bmd_engine::fetch(url, path, opts, |done, total| {
         if let Some(p) = progress {
             use std::sync::atomic::Ordering::Relaxed;
             p.got.store(done, Relaxed);
@@ -257,15 +257,15 @@ pub(crate) async fn fetch_verified(
         }
     })
     .await;
-    let state = mdm_engine::state::state_path(path);
+    let state = bmd_engine::state::state_path(path);
     let forget = || {
         let _ = std::fs::remove_file(path);
-        let _ = std::fs::remove_file(mdm_engine::naming::part_path(path));
+        let _ = std::fs::remove_file(bmd_engine::naming::part_path(path));
         let _ = std::fs::remove_file(&state);
     };
     match got {
         Ok(_) if sha256_of(path)? == expected => Ok(()),
-        Ok(_) | Err(mdm_engine::Error::ChecksumMismatch(_)) => {
+        Ok(_) | Err(bmd_engine::Error::ChecksumMismatch(_)) => {
             forget();
             Err(Error::BadChecksum)
         }
@@ -299,7 +299,7 @@ pub fn sum_for(sums: &str, name: &str) -> Option<[u8; 32]> {
     })
 }
 
-/// The yt-dlp to use: the person's own (`chosen`), else iDM's install in `dir`
+/// The yt-dlp to use: the person's own (`chosen`), else BMD's install in `dir`
 /// (`dir/yt-dlp/current.json`), if any and still there; else the system's.
 pub fn installed(dir: &Path) -> Option<Installed> {
     let own = chosen::chosen(dir, chosen::Helper::YtDlp).or_else(|| own_ytdlp(dir));
@@ -330,12 +330,12 @@ pub fn refreshable(dir: &Path) -> bool {
 }
 
 /// Install the latest yt-dlp release into `dir` unless the installed one is as new, the program
-/// downloaded with iDM's engine (`net`), counted into `progress`. Returns what is installed
-/// afterwards. A system copy doesn't count as installed here: this is the way to get iDM's own
-/// instead (Helpers), and iDM's own then wins ([`installed`]).
+/// downloaded with BMD's engine (`net`), counted into `progress`. Returns what is installed
+/// afterwards. A system copy doesn't count as installed here: this is the way to get BMD's own
+/// instead (Helpers), and BMD's own then wins ([`installed`]).
 pub async fn install_latest(
     dir: &Path,
-    net: &mdm_engine::Options,
+    net: &bmd_engine::Options,
     progress: Option<&update::Progress>,
 ) -> Result<Installed, Error> {
     // The person's own copy: theirs to update (#51).
@@ -358,7 +358,7 @@ pub async fn install_latest(
     if let Some(current) = own_ytdlp(dir)
         && !newer(&release.tag, &current.version)
         // The same release again only as the folder build, in place of the one-file one that
-        // earlier versions of iDM installed on Windows (#1053).
+        // earlier versions of BMD installed on Windows (#1053).
         && !(folder::BUILD && folder::one_file_build(&current.exe))
     {
         return Ok(current); // never the same again, never older
@@ -490,16 +490,16 @@ mod tests {
     }
 
     #[test]
-    fn mdm_releases_are_checked_against_mdms_own_key() {
+    fn bmd_releases_are_checked_against_mdms_own_key() {
         let sums = include_bytes!("../tests/fixtures/mdm-SHA256SUMS.txt");
         let sig = include_bytes!("../tests/fixtures/mdm-SHA256SUMS.txt.sig");
-        assert!(signed_by_mdm(sums, sig));
+        assert!(signed_by_bmd(sums, sig));
         let mut forged = sums.to_vec();
         forged[0] = if forged[0] == b'0' { b'1' } else { b'0' };
-        assert!(!signed_by_mdm(&forged, sig));
+        assert!(!signed_by_bmd(&forged, sig));
         // Each key signs for itself only.
         assert!(!signed_by_ytdlp(sums, sig));
-        assert!(!signed_by_mdm(SUMS, SIG));
+        assert!(!signed_by_bmd(SUMS, SIG));
     }
 
     #[test]
@@ -521,7 +521,7 @@ mod tests {
         assert!(sum_for(&sums, "yt-dlp.ex").is_none());
     }
 
-    /// Each system and processor iDM is published for takes yt-dlp's own build for it, and the
+    /// Each system and processor BMD is published for takes yt-dlp's own build for it, and the
     /// release's signed list has a checksum for each (a real release's list).
     #[test]
     fn ytdlp_has_a_build_for_each_processor() {

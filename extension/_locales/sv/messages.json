@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Överför nedladdningar från webbläsaren till iDM."
+    "message": "Överför nedladdningar från webbläsaren till BMD."
   },
   "menu": {
-    "message": "Ladda ned med iDM"
+    "message": "Ladda ned med BMD"
   },
   "video_download": {
     "message": "Hämta video"
@@ -30,19 +30,19 @@
     "message": "Knappinställningar..."
   },
   "video_sent": {
-    "message": "Skickades till iDM"
+    "message": "Skickades till BMD"
   },
   "menu_selected": {
-    "message": "Ladda ner valda länkar med iDM"
+    "message": "Ladda ner valda länkar med BMD"
   },
   "menu_all": {
-    "message": "Ladda ner alla länkar med iDM"
+    "message": "Ladda ner alla länkar med BMD"
   },
   "status_connected": {
-    "message": "Ansluten till iDM"
+    "message": "Ansluten till BMD"
   },
   "status_connected_version": {
-    "message": "Ansluten till iDM $version$",
+    "message": "Ansluten till BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Pausad: nedladdningar stannar i webbläsaren"
   },
   "status_not_installed": {
-    "message": "iDM är inte installerad, eller dess webbläsarintegrering är inte inställd"
+    "message": "BMD är inte installerad, eller dess webbläsarintegrering är inte inställd"
   },
   "status_forbidden": {
-    "message": "iDM accepterar inte den här kopian av tillägget"
+    "message": "BMD accepterar inte den här kopian av tillägget"
   },
   "status_not_running": {
-    "message": "iDM startade inte i tid"
+    "message": "BMD startade inte i tid"
   },
   "status_host_failed": {
-    "message": "Anslutningen till iDM misslyckades"
+    "message": "Anslutningen till BMD misslyckades"
   },
   "status_too_large": {
     "message": "Informationen om den här nedladdningen var för stor för att överlämnas"
   },
   "status_update_app": {
-    "message": "Uppdatera iDM för att använda allt som det här tillägget erbjuder"
+    "message": "Uppdatera BMD för att använda allt som det här tillägget erbjuder"
   },
   "popup_take": {
     "message": "Ta nedladdningar från den här webbläsaren"
@@ -78,10 +78,10 @@
     "message": "Skicka nedladdningar via den här webbläsarens proxy- eller VPN-tillägg"
   },
   "popup_proxy_title": {
-    "message": "iDM laddar sedan ned via samma proxy som den här webbläsaren. Webbläsaren frågar dig en gång om du vill tillåta det. Om du inaktiverar detta tas det tillbaka."
+    "message": "BMD laddar sedan ned via samma proxy som den här webbläsaren. Webbläsaren frågar dig en gång om du vill tillåta det. Om du inaktiverar detta tas det tillbaka."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM hämtar sedan via samma proxy som den här webbläsaren. När detta är inaktiverat läser tillägget inte webbläsarens proxy."
+    "message": "BMD hämtar sedan via samma proxy som den här webbläsaren. När detta är inaktiverat läser tillägget inte webbläsarens proxy."
   },
   "popup_exclude_site": {
     "message": "Ta aldrig nedladdningar från $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Öppna iDM"
+    "message": "Öppna BMD"
   },
   "popup_options": {
     "message": "Alternativ..."
@@ -114,7 +114,7 @@
     "message": "Hjälp"
   },
   "popup_support": {
-    "message": "Stöd iDM"
+    "message": "Stöd BMD"
   },
   "popup_fix": {
     "message": "Så här åtgärdar du det"
@@ -150,7 +150,7 @@
     "message": "Använd avancerad webbläsarintegrering är avstängd i Alternativ → Allmänt."
   },
   "declined_torrents": {
-    "message": "Det är en torrent, och Öppna magnetlänkar och .torrent-filer med iDM är avstängt i Torrentinställningar."
+    "message": "Det är en torrent, och Öppna magnetlänkar och .torrent-filer med BMD är avstängt i Torrentinställningar."
   },
   "declined_site_access": {
     "message": "Tillägget får inte läsa den här webbplatsen (webbläsarens webbplatsåtkomst)."
@@ -195,16 +195,16 @@
     "message": "Ingen video att hämta här"
   },
   "video_playlist": {
-    "message": "En lista med videor: välj dem i iDM"
+    "message": "En lista med videor: välj dem i BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM behöver yt-dlp för den här videon"
+    "message": "BMD behöver yt-dlp för den här videon"
   },
   "video_too_long": {
     "message": "Sökningen tog för lång tid"
   },
   "video_busy": {
-    "message": "iDM är upptaget med andra videor"
+    "message": "BMD är upptaget med andra videor"
   },
   "video_queued": {
     "message": "Tillagd i kön"
@@ -228,7 +228,7 @@
     "message": "Den här datorn"
   },
   "popup_send_remote": {
-    "message": "En annan iDM (en server)"
+    "message": "En annan BMD (en server)"
   },
   "popup_remote_code": {
     "message": "Kopplingskod"
@@ -240,7 +240,7 @@
     "message": "Koppla"
   },
   "popup_remote_help": {
-    "message": "Öppna dess adress en gång och acceptera dess certifikat, ange sedan en kod från dess Alternativ, Fjärr, Koppla en enhet (eller misterdownloadmanager-cli pair)."
+    "message": "Öppna dess adress en gång och acceptera dess certifikat, ange sedan en kod från dess Alternativ, Fjärr, Koppla en enhet (eller bmd-cli pair)."
   },
   "status_remote": {
     "message": "Nedladdningar går till $address$",
@@ -297,19 +297,19 @@
     "message": "Ladda ned bästa kvalitet"
   },
   "video_sending": {
-    "message": "Skickar till iDM..."
+    "message": "Skickar till BMD..."
   },
   "video_added": {
-    "message": "Tillagd i iDM"
+    "message": "Tillagd i BMD"
   },
   "video_show": {
     "message": "Visa"
   },
   "video_no_answer": {
-    "message": "iDM svarade inte"
+    "message": "BMD svarade inte"
   },
-  "video_get_mdm": {
-    "message": "Skaffa iDM"
+  "video_get_bmd": {
+    "message": "Skaffa BMD"
   },
   "video_retry": {
     "message": "Försök igen"
@@ -324,7 +324,7 @@
     "message": "Alla kvaliteter och undertexter..."
   },
   "video_failed": {
-    "message": "iDM är inte installerad eller startade inte"
+    "message": "BMD är inte installerad eller startade inte"
   },
   "video_download_best": {
     "message": "Ladda ned bästa kvalitet"

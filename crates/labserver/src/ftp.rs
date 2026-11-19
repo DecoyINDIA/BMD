@@ -201,7 +201,7 @@ pub(crate) fn certificate_of(
     ca.not_after = now + time::Duration::days(365);
     ca.is_ca = IsCa::Ca(BasicConstraints::Unconstrained);
     ca.distinguished_name
-        .push(DnType::CommonName, "iDM lab test CA");
+        .push(DnType::CommonName, "BMD lab test CA");
     ca.key_usages = vec![
         KeyUsagePurpose::KeyCertSign,
         KeyUsagePurpose::CrlSign,
@@ -348,7 +348,7 @@ where
     let mut lines = BufReader::new(read).lines();
     if greet
         && write
-            .write_all(reply(220, "iDM lab FTP").as_bytes())
+            .write_all(reply(220, "BMD lab FTP").as_bytes())
             .await
             .is_err()
     {

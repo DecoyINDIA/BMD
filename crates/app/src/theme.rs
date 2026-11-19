@@ -156,10 +156,10 @@ pub fn follow_pywal(files: Option<&crate::lookwatch::ThemeFiles>) -> bool {
     }
 }
 
-/// The theme to start with: `MDM_THEME` (tests and screenshots: an id or a theme file's path),
+/// The theme to start with: `BMD_THEME` (tests and screenshots: an id or a theme file's path),
 /// else the setting.
 pub fn startup_id(setting: &str) -> String {
-    std::env::var("MDM_THEME")
+    std::env::var("BMD_THEME")
         .ok()
         .filter(|s| !s.is_empty())
         .unwrap_or_else(|| setting.to_owned())
@@ -444,8 +444,8 @@ pub(crate) fn read_font(path: &std::path::Path) -> Option<Vec<u8>> {
 
 /// The last look at the fonts before egui gets them: each one egui can read ([`loadable_font`], at
 /// the face it names) stays, any other is left out of the fonts and of every family that names it,
-/// and the log says so. Every system font iDM adds came through [`read_font`] already; this keeps
-/// a font from any other path (or a face of a collection egui can't find) from stopping iDM as it
+/// and the log says so. Every system font BMD adds came through [`read_font`] already; this keeps
+/// a font from any other path (or a face of a collection egui can't find) from stopping BMD as it
 /// starts, which egui does with a font it was given and can't parse (#1412).
 fn only_loadable_fonts(defs: &mut egui::FontDefinitions) {
     defs.font_data.retain(|name, data| {
@@ -813,7 +813,7 @@ fn fc_lookup(pattern: &str) -> Vec<std::path::PathBuf> {
 /// best answer alone can be a font egui can't draw with, a bitmap font fontconfig prefers for a
 /// language (#931: a gzipped PCF font for Japanese). So the fonts that scale come first
 /// (`scalable=true` outranks the family and the language in fontconfig's order: Noto Sans CJK
-/// before a preferred bitmap font), and iDM takes the first it can read ([`pick_font`]: a
+/// before a preferred bitmap font), and BMD takes the first it can read ([`pick_font`]: a
 /// scalable Type 1 font is no more readable than a bitmap one).
 #[cfg(not(any(windows, target_os = "macos")))]
 fn fc_match(pattern: &str) -> std::process::Command {
@@ -908,7 +908,7 @@ impl egui::FontProvider for SystemFallback {
     }
 }
 
-/// The fonts for text outside the interface language, in the order they are asked: iDM's lists
+/// The fonts for text outside the interface language, in the order they are asked: BMD's lists
 /// ([`ScriptFallback`]), then the system's choice ([`SystemFallback`]).
 fn on_demand_fonts() -> Vec<std::sync::Arc<dyn egui::FontProvider>> {
     vec![
@@ -978,10 +978,10 @@ fn fc_font(pattern: &str) -> Option<(std::path::PathBuf, Vec<u8>)> {
 
 /// Every font file the windows may need, as fontconfig picks it: the interface font
 /// (`sans-serif`) and each script's (`:lang=…`). Each answer is an `fc-match` program; asked one
-/// after the other on the window's thread, the thirty of them held up iDM's first frame for 2 s
+/// after the other on the window's thread, the thirty of them held up BMD's first frame for 2 s
 /// on an idle computer and past the freeze report's 8 s on a busy one (#164). So they are asked
 /// once, all together (a third of the time), and [`prepare_fonts`] starts that while the window
-/// opens; the fonts only wait for what is still running. A font installed while iDM runs is
+/// opens; the fonts only wait for what is still running. A font installed while BMD runs is
 /// used from its next start.
 #[cfg(not(any(windows, target_os = "macos")))]
 fn fc_files() -> &'static std::collections::HashMap<String, Vec<std::path::PathBuf>> {
@@ -1264,7 +1264,7 @@ pub fn apply(ctx: &egui::Context) {
         // Ctrl + / Ctrl − / Ctrl 0 step through View → Interface size and are saved (scale.rs),
         // not egui's own 10 % steps.
         o.zoom_with_keyboard = false;
-        // Every window's theme (its caption) is iDM's to give: the main window's in
+        // Every window's theme (its caption) is BMD's to give: the main window's in
         // `apply_mode`, each dialog's in `dialogs::keep_theme`, the caption the theme's surface.
         // egui's own would set the mode's instead, behind them, and the caption would have to
         // be checked with DWM again and again (#633).
@@ -1503,7 +1503,7 @@ mod font_file_tests {
     /// #1412: the fonts egui gets are each one it can read, whatever path added them: a BDF font,
     /// an empty file, random bytes and a TrueType font named at a face it doesn't have are left
     /// out (of the fonts and of the families), the TrueType font stays, and egui lays text out.
-    /// Without that last look egui stops on the first of them, as iDM 0.5.2 did as it started.
+    /// Without that last look egui stops on the first of them, as BMD 0.5.2 did as it started.
     #[test]
     fn a_font_egui_cant_read_never_reaches_it() {
         use egui::epaint::text::{Fonts, TextOptions};
@@ -1530,7 +1530,7 @@ mod font_file_tests {
             }
         }
 
-        // What egui does with them as given: it stops (the panic iDM 0.5.2 started with).
+        // What egui does with them as given: it stops (the panic BMD 0.5.2 started with).
         let unchecked = defs.clone();
         let stopped = std::panic::catch_unwind(std::panic::AssertUnwindSafe(move || {
             let mut fonts = Fonts::new(TextOptions::default(), unchecked);
@@ -1564,7 +1564,7 @@ mod font_file_tests {
         }
 
         let mut fonts = Fonts::new(TextOptions::default(), defs);
-        assert!(fonts.has_glyphs(&FontId::proportional(13.0), "iDM"));
+        assert!(fonts.has_glyphs(&FontId::proportional(13.0), "BMD"));
         assert!(fonts.has_glyphs(&FontId::monospace(13.0), "0123456789"));
     }
 }
@@ -1597,7 +1597,7 @@ mod glyph_tests {
     }
 
     /// #1125: file names in the scripts the report and the lists name, under an English
-    /// interface, and in scripts iDM's lists don't name, which only the system's own fallback
+    /// interface, and in scripts BMD's lists don't name, which only the system's own fallback
     /// finds: before, those stayed boxes. egui's fonts alone have none of them (no Segoe UI here,
     /// so even Arabic and Hebrew must come from a fallback).
     /// (Linux asks fontconfig, whose answer depends on the fonts a distribution installs.)
@@ -1648,7 +1648,7 @@ mod glyph_tests {
         }
     }
 
-    /// The fallback's choice (#1125): iDM's lists first (Nirmala UI for Hindi, the face the
+    /// The fallback's choice (#1125): BMD's lists first (Nirmala UI for Hindi, the face the
     /// classic text and the interface languages that use the script have), the system only for
     /// what the lists don't name (Thaana), and the system's font never replaces a list's.
     #[cfg(windows)]

@@ -1,4 +1,4 @@
-﻿; iDM's installer in Chinese (Simplified): tools/installer/languages.py
+﻿; BMD's installer in Chinese (Simplified): tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=正在卸载 %1。
 
 [CustomMessages]
 TaskBrowser=设置浏览器集成(&B) (Chrome、Edge、Brave、Firefox)
-TaskTorrents=用 iDM 打开 .&torrent 文件和磁力链接
-TaskStartup=在 &Windows 启动时启动 iDM
+TaskTorrents=用 BMD 打开 .&torrent 文件和磁力链接
+TaskStartup=在 &Windows 启动时启动 BMD
 TaskGroupOther=其他:
-Launch=启动 iDM
+Launch=启动 BMD
 KeepData=是否同时删除下载列表和设置?%n%n无论如何，您的下载文件都不会被触及。

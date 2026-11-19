@@ -30,7 +30,7 @@ pub fn platform() -> &'static str {
 
 /// The release asset holding `version`'s symbols for this system.
 pub fn asset_name(version: &str) -> String {
-    format!("iDM-{version}-symbols-{}.zip", platform())
+    format!("BMD-{version}-symbols-{}.zip", platform())
 }
 
 pub fn asset_url(version: &str) -> String {
@@ -64,20 +64,20 @@ pub fn have(data: &Path, version: &str) -> bool {
     any_sym(&store(data, version), 3)
 }
 
-/// Fetch `version`'s symbols into the store with iDM's own engine (`net`); `progress(done,
+/// Fetch `version`'s symbols into the store with BMD's own engine (`net`); `progress(done,
 /// total)` as it downloads. A download cut off resumes next time. Earlier versions' symbols are
 /// removed (only the running version's are useful).
 pub async fn fetch(
     data: &Path,
     version: &str,
-    net: mdm_engine::Options,
+    net: bmd_engine::Options,
     progress: &(dyn Fn(u64, Option<u64>) + Send + Sync),
 ) -> Result<(), String> {
     let url = url::Url::parse(&asset_url(version)).map_err(|e| e.to_string())?;
     let parent = data.join("symbols");
     std::fs::create_dir_all(&parent).map_err(|e| e.to_string())?;
     let zip = parent.join(asset_name(version));
-    mdm_engine::fetch(url, &zip, net, progress)
+    bmd_engine::fetch(url, &zip, net, progress)
         .await
         .map_err(|e| e.to_string())?;
     let bytes = std::fs::read(&zip).map_err(|e| e.to_string())?;
@@ -122,7 +122,7 @@ mod tests {
 
     #[test]
     fn names_follow_the_release() {
-        assert!(asset_name("0.2.3").starts_with("iDM-0.2.3-symbols-"));
+        assert!(asset_name("0.2.3").starts_with("BMD-0.2.3-symbols-"));
         assert!(asset_url("0.2.3").contains("/releases/download/v0.2.3/"));
     }
 

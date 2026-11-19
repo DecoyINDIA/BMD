@@ -34,7 +34,7 @@ jobs:
           script: |
             const LABEL = 'needs info';
             const DAYS = 14;
-            const MARKER = '<!-- mdm:needs-info-closed -->';
+            const MARKER = '<!-- bmd:needs-info-closed -->';
             const NOTE = "closing for now since there's no answer yet; just reply here with the details and it opens again";
             const OURS = ['OWNER', 'MEMBER', 'COLLABORATOR'];
             const dryRun = process.env.DRY_RUN === 'true';
@@ -97,7 +97,7 @@ jobs:
         with:
           script: |
             const LABEL = 'needs info';
-            const MARKER = '<!-- mdm:needs-info-closed -->';
+            const MARKER = '<!-- bmd:needs-info-closed -->';
             const BOT = 'github-actions[bot]';
             const { owner, repo } = context.repo;
             const issue = context.payload.issue;

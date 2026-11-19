@@ -1,4 +1,4 @@
-﻿; iDM's installer in Belarusian: tools/installer/languages.py
+﻿; BMD's installer in Belarusian: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Выдаленне %1.
 
 [CustomMessages]
 TaskBrowser=Наладзіць інтэграцыю з &браўзерам (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Адкрываць файлы .&torrent і магнітныя спасылкі з дапамогай iDM
-TaskStartup=Запускаць iDM пры запуску &Windows
+TaskTorrents=Адкрываць файлы .&torrent і магнітныя спасылкі з дапамогай BMD
+TaskStartup=Запускаць BMD пры запуску &Windows
 TaskGroupOther=Іншае:
-Launch=Запусціць iDM
+Launch=Запусціць BMD
 KeepData=Выдаліць таксама спіс загрузак і налады?%n%nВашы загружаныя файлы не будуць закрануты ў любым выпадку.

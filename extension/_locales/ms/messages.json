@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Menyerahkan muat turun daripada pelayar kepada iDM."
+    "message": "Menyerahkan muat turun daripada pelayar kepada BMD."
   },
   "menu": {
-    "message": "Muat turun dengan iDM"
+    "message": "Muat turun dengan BMD"
   },
   "video_download": {
     "message": "Muat turun video"
@@ -30,19 +30,19 @@
     "message": "Tetapan butang..."
   },
   "video_sent": {
-    "message": "Dihantar ke iDM"
+    "message": "Dihantar ke BMD"
   },
   "menu_selected": {
-    "message": "Muat turun pautan terpilih dengan iDM"
+    "message": "Muat turun pautan terpilih dengan BMD"
   },
   "menu_all": {
-    "message": "Muat turun semua pautan dengan iDM"
+    "message": "Muat turun semua pautan dengan BMD"
   },
   "status_connected": {
-    "message": "Bersambung ke iDM"
+    "message": "Bersambung ke BMD"
   },
   "status_connected_version": {
-    "message": "Bersambung ke iDM $version$",
+    "message": "Bersambung ke BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Dijeda: muat turun kekal bersama penyemak imbas"
   },
   "status_not_installed": {
-    "message": "iDM tidak dipasang, atau penyepaduan penyemak imbasnya tidak disediakan"
+    "message": "BMD tidak dipasang, atau penyepaduan penyemak imbasnya tidak disediakan"
   },
   "status_forbidden": {
-    "message": "iDM tidak menerima salinan sambungan ini"
+    "message": "BMD tidak menerima salinan sambungan ini"
   },
   "status_not_running": {
-    "message": "iDM tidak bermula tepat pada masanya"
+    "message": "BMD tidak bermula tepat pada masanya"
   },
   "status_host_failed": {
-    "message": "Sambungan ke iDM gagal"
+    "message": "Sambungan ke BMD gagal"
   },
   "status_too_large": {
     "message": "Butiran muat turun ini terlalu besar untuk diserahkan"
   },
   "status_update_app": {
-    "message": "Kemas kini iDM untuk menggunakan semua yang ditawarkan oleh sambungan ini"
+    "message": "Kemas kini BMD untuk menggunakan semua yang ditawarkan oleh sambungan ini"
   },
   "popup_take": {
     "message": "Ambil muat turun daripada penyemak imbas ini"
@@ -78,10 +78,10 @@
     "message": "Hantar muat turun melalui proksi atau sambungan VPN pelayar ini"
   },
   "popup_proxy_title": {
-    "message": "iDM kemudian memuat turun melalui proksi yang sama seperti pelayar ini. Pelayar meminta anda sekali untuk membenarkannya; mematikan ini akan menarik balik kebenaran itu."
+    "message": "BMD kemudian memuat turun melalui proksi yang sama seperti pelayar ini. Pelayar meminta anda sekali untuk membenarkannya; mematikan ini akan menarik balik kebenaran itu."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM kemudian memuat turun melalui proksi yang sama dengan pelayar ini. Apabila pilihan ini dimatikan, sambungan tidak membaca proksi pelayar."
+    "message": "BMD kemudian memuat turun melalui proksi yang sama dengan pelayar ini. Apabila pilihan ini dimatikan, sambungan tidak membaca proksi pelayar."
   },
   "popup_exclude_site": {
     "message": "Jangan sekali-kali mengambil muat turun daripada $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Buka iDM"
+    "message": "Buka BMD"
   },
   "popup_options": {
     "message": "Pilihan..."
@@ -114,7 +114,7 @@
     "message": "Bantuan"
   },
   "popup_support": {
-    "message": "Sokong iDM"
+    "message": "Sokong BMD"
   },
   "popup_fix": {
     "message": "Cara membetulkannya"
@@ -150,7 +150,7 @@
     "message": "Guna penyepaduan penyemak imbas lanjutan dimatikan dalam Pilihan → Umum."
   },
   "declined_torrents": {
-    "message": "Ia adalah torrent, dan Buka pautan magnet dan fail .torrent dengan iDM dimatikan dalam Tetapan Torrent."
+    "message": "Ia adalah torrent, dan Buka pautan magnet dan fail .torrent dengan BMD dimatikan dalam Tetapan Torrent."
   },
   "declined_site_access": {
     "message": "Sambungan tidak dibenarkan membaca tapak ini (akses tapak penyemak imbas)."
@@ -195,16 +195,16 @@
     "message": "Tiada video untuk dimuat turun di sini"
   },
   "video_playlist": {
-    "message": "Senarai video: pilih video dalam iDM"
+    "message": "Senarai video: pilih video dalam BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM memerlukan yt-dlp untuk video ini"
+    "message": "BMD memerlukan yt-dlp untuk video ini"
   },
   "video_too_long": {
     "message": "Pencarian mengambil masa terlalu lama"
   },
   "video_busy": {
-    "message": "iDM sedang sibuk dengan video lain"
+    "message": "BMD sedang sibuk dengan video lain"
   },
   "video_queued": {
     "message": "Ditambah pada baris gilir"
@@ -228,7 +228,7 @@
     "message": "Komputer ini"
   },
   "popup_send_remote": {
-    "message": "iDM lain (pelayan)"
+    "message": "BMD lain (pelayan)"
   },
   "popup_remote_code": {
     "message": "Kod pasangan"
@@ -240,7 +240,7 @@
     "message": "Pasangkan"
   },
   "popup_remote_help": {
-    "message": "Buka alamatnya sekali dan terima sijilnya, kemudian masukkan kod dari Pilihannya, Jauh, Pasangkan peranti (atau misterdownloadmanager-cli pair)."
+    "message": "Buka alamatnya sekali dan terima sijilnya, kemudian masukkan kod dari Pilihannya, Jauh, Pasangkan peranti (atau bmd-cli pair)."
   },
   "status_remote": {
     "message": "Muat turun pergi ke $address$",
@@ -297,19 +297,19 @@
     "message": "Muat turun kualiti terbaik"
   },
   "video_sending": {
-    "message": "Menghantar ke iDM..."
+    "message": "Menghantar ke BMD..."
   },
   "video_added": {
-    "message": "Ditambah ke iDM"
+    "message": "Ditambah ke BMD"
   },
   "video_show": {
     "message": "Tunjuk"
   },
   "video_no_answer": {
-    "message": "iDM tidak menjawab"
+    "message": "BMD tidak menjawab"
   },
-  "video_get_mdm": {
-    "message": "Dapatkan iDM"
+  "video_get_bmd": {
+    "message": "Dapatkan BMD"
   },
   "video_retry": {
     "message": "Cuba lagi"
@@ -324,7 +324,7 @@
     "message": "Semua kualiti dan sari kata..."
   },
   "video_failed": {
-    "message": "iDM tidak dipasang atau tidak bermula"
+    "message": "BMD tidak dipasang atau tidak bermula"
   },
   "video_download_best": {
     "message": "Muat turun terbaik"

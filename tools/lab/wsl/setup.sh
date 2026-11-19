@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-# mdm-lab: a WSL2 distribution that builds MDM for Linux at the PC's full speed and screenshots
+# bmd-lab: a WSL2 distribution that builds BMD for Linux at the PC's full speed and screenshots
 # its windows on a virtual screen (Xvfb) that never shows on Windows. It replaces the VirtualBox
 # machines for builds and window shots (those run about 3x slower under Hyper-V); README.md says
 # what still needs them.
 #
 # From Windows (PowerShell), once:
-#   wsl --install -d Ubuntu-24.04 --name mdm-lab --location C:\mdm-wsl --no-launch
-#   wsl -d mdm-lab -u root -- bash /mnt/c/<checkout>/tools/lab/wsl/setup.sh
-#   wsl --terminate mdm-lab        # wsl.conf (no Windows programs, user lab) applies at the next start
+#   wsl --install -d Ubuntu-24.04 --name bmd-lab --location C:\bmd-wsl --no-launch
+#   wsl -d bmd-lab -u root -- bash /mnt/c/<checkout>/tools/lab/wsl/setup.sh
+#   wsl --terminate bmd-lab        # wsl.conf (no Windows programs, user lab) applies at the next start
 # Running it again only adds what's missing and updates the checkout. It touches nothing outside
-# mdm-lab: never %USERPROFILE%\.wslconfig, never another distribution.
+# bmd-lab: never %USERPROFILE%\.wslconfig, never another distribution.
 set -euo pipefail
-[ "$(id -u)" = 0 ] || { echo "run as root: wsl -d mdm-lab -u root -- bash $0" >&2; exit 2; }
+[ "$(id -u)" = 0 ] || { echo "run as root: wsl -d bmd-lab -u root -- bash $0" >&2; exit 2; }
 user=lab
-repo_url=https://github.com/anefzaoui/misterdownloadmanager.git
+repo_url=https://github.com/DecoyINDIA/BMD.git
 export DEBIAN_FRONTEND=noninteractive
 
 # --- The distribution's own settings (per distribution; .wslconfig is global and stays as it is).
@@ -21,7 +21,7 @@ export DEBIAN_FRONTEND=noninteractive
 # Windows' PATH stays out of builds. WSLg can't be turned off per distribution (guiApplications
 # is a .wslconfig key), so env.sh keeps every program off its display, sound and runtime folder.
 cat > /etc/wsl.conf <<'EOF'
-# mdm-lab: MDM's build and screenshot machine (tools/lab/wsl/setup.sh).
+# bmd-lab: BMD's build and screenshot machine (tools/lab/wsl/setup.sh).
 [boot]
 systemd=true
 
@@ -37,7 +37,7 @@ echo "$user ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$user
 chmod 440 /etc/sudoers.d/$user
 
 # --- Packages: the build's libraries (the same as ci.yml, release.yml and the VMs' setup.sh),
-# the helpers MDM drives (ffmpeg, 7-Zip: their windows show what is found), the virtual screen
+# the helpers BMD drives (ffmpeg, 7-Zip: their windows show what is found), the virtual screen
 # with a window manager that frames windows as a desktop does (Metacity: GNOME's own frames,
 # without a compositor, so a capture reads the screen as drawn), capture and input tools, and
 # the fonts of an Ubuntu desktop with every script the languages need.
@@ -85,15 +85,15 @@ opt-level = 3
 EOF
 fi
 mkdir -p "$HOME/src" "$HOME/lab/bin"
-[ -d "$HOME/src/mdm/.git" ] || git clone -q "$repo_url" "$HOME/src/mdm"
-git -C "$HOME/src/mdm" fetch -q origin
+[ -d "$HOME/src/bmd/.git" ] || git clone -q "$repo_url" "$HOME/src/bmd"
+git -C "$HOME/src/bmd" fetch -q origin
 # The lab scripts, copied in so they run from ext4 (refreshed by every setup run).
 mkdir -p "$HOME/lab/tools"
 cp "$here"/*.sh "$here"/*.py "$here/../linux-vm/pixdiff.py" "$HOME/lab/tools/"
 # The toolchain rust-toolchain.toml names, installed now rather than at the first build.
 # (Under build.sh's lock: never in the middle of someone's build.)
 mkdir -p "$HOME/lab"
-(cd "$HOME/src/mdm" && flock "$HOME/lab/build.lock" git checkout -q -f --detach origin/main \
+(cd "$HOME/src/bmd" && flock "$HOME/lab/build.lock" git checkout -q -f --detach origin/main \
   && rustup show active-toolchain >/dev/null)
 echo "lab ready: $(. /etc/os-release; echo "$PRETTY_NAME"), $(rustc --version), $(nproc) cores"
 USER
