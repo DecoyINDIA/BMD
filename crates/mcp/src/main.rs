@@ -16,7 +16,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 "bmd-mcp: BMD's MCP server, for AI \
                  assistants. The assistant starts it (no arguments) and talks to it on stdin and \
                  stdout. Setup: \
-                 https://misterdownloadmanager.com/help/ai-assistants.html"
+                 https://bmd.example.com/help/ai-assistants.html"
             ),
         }
         return Ok(());

@@ -49,7 +49,7 @@ maker (Tonec), or as a crack or copy of it.
 ## Capabilities and Constraints
 
 - Static site: `tools/website/build.py` builds `website/`, `docs/` (help) and `CHANGELOG.md`
-  (news) into `target/site`; GitHub Pages serves it at misterdownloadmanager.com. Plain HTML,
+  (news) into `target/site`; GitHub Pages serves it at bmd.example.com. Plain HTML,
   CSS and JavaScript, no framework, no external scripts except the Statcounter visit counter.
 - Every page exists in 21 languages (`tools/website/sitei18n.py`, catalogs in `i18n/site/`);
   layout must hold for long German words, CJK, Thai, Bengali and right-to-left Arabic/Persian.

@@ -441,7 +441,7 @@ pub fn schema() -> serde_json::Value {
     let defs = generator.take_definitions(true);
     serde_json::json!({
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "$id": "https://misterdownloadmanager.com/automation-api.schema.json",
+        "$id": "https://bmd.example.com/automation-api.schema.json",
         "title": "BMD automation API",
         "description": "One JSON line to the port in ipc.json (on 127.0.0.1), one line back. \
             A request is `Request`. A command (an address to add, start_queue) is answered \
@@ -450,7 +450,7 @@ pub fn schema() -> serde_json::Value {
             an app that doesn't answer within 2 seconds `timeout`. The browser's quality menu \
             (`video_lookup`, `video_poll`, `video_pick`, sent by its native host) is answered \
             with a `VideoLookupAnswer`. \
-            Guide: https://misterdownloadmanager.com/help/command-line.html#the-automation-api",
+            Guide: https://bmd.example.com/help/command-line.html#the-automation-api",
         "$ref": request.get("$ref").cloned().unwrap_or(serde_json::Value::Null),
         "$defs": defs,
     })

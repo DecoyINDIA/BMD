@@ -16,7 +16,7 @@ The built-in themes are **Classic** (BMD's own look, the default), **Native** (y
 accent colour and contrast), **High contrast**, and the style themes **Metro**, **Adwaita**,
 **Breeze**, **Luna**, **Aero**, **Aqua** and **Emerald**, each with its own control shapes and
 icons, and on Windows its own title bar. [Getting started](getting-started.md#themes) describes
-each one; the website's [Themes page](https://misterdownloadmanager.com/themes.html) shows them
+each one; the website's [Themes page](https://bmd.example.com/themes.html) shows them
 all, light and dark.
 
 ## Where theme files go
@@ -144,7 +144,7 @@ focus = "ring"
 - **`contrast = "high"`** — strengthens every edge and text colour on top of the rest.
 
 Every colour role, size and control style, with what it sets, is listed on the website's
-[Themes page](https://misterdownloadmanager.com/themes.html#make-your-own) (read from BMD's own
+[Themes page](https://bmd.example.com/themes.html#make-your-own) (read from BMD's own
 code, so it never drifts). The built-in themes are written the same way:
 [read them on GitHub](https://github.com/DecoyINDIA/BMD/tree/main/crates/app/assets/themes).
 
@@ -169,7 +169,7 @@ names is in [themeicons.rs](https://github.com/DecoyINDIA/BMD/blob/main/crates/a
 3. Pick it in **View → Theme**, and look at both sides: **View → Always dark** on and off. Check
    that text is readable and the focus mark visible in both.
 
-The website's [Themes page](https://misterdownloadmanager.com/themes.html#ai-prompt) has a prompt
+The website's [Themes page](https://bmd.example.com/themes.html#ai-prompt) has a prompt
 you can give an AI assistant, with the format, every key and the rules, to write a theme for you
 from a description.
 

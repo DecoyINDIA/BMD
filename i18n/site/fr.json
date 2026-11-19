@@ -3747,8 +3747,8 @@
    "text": "Faites un clic droit dans une zone vide de la liste pour accéder à <g1>Ajouter un nouveau téléchargement</g1>, <g2>Sélectionner tout</g2>, <g3>Organiser les fichiers</g3>, <g4>Effacer tous les filtres</g4> et <g5>Supprimer tous les téléchargements terminés</g5>."
   },
   "36919d7c5630c182": {
-   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and misterdownloadmanager.com",
-   "text": "Dernière mise à jour le 18/11/2026 · s’applique à l’application, à l’extension de navigateur et à misterdownloadmanager.com"
+   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and bmd.example.com",
+   "text": "Dernière mise à jour le 18/11/2026 · s’applique à l’application, à l’extension de navigateur et à bmd.example.com"
   },
   "36a1df60e5ee30b9": {
    "source": "<g1><x2/></g1> — what <g3>View → Theme</g3> lists; the file's name when there is none.",
@@ -4411,8 +4411,8 @@
    "text": "1,0 s"
   },
   "40056f59278920a5": {
-   "source": "BMD (\"BMD\", \"the software\") and the website misterdownloadmanager.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
-   "text": "BMD (« BMD », « le logiciel ») et le site web misterdownloadmanager.com (« le site ») sont créés par Ahmed Nefzaoui et des contributeurs (« nous »). En utilisant le logiciel ou le site, vous acceptez ces conditions. Si vous ne les acceptez pas, veuillez ne pas les utiliser."
+   "source": "BMD (\"BMD\", \"the software\") and the website bmd.example.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
+   "text": "BMD (« BMD », « le logiciel ») et le site web bmd.example.com (« le site ») sont créés par Ahmed Nefzaoui et des contributeurs (« nous »). En utilisant le logiciel ou le site, vous acceptez ces conditions. Si vous ne les acceptez pas, veuillez ne pas les utiliser."
   },
   "400e2d4fd45ae70d": {
    "source": "BMD has to be running for a schedule to fire. It can sit in the tray: closing the main window doesn't quit it.",
@@ -6319,8 +6319,8 @@
    "text": "télécharge une galerie dans un dossier nommé d'après elle. Voir <g1>Ligne de commande et automatisation</g1>."
   },
   "5d0bbcc71d941fe0": {
-   "source": "misterdownloadmanager.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
-   "text": "Les pages de misterdownloadmanager.com (accueil, téléchargement, fonctionnalités, thèmes, FAQ) ; <x1/> ajoute l’aide de <x2/> et les actualités du CHANGELOG, en 22 langues, et GitHub Pages les publie."
+   "source": "bmd.example.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
+   "text": "Les pages de bmd.example.com (accueil, téléchargement, fonctionnalités, thèmes, FAQ) ; <x1/> ajoute l’aide de <x2/> et les actualités du CHANGELOG, en 22 langues, et GitHub Pages les publie."
   },
   "5d199508494f7f75": {
    "source": "Windows, menus and dialogs",
@@ -10011,8 +10011,8 @@
    "text": "<g1>Démarrer le téléchargement immédiatement tout en affichant la boîte de dialogue « Informations sur le fichier à télécharger »</g1> — activée par défaut : le téléchargement commence pendant que vous choisissez un dossier."
   },
   "9289eb0f078ac8f3": {
-   "source": "The terms for using BMD and misterdownloadmanager.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
-   "text": "Les conditions d'utilisation de BMD et de misterdownloadmanager.com : un logiciel libre sous licence GNU GPL 3.0, utilisé à vos propres risques, pour les téléchargements que vous êtes en droit d'effectuer."
+   "source": "The terms for using BMD and bmd.example.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
+   "text": "Les conditions d'utilisation de BMD et de bmd.example.com : un logiciel libre sous licence GNU GPL 3.0, utilisé à vos propres risques, pour les téléchargements que vous êtes en droit d'effectuer."
   },
   "92abe6de5cd6999e": {
    "source": "<g1>Hide tab</g1> takes a tab off this download's window and goes back to <g2>Download status</g2>. To bring the tabs back, right-click the tab row and choose <g3>Show hidden tabs</g3>; closing the window and opening it again brings them back too.",
@@ -12283,8 +12283,8 @@
    "text": "L'intégration au navigateur nécessite une étape supplémentaire dans chaque navigateur : l'ajout de l'extension. Dans Firefox, cliquez sur <g1>Ajouter à Firefox</g1> sur <g2>sa page sur addons.mozilla.org</g2> ; dans Chrome, Edge, Brave, Opera et Vivaldi, cliquez sur <g3>Ajouter à Chrome</g3> sur <g4>sa page dans le Chrome Web Store</g4>. La section <g5>Intégration au navigateur</g5> explique comment faire."
   },
   "b25b5595e4410599": {
-   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open misterdownloadmanager.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
-   "text": "<g1>L’aide ouvre les pages d’aide du site web, dans votre langue</g1> (<g2>#227</g2>) : <g3>Contenu de l’aide</g3>, <g4>Didacticiels</g4>, <g5>Planificateur et files d’attente</g5>, <g6>Téléchargements de vidéos</g6>, les boutons <g7>Aide</g7> des Options et du Planificateur, et les liens de didacticiel et d’aide de la fenêtre de l’extension du navigateur ouvraient la documentation sur GitHub (les boutons Options et Planificateur une page qui n’existait pas). Ils ouvrent désormais misterdownloadmanager.com, à la même section, dans la langue de l’interface lorsque le site web la propose (sinon en anglais), et <g8>Page d’accueil</g8> ouvre également le site web. L’aide de la ligne de commande et du serveur MCP nomme le guide du site web. Les rapports de problèmes, les versions et le code source restent sur GitHub."
+   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open bmd.example.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
+   "text": "<g1>L’aide ouvre les pages d’aide du site web, dans votre langue</g1> (<g2>#227</g2>) : <g3>Contenu de l’aide</g3>, <g4>Didacticiels</g4>, <g5>Planificateur et files d’attente</g5>, <g6>Téléchargements de vidéos</g6>, les boutons <g7>Aide</g7> des Options et du Planificateur, et les liens de didacticiel et d’aide de la fenêtre de l’extension du navigateur ouvraient la documentation sur GitHub (les boutons Options et Planificateur une page qui n’existait pas). Ils ouvrent désormais bmd.example.com, à la même section, dans la langue de l’interface lorsque le site web la propose (sinon en anglais), et <g8>Page d’accueil</g8> ouvre également le site web. L’aide de la ligne de commande et du serveur MCP nomme le guide du site web. Les rapports de problèmes, les versions et le code source restent sur GitHub."
   },
   "b26c000488bb45a1": {
    "source": "<g1>Windows</g1>: <x2/>, or <x3/>. The installers on <g4>deno.com</g4> and <g5>nodejs.org</g5> work too.",
@@ -14391,8 +14391,8 @@
    "text": "<g1>Démarrer la file d’attente</g1> et <g2>Arrêter la file d’attente</g2> dans la barre d’outils démarrent et arrêtent la <g3>File d’attente de téléchargement principale</g3>. La flèche à côté de chaque bouton liste toutes les files d’attente."
   },
   "d01313dd0d5afa65": {
-   "source": "misterdownloadmanager.com is a static site. Three companies take part in showing it to you:",
-   "text": "misterdownloadmanager.com est un site statique. Trois entreprises participent à son affichage :"
+   "source": "bmd.example.com is a static site. Three companies take part in showing it to you:",
+   "text": "bmd.example.com est un site statique. Trois entreprises participent à son affichage :"
   },
   "d013797562de4ed8": {
    "source": "<g1>Download in order</g1> — downloads the torrent's files from their start (see below). Click it again to go back to the rarest pieces first.",

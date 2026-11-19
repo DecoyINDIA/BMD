@@ -41,7 +41,7 @@ const RELEASES: &str = "https://codeberg.org/api/v1/repos/mikf/gallery-dl/releas
 pub const USER_AGENT: &str = concat!(
     "BMD/",
     env!("CARGO_PKG_VERSION"),
-    " (+https://misterdownloadmanager.com) gallery-dl"
+    " (+https://bmd.example.com) gallery-dl"
 );
 
 /// gallery-dl's program for this system and processor in its releases: see [`asset_for`].

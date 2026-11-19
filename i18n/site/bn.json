@@ -3751,8 +3751,8 @@
    "text": "তালিকার ফাঁকা জায়গায় ডান-ক্লিক করলে <g1>নতুন ডাউনলোড যোগ করুন</g1>, <g2>সব নির্বাচন করুন</g2>, <g3>ফাইলগুলি সাজান</g3>, <g4>সমস্ত ফিল্টার সাফ করুন</g4> এবং <g5>সম্পন্ন হওয়া সব মুছুন</g5> বিকল্পগুলি পাবেন।"
   },
   "36919d7c5630c182": {
-   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and misterdownloadmanager.com",
-   "text": "সর্বশেষ আপডেট করা হয়েছে 2026-11-18 · অ্যাপ, ব্রাউজার এক্সটেনশন এবং misterdownloadmanager.com-এর জন্য প্রযোজ্য"
+   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and bmd.example.com",
+   "text": "সর্বশেষ আপডেট করা হয়েছে 2026-11-18 · অ্যাপ, ব্রাউজার এক্সটেনশন এবং bmd.example.com-এর জন্য প্রযোজ্য"
   },
   "36a1df60e5ee30b9": {
    "source": "<g1><x2/></g1> — what <g3>View → Theme</g3> lists; the file's name when there is none.",
@@ -4415,8 +4415,8 @@
    "text": "1.0 সেকেন্ড"
   },
   "40056f59278920a5": {
-   "source": "BMD (\"BMD\", \"the software\") and the website misterdownloadmanager.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
-   "text": "BMD (\"BMD\", \"সফটওয়্যার\") এবং misterdownloadmanager.com ওয়েবসাইটটি (\"সাইট\") আহমেদ নেফজাউই ও অন্যান্য অবদানকারী (\"আমরা\") তৈরি করেছেন। সফটওয়্যার বা সাইট ব্যবহার করলে আপনি এই শর্তাবলি মেনে নিচ্ছেন। মেনে না নিলে, অনুগ্রহ করে সফটওয়্যার বা সাইট ব্যবহার করবেন না।"
+   "source": "BMD (\"BMD\", \"the software\") and the website bmd.example.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
+   "text": "BMD (\"BMD\", \"সফটওয়্যার\") এবং bmd.example.com ওয়েবসাইটটি (\"সাইট\") আহমেদ নেফজাউই ও অন্যান্য অবদানকারী (\"আমরা\") তৈরি করেছেন। সফটওয়্যার বা সাইট ব্যবহার করলে আপনি এই শর্তাবলি মেনে নিচ্ছেন। মেনে না নিলে, অনুগ্রহ করে সফটওয়্যার বা সাইট ব্যবহার করবেন না।"
   },
   "400e2d4fd45ae70d": {
    "source": "BMD has to be running for a schedule to fire. It can sit in the tray: closing the main window doesn't quit it.",
@@ -6327,8 +6327,8 @@
    "text": "একটি গ্যালারি ডাউনলোড করে যা এর নামে নামকরণ করা একটি ফোল্ডারে যায়। <g1>কমান্ড লাইন এবং অটোমেশন</g1> দেখুন।"
   },
   "5d0bbcc71d941fe0": {
-   "source": "misterdownloadmanager.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
-   "text": "misterdownloadmanager.com-এর নিজস্ব পেজ (হোম, ডাউনলোড, ফিচার, থিম, FAQ); <x1/> <x2/> থেকে সাহায্য এবং CHANGELOG থেকে খবর যোগ করে, 22টি ভাষায়, এবং GitHub Pages এটি প্রকাশ করে।"
+   "source": "bmd.example.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
+   "text": "bmd.example.com-এর নিজস্ব পেজ (হোম, ডাউনলোড, ফিচার, থিম, FAQ); <x1/> <x2/> থেকে সাহায্য এবং CHANGELOG থেকে খবর যোগ করে, 22টি ভাষায়, এবং GitHub Pages এটি প্রকাশ করে।"
   },
   "5d199508494f7f75": {
    "source": "Windows, menus and dialogs",
@@ -10019,8 +10019,8 @@
    "text": "<g1>\"ফাইল তথ্য ডাউনলোড করুন\" ডায়ালগ প্রদর্শনের সময় অবিলম্বে ডাউনলোড শুরু করুন</g1> — ডিফল্টরূপে চালু থাকে, তাই আপনি একটি ফোল্ডার নির্বাচন করার সময় ডাউনলোড ইতিমধ্যেই চলছে।"
   },
   "9289eb0f078ac8f3": {
-   "source": "The terms for using BMD and misterdownloadmanager.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
-   "text": "BMD এবং misterdownloadmanager.com ব্যবহারের শর্তাবলী: GNU GPL 3.0 এর অধীনে বিনামূল্যে সফটওয়্যার, আপনার নিজের ঝুঁকিতে ব্যবহার করুন, শুধুমাত্র সেইসব ডাউনলোডের জন্য যা করার অধিকার আপনার আছে।"
+   "source": "The terms for using BMD and bmd.example.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
+   "text": "BMD এবং bmd.example.com ব্যবহারের শর্তাবলী: GNU GPL 3.0 এর অধীনে বিনামূল্যে সফটওয়্যার, আপনার নিজের ঝুঁকিতে ব্যবহার করুন, শুধুমাত্র সেইসব ডাউনলোডের জন্য যা করার অধিকার আপনার আছে।"
   },
   "92abe6de5cd6999e": {
    "source": "<g1>Hide tab</g1> takes a tab off this download's window and goes back to <g2>Download status</g2>. To bring the tabs back, right-click the tab row and choose <g3>Show hidden tabs</g3>; closing the window and opening it again brings them back too.",
@@ -12291,8 +12291,8 @@
    "text": "ব্রাউজার ইন্টিগ্রেশন চালু করতে প্রতিটি ব্রাউজারে আরেকটি ধাপ দরকার: এক্সটেনশন যোগ করা। Firefox-এ <g2>addons.mozilla.org-এর পৃষ্ঠায়</g2> <g1>Add to Firefox</g1> ক্লিক করুন; Chrome, Edge, Brave, Opera এবং Vivaldi-তে <g4>Chrome Web Store-এর পৃষ্ঠায়</g4> <g3>Add to Chrome</g3> ক্লিক করুন। <g5>ব্রাউজার ইন্টিগ্রেশন</g5> পৃষ্ঠায় এ বিষয়ে নির্দেশনা আছে।"
   },
   "b25b5595e4410599": {
-   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open misterdownloadmanager.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
-   "text": "<g1>সহায়তা ওয়েবসাইটের সহায়তা পৃষ্ঠাগুলি খোলে, আপনার ভাষায়</g1> (<g2>#227</g2>): <g3>সহায়তা বিষয়বস্তু</g3>, <g4>টিউটোরিয়াল</g4>, <g5>শিডিউলার ও কিউ</g5>, <g6>ভিডিও ডাউনলোড</g6>, সেটিংস এবং শিডিউলারের <g7>সহায়তা</g7> বোতাম, এবং ব্রাউজার এক্সটেনশন উইন্ডোর টিউটোরিয়াল ও সহায়তা লিঙ্কগুলি GitHub-এর ডকুমেন্টেশন খুলত (সেটিংস এবং শিডিউলার বোতামগুলি এমন একটি পৃষ্ঠা খুলত যা সেখানে ছিল না)। তারা এখন misterdownloadmanager.com খোলে, একই বিভাগে, ওয়েবসাইটে থাকলে ইন্টারফেস ভাষায় (অন্যথায় ইংরেজি), এবং <g8>হোম পেজ</g8>ও ওয়েবসাইট খোলে। কমান্ড লাইন এবং MCP সার্ভারের সহায়তা ওয়েবসাইটের গাইডকে নির্দেশ করে। সমস্যা রিপোর্ট, রিলিজ এবং সোর্স GitHub-এ থাকে।"
+   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open bmd.example.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
+   "text": "<g1>সহায়তা ওয়েবসাইটের সহায়তা পৃষ্ঠাগুলি খোলে, আপনার ভাষায়</g1> (<g2>#227</g2>): <g3>সহায়তা বিষয়বস্তু</g3>, <g4>টিউটোরিয়াল</g4>, <g5>শিডিউলার ও কিউ</g5>, <g6>ভিডিও ডাউনলোড</g6>, সেটিংস এবং শিডিউলারের <g7>সহায়তা</g7> বোতাম, এবং ব্রাউজার এক্সটেনশন উইন্ডোর টিউটোরিয়াল ও সহায়তা লিঙ্কগুলি GitHub-এর ডকুমেন্টেশন খুলত (সেটিংস এবং শিডিউলার বোতামগুলি এমন একটি পৃষ্ঠা খুলত যা সেখানে ছিল না)। তারা এখন bmd.example.com খোলে, একই বিভাগে, ওয়েবসাইটে থাকলে ইন্টারফেস ভাষায় (অন্যথায় ইংরেজি), এবং <g8>হোম পেজ</g8>ও ওয়েবসাইট খোলে। কমান্ড লাইন এবং MCP সার্ভারের সহায়তা ওয়েবসাইটের গাইডকে নির্দেশ করে। সমস্যা রিপোর্ট, রিলিজ এবং সোর্স GitHub-এ থাকে।"
   },
   "b26c000488bb45a1": {
    "source": "<g1>Windows</g1>: <x2/>, or <x3/>. The installers on <g4>deno.com</g4> and <g5>nodejs.org</g5> work too.",
@@ -14399,8 +14399,8 @@
    "text": "টুলবারে <g1>সারি শুরু করুন</g1> এবং <g2>সারি বন্ধ করুন</g2> <g3>প্রধান ডাউনলোড কিউ</g3> শুরু এবং বন্ধ করে। প্রতিটি বোতামের পাশের তীরচিহ্ন প্রতিটি সারি তালিকাভুক্ত করে।"
   },
   "d01313dd0d5afa65": {
-   "source": "misterdownloadmanager.com is a static site. Three companies take part in showing it to you:",
-   "text": "misterdownloadmanager.com একটি স্ট্যাটিক সাইট। এটি আপনাকে দেখানোর জন্য তিনটি কোম্পানি জড়িত:"
+   "source": "bmd.example.com is a static site. Three companies take part in showing it to you:",
+   "text": "bmd.example.com একটি স্ট্যাটিক সাইট। এটি আপনাকে দেখানোর জন্য তিনটি কোম্পানি জড়িত:"
   },
   "d013797562de4ed8": {
    "source": "<g1>Download in order</g1> — downloads the torrent's files from their start (see below). Click it again to go back to the rarest pieces first.",

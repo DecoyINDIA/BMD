@@ -3751,8 +3751,8 @@
    "text": "リストの空白部分を右クリックすると、<g1>新しいダウンロードを追加</g1>、<g2>すべて選択</g2>、<g3>ファイルを整理</g3>、<g4>すべてのフィルターをクリア</g4>、<g5>完了したものをすべて削除</g5>を選べます。"
   },
   "36919d7c5630c182": {
-   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and misterdownloadmanager.com",
-   "text": "最終更新日: 2026-11-18 · アプリ、ブラウザー拡張機能、misterdownloadmanager.com に適用されます"
+   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and bmd.example.com",
+   "text": "最終更新日: 2026-11-18 · アプリ、ブラウザー拡張機能、bmd.example.com に適用されます"
   },
   "36a1df60e5ee30b9": {
    "source": "<g1><x2/></g1> — what <g3>View → Theme</g3> lists; the file's name when there is none.",
@@ -4415,8 +4415,8 @@
    "text": "1.0 秒"
   },
   "40056f59278920a5": {
-   "source": "BMD (\"BMD\", \"the software\") and the website misterdownloadmanager.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
-   "text": "BMD（「BMD」、「本ソフトウェア」）およびウェブサイトmisterdownloadmanager.com（「本サイト」）は、Ahmed Nefzaouiおよび貢献者（「当社」）によって作成されています。本ソフトウェアまたは本サイトを使用することにより、お客様はこれらの規約に同意するものとします。同意しない場合は、使用しないでください。"
+   "source": "BMD (\"BMD\", \"the software\") and the website bmd.example.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
+   "text": "BMD（「BMD」、「本ソフトウェア」）およびウェブサイトbmd.example.com（「本サイト」）は、Ahmed Nefzaouiおよび貢献者（「当社」）によって作成されています。本ソフトウェアまたは本サイトを使用することにより、お客様はこれらの規約に同意するものとします。同意しない場合は、使用しないでください。"
   },
   "400e2d4fd45ae70d": {
    "source": "BMD has to be running for a schedule to fire. It can sit in the tray: closing the main window doesn't quit it.",
@@ -6323,8 +6323,8 @@
    "text": "ギャラリー名を付けたフォルダーにギャラリーをダウンロードします。<g1>コマンドラインと自動化</g1>を参照してください。"
   },
   "5d0bbcc71d941fe0": {
-   "source": "misterdownloadmanager.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
-   "text": "misterdownloadmanager.com のページ (ホーム、ダウンロード、機能、テーマ、FAQ)。<x1/> が <x2/> のヘルプと CHANGELOG のニュースを 22 言語で追加し、GitHub Pages が公開します。"
+   "source": "bmd.example.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
+   "text": "bmd.example.com のページ (ホーム、ダウンロード、機能、テーマ、FAQ)。<x1/> が <x2/> のヘルプと CHANGELOG のニュースを 22 言語で追加し、GitHub Pages が公開します。"
   },
   "5d199508494f7f75": {
    "source": "Windows, menus and dialogs",
@@ -10011,8 +10011,8 @@
    "text": "<g1>「ダウンロード ファイル情報」ダイアログの表示中にダウンロードを開始する</g1> — 既定ではオンです。フォルダーを選択している間もダウンロードが進みます。"
   },
   "9289eb0f078ac8f3": {
-   "source": "The terms for using BMD and misterdownloadmanager.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
-   "text": "BMDおよびmisterdownloadmanager.comの利用規約：GNU GPL 3.0に基づくフリーソフトウェアであり、ご自身の責任において、ダウンロードする権利のあるコンテンツにのみ使用してください。"
+   "source": "The terms for using BMD and bmd.example.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
+   "text": "BMDおよびbmd.example.comの利用規約：GNU GPL 3.0に基づくフリーソフトウェアであり、ご自身の責任において、ダウンロードする権利のあるコンテンツにのみ使用してください。"
   },
   "92abe6de5cd6999e": {
    "source": "<g1>Hide tab</g1> takes a tab off this download's window and goes back to <g2>Download status</g2>. To bring the tabs back, right-click the tab row and choose <g3>Show hidden tabs</g3>; closing the window and opening it again brings them back too.",
@@ -12283,8 +12283,8 @@
    "text": "ブラウザ連携には、各ブラウザで拡張機能を追加するというもう1つのステップが必要です。Firefoxでは、<g2>addons.mozilla.orgのページ</g2>で<g1>Firefoxへ追加</g1>をクリックします。Chrome、Edge、Brave、Opera、Vivaldiでは、<g4>Chromeウェブストアのページ</g4>で<g3>Chromeに追加</g3>をクリックします。<g5>ブラウザ連携</g5>でその方法が示されています。"
   },
   "b25b5595e4410599": {
-   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open misterdownloadmanager.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
-   "text": "<g1>ヘルプがウェブサイトのヘルプ ページをユーザーの言語で開くようになりました</g1> (<g2>#227</g2>): <g3>ヘルプ コンテンツ</g3>、<g4>チュートリアル</g4>、<g5>スケジューラとキュー</g5>、<g6>ビデオのダウンロード</g6>、［オプション］と［スケジューラ］の<g7>ヘルプ</g7> ボタン、およびブラウザー拡張機能ウィンドウのチュートリアルとヘルプ リンクは、GitHub のドキュメントを開いていました (［オプション］と［スケジューラ］のボタンは存在しないページを開いていました)。これらは現在、misterdownloadmanager.com の同じセクションを、ウェブサイトが対応している場合はインターフェース言語で (それ以外の場合は英語で) 開きます。<g8>ホームページ</g8>もウェブサイトを開きます。コマンド ラインと MCP サーバーのヘルプは、ウェブサイトのガイドを参照します。問題報告、リリース、ソースは引き続き GitHub に残ります。"
+   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open bmd.example.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
+   "text": "<g1>ヘルプがウェブサイトのヘルプ ページをユーザーの言語で開くようになりました</g1> (<g2>#227</g2>): <g3>ヘルプ コンテンツ</g3>、<g4>チュートリアル</g4>、<g5>スケジューラとキュー</g5>、<g6>ビデオのダウンロード</g6>、［オプション］と［スケジューラ］の<g7>ヘルプ</g7> ボタン、およびブラウザー拡張機能ウィンドウのチュートリアルとヘルプ リンクは、GitHub のドキュメントを開いていました (［オプション］と［スケジューラ］のボタンは存在しないページを開いていました)。これらは現在、bmd.example.com の同じセクションを、ウェブサイトが対応している場合はインターフェース言語で (それ以外の場合は英語で) 開きます。<g8>ホームページ</g8>もウェブサイトを開きます。コマンド ラインと MCP サーバーのヘルプは、ウェブサイトのガイドを参照します。問題報告、リリース、ソースは引き続き GitHub に残ります。"
   },
   "b26c000488bb45a1": {
    "source": "<g1>Windows</g1>: <x2/>, or <x3/>. The installers on <g4>deno.com</g4> and <g5>nodejs.org</g5> work too.",
@@ -14387,8 +14387,8 @@
    "text": "ツールバーの<g1>キューの開始</g1>と<g2>キューの停止</g2>で、<g3>メインダウンロードキュー</g3>を開始または停止します。各ボタンの横にある矢印から、すべてのキューを選択できます。"
   },
   "d01313dd0d5afa65": {
-   "source": "misterdownloadmanager.com is a static site. Three companies take part in showing it to you:",
-   "text": "misterdownloadmanager.comは静的サイトです。サイトの表示には3社が関わっています。"
+   "source": "bmd.example.com is a static site. Three companies take part in showing it to you:",
+   "text": "bmd.example.comは静的サイトです。サイトの表示には3社が関わっています。"
   },
   "d013797562de4ed8": {
    "source": "<g1>Download in order</g1> — downloads the torrent's files from their start (see below). Click it again to go back to the rarest pieces first.",

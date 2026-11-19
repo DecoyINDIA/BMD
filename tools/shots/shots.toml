@@ -623,7 +623,7 @@ ring = ["Test browser integration..."]
 alt = "Options, General with Test browser integration..."
 caption = "Test browser integration... says whether the browser reaches BMD."
 
-# ---- The website (misterdownloadmanager.com) ------------------------------------------------------
+# ---- The website (bmd.example.com) ------------------------------------------------------
 # Pictures the site's own pages show (tools/website/build.py), not a help page: `page` names the
 # website file that lists them, where `make.py check` looks for "images/help/<id>.webp".
 
