@@ -12,6 +12,10 @@ Thumbs.db
 .DS_Store
 __pycache__/
 
+# Local Codex session artifacts
+/.codex-attachments/
+/debug.log
+
 node_modules/
 
 # Impeccable (.claude/skills/impeccable): its engine downloads on first use; personal Claude Code settings
