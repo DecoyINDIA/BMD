@@ -111,7 +111,7 @@ pub fn monitor_main(m: MonitorArgs) -> eframe::Result {
         viewport: builder.clone(),
         ..Default::default()
     };
-    // What the app draws with (renderer.rs, MDM_RENDERER too), the next way when one can't
+    // What the app draws with (renderer.rs, BMD_RENDERER too), the next way when one can't
     // start. A way the app failed with, or is still starting with (this report may be about it),
     // is passed over: WARP when its Direct3D on the card did, OpenGL when WARP did too; only the
     // app's own starts are watched.

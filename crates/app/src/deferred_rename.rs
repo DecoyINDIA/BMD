@@ -1,7 +1,7 @@
 //! Safe deferred rename (`Item::rename_on_complete`) from a download's progress window.
 //!
 //! Typing a new name while a download runs never touches the live HTTP stream, signed URL,
-//! temporary `.mdm.part` state, or torrent session in flight. Instead, the chosen main name is
+//! temporary `.bmd.part` state, or torrent session in flight. Instead, the chosen main name is
 //! stored on the item and applied in place once the download reaches `Status::Complete`:
 //! - Single-file downloads replace only the finalized file's main stem, keeping its real
 //!   extension (including compound archive suffixes such as `.tar.gz`).

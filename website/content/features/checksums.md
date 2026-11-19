@@ -45,5 +45,5 @@ The [command line guide](command-line.md) lists everything `get` takes.
 
 The same care goes into what BMD fetches for itself. The helpers it can install for videos are
 verified before they run: yt-dlp against its developers' signing key, ffmpeg against its
-published checksums. BMD's own updates install only files listed in a checksum list signed with
-BMD's release key, which every release carries.
+published checksums. BMD's own updates install only files that match the checksum list every
+release carries, read from BMD's GitHub releases over HTTPS.

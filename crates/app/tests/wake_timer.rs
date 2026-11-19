@@ -91,7 +91,7 @@ async fn the_computer_is_woken_for_the_queue_and_kept_awake_while_it_runs() {
     std::fs::write(data.join("downloads.json"), list.to_string()).unwrap();
     let result = tokio::task::spawn_blocking(move || {
         let mut app = Command::new(APP)
-            .env("MDM_DATA_DIR", &data)
+            .env("BMD_DATA_DIR", &data)
             .env("BMD_OFFSCREEN", "1")
             .spawn()
             .unwrap();
@@ -158,7 +158,7 @@ async fn the_computer_is_woken_for_the_queue_and_kept_awake_while_it_runs() {
         }));
         let _ = Command::new(APP)
             .arg("/exit")
-            .env("MDM_DATA_DIR", &data)
+            .env("BMD_DATA_DIR", &data)
             .env("BMD_OFFSCREEN", "1")
             .status();
         let until = Instant::now() + Duration::from_secs(15);

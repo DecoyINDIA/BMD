@@ -151,7 +151,7 @@ function races(t) {
   const parts = cases.map((c, i) => {
     const x = i * (cw + gap);
     const seed = 7 + i * 13;
-    const mdmW = Math.max(10, (barW * c.bmd) / c.idm);
+    const bmdW = Math.max(10, (barW * c.bmd) / c.idm);
     const verdictText = verdict(c.idm / c.bmd);
     const vw = hand.getAdvanceWidth(verdictText, 30);
     // Two hatch directions as well as two colours: the bars stay apart in grey too.
@@ -164,7 +164,7 @@ function races(t) {
   ${write(c.title, 22, 40, 22, t.text, "start", true)}
   ${write("BMD", 22, 72, 17, t.text)}
   ${write(seconds(c.bmd), cw - 22, 72, 17, t.text, "end", true)}
-  ${bar(80, mdmW, t.bmd, -41, seed + 1)}
+  ${bar(80, bmdW, t.bmd, -41, seed + 1)}
   ${write("IDM 6.42", 22, 122, 17, t.muted)}
   ${write(seconds(c.idm), cw - 22, 122, 17, t.muted, "end")}
   ${bar(130, barW, t.idm, 41, seed + 2)}

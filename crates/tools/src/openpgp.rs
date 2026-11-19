@@ -1,6 +1,6 @@
 //! Just enough OpenPGP (RFC 9580, and RFC 4880 before it) to check a detached signature by one
-//! of the keys BMD pins: yt-dlp's (RSA) and BMD's own release key (Ed25519, in its legacy
-//! EdDSA form, algorithm 22). Both sign their checksum lists as binary documents with v4
+//! of the keys BMD pins: yt-dlp's and gallery-dl's (RSA), and Ed25519 keys in their legacy EdDSA
+//! form (algorithm 22). They sign their checksum lists as binary documents with v4
 //! signatures; that, with SHA-256 or SHA-512, is all this understands, and anything else fails.
 //! The keys are built into the program, so their self-signatures aren't checked: every key and
 //! subkey in a pinned key is trusted to sign. The cryptography is aws-lc-rs's, the library
@@ -461,14 +461,14 @@ fn left_pad(bytes: &[u8], len: usize) -> Option<Vec<u8>> {
 mod tests {
     use super::*;
 
-    const BMD_KEY: &[u8] = include_bytes!("../keys/bmd-release.asc");
+    const ED_KEY: &[u8] = include_bytes!("../tests/fixtures/ed25519-test-key.asc");
     const YTDLP_KEY: &[u8] = include_bytes!("../keys/yt-dlp.asc");
-    const BMD_SUMS: &[u8] = include_bytes!("../tests/fixtures/mdm-SHA256SUMS.txt");
-    const BMD_SIG: &[u8] = include_bytes!("../tests/fixtures/mdm-SHA256SUMS.txt.sig");
+    const ED_SUMS: &[u8] = include_bytes!("../tests/fixtures/ed25519-signed.txt");
+    const ED_SIG: &[u8] = include_bytes!("../tests/fixtures/ed25519-signed.txt.sig");
     const YTDLP_SUMS: &[u8] = include_bytes!("../tests/fixtures/SHA2-256SUMS");
     const YTDLP_SIG: &[u8] = include_bytes!("../tests/fixtures/SHA2-256SUMS.sig");
     const BOTH: [(&[u8], &[u8], &[u8]); 2] = [
-        (BMD_KEY, BMD_SUMS, BMD_SIG),
+        (ED_KEY, ED_SUMS, ED_SIG),
         (YTDLP_KEY, YTDLP_SUMS, YTDLP_SIG),
     ];
 
@@ -505,8 +505,8 @@ mod tests {
             hex::encode_upper(keys[0].fingerprint)
         };
         assert_eq!(
-            fingerprint(BMD_KEY),
-            "ED4D65B61F3809DA1AF22D954EFF92B31405DDFB"
+            fingerprint(ED_KEY),
+            "1C46ACF5B87A5E5A9A281197D2A62F72B7D94DD8"
         );
         assert_eq!(
             fingerprint(YTDLP_KEY),
@@ -552,23 +552,23 @@ mod tests {
 
     #[test]
     fn each_key_signs_for_itself_only() {
-        assert!(!verify(YTDLP_KEY, BMD_SUMS, BMD_SIG));
-        assert!(!verify(BMD_KEY, YTDLP_SUMS, YTDLP_SIG));
-        assert!(!verify(BMD_KEY, BMD_SUMS, BMD_KEY));
-        assert!(!verify(BMD_SIG, BMD_SUMS, BMD_SIG));
+        assert!(!verify(YTDLP_KEY, ED_SUMS, ED_SIG));
+        assert!(!verify(ED_KEY, YTDLP_SUMS, YTDLP_SIG));
+        assert!(!verify(ED_KEY, ED_SUMS, ED_KEY));
+        assert!(!verify(ED_SIG, ED_SUMS, ED_SIG));
     }
 
     #[test]
     fn armor_is_checked_by_its_checksum() {
-        let armored = armor(BMD_SIG, crc24(BMD_SIG));
-        assert!(verify(BMD_KEY, BMD_SUMS, armored.as_bytes()));
-        let wrong = armor(BMD_SIG, crc24(BMD_SIG) ^ 1);
-        assert!(!verify(BMD_KEY, BMD_SUMS, wrong.as_bytes()));
+        let armored = armor(ED_SIG, crc24(ED_SIG));
+        assert!(verify(ED_KEY, ED_SUMS, armored.as_bytes()));
+        let wrong = armor(ED_SIG, crc24(ED_SIG) ^ 1);
+        assert!(!verify(ED_KEY, ED_SUMS, wrong.as_bytes()));
         // A damaged key: "mDME" begins its data.
-        let key = String::from_utf8(BMD_KEY.to_vec())
+        let key = String::from_utf8(ED_KEY.to_vec())
             .unwrap()
             .replacen("mDME", "mDMF", 1);
-        assert!(!verify(key.as_bytes(), BMD_SUMS, BMD_SIG));
+        assert!(!verify(key.as_bytes(), ED_SUMS, ED_SIG));
     }
 
     #[test]
@@ -592,7 +592,7 @@ mod tests {
             assert!(!verify(&bytes, YTDLP_SUMS, YTDLP_SIG));
             let text: String = bytes.iter().map(|&b| char::from(b'+' + b % 80)).collect();
             let armored = format!("-----BEGIN PGP SIGNATURE-----\n\n{text}\n=");
-            assert!(!verify(BMD_KEY, BMD_SUMS, armored.as_bytes()));
+            assert!(!verify(ED_KEY, ED_SUMS, armored.as_bytes()));
         }
         // The real keys and signatures, each byte damaged in turn, and cut short.
         for (key, sums, sig) in BOTH {

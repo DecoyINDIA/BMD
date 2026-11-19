@@ -58,7 +58,7 @@ fn failures_are_json_with_a_failing_exit_code() {
     let out = Command::new(APP)
         .arg(bmd_cli::FLAG)
         .args(["--json", "status"])
-        .env("MDM_DATA_DIR", dir.path())
+        .env("BMD_DATA_DIR", dir.path())
         .output()
         .unwrap();
     assert!(!out.status.success());
@@ -71,7 +71,7 @@ fn failures_are_json_with_a_failing_exit_code() {
     let out = Command::new(APP)
         .arg(bmd_cli::FLAG)
         .args(["--json", "resume"])
-        .arg(dir.path().join("missing.mdm.json"))
+        .arg(dir.path().join("missing.bmd.json"))
         .output()
         .unwrap();
     assert!(!out.status.success());

@@ -6,8 +6,8 @@
 # Apple Developer ID, macOS asks before the first start (right-click the app -> Open).
 # The app carries the Safari extension (tools/safari). Safari loads an ad-hoc signed one only with
 # Develop -> Allow Unsigned Extensions (each time Safari starts); signed with a Developer ID
-# (MDM_MACOS_IDENTITY="Developer ID Application: ..."), it is an ordinary extension.
-# MDM_NOTARY_PROFILE=<name> (a `xcrun notarytool store-credentials` profile) also has Apple notarize
+# (BMD_MACOS_IDENTITY="Developer ID Application: ..."), it is an ordinary extension.
+# BMD_NOTARY_PROFILE=<name> (a `xcrun notarytool store-credentials` profile) also has Apple notarize
 # the app and the .dmg: Safari ignores a Developer ID extension that isn't.
 # Needs: macOS with Xcode's command line tools (swiftc), rustup, pwsh (the extension).
 #   tools/installer/build-macos.sh [--no-build]
@@ -30,7 +30,7 @@ if [ "${1:-}" != "--no-build" ]; then
   done
 fi
 pwsh -NoProfile -File "$root/tools/extension/pack.ps1"
-sign="${MDM_MACOS_IDENTITY:--}"
+sign="${BMD_MACOS_IDENTITY:--}"
 # A real identity also gets the hardened runtime (notarization needs it).
 sign_opts=()
 [ "$sign" = "-" ] || sign_opts=(--options runtime --timestamp)
@@ -83,7 +83,7 @@ for pair in "${targets[@]}"; do
 <dict>
   <key>CFBundleName</key><string>BMD</string>
   <key>CFBundleDisplayName</key><string>BMD</string>
-  <key>CFBundleIdentifier</key><string>io.github.anefzaoui.misterdownloadmanager</string>
+  <key>CFBundleIdentifier</key><string>io.github.decoyindia.bmd</string>
   <key>CFBundleVersion</key><string>$version</string>
   <key>CFBundleShortVersionString</key><string>$version</string>
   <key>CFBundlePackageType</key><string>APPL</string>
@@ -140,10 +140,10 @@ EOF
   done
   codesign --force ${sign_opts[@]+"${sign_opts[@]}"} --sign "$sign" "$app"
   codesign --verify --strict --deep "$app"
-  if [ -n "${MDM_NOTARY_PROFILE:-}" ]; then
+  if [ -n "${BMD_NOTARY_PROFILE:-}" ]; then
     # Apple scans a zip of the app; the ticket is stapled to the app, so it also opens offline.
     ditto -c -k --keepParent "$app" "$stage/$arch/notarize.zip"
-    xcrun notarytool submit "$stage/$arch/notarize.zip" --keychain-profile "$MDM_NOTARY_PROFILE" --wait
+    xcrun notarytool submit "$stage/$arch/notarize.zip" --keychain-profile "$BMD_NOTARY_PROFILE" --wait
     xcrun stapler staple "$app"
     rm -f "$stage/$arch/notarize.zip"
   fi
@@ -154,9 +154,9 @@ EOF
   rm -f "$dist/$name.dmg"
   hdiutil create -volname "BMD" -srcfolder "$stage/$arch/dmg" -ov -format ULMO \
     "$dist/$name.dmg"
-  if [ -n "${MDM_NOTARY_PROFILE:-}" ]; then
+  if [ -n "${BMD_NOTARY_PROFILE:-}" ]; then
     codesign --force --sign "$sign" --timestamp "$dist/$name.dmg"
-    xcrun notarytool submit "$dist/$name.dmg" --keychain-profile "$MDM_NOTARY_PROFILE" --wait
+    xcrun notarytool submit "$dist/$name.dmg" --keychain-profile "$BMD_NOTARY_PROFILE" --wait
     xcrun stapler staple "$dist/$name.dmg"
   fi
   dmgs+=("$name.dmg")

@@ -58,7 +58,7 @@ No device is paired yet. Open the address (or scan this) and enter the code 1037
 ```
 
 Inside a container, the address BMD finds is the container's own: give it the one you open, the
-**server's** address with the port you published, as `-e MDM_REMOTE_URL=https://192.168.1.10:8463/`,
+**server's** address with the port you published, as `-e BMD_REMOTE_URL=https://192.168.1.10:8463/`,
 and the log and the QR code show that one. Then pair as
 [Control BMD from your phone](remote-control.md#pair-your-phone) says. For another code, at any
 time:
@@ -68,7 +68,7 @@ docker exec bmd bmd-cli pair
 ```
 
 To open the page by the server's name (`https://nas.local:8463/`), give BMD that name:
-`-e MDM_REMOTE_HOSTS=nas.local` (several: separated by commas). Other names are refused, so that
+`-e BMD_REMOTE_HOSTS=nas.local` (several: separated by commas). Other names are refused, so that
 no web page can reach BMD through a name of its own.
 
 ## On Unraid
@@ -79,7 +79,7 @@ Container** and pick **bmd**. It maps `/config` to `appdata`, `/downloads` to a
 share, the port 8463, and runs as `nobody:users` (99:100), as Unraid's shares expect. The image
 must be built first (above), on the server or pushed to a registry you use. If the container's
 log says a folder belongs to another user, give it to `nobody:users` once:
-`chown -R 99:100 /mnt/user/appdata/misterdownloadmanager`.
+`chown -R 99:100 /mnt/user/appdata/bmd`.
 
 ## Without Docker
 
@@ -91,19 +91,19 @@ bmd --headless --data ~/bmd-server --downloads /srv/downloads
 
 | Flag | Or the variable | What it sets |
 |---|---|---|
-| `--data <folder>` | `MDM_DATA_DIR` | the list, settings, certificate and paired devices |
-| `--downloads <folder>` | `MDM_DOWNLOADS` | where downloads go (each category's folder inside) |
-| `--port <number>` | `MDM_REMOTE_PORT` | the remote control's port (8463) |
-| `--listen <address>` | `MDM_REMOTE_LISTEN` | where it listens: every local network address unless given |
-| `--hosts <names>` | `MDM_REMOTE_HOSTS` | names besides its addresses the page may be opened by |
-| | `MDM_REMOTE_URL` | the page's address as you open it, shown with the pairing code |
+| `--data <folder>` | `BMD_DATA_DIR` | the list, settings, certificate and paired devices |
+| `--downloads <folder>` | `BMD_DOWNLOADS` | where downloads go (each category's folder inside) |
+| `--port <number>` | `BMD_REMOTE_PORT` | the remote control's port (8463) |
+| `--listen <address>` | `BMD_REMOTE_LISTEN` | where it listens: every local network address unless given |
+| `--hosts <names>` | `BMD_REMOTE_HOSTS` | names besides its addresses the page may be opened by |
+| | `BMD_REMOTE_URL` | the page's address as you open it, shown with the pairing code |
 
-The remote control is on in this mode (`MDM_REMOTE=off` turns it off). It stops cleanly, saving
+The remote control is on in this mode (`BMD_REMOTE=off` turns it off). It stops cleanly, saving
 its list, when the system stops it (`docker stop`, systemd, Ctrl+C). It works on Windows and
 macOS too, the same way.
 
 The command line talks to it as to a desktop BMD, with the same data folder:
-`MDM_DATA_DIR=~/bmd-server bmd-cli status` (once `api on`), `pair`, and adding
+`BMD_DATA_DIR=~/bmd-server bmd-cli status` (once `api on`), `pair`, and adding
 an address: `bmd /d https://example.com/file.zip`.
 
 ## Send downloads from your browser

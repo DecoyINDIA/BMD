@@ -35,8 +35,7 @@ tempfile.workspace = true
 
 [features]
 # Update now's end-to-end tests only, never in a release (tools/installer and release.yml don't
-# turn it on): BMD_TEST_UPDATE_KEY names a test key a fake release's checksum list may be signed
-# with instead of BMD's release key.
+# turn it on): the app's `/show update-now` and BMD_TEST_UPDATE_HOLD (see bmd-app).
 test-update = []
 
 # A fake yt-dlp and the checks against it in one program (#68; see the file).

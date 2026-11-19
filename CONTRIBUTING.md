@@ -17,7 +17,7 @@ cargo run -p bmd-app
 To try changes without touching your own downloads, give the app a separate data folder:
 
 ```
-set MDM_DATA_DIR=C:\some\empty\folder
+set BMD_DATA_DIR=C:\some\empty\folder
 cargo run -p bmd-app
 ```
 

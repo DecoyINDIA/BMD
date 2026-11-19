@@ -8,14 +8,14 @@
 //!
 //! | Flag | Environment | |
 //! |---|---|---|
-//! | `--data <dir>` | `MDM_DATA_DIR` | the data folder (list, settings, certificate, devices) |
-//! | `--downloads <dir>` | `MDM_DOWNLOADS` | where downloads go (each category's folder inside) |
-//! | `--port <n>` | `MDM_REMOTE_PORT` | the remote control's port (8463) |
-//! | `--listen <addr>` | `MDM_REMOTE_LISTEN` | where it listens: "" every local network address |
-//! | `--hosts <names>` | `MDM_REMOTE_HOSTS` | names besides addresses it answers to (a NAS's) |
-//! | | `MDM_REMOTE_URL` | the page's address as people open it (a container's isn't) |
+//! | `--data <dir>` | `BMD_DATA_DIR` | the data folder (list, settings, certificate, devices) |
+//! | `--downloads <dir>` | `BMD_DOWNLOADS` | where downloads go (each category's folder inside) |
+//! | `--port <n>` | `BMD_REMOTE_PORT` | the remote control's port (8463) |
+//! | `--listen <addr>` | `BMD_REMOTE_LISTEN` | where it listens: "" every local network address |
+//! | `--hosts <names>` | `BMD_REMOTE_HOSTS` | names besides addresses it answers to (a NAS's) |
+//! | | `BMD_REMOTE_URL` | the page's address as people open it (a container's isn't) |
 //!
-//! The remote control is on (that is the point); `MDM_REMOTE=off` turns it off. With no device
+//! The remote control is on (that is the point); `BMD_REMOTE=off` turns it off. With no device
 //! paired yet, a pairing code is printed at start; `bmd-cli pair` prints
 //! another.
 
@@ -49,7 +49,7 @@ pub fn main(args: Vec<String>) -> ExitCode {
     // A Windows server has no console for a windowed program: the one it was started from.
     #[cfg(windows)]
     crate::win32::cli_console(None);
-    if let Some(dir) = setting(&args, "data", "MDM_DATA_DIR") {
+    if let Some(dir) = setting(&args, "data", "BMD_DATA_DIR") {
         bmd_ipc::set_data_dir(PathBuf::from(dir));
     }
     let Some(data) = bmd_ipc::data_dir() else {
@@ -94,8 +94,8 @@ pub fn main(args: Vec<String>) -> ExitCode {
     let rt = tokio::runtime::Runtime::new().expect("tokio runtime");
     let mut loaded = crate::store::load();
     let s = &mut loaded.settings;
-    s.remote_on = !std::env::var("MDM_REMOTE").is_ok_and(|v| v.eq_ignore_ascii_case("off"));
-    if let Some(p) = setting(&args, "port", "MDM_REMOTE_PORT") {
+    s.remote_on = !std::env::var("BMD_REMOTE").is_ok_and(|v| v.eq_ignore_ascii_case("off"));
+    if let Some(p) = setting(&args, "port", "BMD_REMOTE_PORT") {
         match p.trim().parse::<u16>() {
             Ok(p) if p > 0 => s.remote_port = p,
             _ => {
@@ -104,16 +104,16 @@ pub fn main(args: Vec<String>) -> ExitCode {
             }
         }
     }
-    if let Some(l) = setting(&args, "listen", "MDM_REMOTE_LISTEN") {
+    if let Some(l) = setting(&args, "listen", "BMD_REMOTE_LISTEN") {
         s.remote_listen = l.trim().to_owned();
     }
     // No one to ask: the language is the system's, and nothing opens a window.
     s.language_asked = true;
     s.show_start_dialog = false;
     s.show_complete = false;
-    let hosts = setting(&args, "hosts", "MDM_REMOTE_HOSTS");
+    let hosts = setting(&args, "hosts", "BMD_REMOTE_HOSTS");
     crate::remote::set_hosts(hosts.as_deref());
-    let downloads = setting(&args, "downloads", "MDM_DOWNLOADS").map(PathBuf::from);
+    let downloads = setting(&args, "downloads", "BMD_DOWNLOADS").map(PathBuf::from);
     if let Some(d) = &downloads
         && let Err(e) = writable(d)
     {
@@ -198,12 +198,12 @@ fn not_ours(e: &std::io::Error) -> &'static str {
 /// once said (or when it is off).
 fn tell(app: &mut crate::app::App) -> bool {
     let Some(remote) = app.remote.clone() else {
-        println!("The remote control is off (MDM_REMOTE=off).");
+        println!("The remote control is off (BMD_REMOTE=off).");
         return true;
     };
     match remote.status() {
         bmd_remote::Status::Off => {
-            println!("The remote control is off (MDM_REMOTE=off).");
+            println!("The remote control is off (BMD_REMOTE=off).");
             true
         }
         bmd_remote::Status::Listening(_) => {

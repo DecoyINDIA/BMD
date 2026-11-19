@@ -3,7 +3,7 @@
 // YouTube, and the same film as a plain video file. Nothing shows on the screen: the window
 // opens far off the screens without taking the focus (and keeps painting there), Windows draws
 // it into the picture (PrintWindow), and a separate BMD runs off the screen
-// for the button to ask (MDM_DATA_DIR, BMD_OFFSCREEN). Windows only.
+// for the button to ask (BMD_DATA_DIR, BMD_OFFSCREEN). Windows only.
 //
 //   cargo build --release -p bmd-app -p bmd-nmhost; tools\extension\pack.ps1
 //   node tools/readme/browser-shots.mjs        -> target/browser-shots/video-button-*.png
@@ -77,7 +77,7 @@ async function main() {
   fs.writeFileSync(path.join(data, "downloads.json"), JSON.stringify({ next_id: 1, items: [], version: 2, settings: { language: "en", language_asked: true, extension_never_ask: true } }));
   // No translation offers or other bubbles over the page.
   fs.writeFileSync(path.join(profile, "Default", "Preferences"), JSON.stringify({ translate: { enabled: false }, browser: { has_seen_welcome_page: true } }));
-  process.env.MDM_DATA_DIR = data;
+  process.env.BMD_DATA_DIR = data;
   process.env.BMD_OFFSCREEN = "1";
 
   const app = spawn(exe("bmd"), [], { env: process.env, stdio: "ignore" });
@@ -92,7 +92,7 @@ async function main() {
   };
   try {
     await until("BMD", 20000, () => fs.existsSync(path.join(data, "ipc.json")));
-    const key = "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.misterdownloadmanager.host";
+    const key = "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.blackmarlindownloader.host";
     if (spawnSync("reg", ["query", key], { stdio: "ignore" }).status === 0) {
       throw new Error("BMD's host is already registered (an installed copy): not touching it");
     }
@@ -211,9 +211,9 @@ async function one(cdp, browser, shot) {
   // The frame itself, not a buffering spinner over a dark picture.
   await until(`${shot.name}: the frame`, 60000, () =>
     evaluate(`(() => { const v = document.querySelector('video');
-      window.__mdmState = [document.visibilityState, v.readyState, v.networkState, v.seeking, v.paused, v.currentTime.toFixed(1)].join(' ');
+      window.__bmdState = [document.visibilityState, v.readyState, v.networkState, v.seeking, v.paused, v.currentTime.toFixed(1)].join(' ');
       return v.readyState >= 2 && !v.seeking; })()`).then(async (ok) => {
-      if (!ok) console.error(`${shot.name}: waiting (visibility readyState network seeking paused time):`, await evaluate("window.__mdmState"));
+      if (!ok) console.error(`${shot.name}: waiting (visibility readyState network seeking paused time):`, await evaluate("window.__bmdState"));
       return ok;
     }),
   );

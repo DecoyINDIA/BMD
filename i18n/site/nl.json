@@ -1223,8 +1223,8 @@
    "text": "Teamrollen"
   },
   "1171655e77148bd2": {
-   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/anefzaoui/misterdownloadmanager</g2> under the GNU GPL, version 3.",
-   "text": "Elke release, met de notities en bestanden, staat op <g1>GitHub Releases</g1>. De broncode is te vinden op <g2>github.com/anefzaoui/misterdownloadmanager</g2> onder de GNU GPL, versie 3."
+   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/DecoyINDIA/BMD</g2> under the GNU GPL, version 3.",
+   "text": "Elke release, met de notities en bestanden, staat op <g1>GitHub Releases</g1>. De broncode is te vinden op <g2>github.com/DecoyINDIA/BMD</g2> onder de GNU GPL, versie 3."
   },
   "1173fd2e0a9c235b": {
    "source": "The app has no accounts, telemetry or tracking",
@@ -14299,8 +14299,8 @@
    "text": "De video's worden elk onder hun eigen titel opgeslagen in een map met de naam van de lijst, in <g1>Opslaan in</g1>."
   },
   "ceb8f4f5a72cba4a": {
-   "source": "Every signed file is built from the public source code at <g1>github.com/anefzaoui/misterdownloadmanager</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
-   "text": "Elk ondertekend bestand wordt gebouwd vanuit de openbare broncode op <g1>github.com/anefzaoui/misterdownloadmanager</g1> door GitHub Actions, op de servers van GitHub, nooit op een persoonlijke computer. Elk bestand vermeldt dat het BMD is en welke versie het betreft."
+   "source": "Every signed file is built from the public source code at <g1>github.com/DecoyINDIA/BMD</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
+   "text": "Elk ondertekend bestand wordt gebouwd vanuit de openbare broncode op <g1>github.com/DecoyINDIA/BMD</g1> door GitHub Actions, op de servers van GitHub, nooit op een persoonlijke computer. Elk bestand vermeldt dat het BMD is en welke versie het betreft."
   },
   "cee8fa5faa008467": {
    "source": "To save your own list, use <g1>Tasks → Export → To text file</g1> (one address per line) or <g2>To IDM export file</g2>.",
@@ -14695,8 +14695,8 @@
    "text": "<g1>librqbit</g1><g2>torrent-engine</g2>"
   },
   "d3bb5a30d659061d": {
-   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/anefzaoui/misterdownloadmanager</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
-   "text": "BMD (\"BMD\") is gratis, open-source software gemaakt door Ahmed Nefzaoui en bijdragers. Omdat de volledige broncode openbaar is op <g1>github.com/anefzaoui/misterdownloadmanager</g1>, hoeft u deze pagina niet op zijn woord te geloven: elke netwerkverbinding die hier wordt beschreven, kan in de code worden gecontroleerd."
+   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/DecoyINDIA/BMD</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
+   "text": "BMD (\"BMD\") is gratis, open-source software gemaakt door Ahmed Nefzaoui en bijdragers. Omdat de volledige broncode openbaar is op <g1>github.com/DecoyINDIA/BMD</g1>, hoeft u deze pagina niet op zijn woord te geloven: elke netwerkverbinding die hier wordt beschreven, kan in de code worden gecontroleerd."
   },
   "d3da8c9dc89aaa97": {
    "source": "What's new in version 0.5.1 <g1>2026-11-08</g1>",

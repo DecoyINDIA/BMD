@@ -214,7 +214,7 @@ struct Sources {
 
 async fn latest() -> Result<Found, String> {
     // BMD_UPDATE_FEED: another address for the latest release (tests of Update now, as
-    // MDM_DATA_DIR is for a separate list); BMD_UPDATE_WEB and BMD_UPDATE_RAW: other addresses
+    // BMD_DATA_DIR is for a separate list); BMD_UPDATE_WEB and BMD_UPDATE_RAW: other addresses
     // for GitHub's pages and files (tests of the way around the API's rate limit: the lab
     // server's fake GitHub, `/gh/web` and `/gh/raw`).
     let var = |name: &str, default: &str| std::env::var(name).unwrap_or_else(|_| default.into());
@@ -284,7 +284,7 @@ async fn fetch(
 
 /// The latest release from GitHub's pages, without its API (#1337): its tag from where
 /// `releases/latest` redirects, its date and notes from its section of CHANGELOG.md at that tag
-/// (release.yml's source for them; none when it can't be read), and of its files the signed
+/// (release.yml's source for them; none when it can't be read), and of its files the
 /// checksum list and the ones this copy updates from (`install`), those the release has (asked
 /// without downloading them). Update now checks them as it checks the API's.
 async fn from_pages(
@@ -311,7 +311,7 @@ async fn from_pages(
             Default::default()
         }
     };
-    let mut names = vec!["SHA256SUMS.txt".to_owned(), "SHA256SUMS.txt.sig".to_owned()];
+    let mut names = vec!["SHA256SUMS.txt".to_owned()];
     names.extend(install.assets(version));
     let mut assets = Vec::new();
     for name in names {
@@ -615,7 +615,7 @@ impl Updates {
                         download = Some(rel.clone());
                     }
                 }
-                // Update now when this copy's file is in the signed release (and it hasn't just
+                // Update now when this copy's file is in the release, with its checksums (and it hasn't just
                 // failed); else Download opens the release's page.
                 let asset = download.as_ref().and_then(|rel| {
                     crate::update::asset_for(install, &rel.version, &rel.assets)
@@ -1468,7 +1468,7 @@ mod tests {
         std::fs::create_dir_all(&release).unwrap();
         std::fs::write(repo.join("LATEST"), "v9.9.9").unwrap();
         let linux = Install::TarGz.assets_on(Arch::THIS, "9.9.9");
-        let mut published = vec!["SHA256SUMS.txt", "SHA256SUMS.txt.sig"];
+        let mut published = vec!["SHA256SUMS.txt"];
         published.extend(linux.first().map(String::as_str));
         for name in &published {
             std::fs::write(release.join(name), name).unwrap();

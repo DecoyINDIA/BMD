@@ -7,7 +7,7 @@ Each release's notes on GitHub come from its section here (`## [X.Y.Z]`, see
 
 ## [1.0.0] - 2026-11-19
 
-The first release as BMD (Black Marlin Downloader), signed with BMD's own release key.
+The first release as BMD (Black Marlin Downloader).
 
 ### Added
 
@@ -54,7 +54,9 @@ The first release as BMD (Black Marlin Downloader), signed with BMD's own releas
 
 ### Changed
 
-- The app is now **BMD** (Black Marlin Downloader), with the Black Marlin logo. The updated commands are `bmd`, `bmd-cli` and `bmd-mcp`. Existing installations keep their download data and settings in the same folders.
+- The app is now **BMD** (Black Marlin Downloader), with the Black Marlin logo. The updated commands are `bmd`, `bmd-cli` and `bmd-mcp`.
+- **BMD's own names throughout**, so it installs and runs beside Mister Download Manager without sharing anything with it: its own installer identity, data folder (`%APPDATA%md`, `~/.local/share/bmd`, `~/Library/Application Support/bmd`), part and resume files (`.bmd.part`, `.bmd.json`), environment variables (`BMD_DATA_DIR`, `BMD_LOG`, ...), browser helper (`com.blackmarlindownloader.host`), Firefox add-on, credential and keychain entries, and Windows registry keys and file associations.
+- **Releases are no longer signed with a release key.** Update now installs a file only when it matches its line in the release's `SHA256SUMS.txt`, read from BMD's GitHub releases over HTTPS, and every file carries GitHub's build provenance (`gh attestation verify <file> --repo DecoyINDIA/BMD`).
 
 - **Updates come signed by BMD's own release key:** **Update now** takes a release only when its checksum list is signed by BMD's key (fingerprint `ED4D 65B6 1F38 09DA 1AF2 2D95 4EFF 92B3 1405 DDFB`, in `crates/tools/keys/bmd-release.asc`), the key of the repository BMD updates from, rather than upstream's. A copy built before this change can't update to BMD's releases by itself: install the new version over it once. A release can no longer be published without its signature.
 - **Videos are looked up about a second sooner on Windows** ([#1053](https://github.com/anefzaoui/misterdownloadmanager/issues/1053)): BMD installs yt-dlp's folder build there, which starts in half a second, instead of the single program, which unpacks itself at every start and took 1.3 s. Every look-up gains it: the qualities in the menu over a video, the Download video window, a video's download. Measured here from the look-up's start to its qualities: a YouTube video in about 3.7 s instead of 5.4 s, a TED talk in about 1.9 s instead of 3.8 s. A copy an earlier version installed is replaced in the background the first time BMD looks a video up, even for the same version of yt-dlp; a yt-dlp you chose yourself in **Helpers** stays as it is. The video button also starts its look-up a fifth of a second after the pointer rests on it, rather than only once it has shown over the video for 0.6 s, so a click made straight away finds it under way; and a click on a video whose early look-up BMD was too busy for (other videos' still running) asks again rather than opening the Download video window.

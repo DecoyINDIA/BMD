@@ -493,11 +493,11 @@ pub struct GalleryJob {
 }
 
 /// The line gallery-dl prints for each file it lists (`--print`): its address and its path.
-const LISTED: &str = "prepare-after:MDMG {_url}\t{_path}";
+const LISTED: &str = "prepare-after:BMDG {_url}\t{_path}";
 
-/// A listed file (`MDMG <address>\t<path>`) inside `folder`, the gallery's own: none other.
+/// A listed file (`BMDG <address>\t<path>`) inside `folder`, the gallery's own: none other.
 fn listed(line: &str, folder: &Path) -> Option<(url::Url, PathBuf)> {
-    let (url, path) = line.strip_prefix("MDMG ")?.split_once('\t')?;
+    let (url, path) = line.strip_prefix("BMDG ")?.split_once('\t')?;
     let url = url::Url::parse(url.trim()).ok()?;
     let path = PathBuf::from(path.trim_end_matches(['\r', '\n']));
     let inside = path.parent() == Some(folder) || path.starts_with(folder);

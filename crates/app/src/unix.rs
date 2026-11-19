@@ -31,13 +31,13 @@ fn spawn(cmd: &mut Command) {
 fn startup_file() -> Option<PathBuf> {
     let home = PathBuf::from(std::env::var_os("HOME")?);
     if cfg!(target_os = "macos") {
-        Some(home.join("Library/LaunchAgents/io.github.anefzaoui.misterdownloadmanager.plist"))
+        Some(home.join("Library/LaunchAgents/io.github.decoyindia.bmd.plist"))
     } else {
         let config = std::env::var_os("XDG_CONFIG_HOME")
             .map(PathBuf::from)
             .filter(|p| p.is_absolute())
             .unwrap_or_else(|| home.join(".config"));
-        Some(config.join("autostart/misterdownloadmanager.desktop"))
+        Some(config.join("autostart/bmd.desktop"))
     }
 }
 
@@ -417,7 +417,7 @@ fn startup_entry(exe: &Path, macos: bool) -> String {
              <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \
              \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n\
              <plist version=\"1.0\">\n<dict>\n\
-             \x20 <key>Label</key><string>io.github.anefzaoui.misterdownloadmanager</string>\n\
+             \x20 <key>Label</key><string>io.github.decoyindia.bmd</string>\n\
              \x20 <key>ProgramArguments</key><array><string>{exe}</string>\
              <string>{arg}</string></array>\n\
              \x20 <key>RunAtLoad</key><true/>\n\
@@ -509,7 +509,7 @@ pub fn update_run_at_startup() {
 /// The browsers' helper program (crates/nmhost), beside this one.
 const HOST: &str = "bmd-nmhost";
 /// The manifest it writes in each browser's folder.
-const MANIFEST: &str = "com.misterdownloadmanager.host.json";
+const MANIFEST: &str = "com.blackmarlindownloader.host.json";
 /// How long the helper's `--repair` has at a start (it writes a few small files).
 const REGISTER_LIMIT: std::time::Duration = std::time::Duration::from_secs(20);
 
@@ -983,7 +983,7 @@ pub fn set_torrent_handlers(on: bool) {
     #[cfg(not(target_os = "macos"))]
     spawn(Command::new("xdg-mime").args([
         "default",
-        "misterdownloadmanager.desktop",
+        "bmd.desktop",
         "x-scheme-handler/magnet",
         "application/x-bittorrent",
     ]));
@@ -1002,7 +1002,7 @@ pub fn torrent_handler_is_ours() -> bool {
         .stdin(Stdio::null())
         .stderr(Stdio::null())
         .output()
-        .is_ok_and(|o| String::from_utf8_lossy(&o.stdout).trim() == "misterdownloadmanager.desktop")
+        .is_ok_and(|o| String::from_utf8_lossy(&o.stdout).trim() == "bmd.desktop")
 }
 
 /// `win32::assistive_technology_listening`: Linux's AT-SPI adapter answers a screen reader with
@@ -1761,7 +1761,7 @@ pub struct WindowSystem {
     pub why: &'static str,
 }
 
-/// Who chose the window system for this start, strongest first (#624): `MDM_WAYLAND=1` or `0`,
+/// Who chose the window system for this start, strongest first (#624): `BMD_WAYLAND=1` or `0`,
 /// else View → Window system (saved, so every way BMD starts agrees: its menu entry, the
 /// browser's helper, the session's autostart), else BMD itself (`Pick::Auto`).
 #[cfg(target_os = "linux")]
@@ -1774,15 +1774,15 @@ pub enum Pick {
 
 #[cfg(target_os = "linux")]
 impl Pick {
-    /// From `MDM_WAYLAND`'s value and the saved choice.
+    /// From `BMD_WAYLAND`'s value and the saved choice.
     pub fn of(
         env: Option<&std::ffi::OsStr>,
         saved: Option<crate::settings::WindowSystemPick>,
     ) -> Pick {
         use crate::settings::WindowSystemPick as Saved;
         match env.and_then(|v| v.to_str()).map(str::trim) {
-            Some("1") => return Pick::Wayland("MDM_WAYLAND=1"),
-            Some("0") => return Pick::X11("MDM_WAYLAND=0"),
+            Some("1") => return Pick::Wayland("BMD_WAYLAND=1"),
+            Some("0") => return Pick::X11("BMD_WAYLAND=0"),
             _ => {}
         }
         match saved {
@@ -1918,7 +1918,7 @@ pub fn window_system() -> &'static WindowSystem {
             tracing::warn!("windows: chosen before the settings were read (View → Window system)");
         }
         let pick = Pick::of(
-            std::env::var_os("MDM_WAYLAND").as_deref(),
+            std::env::var_os("BMD_WAYLAND").as_deref(),
             SAVED_PICK.get().copied().flatten(),
         );
         let ws = on_xwayland_server(
@@ -2246,7 +2246,7 @@ pub fn gl_vendor(gl: &eframe::glow::Context) -> String {
 /// fades it, as any X11 menu), where a managed one came down from the top of the screen (#277).
 /// Its type says which menu it is (`menu_window_type`), for the compositors that style each.
 /// Never activated either way: the main window keeps the keyboard, and the menu's keys reach it
-/// (chrome::popup). Native Wayland (`MDM_WAYLAND=1`) ignores both: winit 0.30 has no popup
+/// (chrome::popup). Native Wayland (`BMD_WAYLAND=1`) ignores both: winit 0.30 has no popup
 /// windows (xdg_popup) there, so a menu is a window the compositor places and animates as any.
 #[cfg(target_os = "linux")]
 pub fn menu_window(
@@ -2612,7 +2612,7 @@ pub mod open_events {
         // SAFETY: NSObject has no subclassing requirements, and OpenEvents doesn't implement Drop.
         #[unsafe(super(NSObject))]
         #[thread_kind = MainThreadOnly]
-        #[name = "MDMOpenEvents"]
+        #[name = "BMDOpenEvents"]
         #[ivars = Ivars]
         pub struct OpenEvents;
 
@@ -2721,7 +2721,7 @@ pub mod open_events {
 
     /// The app's identifier and the .torrent file type, as Info.plist names them
     /// (tools/installer/build-macos.sh).
-    pub const BUNDLE_ID: &str = "io.github.anefzaoui.misterdownloadmanager";
+    pub const BUNDLE_ID: &str = "io.github.decoyindia.bmd";
     pub const TORRENT_TYPE: &str = "org.bittorrent.torrent";
 
     #[link(name = "CoreServices", kind = "framework")]
@@ -3632,7 +3632,7 @@ mod macos_hotkey {
 
     const K_EVENT_CLASS_KEYBOARD: u32 = u32::from_be_bytes(*b"keyb");
     const K_EVENT_HOT_KEY_PRESSED: u32 = 5;
-    const HOTKEY_SIGNATURE: u32 = u32::from_be_bytes(*b"MDMH");
+    const HOTKEY_SIGNATURE: u32 = u32::from_be_bytes(*b"BMDH");
 
     #[link(name = "Carbon", kind = "framework")]
     unsafe extern "C" {
@@ -3934,7 +3934,7 @@ mod tests {
         let fine = choose_window_system(true, true, Pick::Auto, CARED, |_| true);
         assert!(!fine.wayland && fine.x11_over_wayland && fine.missing.is_empty());
         let asked =
-            choose_window_system(true, true, Pick::Wayland("MDM_WAYLAND=1"), CARED, |_| true);
+            choose_window_system(true, true, Pick::Wayland("BMD_WAYLAND=1"), CARED, |_| true);
         assert!(asked.wayland && !asked.x11_over_wayland && asked.x11_missing.is_empty());
 
         // Nothing loads: on Wayland, its own libraries are named.
@@ -3943,7 +3943,7 @@ mod tests {
         assert_eq!(none.missing[0].names[0], "libxkbcommon.so.0");
     }
 
-    /// #624: MDM_WAYLAND first (1 or 0), then View → Window system's saved choice, then BMD's
+    /// #624: BMD_WAYLAND first (1 or 0), then View → Window system's saved choice, then BMD's
     /// own: the same however BMD is started, as the saved choice goes with every start.
     #[test]
     fn the_window_system_is_picked_the_same_way_at_every_start() {
@@ -4535,7 +4535,7 @@ mod host_copy_tests {
         }
         let write = |dir: &Path, path: &Path| {
             let json =
-                serde_json::json!({ "name": "com.misterdownloadmanager.host", "path": path });
+                serde_json::json!({ "name": "com.blackmarlindownloader.host", "path": path });
             std::fs::write(dir.join(MANIFEST), json.to_string()).unwrap();
         };
         let dirs = || vec![(a.clone(), Family::Chromium), (b.clone(), Family::Gecko)];
@@ -4572,7 +4572,7 @@ mod host_copy_tests {
         let helper = program(t.path(), HOST, "true");
         let (a, b) = (t.path().join("a"), t.path().join("b"));
         std::fs::create_dir_all(&a).unwrap();
-        let json = serde_json::json!({ "name": "com.misterdownloadmanager.host", "path": helper });
+        let json = serde_json::json!({ "name": "com.blackmarlindownloader.host", "path": helper });
         std::fs::write(a.join(MANIFEST), json.to_string()).unwrap();
         let dirs = || vec![(a.clone(), Family::Chromium), (b.clone(), Family::Chromium)];
         let refuses_b = |d: &Path| d == b;
@@ -4692,7 +4692,7 @@ mod secret_service {
     const ITEM: &str = "org.freedesktop.Secret.Item";
     const SESSION: &str = "org.freedesktop.Secret.Session";
     /// Groups BMD's entries in Seahorse and the like.
-    const SCHEMA: &str = "io.github.anefzaoui.misterdownloadmanager.Secret";
+    const SCHEMA: &str = "io.github.decoyindia.bmd.Secret";
 
     /// The D-Bus error's kind; its text (the service's own words) is never kept.
     fn fault(e: zbus::Error) -> Fault {

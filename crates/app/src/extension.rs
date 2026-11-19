@@ -1238,7 +1238,7 @@ mod tests {
         let chrome = "/Users/a b/Library/Application Support/Google/Chrome/NativeMessagingHosts";
         let error = format!(
             "/Applications/BMD.app/Contents/MacOS/bmd-nmhost \
-             --repair: exit status: 1: registered com.misterdownloadmanager.host in /Users/a b/\
+             --repair: exit status: 1: registered com.blackmarlindownloader.host in /Users/a b/\
              Library/Application Support/Vivaldi/NativeMessagingHosts bmd-nmhost: \
              {chrome}: Operation not permitted (os error 1)"
         );

@@ -43,9 +43,9 @@ In BMD's data folder:
 - `crashes\`: each report (`.txt`) and its crash data (`.dmp`);
 - `logs\`: BMD's log (`bmd.log`, with older ones as `bmd.1.log` and so on, 2 MB each).
 
-BMD's data folder is `%APPDATA%\misterdownloadmanager` on Windows, `~/Library/Application Support/misterdownloadmanager` on macOS, and `~/.local/share/misterdownloadmanager` on Linux. In [portable mode](portable.md) it is the `data` folder next to the program.
+BMD's data folder is `%APPDATA%\bmd` on Windows, `~/Library/Application Support/bmd` on macOS, and `~/.local/share/bmd` on Linux. In [portable mode](portable.md) it is the `data` folder next to the program.
 
-The log records what BMD does, so a report can show what led to a problem. To log more detail, start BMD with the environment variable `MDM_LOG=debug`.
+The log records what BMD does, so a report can show what led to a problem. To log more detail, start BMD with the environment variable `BMD_LOG=debug`.
 
 ## For developers
 

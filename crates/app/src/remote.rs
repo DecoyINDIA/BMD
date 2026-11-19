@@ -21,15 +21,15 @@ pub fn start(
     Some(remote)
 }
 
-/// The page's address as people open it (`MDM_REMOTE_URL`, #157): a container's own address
+/// The page's address as people open it (`BMD_REMOTE_URL`, #157): a container's own address
 /// isn't the server's.
 pub fn public_url() -> Option<String> {
-    let url = std::env::var("MDM_REMOTE_URL").ok()?;
+    let url = std::env::var("BMD_REMOTE_URL").ok()?;
     let url = url.trim();
     url.starts_with("https://").then(|| url.to_owned())
 }
 
-/// The names `--hosts` gave a headless run (#157), over `MDM_REMOTE_HOSTS`.
+/// The names `--hosts` gave a headless run (#157), over `BMD_REMOTE_HOSTS`.
 static HOSTS: std::sync::OnceLock<String> = std::sync::OnceLock::new();
 
 /// Use `hosts` (names separated by commas) as [`config`]'s extra names.
@@ -39,13 +39,13 @@ pub fn set_hosts(hosts: Option<&str>) {
     }
 }
 
-/// Where and whether to listen, from `settings`; `MDM_REMOTE_HOSTS` (names separated by commas)
+/// Where and whether to listen, from `settings`; `BMD_REMOTE_HOSTS` (names separated by commas)
 /// adds the names a request may use besides the addresses (a server's, a reverse proxy's).
 pub fn config(settings: &Settings) -> bmd_remote::Config {
     let hosts = HOSTS
         .get()
         .cloned()
-        .or_else(|| std::env::var("MDM_REMOTE_HOSTS").ok())
+        .or_else(|| std::env::var("BMD_REMOTE_HOSTS").ok())
         .unwrap_or_default()
         .split(',')
         .map(|h| h.trim().to_ascii_lowercase())

@@ -151,7 +151,7 @@ mod tests {
     }
 
     #[test]
-    fn mdms_own_folder_when_the_temporary_folder_is_missing() {
+    fn bmds_own_folder_when_the_temporary_folder_is_missing() {
         let data = tempfile::tempdir().unwrap();
         let missing = data.path().join("no-such-temp");
         let f = choose(&missing, Some(data.path()));
@@ -162,7 +162,7 @@ mod tests {
     }
 
     #[test]
-    fn mdms_own_folder_when_the_temporary_folder_is_a_file() {
+    fn bmds_own_folder_when_the_temporary_folder_is_a_file() {
         let data = tempfile::tempdir().unwrap();
         let file = data.path().join("temp.txt");
         std::fs::write(&file, b"x").unwrap();
@@ -210,7 +210,7 @@ mod tests {
     }
 
     #[test]
-    fn mdms_own_folder_when_the_temporary_folder_cant_be_written() {
+    fn bmds_own_folder_when_the_temporary_folder_cant_be_written() {
         let data = tempfile::tempdir().unwrap();
         let locked = data.path().join("locked");
         std::fs::create_dir(&locked).unwrap();

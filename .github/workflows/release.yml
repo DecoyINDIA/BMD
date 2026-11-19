@@ -159,7 +159,7 @@ jobs:
       - name: Installer and portable zip
         shell: pwsh
         env:
-          MDM_SIGN_COMMAND: ${{ steps.cert.outputs.command }}
+          BMD_SIGN_COMMAND: ${{ steps.cert.outputs.command }}
         run: ./tools/installer/build.ps1 -Arch ${{ matrix.arch }}
 
       # The programs on the machine that built them: for this processor, and a download works.
@@ -431,7 +431,6 @@ jobs:
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
-          MDM_RELEASE_KEY: ${{ secrets.MDM_RELEASE_KEY }}
         shell: pwsh
         run: |
           # The release waits for x64 Windows (the names every copy before had): its files or none.
@@ -444,27 +443,9 @@ jobs:
           $files = Get-ChildItem dist -File | Sort-Object Name
           $sums = $files | ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)" }
           Set-Content -Encoding ascii dist/SHA256SUMS.txt $sums
-          # Signed with this repository's release key (fingerprint
-          # ED4D65B61F3809DA1AF22D954EFF92B31405DDFB): the app updates itself only from a list it
-          # signed (crates/tools/src/update.rs; the public key is crates/tools/keys/bmd-release.asc).
-          # No key, no release: an unsigned release is one no installed copy can update to.
-          $fpr = "ED4D65B61F3809DA1AF22D954EFF92B31405DDFB"
-          if (-not $env:MDM_RELEASE_KEY) { throw "the MDM_RELEASE_KEY secret isn't set: no unsigned release" }
-          $key = Join-Path $env:RUNNER_TEMP "bmd-release.asc"
-          Set-Content -Encoding ascii $key $env:MDM_RELEASE_KEY
-          gpg --batch --quiet --import $key
-          $imported = $LASTEXITCODE
-          Remove-Item $key
-          if ($imported) { throw "the MDM_RELEASE_KEY secret can't be imported" }
-          gpg --batch --yes --detach-sign --local-user $fpr `
-            --output dist/SHA256SUMS.txt.sig dist/SHA256SUMS.txt
-          if ($LASTEXITCODE) { throw "signing SHA256SUMS.txt failed: is MDM_RELEASE_KEY the key $fpr?" }
-          # Checked the way the app checks it: against the public key built into it, alone.
-          $pub = Join-Path $env:RUNNER_TEMP "gnupg-pub"
-          New-Item -ItemType Directory -Force $pub | Out-Null
-          gpg --homedir $pub --batch --quiet --import crates/tools/keys/bmd-release.asc
-          gpg --homedir $pub --batch --verify dist/SHA256SUMS.txt.sig dist/SHA256SUMS.txt
-          if ($LASTEXITCODE) { throw "SHA256SUMS.txt.sig doesn't verify with crates/tools/keys/bmd-release.asc" }
+          # Not signed: the app updates itself from the file this list names, read over HTTPS from
+          # this repository's releases (crates/tools/src/update.rs), and the build provenance above
+          # attests where each file was built.
           # Notes: the version's section of CHANGELOG.md ("## [X.Y.Z]" up to the next "## "),
           # else GitHub's list of changes since the last tag; first, the invitation to try the
           # macOS builds when they are there (Linux's files are no longer "-experimental").

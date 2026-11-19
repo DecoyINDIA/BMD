@@ -1223,8 +1223,8 @@
    "text": "Role w zespole"
   },
   "1171655e77148bd2": {
-   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/anefzaoui/misterdownloadmanager</g2> under the GNU GPL, version 3.",
-   "text": "Każde wydanie, wraz z notatkami i plikami, znajduje się na <g1>GitHub Releases</g1>. Kod źródłowy jest dostępny pod adresem <g2>github.com/anefzaoui/misterdownloadmanager</g2> na licencji GNU GPL, wersja 3."
+   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/DecoyINDIA/BMD</g2> under the GNU GPL, version 3.",
+   "text": "Każde wydanie, wraz z notatkami i plikami, znajduje się na <g1>GitHub Releases</g1>. Kod źródłowy jest dostępny pod adresem <g2>github.com/DecoyINDIA/BMD</g2> na licencji GNU GPL, wersja 3."
   },
   "1173fd2e0a9c235b": {
    "source": "The app has no accounts, telemetry or tracking",
@@ -14299,8 +14299,8 @@
    "text": "Filmy są zapisywane każdy pod własnym tytułem w folderze o nazwie listy, wewnątrz <g1>Zapisz w</g1>."
   },
   "ceb8f4f5a72cba4a": {
-   "source": "Every signed file is built from the public source code at <g1>github.com/anefzaoui/misterdownloadmanager</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
-   "text": "Każdy podpisany plik jest kompilowany z publicznego kodu źródłowego dostępnego pod adresem <g1>github.com/anefzaoui/misterdownloadmanager</g1> przez GitHub Actions, na serwerach GitHub, nigdy na komputerze osobistym. Każdy z nich wskazuje, że jest to BMD i jaka to wersja."
+   "source": "Every signed file is built from the public source code at <g1>github.com/DecoyINDIA/BMD</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
+   "text": "Każdy podpisany plik jest kompilowany z publicznego kodu źródłowego dostępnego pod adresem <g1>github.com/DecoyINDIA/BMD</g1> przez GitHub Actions, na serwerach GitHub, nigdy na komputerze osobistym. Każdy z nich wskazuje, że jest to BMD i jaka to wersja."
   },
   "cee8fa5faa008467": {
    "source": "To save your own list, use <g1>Tasks → Export → To text file</g1> (one address per line) or <g2>To IDM export file</g2>.",
@@ -14699,8 +14699,8 @@
    "text": "<g1>librqbit</g1><g2>silnik torrentów</g2>"
   },
   "d3bb5a30d659061d": {
-   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/anefzaoui/misterdownloadmanager</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
-   "text": "BMD („BMD”) to darmowe oprogramowanie o otwartym kodzie źródłowym, stworzone przez Ahmeda Nefzaoui i współtwórców. Ponieważ cały jego kod źródłowy jest publicznie dostępny pod adresem <g1>github.com/anefzaoui/misterdownloadmanager</g1>, nie musisz wierzyć na słowo tej stronie: każde połączenie sieciowe opisane tutaj można sprawdzić w kodzie."
+   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/DecoyINDIA/BMD</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
+   "text": "BMD („BMD”) to darmowe oprogramowanie o otwartym kodzie źródłowym, stworzone przez Ahmeda Nefzaoui i współtwórców. Ponieważ cały jego kod źródłowy jest publicznie dostępny pod adresem <g1>github.com/DecoyINDIA/BMD</g1>, nie musisz wierzyć na słowo tej stronie: każde połączenie sieciowe opisane tutaj można sprawdzić w kodzie."
   },
   "d3da8c9dc89aaa97": {
    "source": "What's new in version 0.5.1 <g1>2026-11-08</g1>",

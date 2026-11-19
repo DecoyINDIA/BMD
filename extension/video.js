@@ -19,7 +19,7 @@
   // whose listeners died with it while its button stayed on the page, frozen where it was, shown
   // if it was then: two buttons over the video (#336, seen in full screen). Any button already
   // on the page is such a copy's: it goes.
-  const prev = globalThis.__mdmVideoButton;
+  const prev = globalThis.__bmdVideoButton;
   if (prev && typeof prev === "object" && prev.alive()) return;
   if (prev && typeof prev.teardown === "function") prev.teardown();
   for (const old of document.querySelectorAll("bmd-video-button")) old.remove();
@@ -2336,7 +2336,7 @@ button:focus-visible { outline: none; }
     allowed = false;
     video = null;
   }
-  globalThis.__mdmVideoButton = { alive: () => Boolean(ext.runtime?.id), teardown };
+  globalThis.__bmdVideoButton = { alive: () => Boolean(ext.runtime?.id), teardown };
   addEventListener("pointermove", onMove, { capture: true, passive: true });
   addEventListener("pointerdown", (e) => {
     if (menuOpen && !e.composedPath().includes(root)) closeMenu();

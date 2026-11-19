@@ -17,7 +17,7 @@ under CC BY 4.0 (https://db-ip.com, "IP Geolocation by DB-IP"); BMD credits it w
 location shows. Only the table ships: the app looks addresses up in it, on this computer, and
 never sends one anywhere.
 
-The table (before xz): b"MDMGEO\\x01", the country count (u8) and their two-letter codes (index 0
+The table (before xz): b"BMDGEO\\x01", the country count (u8) and their two-letter codes (index 0
 is "no country": reserved and unlisted addresses), then the IPv4 ranges and the IPv6 ranges, each
 as a count (u32, little endian) and, per range, its first address as a LEB128 delta from the
 previous range's first address, and its country's index (u8). A range lasts until the next one
@@ -158,7 +158,7 @@ def main():
     index["ZZ"] = 0
     t4 = ranges(v4, 32, 0, index)
     t6 = ranges(v6, 64, 64, index)
-    body = bytearray(b"MDMGEO\x01")
+    body = bytearray(b"BMDGEO\x01")
     body.append(len(countries))
     for c in countries:
         body += c.encode("ascii")

@@ -399,7 +399,7 @@ fn app(args: Vec<String>) -> eframe::Result {
         return crashui::monitor_main(m);
     }
 
-    // A windowed app has no console: record panics in %APPDATA%\misterdownloadmanager\crash.log.
+    // A windowed app has no console: record panics in %APPDATA%\bmd\crash.log.
     let default_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |info| {
         if let Some(dir) = bmd_ipc::data_dir() {

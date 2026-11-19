@@ -45,7 +45,7 @@ It comes with every download of BMD, next to the app (the installer puts it in B
 | Command | What it does |
 |---|---|
 | `get URL [-o folder\|file] [-c connections] [-H "Header: value"]... [-r referer] [--user-agent agent] [--cookie cookie] [--checksum hash] [--dns choice] [--adapter name]` | Download a file with up to 8 connections (`-c`, 1 to 128), showing progress. `Ctrl+C` pauses it; `resume` continues. `-r` sets the referring page address (Referer header), `--user-agent` sets the request's User-Agent (then the only one sent; without it, BMD speaks as your default browser, and, when a site's bot check refuses that and the way a browser connects too, once more under its own name), `--cookie` sets the Cookie header (a cookie on the command line ends up in the shell's history; `-` reads it from standard input instead). `--checksum` checks the finished file: hex MD5, SHA-1, SHA-256, SHA-512 or CRC32, optionally named (`sha256:…`). `--dns` picks the DNS: `system` (the default); a service and how to ask it, `cloudflare-https`, `quad9-tls`, `google-plain`, `adguard-https`, `nextdns-tls`; DNS servers' addresses, `9.9.9.9,149.112.112.112`; or a DNS-over-HTTPS address. It never falls back to the system's DNS. `--adapter` sends every connection through one network adapter, by its name (`Ethernet`, `wg0`) or one of its addresses; when it isn't connected, nothing is sent and the download fails. A link from a file host that one of your debrid accounts (**Options → Accounts**) supports goes through that account, as in the app, and `get` says `through Real-Debrid`; `--direct` downloads the address itself ([Debrid service accounts](debrid.md)). |
-| `resume file.mdm.json [-c connections] [-H ...] [-r referer] [--user-agent agent] [--cookie cookie] [--direct]` | Continue a paused or broken download from the `.mdm.json` file next to it. `-r`, `--user-agent` and `--cookie` set extra headers (`-` reads the cookie from standard input). Through a debrid account, as `get`: the service gives a new link when the old one expired; `--direct` continues from the address itself. |
+| `resume file.bmd.json [-c connections] [-H ...] [-r referer] [--user-agent agent] [--cookie cookie] [--direct]` | Continue a paused or broken download from the `.bmd.json` file next to it. `-r`, `--user-agent` and `--cookie` set extra headers (`-` reads the cookie from standard input). Through a debrid account, as `get`: the service gives a new link when the old one expired; `--direct` continues from the address itself. |
 | `install-gallery-dl` | Install or update gallery-dl, for image galleries: its checksum list is checked against its author's signing key, the program against that list (Windows and Linux x86-64; elsewhere install it yourself). |
 | `gallery-get URL [-o folder] [--limit N] [--adapter name]` | Download a gallery's pictures (a Wikimedia Commons category, a Flickr album, ...) into a folder named after it inside `-o`; `--limit` takes at most that many, the first the site lists. Started again, it fetches only the new ones. BMD's own downloader brings the pictures gallery-dl lists, 4 at a time. `--adapter` sends the connections, BMD's and gallery-dl's, through one network adapter, as for `get`. |
 | `video-info URL` | What video a page holds (YouTube, Vimeo, ...), and the qualities to choose from. |
@@ -103,9 +103,9 @@ Other programs can ask the running app what it is downloading, and pause, start,
 ### How a program talks to BMD
 
 1. While it runs, BMD listens on a port of `127.0.0.1` (this computer only) and writes the port and a secret token to `ipc.json` in its data folder:
-   - Windows: `%APPDATA%\misterdownloadmanager\ipc.json`
-   - macOS: `~/Library/Application Support/misterdownloadmanager/ipc.json`
-   - Linux: `~/.local/share/misterdownloadmanager/ipc.json`
+   - Windows: `%APPDATA%\bmd\ipc.json`
+   - macOS: `~/Library/Application Support/bmd/ipc.json`
+   - Linux: `~/.local/share/bmd/ipc.json`
    - A [portable copy](portable.md): `data\ipc.json` next to the program.
 
    The token changes at every start; only programs that can read your data folder (yours) can use it.
@@ -132,7 +132,7 @@ Every request and answer is described, field by field, in a JSON Schema: [automa
 PowerShell (Windows):
 
 ```powershell
-$ep = Get-Content "$env:APPDATA\misterdownloadmanager\ipc.json" | ConvertFrom-Json
+$ep = Get-Content "$env:APPDATA\bmd\ipc.json" | ConvertFrom-Json
 $client = New-Object Net.Sockets.TcpClient("127.0.0.1", $ep.port)
 $stream = $client.GetStream()
 $writer = New-Object IO.StreamWriter($stream); $reader = New-Object IO.StreamReader($stream)

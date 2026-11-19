@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Update now, end to end, on Linux: the .tar.gz and AppImage paths (README.md). Off-screen test
 # copies in folders of their own, on a virtual screen of this script's own (Xvfb :96, a session
-# bus, Metacity), fake 9.9.9 releases signed with a throwaway key made for this run (mkrel.py),
+# bus, Metacity), fake 9.9.9 releases made for this run (mkrel.py),
 # served by the lab server on 127.0.0.1. Needs a release-mode build with the `test-update`
 # feature (vmtest or release profile: debug builds are "built from source" and never update).
 #
@@ -11,7 +11,6 @@
 # Scenarios and what each must show (the run fails otherwise, exit status 1):
 #   targz-good, appimage-good   put in place, the new copy started with /updated, the old ended
 #   targz-bad-hash              refused: nothing replaced, nothing started
-#   appimage-other-key          the checksum list signed by another key: refused
 #   targz-close-download        the window closed while it downloads (1 MB/s): nothing replaced or started
 #   appimage-close-install      the window closed during "Installing the update...": replaced, nothing started
 #
@@ -19,11 +18,11 @@
 set -uo pipefail
 bin=$(cd "${1:?usage: upd-lin.sh <build folder> [scenario ...]}" && pwd); shift
 here=$(cd "$(dirname "$0")" && pwd)
-all="targz-good appimage-good targz-bad-hash appimage-other-key targz-close-download appimage-close-install"
+all="targz-good appimage-good targz-bad-hash targz-close-download appimage-close-install"
 want=${*:-$all}
 work=${BMD_UPDATE_E2E_WORK:-/tmp/bmd-update-e2e}
 rm -rf "$work"; mkdir -p "$work"
-for t in Xvfb dbus-daemon metacity wmctrl python3 gpg; do
+for t in Xvfb dbus-daemon metacity wmctrl python3; do
   command -v $t >/dev/null || { echo "needs $t"; exit 2; }
 done
 
@@ -53,21 +52,19 @@ metacity --replace --no-composite >"$work/metacity.log" 2>&1 </dev/null & wm=$!
 sleep 1
 
 port=8299; slowport=8296; base=http://127.0.0.1:$port/files
-keys=$work/keys
 release() { # release <name> <kind targz|file> <asset> [mkrel args]
   local name=$1 kind=$2 asset=$3; shift 3
-  python3 "$here/mkrel.py" --keys "$keys" --out "$work/rel-$name" --base "$base" --asset "$asset" \
+  python3 "$here/mkrel.py" --out "$work/rel-$name" --base "$base" --asset "$asset" \
     --kind "$kind" --program "$bin/bmd" --program-name bmd "$@" |
     sed 's/^/  /' | tee -a "$work/log.txt"
 }
 TGZ=BMD-9.9.9-linux-x86_64.tar.gz
 APP=BMD-9.9.9-linux-x86_64.AppImage
-log "making the fake releases (throwaway keys in $keys)"
+log "making the fake releases"
 release targz-good targz $TGZ
 release targz-bad-hash targz $TGZ --sums bad
 release targz-slow targz $TGZ --pad 30 --asset-base "http://127.0.0.1:$slowport"
 release appimage-good file $APP
-release appimage-other-key file $APP --signer other
 
 mine() { wmctrl -lp 2>/dev/null | awk -v p="$1" '$3 == p {print $1}'; }
 run() { # run <name> <targz|appimage> <release> <hold> <close: -|download|install>; sets STARTED ENDED REPLACED
@@ -88,7 +85,7 @@ PY
   "$bin/labserver" --bind "127.0.0.1:$port" --files "$work/rel-$rel" >"$w/labserver.log" 2>&1 & srv=$!
   [ "$close" = download ] && { python3 "$here/slowserve.py" "$work/rel-$rel" $slowport 1000000 2>"$w/slow.log" & slow=$!; }
   (
-    export MDM_DATA_DIR=$w/data BMD_OFFSCREEN=1 BMD_UPDATE_FEED=$base/latest.json BMD_TEST_UPDATE_KEY=$keys/test-key.asc
+    export BMD_DATA_DIR=$w/data BMD_OFFSCREEN=1 BMD_UPDATE_FEED=$base/latest.json
     [ "$hold" != 0 ] && export BMD_TEST_UPDATE_HOLD=$hold
     if [ "$kind" = appimage ]; then export APPIMAGE=$prog; else unset APPIMAGE; fi
     cd "$w" && setsid -f "$prog" >"$w/stdout.log" 2>&1 </dev/null
@@ -99,11 +96,11 @@ PY
   if [ -z "$pid" ]; then log "  BMD showed no window (see $w/stdout.log)"; kill $srv $slow 2>/dev/null; return; fi
   sleep 2
   before=$(mine "$pid")
-  ( export MDM_DATA_DIR=$w/data; [ "$kind" = appimage ] && export APPIMAGE=$prog; "$prog" /show updates >/dev/null 2>&1 )
+  ( export BMD_DATA_DIR=$w/data; [ "$kind" = appimage ] && export APPIMAGE=$prog; "$prog" /show updates >/dev/null 2>&1 )
   upd=""
   for _ in $(seq 100); do upd=$(mine "$pid" | grep -vxF -f <(echo "$before") | head -1); [ -n "$upd" ] && break; sleep 0.1; done
   sleep 2
-  ( export MDM_DATA_DIR=$w/data; [ "$kind" = appimage ] && export APPIMAGE=$prog; "$prog" /show update-now >/dev/null 2>&1 )
+  ( export BMD_DATA_DIR=$w/data; [ "$kind" = appimage ] && export APPIMAGE=$prog; "$prog" /show update-now >/dev/null 2>&1 )
   log "  Update now pressed (window $upd)"
   [ "$close" = download ] && { sleep 1.5; wmctrl -i -c "$upd"; log "  the update window closed while it downloads"; }
   [ "$close" = install ] && { sleep 3; wmctrl -i -c "$upd"; log "  the update window closed during 'Installing the update...'"; }
@@ -137,7 +134,6 @@ for s in $want; do
     targz-good)             run $s targz targz-good 4 -;                 check $s yes yes yes ;;
     appimage-good)          run $s appimage appimage-good 4 -;           check $s yes yes yes ;;
     targz-bad-hash)         run $s targz targz-bad-hash 0 -;             check $s no no no ;;
-    appimage-other-key)     run $s appimage appimage-other-key 0 -;      check $s no no no ;;
     targz-close-download)   run $s targz targz-slow 0 download;          check $s no no no ;;
     appimage-close-install) run $s appimage appimage-good 8 install;     check $s no no yes ;;
     *) log "unknown scenario $s"; failed+=("$s") ;;

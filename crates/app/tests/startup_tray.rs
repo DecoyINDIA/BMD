@@ -52,7 +52,7 @@ fn wait_for(app: &mut Child, data: &Path, line: &str, wait: Duration) {
 /// The app's environment: off the screens, its own data folder, its tray icon, and (Windows) a
 /// Run value or (Linux) an autostart folder of the test's own.
 fn env<'a>(cmd: &'a mut Command, data: &Path, startup: &Startup) -> &'a mut Command {
-    cmd.env("MDM_DATA_DIR", data)
+    cmd.env("BMD_DATA_DIR", data)
         .env("BMD_OFFSCREEN", "1")
         .env("BMD_TEST_TRAY", "1")
         // A test's shell isn't asked where the icon is: say it is shown (app.rs tray_icon).
@@ -80,7 +80,7 @@ impl Startup {
     fn old(_dir: &Path) -> Startup {
         #[cfg(windows)]
         {
-            let name = format!("MisterDownloadManagerTest{}", std::process::id());
+            let name = format!("BlackMarlinDownloaderTest{}", std::process::id());
             let status = Command::new("reg")
                 .args(["add", RUN, "/v", &name, "/t", "REG_SZ", "/f", "/d"])
                 .arg(format!("\"{APP}\""))
@@ -95,7 +95,7 @@ impl Startup {
             let auto = config.join("autostart");
             std::fs::create_dir_all(&auto).unwrap();
             std::fs::write(
-                auto.join("misterdownloadmanager.desktop"),
+                auto.join("bmd.desktop"),
                 format!(
                     "[Desktop Entry]\nType=Application\nName=BMD\n\
                      Exec=\"{APP}\"\nIcon=bmd\nTerminal=false\n\
@@ -121,8 +121,7 @@ impl Startup {
                 .unwrap_or_default()
         }
         #[cfg(unix)]
-        std::fs::read_to_string(self.config.join("autostart/misterdownloadmanager.desktop"))
-            .unwrap_or_default()
+        std::fs::read_to_string(self.config.join("autostart/bmd.desktop")).unwrap_or_default()
     }
 }
 

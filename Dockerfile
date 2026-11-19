@@ -43,7 +43,7 @@ RUN apt-get update \
  && mkdir -p /config /downloads && chown 1000:1000 /config /downloads
 COPY --from=build /out/ /usr/local/bin/
 # The list, settings, certificate and paired devices in /config; the files in /downloads.
-ENV MDM_DATA_DIR=/config MDM_DOWNLOADS=/downloads
+ENV BMD_DATA_DIR=/config BMD_DOWNLOADS=/downloads
 VOLUME ["/config", "/downloads"]
 # The remote control (HTTPS); torrents use a port of their own (Torrent settings).
 EXPOSE 8463

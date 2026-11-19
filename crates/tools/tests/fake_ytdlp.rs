@@ -11,7 +11,7 @@
 //!
 //! #769: with `page.json` beside it, the fake's page is that one (its formats' addresses on a lab
 //! server, `{EXPIRES}` replaced by a time a little ahead each look-up); asked for its choice
-//! (`-O "MDMJ %()j"`) it answers as yt-dlp does after choosing; and asked to download a choice
+//! (`-O "BMDJ %()j"`) it answers as yt-dlp does after choosing; and asked to download a choice
 //! whose streams are already there (BMD's engine downloaded them), it merges them as yt-dlp
 //! does ("has already been downloaded"), downloading only what isn't there.
 //!
@@ -142,7 +142,7 @@ fn fake_ytdlp() -> ExitCode {
         use std::io::Write;
         let kind = if has("-J") {
             "J"
-        } else if after("-O").is_some_and(|o| o.starts_with("MDMJ")) {
+        } else if after("-O").is_some_and(|o| o.starts_with("BMDJ")) {
             "O"
         } else {
             "D"
@@ -208,8 +208,8 @@ fn fake_ytdlp() -> ExitCode {
         }
         return ExitCode::SUCCESS;
     }
-    // #769: the choice (`-O "MDMJ %()j"`), as yt-dlp prints it after choosing the formats.
-    if after("-O").is_some_and(|o| o.starts_with("MDMJ")) {
+    // #769: the choice (`-O "BMDJ %()j"`), as yt-dlp prints it after choosing the formats.
+    if after("-O").is_some_and(|o| o.starts_with("BMDJ")) {
         let info =
             std::fs::read_to_string(after("--load-info-json").expect("a page")).expect("the page");
         let info: serde_json::Value = serde_json::from_str(&info).expect("json");
@@ -224,7 +224,7 @@ fn fake_ytdlp() -> ExitCode {
             return ExitCode::FAILURE;
         }
         let chosen = choice(&info, &selector, &template);
-        println!("MDMJ {chosen}");
+        println!("BMDJ {chosen}");
         return ExitCode::SUCCESS;
     }
     let template = after("-o").expect("-o");
@@ -262,12 +262,12 @@ fn fake_ytdlp() -> ExitCode {
     // read on a slow machine.
     if mode == "merge" {
         use std::io::Write;
-        println!("MDMQ 137+140 1920x1080");
-        println!("MDMP 3000 3000 NA 1000 137");
-        println!("MDMP 1000 1000 NA 1000 140");
+        println!("BMDQ 137+140 1920x1080");
+        println!("BMDP 3000 3000 NA 1000 137");
+        println!("BMDP 1000 1000 NA 1000 140");
         let video = template.replace("%(ext)s", "mp4").replace("%%", "%");
-        if args.iter().any(|a| a.starts_with("post_process:MDMM")) {
-            println!("MDMM {video}");
+        if args.iter().any(|a| a.starts_with("post_process:BMDM")) {
+            println!("BMDM {video}");
         }
         let temp = video.replace(".mp4", ".temp.mp4");
         let mut file = std::fs::File::create(&temp).unwrap();
@@ -285,29 +285,29 @@ fn fake_ytdlp() -> ExitCode {
         drop(file);
         std::thread::sleep(Duration::from_millis(1200));
         std::fs::rename(&temp, &video).unwrap();
-        println!("MDMF {video}");
+        println!("BMDF {video}");
         return ExitCode::SUCCESS;
     }
     // A merge that fails (a stream ffmpeg can't read): the streams stay, whole, as yt-dlp leaves
     // them, and the merge's file half written.
     if mode == "merge-fails" {
-        println!("MDMQ 137+aud-English 1920x1080");
-        println!("MDMP 3000 3000 NA 1000 137");
-        println!("MDMP 1000 1000 NA 1000 aud-English");
+        println!("BMDQ 137+aud-English 1920x1080");
+        println!("BMDP 3000 3000 NA 1000 137");
+        println!("BMDP 1000 1000 NA 1000 aud-English");
         let video = template.replace("%(ext)s", "mp4").replace("%%", "%");
         std::fs::write(video.replace(".mp4", ".f137.mp4"), [0u8; 3000]).unwrap();
         // An HLS sound, named as yt-dlp names its rendition.
         std::fs::write(video.replace(".mp4", ".faud-English.mp4"), [0u8; 1000]).unwrap();
-        if args.iter().any(|a| a.starts_with("post_process:MDMM")) {
-            println!("MDMM {video}");
+        if args.iter().any(|a| a.starts_with("post_process:BMDM")) {
+            println!("BMDM {video}");
         }
         std::fs::write(video.replace(".mp4", ".temp.mp4"), [0u8; 1200]).unwrap();
         std::thread::sleep(Duration::from_millis(300));
         eprintln!("ERROR: Postprocessing: Conversion failed!");
         return ExitCode::FAILURE;
     }
-    println!("MDMP 1024 4096 NA 1000 18");
-    println!("MDMQ 18 640x360");
+    println!("BMDP 1024 4096 NA 1000 18");
+    println!("BMDQ 18 640x360");
     // #79: it falls over mid-way, leaving a helper running (Windows: the launcher's child).
     if mode == "crash" {
         let me = std::env::current_exe().unwrap();
@@ -325,7 +325,7 @@ fn fake_ytdlp() -> ExitCode {
     if mode == "odd-lines" {
         out_bytes(b"\xff\xfe [download] Destination: \xde\xfd.mp4\n");
         println!("not one of our lines");
-        println!("MDMP NA NA NA NA");
+        println!("BMDP NA NA NA NA");
     }
     // #79: silent for a while, as when ffmpeg merges a long video.
     if let Some(secs) = mode.strip_prefix("quiet:") {
@@ -399,9 +399,9 @@ fn fake_ytdlp() -> ExitCode {
         }
         // #736: several streams are merged as yt-dlp's ffmpeg does, said first when asked
         // (`post_process:` print), into `<stem>.temp.mp4`, growing for a while, then renamed.
-        if streams.len() > 1 && args.iter().any(|a| a.starts_with("post_process:MDMM")) {
-            println!("MDMQ {} 1920x1080", chosen["format_id"].as_str().unwrap());
-            println!("MDMM {output}");
+        if streams.len() > 1 && args.iter().any(|a| a.starts_with("post_process:BMDM")) {
+            println!("BMDQ {} 1920x1080", chosen["format_id"].as_str().unwrap());
+            println!("BMDM {output}");
             let temp = output.replace(".mp4", ".temp.mp4");
             let step = merged.len().div_ceil(5);
             for k in 1..=5 {
@@ -414,7 +414,7 @@ fn fake_ytdlp() -> ExitCode {
         } else if let Err(failed) = python_write(&output, &merged) {
             return failed;
         }
-        println!("MDMF {output}");
+        println!("BMDF {output}");
         return ExitCode::SUCCESS;
     }
     if !has("--skip-download") {
@@ -432,7 +432,7 @@ fn fake_ytdlp() -> ExitCode {
         std::fs::write(&video, content).unwrap();
         if mode == "odd-lines" {
             // The path in a one-byte code page: every letter beyond ASCII one byte, not UTF-8.
-            let mut line = b"MDMF ".to_vec();
+            let mut line = b"BMDF ".to_vec();
             line.extend(
                 video
                     .chars()
@@ -441,7 +441,7 @@ fn fake_ytdlp() -> ExitCode {
             line.push(b'\n');
             out_bytes(&line);
         } else {
-            println!("MDMF {video}");
+            println!("BMDF {video}");
         }
     }
     ExitCode::SUCCESS
@@ -1366,7 +1366,7 @@ fn engine_checks(me: &Path) {
         std::fs::read_dir(out.path())
             .unwrap()
             .filter_map(Result::ok)
-            .all(|e| !e.file_name().to_string_lossy().contains(".mdm.")),
+            .all(|e| !e.file_name().to_string_lossy().contains(".bmd.")),
         "no part file or state left"
     );
 

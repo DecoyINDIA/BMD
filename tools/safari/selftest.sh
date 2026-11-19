@@ -15,7 +15,7 @@ cat > "$app/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-<key>CFBundleIdentifier</key><string>io.github.anefzaoui.misterdownloadmanager.safari.selftest</string>
+<key>CFBundleIdentifier</key><string>io.github.decoyindia.bmd.safari.selftest</string>
 <key>CFBundleName</key><string>RelayTest</string>
 <key>CFBundleExecutable</key><string>RelayTest</string>
 <key>CFBundlePackageType</key><string>APPL</string>
@@ -27,8 +27,8 @@ xcrun swiftc -parse-as-library -module-name RelayTest -framework SafariServices 
 cp "$helper" "$app/Contents/MacOS/bmd-nmhost"
 
 # The extension's entitlements, the data folder swapped for the test's own.
-sed 's|/Library/Application Support/misterdownloadmanager/|/Library/Caches/bmd-safari-selftest/|' \
+sed 's|/Library/Application Support/bmd/|/Library/Caches/bmd-safari-selftest/|' \
   "$here/extension.entitlements" > "$work/test.entitlements"
-codesign --force --sign "${MDM_SIGN:--}" --entitlements "$here/helper.entitlements" "$app/Contents/MacOS/bmd-nmhost"
-codesign --force --sign "${MDM_SIGN:--}" --entitlements "$work/test.entitlements" "$app/Contents/MacOS/RelayTest"
-MDM_DATA_DIR="$HOME/Library/Caches/bmd-safari-selftest" "$app/Contents/MacOS/RelayTest"
+codesign --force --sign "${BMD_SIGN:--}" --entitlements "$here/helper.entitlements" "$app/Contents/MacOS/bmd-nmhost"
+codesign --force --sign "${BMD_SIGN:--}" --entitlements "$work/test.entitlements" "$app/Contents/MacOS/RelayTest"
+BMD_DATA_DIR="$HOME/Library/Caches/bmd-safari-selftest" "$app/Contents/MacOS/RelayTest"

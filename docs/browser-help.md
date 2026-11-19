@@ -19,7 +19,7 @@ The browser can't find the small helper program it talks to. It is registered wh
 5. On Linux and macOS, BMD sets browser integration up itself each time it starts: start BMD once. **Test browser integration** says what went wrong if it couldn't, such as **The helper program the browsers start is missing**: **Set it up** puts it back.
 6. Restart the browser after setting it up.
 7. **Zen, Helium, Brave Origin or another browser built on Firefox or Chromium, as your only browser on Linux or macOS?** Older versions of BMD set browser integration up only for the browsers they knew; the current one also knows Brave Origin and the Beta, Dev and Nightly versions of Brave, Chrome and Edge. Update BMD and start it once.
-8. **The AppImage on Linux:** the AppImage's files are gone once it quits, so BMD keeps a copy of its helper program in its data folder (`~/.local/share/misterdownloadmanager/browser-host`) and points the browsers there. Start BMD once after moving or renaming the AppImage, or after an AppImage manager (Gear Lever, AppImageLauncher and the like) moved it, so the helper knows where to start it from.
+8. **The AppImage on Linux:** the AppImage's files are gone once it quits, so BMD keeps a copy of its helper program in its data folder (`~/.local/share/bmd/browser-host`) and points the browsers there. Start BMD once after moving or renaming the AppImage, or after an AppImage manager (Gear Lever, AppImageLauncher and the like) moved it, so the helper knows where to start it from.
 9. **Zen on Windows:** Zen 1.21.15b and later have a bug of their own that keeps add-ons from reaching their helper program ([zen-browser/desktop#15432](https://github.com/zen-browser/desktop/issues/15432)), with any add-on that uses one. Until Zen fixes it, Zen 1.21.14b works.
 
 <a name="not-running"></a>
@@ -123,7 +123,7 @@ Browsers installed as a Flatpak or a Snap run in a sandbox, which decides whethe
 
 - **Firefox as a Snap** (Ubuntu's own Firefox) reaches BMD through the desktop, which reads the browser files in your home folder and those the .deb or .rpm installs for everyone. The first time the extension calls BMD, the desktop asks **Allow Firefox to start WebExtension backend?** for BMD: choose **Allow**. After **Don't allow**, the extension says the connection failed and the desktop doesn't ask again; to be asked again, run this in a terminal, then use the extension again:
 
-  `gdbus call --session --dest org.freedesktop.impl.portal.PermissionStore --object-path /org/freedesktop/impl/portal/PermissionStore --method org.freedesktop.impl.portal.PermissionStore.Delete webextensions com.misterdownloadmanager.host`
+  `gdbus call --session --dest org.freedesktop.impl.portal.PermissionStore --object-path /org/freedesktop/impl/portal/PermissionStore --method org.freedesktop.impl.portal.PermissionStore.Delete webextensions com.blackmarlindownloader.host`
 - **Chromium as a Snap** (Ubuntu's Chromium) starts BMD's helper inside its sandbox, where it can't reach BMD, so BMD doesn't list it in **Add BMD to your browser**. Use Firefox, or Google Chrome from its own `.deb`.
 - **Flatpak browsers** (such as Zen's `app.zen_browser.zen`) can't start BMD's helper, so BMD doesn't list them either. Install the browser from your distribution's packages (or the browser maker's own `.deb`, `.rpm`, tarball or AppImage) to use browser integration.
 

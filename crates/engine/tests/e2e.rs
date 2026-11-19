@@ -246,7 +246,7 @@ async fn a_wrong_checksum_fails_and_keeps_the_data() {
         "{err}"
     );
     assert!(
-        dir.path().join("bad.bin.mdm.part").exists(),
+        dir.path().join("bad.bin.bmd.part").exists(),
         "the data is kept"
     );
     assert!(!dir.path().join("bad.bin").exists());
@@ -1743,7 +1743,7 @@ async fn a_server_that_sometimes_ignores_ranges_still_completes() {
 async fn a_missing_folder_is_reported_and_nothing_restarts() {
     let dir = tempfile::tempdir().unwrap();
     let gone = dir.path().join("unplugged");
-    let err = Download::resume(gone.join("a.bin.mdm.json"), Default::default(), fast_opts())
+    let err = Download::resume(gone.join("a.bin.bmd.json"), Default::default(), fast_opts())
         .err()
         .expect("refused");
     assert!(

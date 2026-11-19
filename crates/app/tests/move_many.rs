@@ -29,9 +29,9 @@ fn log(data: &Path) -> String {
 fn second_launch(data: &Path, downloads: &Path, what: &str) {
     let status = Command::new(APP)
         .args(["/show", what])
-        .env("MDM_DATA_DIR", data)
+        .env("BMD_DATA_DIR", data)
         .env("BMD_OFFSCREEN", "1")
-        .env("MDM_DOWNLOADS", downloads)
+        .env("BMD_DOWNLOADS", downloads)
         .status()
         .unwrap();
     assert!(status.success(), "/show {what}: {status}");
@@ -91,9 +91,9 @@ fn a_selection_moves_to_one_folder() {
     )
     .unwrap();
     let mut app = Command::new(APP)
-        .env("MDM_DATA_DIR", &data)
+        .env("BMD_DATA_DIR", &data)
         .env("BMD_OFFSCREEN", "1")
-        .env("MDM_DOWNLOADS", &dl)
+        .env("BMD_DOWNLOADS", &dl)
         .env("BMD_TEST_MOVE_TO", &to)
         .spawn()
         .unwrap();

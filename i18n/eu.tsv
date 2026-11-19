@@ -245,7 +245,7 @@
 #. text in the Options window
 #. Options → Accounts: what these accounts are, and the services' rule against sharing
 #, machine
-	A debrid service downloads a file host's link with your own paid account and gives BMD a direct link. Use only your own account: sharing an account or its links breaks the services' terms and can get it suspended. Downloads the browser already started stay as they are.	Desbridatze-zerbitzu batek fitxategi-ostatu baten esteka deskargatzen du zure ordainpeko kontuarekin eta esteka zuzen bat ematen dio MDMri. Erabili zure kontua soilik: kontu bat edo haren estekak partekatzeak zerbitzuen baldintzak hausten ditu eta kontua eten dezake. Nabigatzaileak dagoeneko hasitako deskargak bere horretan geratzen dira.
+	A debrid service downloads a file host's link with your own paid account and gives BMD a direct link. Use only your own account: sharing an account or its links breaks the services' terms and can get it suspended. Downloads the browser already started stay as they are.	Desbridatze-zerbitzu batek fitxategi-ostatu baten esteka deskargatzen du zure ordainpeko kontuarekin eta esteka zuzen bat ematen dio BMDri. Erabili zure kontua soilik: kontu bat edo haren estekak partekatzeak zerbitzuen baldintzak hausten ditu eta kontua eten dezake. Nabigatzaileak dagoeneko hasitako deskargak bere horretan geratzen dira.
 #. text in a download's progress window
 #. reason shown on the Rename box when the entered name ends with a period
 #, machine
@@ -1531,7 +1531,7 @@
 #. Video helpers: BMD's own yt-dlp is being downloaded
 #. the trailing ... means it is still going on: keep it
 #, machine
-	Downloading BMD's own copy...	MDMren kopia deskargatzen...
+	Downloading BMD's own copy...	BMDren kopia deskargatzen...
 #. text in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #. Check for updates, while Update now downloads; {percent} like "42%"
 #, machine
@@ -2408,7 +2408,7 @@
 #. text in extracting archives (a download's log, the Archive password window)
 #. why an archive wasn't extracted (after "Couldn't extract {name}: ")
 #, machine
-	it is not an archive BMD extracts	MDMk ateratzen ez duen artxiboa da
+	it is not an archive BMD extracts	BMDk ateratzen ez duen artxiboa da
 #. text in extracting archives (a download's log, the Archive password window)
 #. why an archive wasn't extracted (after "Couldn't extract {name}: ")
 #, machine
@@ -2433,7 +2433,7 @@
 #. text in the Batch download window
 #. \\n starts a new line: break lines where they fit the translation
 #, machine
-	It's possible to add a group of sequential file names like img001.jpg, img002.jpg, etc.,\nimg100.jpg to BMD download queue. Use the asterisk wildcard for the file name pattern.	Fitxategi-izen sekuentzialen talde bat gehitu daiteke, hala nola img001.jpg, img002.jpg, etab.,\nimg100.jpg, MDMren deskarga-ilaran. Erabili izartxoaren komodina fitxategi-izenaren ereduan.
+	It's possible to add a group of sequential file names like img001.jpg, img002.jpg, etc.,\nimg100.jpg to BMD download queue. Use the asterisk wildcard for the file name pattern.	Fitxategi-izen sekuentzialen talde bat gehitu daiteke, hala nola img001.jpg, img002.jpg, etab.,\nimg100.jpg, BMDren deskarga-ilaran. Erabili izartxoaren komodina fitxategi-izenaren ereduan.
 #. text in countries.rs
 #. a country's name (where a download's server is)
 #, machine
@@ -3245,7 +3245,7 @@
 #. text in the Options window
 #. Options → Accounts: no system keyring/keychain answered (none runs, e.g. a desktop without one), so the sign-ins stay in BMD's settings folder, which only the user's account may read
 #, machine
-	No system keyring answered, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Sistemaren giltza-sortak ez du erantzun, beraz, saio-hasierak eta pasahitzak MDMren ezarpenetan gordetzen dira, zuk bakarrik irakur ditzakezunetan.
+	No system keyring answered, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Sistemaren giltza-sortak ez du erantzun, beraz, saio-hasierak eta pasahitzak BMDren ezarpenetan gordetzen dira, zuk bakarrik irakur ditzakezunetan.
 #. message or event log entry in the main window
 #. event log entry: Add trackers changed nothing, the torrent had them all
 #, machine
@@ -4309,19 +4309,19 @@
 #. message or event log entry in the main window
 #. View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw BMD; {date}: the day that was found; BMD tries it again once the graphics driver is updated
 #, machine
-	Since {date}: BMD tries it again after a driver update	{date}tik: MDMk berriro probatuko du kontrolatzailea eguneratu ondoren
+	Since {date}: BMD tries it again after a driver update	{date}tik: BMDk berriro probatuko du kontrolatzailea eguneratu ondoren
 #. message or event log entry in the main window
 #. View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw BMD; {date}: the day that was found; BMD tries that graphics system again when it next starts
 #, machine
-	Since {date}: BMD tries it again at its next start	{date}tik: MDMk berriro probatuko du hurrengo abiaraztean
+	Since {date}: BMD tries it again at its next start	{date}tik: BMDk berriro probatuko du hurrengo abiaraztean
 #. message or event log entry in the main window
 #. View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw BMD; {date}: the day that was found; {retry}: the day BMD tries it again
 #, machine
-	Since {date}: BMD tries it again on {retry}	{date}tik: MDMk berriro probatuko du {retry}an
+	Since {date}: BMD tries it again on {retry}	{date}tik: BMDk berriro probatuko du {retry}an
 #. message or event log entry in the main window
 #. View → Draw with: a greyed note under why a graphics system ("it": Direct3D, Vulkan, Metal or OpenGL) doesn't draw BMD; {date}: the day that was found; {retry}: the day BMD tries it again, unless the graphics driver is updated before
 #, machine
-	Since {date}: BMD tries it again on {retry}, or after a driver update	{date}tik: MDMk berriro probatuko du {retry}an, edo kontrolatzailea eguneratu ondoren
+	Since {date}: BMD tries it again on {retry}, or after a driver update	{date}tik: BMDk berriro probatuko du {retry}an, edo kontrolatzailea eguneratu ondoren
 #. text in countries.rs
 #. a country's name (where a download's server is)
 #, machine
@@ -4628,7 +4628,7 @@
 	Sunday	Igandea
 #. link (opens a web page) in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #, machine
-	Support BMD on GitHub	Lagundu MDMri GitHub-en
+	Support BMD on GitHub	Lagundu BMDri GitHub-en
 #. text in countries.rs
 #. a country's name (where a download's server is)
 #, machine
@@ -5010,7 +5010,7 @@
 #. text in errors.rs
 #. why a download failed (#701): a file host answered with its own web page (a countdown before the link, a captcha, a sign-in) where the file was expected. The browser gets past it; BMD's browser extension then hands the real file back to BMD
 #, machine
-	the site sent a web page instead of the file (a waiting page, a captcha or a sign-in): open the link in your browser, finish there, and the download comes back to BMD	guneak web-orri bat bidali du fitxategiaren ordez (itxaron-orri bat, captcha bat edo saio-hasiera bat): ireki esteka arakatzailean, amaitu han, eta deskarga MDMra itzuliko da
+	the site sent a web page instead of the file (a waiting page, a captcha or a sign-in): open the link in your browser, finish there, and the download comes back to BMD	guneak web-orri bat bidali du fitxategiaren ordez (itxaron-orri bat, captcha bat edo saio-hasiera bat): ireki esteka arakatzailean, amaitu han, eta deskarga BMDra itzuliko da
 #. text in the Download video window
 #. the Download video window: the site asked for a sign-in although the browser's extension passed the page's cookies
 #, machine
@@ -5046,7 +5046,7 @@
 #. text in errors.rs
 #. why a download failed: the site's security certificate is made for other uses than a website (its "extended key usage" leaves out web servers)
 #, machine
-	the site's security certificate isn't made for websites, so BMD can't be sure it's the real site	Gunearen segurtasun-ziurtagiria ez dago webguneetarako egina; beraz, MDMk ezin du ziurtatu gune erreala denik
+	the site's security certificate isn't made for websites, so BMD can't be sure it's the real site	Gunearen segurtasun-ziurtagiria ez dago webguneetarako egina; beraz, BMDk ezin du ziurtatu gune erreala denik
 #. text in errors.rs
 #. why a download failed: the site's security certificate was signed by the site itself or by an issuer this computer doesn't trust. Browsers warn about the same site
 #, machine
@@ -5070,7 +5070,7 @@
 #. text in the Options window
 #. Options → Accounts (Linux): the system keyring is locked (BMD never unlocks it: that would ask for its password), so the sign-ins stay in BMD's settings folder, which only the user's account may read
 #, machine
-	The system keyring is locked and BMD doesn't unlock it, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Sistemaren giltza-sorta blokeatuta dago eta MDMk ez du desblokeatzen, beraz, saio-hasierak eta pasahitzak MDMren ezarpenetan gordetzen dira, zuk bakarrik irakur ditzakezunetan.
+	The system keyring is locked and BMD doesn't unlock it, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Sistemaren giltza-sorta blokeatuta dago eta BMDk ez du desblokeatzen, beraz, saio-hasierak eta pasahitzak BMDren ezarpenetan gordetzen dira, zuk bakarrik irakur ditzakezunetan.
 #. text in the Options window
 #. Options → Connection → DNS: the operating system's own DNS (the default)
 #, machine
@@ -5293,7 +5293,7 @@
 #. message or event log entry in the main window
 #. event log: a torrent goes through the user's debrid account, not to peers; {service} its name ("Real-Debrid")
 #, machine
-	Through {service}: the service downloads the torrent, then BMD its files	{service} bidez: zerbitzuak torrenta deskargatzen du, eta gero MDMk haren fitxategiak deskargatzen ditu
+	Through {service}: the service downloads the torrent, then BMD its files	{service} bidez: zerbitzuak torrenta deskargatzen du, eta gero BMDk haren fitxategiak deskargatzen ditu
 #. text in the Scheduler window
 #, machine
 	Thursday	Osteguna
@@ -5601,7 +5601,7 @@
 #. button in helpers.rs
 #. Video helpers: button: go back to the copy BMD downloads and checks itself
 #, machine
-	Use BMD's own copy	Erabili MDMren kopia propioa
+	Use BMD's own copy	Erabili BMDren kopia propioa
 #. text in the Batch download window
 #. why Batch download's OK is greyed
 #, machine
@@ -5817,7 +5817,7 @@
 #. text in the Options window
 #. Options → Accounts: Windows Credential Manager didn't answer, so the sign-ins stay in BMD's settings, encrypted so that only this Windows account can read them
 #, machine
-	Windows Credential Manager didn't answer, so sign-ins and passwords are kept in BMD's settings, encrypted for your Windows account.	Windows Kredentzial Kudeatzaileak ez du erantzun, beraz, saio-hasierak eta pasahitzak MDMren ezarpenetan gordetzen dira, zure Windows konturako enkriptatuta.
+	Windows Credential Manager didn't answer, so sign-ins and passwords are kept in BMD's settings, encrypted for your Windows account.	Windows Kredentzial Kudeatzaileak ez du erantzun, beraz, saio-hasierak eta pasahitzak BMDren ezarpenetan gordetzen dira, zure Windows konturako enkriptatuta.
 #. text in a dialog box
 #. why the computer could not be put to sleep (fills {error})
 #, machine
@@ -5901,7 +5901,7 @@
 	Your browser	Zure arakatzailea
 #. text in the Options window
 #, machine
-	Your default browser isn't one BMD knows: a current Chrome's User-Agent	Zure arakatzaile lehenetsia MDMk ezagutzen ez duen bat da: Chrome baten User-Agent-a
+	Your default browser isn't one BMD knows: a current Chrome's User-Agent	Zure arakatzaile lehenetsia BMDk ezagutzen ez duen bat da: Chrome baten User-Agent-a
 #. text in the Options window
 #. tooltip; {browser} is a browser and its version, e.g. "Brave 157"
 #, machine
@@ -6074,7 +6074,7 @@
 	{file} is too large to be a list of addresses ({size}). Import reads text files, web pages and .ef2 exports of up to {limit}.	{file} handiegia da helbide-zerrenda izateko ({size}). Inportazioak testu-fitxategiak, web-orriak eta gehienez {limit} tamainako .ef2 esportazioak irakurtzen ditu.
 #. text in a dialog box
 #, machine
-	{file} was moved elsewhere by dragging it out of BMD, and BMD couldn't learn where. Look for it where you dropped it.	{file} beste nonbaitera mugitu da MDMtik arrastatuz, eta MDMk ezin izan du jakin nora. Bilatu bota duzun lekuan.
+	{file} was moved elsewhere by dragging it out of BMD, and BMD couldn't learn where. Look for it where you dropped it.	{file} beste nonbaitera mugitu da BMDtik arrastatuz, eta BMDk ezin izan du jakin nora. Bilatu bota duzun lekuan.
 #. text in the Checksum window
 #. {algorithm} = a checksum algorithm such as "SHA-256" (keep the braces as they are)
 #, machine
@@ -6160,7 +6160,7 @@
 #. in the "7-Zip needed" window: {name} is the archive's file name; 7-Zip is a program's name
 #. {name} = a file name (keep the braces as they are)
 #, machine
-	{name} is a 7z or RAR archive. BMD extracts those with 7-Zip, which isn't installed.	{name} 7z edo RAR artxibo bat da. MDMk 7-Zip-ekin ateratzen ditu artxibo horiek, baina 7-Zip ez dago instalatuta.
+	{name} is a 7z or RAR archive. BMD extracts those with 7-Zip, which isn't installed.	{name} 7z edo RAR artxibo bat da. BMDk 7-Zip-ekin ateratzen ditu artxibo horiek, baina 7-Zip ez dago instalatuta.
 #. text in extracting archives (a download's log, the Archive password window)
 #. in Archive password: {name} is the archive's file name
 #. {name} = a file name (keep the braces as they are)
@@ -6380,7 +6380,7 @@ extension	A list of videos: choose them in BMD	Bideo-zerrenda bat: hautatu BMD a
 #. text in the browser extension
 #. on the download button (green) over a video after the app added and started the download; a quality may follow ('· 1080p') and a 'Show' button; BMD is the app's short name, keep it; short
 #, machine
-extension	Added to BMD	MDMra gehitu da
+extension	Added to BMD	BMDra gehitu da
 #. text in the browser extension
 #. shown briefly on the download button over a video after a quality was picked: the download was added to the app's download queue, to start later
 #, machine
@@ -6557,7 +6557,7 @@ extension	Looking up took too long	Bilaketak denbora gehiegi iraun du
 #. text in the browser extension
 #. on the download button (red) over a video when the app isn't installed or didn't start; 'Get BMD' and 'Retry' buttons follow; BMD is the app's short name, keep it; short
 #, machine
-extension	BMD didn't answer	MDMk ez du erantzun
+extension	BMD didn't answer	BMDk ez du erantzun
 #. text in the browser extension
 #. heading in the toolbar button's popup over the list of the videos, sounds and streams the current web page has loaded
 #, machine
@@ -6701,7 +6701,7 @@ extension	Send downloads to	Bidali deskargak hona
 #. on the download button over a video right after it was clicked, while the download goes to the app; BMD is BMD's short name, keep it as it is; short
 #. the trailing ... means it is still going on: keep it
 #, machine
-extension	Sending to BMD...	MDMra bidaltzen...
+extension	Sending to BMD...	BMDra bidaltzen...
 #. text in the browser extension
 #. shown briefly on the download button after it was clicked; keep the name BMD as it is
 #, machine
@@ -6713,7 +6713,7 @@ extension	Show	Erakutsi
 #. text in the browser extension
 #. link at the foot of the toolbar button's popup to the creator's GitHub Sponsors page (BMD is free; this is an optional donation)
 #, machine
-extension	Support BMD	Lagundu MDMri
+extension	Support BMD	Lagundu BMDri
 #. text in the browser extension
 #. check box in the toolbar button's popup: on, downloads go to the app; off, the browser keeps them
 #, machine
@@ -7472,7 +7472,7 @@ menu	Stop Download	Gelditu deskarga
 #. menu command in the main window
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation
 #, machine
-menu	Support &BMD	Lagundu &MDMri
+menu	Support &BMD	Lagundu &BMDri
 #. menu command in the main window
 #. View menu: submenu choosing how the text is drawn (smooth or classic)
 #. & marks the keyboard shortcut letter: keep one & before a letter of the translation

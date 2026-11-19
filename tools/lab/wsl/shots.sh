@@ -17,13 +17,13 @@
 # README's 21 windows). `main` is the main window; a `menu:...` show is captured with the main
 # window, grown by BMD_GROW pixels (default 300) for menus past its edge.
 #
-# Each run has its own data folder (MDM_DATA_DIR) and download folder under ~/lab/run/<label>,
+# Each run has its own data folder (BMD_DATA_DIR) and download folder under ~/lab/run/<label>,
 # and its own lab server (port 8197): the list looks used (the README's files), downloaded once
 # for the first language and given to the others. --finished-only: no download still running (shots
 # that must not change between runs: progress and the main window's speeds otherwise do);
 # --keep-list: the list of the label's last run again (the same names and dates: two runs
 # compared pixel by pixel, e.g. two renderers). BMD_SET: more settings, a JSON object; BMD_* in
-# the environment (MDM_RENDERER, ...) reach BMD.
+# the environment (BMD_RENDERER, ...) reach BMD.
 # BMD_OFFSCREEN passes through when set (Xvfb is off the user's screen already, so it's off by
 # default: the shots show BMD as a person sees it).
 set -uo pipefail
@@ -152,7 +152,7 @@ for lang in $langs; do
     DATA=$work/data-$lang-$mode
     rm -rf "$DATA"; mkdir -p "$DATA"
     write_state "$DATA" "$lang" "$mode"
-    export MDM_DATA_DIR=$DATA
+    export BMD_DATA_DIR=$DATA
     dir="$out/$lang-$mode"; rm -rf "$dir"; mkdir -p "$dir"
     xdotool mousemove $((SW - 2)) $((SH / 2))
     (cd "$work" && setsid -f "$app" >"$DATA/stdout.log" 2>&1 </dev/null 9>&-)

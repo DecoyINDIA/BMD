@@ -1223,8 +1223,8 @@
    "text": "Ролі команди"
   },
   "1171655e77148bd2": {
-   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/anefzaoui/misterdownloadmanager</g2> under the GNU GPL, version 3.",
-   "text": "Кожен випуск, з його примітками та файлами, знаходиться на <g1>GitHub Releases</g1>. Вихідний код доступний за адресою <g2>github.com/anefzaoui/misterdownloadmanager</g2> під ліцензією GNU GPL, версія 3."
+   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/DecoyINDIA/BMD</g2> under the GNU GPL, version 3.",
+   "text": "Кожен випуск, з його примітками та файлами, знаходиться на <g1>GitHub Releases</g1>. Вихідний код доступний за адресою <g2>github.com/DecoyINDIA/BMD</g2> під ліцензією GNU GPL, версія 3."
   },
   "1173fd2e0a9c235b": {
    "source": "The app has no accounts, telemetry or tracking",
@@ -14299,8 +14299,8 @@
    "text": "Відео зберігаються в папку, названу на честь списку, всередині <g1>Зберегти до</g1>, кожне під власною назвою."
   },
   "ceb8f4f5a72cba4a": {
-   "source": "Every signed file is built from the public source code at <g1>github.com/anefzaoui/misterdownloadmanager</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
-   "text": "Кожен підписаний файл створюється з відкритого вихідного коду за адресою <g1>github.com/anefzaoui/misterdownloadmanager</g1> за допомогою GitHub Actions, на серверах GitHub, ніколи не на персональному комп’ютері. Кожен файл вказує, що це BMD і яка його версія."
+   "source": "Every signed file is built from the public source code at <g1>github.com/DecoyINDIA/BMD</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
+   "text": "Кожен підписаний файл створюється з відкритого вихідного коду за адресою <g1>github.com/DecoyINDIA/BMD</g1> за допомогою GitHub Actions, на серверах GitHub, ніколи не на персональному комп’ютері. Кожен файл вказує, що це BMD і яка його версія."
   },
   "cee8fa5faa008467": {
    "source": "To save your own list, use <g1>Tasks → Export → To text file</g1> (one address per line) or <g2>To IDM export file</g2>.",
@@ -14699,8 +14699,8 @@
    "text": "<g1>librqbit</g1><g2>торрент-рушій</g2>"
   },
   "d3bb5a30d659061d": {
-   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/anefzaoui/misterdownloadmanager</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
-   "text": "BMD (\"BMD\") — це безкоштовне програмне забезпечення з відкритим кодом, створене Ahmed Nefzaoui та співавторами. Оскільки весь його вихідний код є публічним на <g1>github.com/anefzaoui/misterdownloadmanager</g1>, вам не потрібно вірити цій сторінці на слово: кожне мережеве з’єднання, описане тут, можна перевірити в коді."
+   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/DecoyINDIA/BMD</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
+   "text": "BMD (\"BMD\") — це безкоштовне програмне забезпечення з відкритим кодом, створене Ahmed Nefzaoui та співавторами. Оскільки весь його вихідний код є публічним на <g1>github.com/DecoyINDIA/BMD</g1>, вам не потрібно вірити цій сторінці на слово: кожне мережеве з’єднання, описане тут, можна перевірити в коді."
   },
   "d3da8c9dc89aaa97": {
    "source": "What's new in version 0.5.1 <g1>2026-11-08</g1>",

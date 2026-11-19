@@ -5062,7 +5062,7 @@ fn reg_string(key: &str, name: &str) -> Option<String> {
 /// names have `_` for `-`.
 pub fn take_install_language() -> Option<String> {
     use windows_sys::Win32::System::Registry::{HKEY_CURRENT_USER, RegDeleteKeyValueW};
-    const KEY: &str = r"Software\MisterDownloadManager";
+    const KEY: &str = r"Software\BlackMarlinDownloader";
     const NAME: &str = "InstallLanguage";
     let value = reg_string(KEY, NAME)?;
     let w = |s: &str| -> Vec<u16> { s.encode_utf16().chain(Some(0)).collect() };
@@ -5079,7 +5079,7 @@ pub fn take_install_language() -> Option<String> {
 /// installer wrote it. Only read: the app settles Torrent settings' switch from it once
 /// (`Settings::settle_torrent_handler`, #1058), and an upgrade's value is never asked again.
 pub fn install_torrents() -> Option<bool> {
-    reg_string(r"Software\MisterDownloadManager", "InstallTorrents").map(|v| v.trim() == "1")
+    reg_string(r"Software\BlackMarlinDownloader", "InstallTorrents").map(|v| v.trim() == "1")
 }
 
 /// Is this program what Windows opens .torrent files with by their class (the user's or
@@ -5420,11 +5420,11 @@ pub fn play_sound(file: &str) {
 /// the same.
 pub const REGISTERED_NAME: &str = "BMD";
 /// BMD's Capabilities (Default apps' list of what it can open), under HKCU or HKLM.
-const CAPABILITIES: &str = r"Software\MisterDownloadManager\Capabilities";
+const CAPABILITIES: &str = r"Software\BlackMarlinDownloader\Capabilities";
 /// The ProgIDs BMD's Capabilities name: Default apps wants an application-specific one for each
 /// file type and protocol, never the generic `magnet` class.
-const TORRENT_PROGID: &str = "MisterDownloadManager.Torrent";
-const MAGNET_PROGID: &str = "MisterDownloadManager.Magnet";
+const TORRENT_PROGID: &str = "BlackMarlinDownloader.Torrent";
+const MAGNET_PROGID: &str = "BlackMarlinDownloader.Magnet";
 
 /// Make BMD (on) or stop it being (off) what Windows opens magnet links and .torrent files
 /// with, for the current user (HKCU; no admin). Off removes only what points at us.
@@ -5747,7 +5747,7 @@ mod default_apps_tests {
             HKEY, HKEY_CURRENT_USER, KEY_ALL_ACCESS, REG_OPTION_NON_VOLATILE, RegCloseKey,
             RegCreateKeyExW, RegDeleteKeyW, RegDeleteTreeW, RegOverridePredefKey,
         };
-        let scratch: Vec<u16> = r"Software\MisterDownloadManagerTest1091"
+        let scratch: Vec<u16> = r"Software\BlackMarlinDownloaderTest1091"
             .encode_utf16()
             .chain(Some(0))
             .collect();
@@ -5777,21 +5777,21 @@ mod default_apps_tests {
                 (r"Software\Classes\magnet\shell\open\command", ""),
                 (r"Software\Classes\.torrent", ""),
                 (
-                    r"Software\Classes\MisterDownloadManager.Magnet",
+                    r"Software\Classes\BlackMarlinDownloader.Magnet",
                     "URL Protocol",
                 ),
                 (
-                    r"Software\Classes\MisterDownloadManager.Magnet\shell\open\command",
+                    r"Software\Classes\BlackMarlinDownloader.Magnet\shell\open\command",
                     "",
                 ),
                 (CAPABILITIES, "ApplicationName"),
                 (CAPABILITIES, "ApplicationDescription"),
                 (
-                    r"Software\MisterDownloadManager\Capabilities\UrlAssociations",
+                    r"Software\BlackMarlinDownloader\Capabilities\UrlAssociations",
                     "magnet",
                 ),
                 (
-                    r"Software\MisterDownloadManager\Capabilities\FileAssociations",
+                    r"Software\BlackMarlinDownloader\Capabilities\FileAssociations",
                     ".torrent",
                 ),
                 (r"Software\RegisteredApplications", REGISTERED_NAME),
@@ -5833,15 +5833,14 @@ fn run_value() -> Option<String> {
     if crate::offscreen() {
         return std::env::var("BMD_TEST_RUN_VALUE")
             .ok()
-            .filter(|v| v.starts_with("MisterDownloadManagerTest"));
+            .filter(|v| v.starts_with("BlackMarlinDownloaderTest"));
     }
-    // The name before the rebrand, kept: the installer writes (and its uninstaller removes) this
-    // one, and every existing installation's entry has it.
+    // The installer's name for it too: it writes (and its uninstaller removes) this one.
     Some(RUN_VALUE.to_owned())
 }
 
 /// The Run value's name, the same in tools/installer/bmd.iss (`the_installer_writes_the_same_entry`).
-const RUN_VALUE: &str = "MisterDownloadManager";
+const RUN_VALUE: &str = "BlackMarlinDownloader";
 
 const RUN_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Run";
 
@@ -6753,7 +6752,7 @@ pub mod ole {
 /// with the process.
 pub fn mark_running() {
     use windows_sys::Win32::System::Threading::CreateMutexW;
-    let name: Vec<u16> = "MisterDownloadManager.Running\0".encode_utf16().collect();
+    let name: Vec<u16> = "BlackMarlinDownloader.Running\0".encode_utf16().collect();
     // SAFETY: NUL-terminated name; the handle is deliberately kept for the process's life.
     unsafe {
         CreateMutexW(std::ptr::null(), 0, name.as_ptr());
@@ -7448,7 +7447,7 @@ mod zone_policy_tests {
             Some(10)
         );
         assert_eq!(
-            reg_dword_in(HKEY_LOCAL_MACHINE, key, "NoSuchValueOfMdm"),
+            reg_dword_in(HKEY_LOCAL_MACHINE, key, "NoSuchValueOfBmd"),
             None
         );
         // A string isn't taken for a number.

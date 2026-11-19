@@ -321,7 +321,7 @@
   var raceDone = false;
   function drawRace() {
     var box = document.querySelector("[data-race-src]");
-    if (!box || raceDone || !window.mdmRace) return;
+    if (!box || raceDone || !window.bmdRace) return;
     raceDone = true;
     var races = data.scenarios.filter(final).map(function (sc) {
       var ph = function (c) {
@@ -333,7 +333,7 @@
                e2e: [sc.clients.BMD.stats.e2e_ms.median, sc.clients.IDM.stats.e2e_ms.median],
                ratio: sc.compare.ratio_idm_over_bmd, conns: two ? [2, 2] : [8, 8], bytes: bytes(sc.size) };
     });
-    window.mdmRace(box, races);
+    window.bmdRace(box, races);
   }
 
   // Speed-up per scenario: a bar from 1x on a log scale, its 95% interval, a counter.

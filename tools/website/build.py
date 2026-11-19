@@ -169,7 +169,6 @@ FILES = {
     "chromium": f"{RELEASE}-extension-chromium.zip",
     "firefox": f"{RELEASE}-extension-firefox.xpi",
     "sums": f"{REPO}/releases/download/v{VERSION}/SHA256SUMS.txt",
-    "sums_sig": f"{REPO}/releases/download/v{VERSION}/SHA256SUMS.txt.sig",
 }
 
 # Every page built, for the sitemap: (path, priority).
@@ -1172,7 +1171,6 @@ def build_contributors() -> None:
 
 TRENDSHIFT = "https://trendshift.io/repositories/337427"
 SOURCEFORGE = "https://sourceforge.net/projects/mister-download-manager.mirror/files/"
-RELEASE_KEY = f"{REPO}/blob/main/crates/tools/keys/bmd-release.asc"
 # The figures the home page and /press.html show, as each source showed them on FIGURES_CHECKED,
 # rounded down. Read them again where they come from before changing them (and the date): the
 # Chrome Web Store listing (users, rating); the add-ons API, addons.mozilla.org/api/v5/addons/addon/
@@ -1200,7 +1198,7 @@ OFFICIAL = [
     ("SourceForge mirror", SOURCEFORGE, "An automatic, exact copy of the GitHub releases; SourceForge shows ads around its downloads"),
 ]
 COMMUNITY = [
-    ("AUR: misterdownloadmanager-bin", "https://aur.archlinux.org/packages/misterdownloadmanager-bin", "Arch Linux, from the release's .tar.gz"),
+    ("AUR: bmd-bin", "https://aur.archlinux.org/packages/bmd-bin", "Arch Linux, from the release's .tar.gz"),
     ("AUR: mister-download-manager-bin", "https://aur.archlinux.org/packages/mister-download-manager-bin", "Arch Linux, from the release's .deb"),
     ("Nix: misterdm-nix", "https://github.com/TamagoMasgend/misterdm-nix", "A Nix flake, for NixOS"),
     ("AM", "https://github.com/ivan-hc/AM", "A package manager for Linux AppImages: installs the release's AppImage"),
@@ -1319,7 +1317,7 @@ def build_press() -> None:
       </section>
       <section class="page-body prose press-critique" aria-labelledby="criticism">
         <h2 id="criticism">The fair criticism</h2>
-        <p class="press-cite"><a href="{locker}"><cite lang="en" translate="no">Mister Download Manager's one-second gigabyte came from a server on the same PC</cite></a> <span>Chris Pirillo, <span translate="no">Lockergnome</span>, <time datetime="2026-11-12" translate="no">2026-11-12</time></span></p>
+        <p class="press-cite"><a href="{locker}"><cite lang="en" translate="no">Black Marlin Downloader's one-second gigabyte came from a server on the same PC</cite></a> <span>Chris Pirillo, <span translate="no">Lockergnome</span>, <time datetime="2026-11-12" translate="no">2026-11-12</time></span></p>
         <p>He is right about the setup. Our "1 GiB in 1 second" comes from a loopback test: both programs downloaded from a test server on the same PC. It compares the two programs under the same load; it doesn't measure an internet connection, and BMD won't make yours faster than it is. We now say so wherever the figure appears.</p>
         <p><a href="/benchmark.html">The benchmark report</a> has every run, the method and the raw data, so anyone can check it or run it again.</p>
       </section>
@@ -1525,7 +1523,7 @@ def fill(text: str) -> str:
     text = text.replace("<!--@crew-->", crew_pile()).replace("<!--@signed-->", signed_sheet())
     text = text.replace("<!--@fields-->", waybill_fields()).replace("<!--@barcode-->", barcode.svg(f"BMD {VERSION}"))
     return (text.replace("{{VERSION}}", VERSION).replace("{{REPO}}", REPO).replace("{{SITE}}", SITE)
-            .replace("{{SPONSORS}}", SPONSORS).replace("{{RELEASE_KEY}}", RELEASE_KEY).replace("{{SOURCEFORGE}}", SOURCEFORGE).replace("{{SOFTWARE_LD}}", json.dumps(SOFTWARE_LD, ensure_ascii=False, separators=(",", ":"))))
+            .replace("{{SPONSORS}}", SPONSORS).replace("{{SOURCEFORGE}}", SOURCEFORGE).replace("{{SOFTWARE_LD}}", json.dumps(SOFTWARE_LD, ensure_ascii=False, separators=(",", ":"))))
 
 
 def build_templated(name: str, path: str, section: str, priority: str) -> None:
@@ -1836,7 +1834,7 @@ def build_themes() -> None:
           <dl class="fields os-paths">
             <div><dt>Windows</dt><dd><code translate="no">%APPDATA%\\bmd\\themes</code></dd></div>
             <div><dt>Linux</dt><dd><code translate="no">~/.local/share/bmd/themes</code></dd></div>
-            <div><dt>macOS</dt><dd><code translate="no">~/Library/Application Support/misterdownloadmanager/themes</code></dd></div>
+            <div><dt>macOS</dt><dd><code translate="no">~/Library/Application Support/bmd/themes</code></dd></div>
             <div><dt>Portable copy</dt><dd><code translate="no">data\\themes</code> beside the program</dd></div>
           </dl>
           <p>Within two seconds it shows in <b>View → Theme</b>, under the built-in themes, by the <code>name</code> it gives itself. Pick it and the whole window changes at once. After you edit the file, pick it again in <b>View → Theme</b> to see the change. <b>View → Dark Mode support</b> and <b>Always dark</b> switch between its light and dark side.</p>

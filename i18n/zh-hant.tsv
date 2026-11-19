@@ -2424,7 +2424,7 @@
 #. text in the Batch download window
 #. \\n starts a new line: break lines where they fit the translation
 #, machine
-	It's possible to add a group of sequential file names like img001.jpg, img002.jpg, etc.,\nimg100.jpg to BMD download queue. Use the asterisk wildcard for the file name pattern.	您可以將 img001.jpg、img002.jpg 等一系列檔案名稱新增至\nMDM 下載佇列。檔案名稱模式請使用星號萬用字元。
+	It's possible to add a group of sequential file names like img001.jpg, img002.jpg, etc.,\nimg100.jpg to BMD download queue. Use the asterisk wildcard for the file name pattern.	您可以將 img001.jpg、img002.jpg 等一系列檔案名稱新增至\nBMD 下載佇列。檔案名稱模式請使用星號萬用字元。
 #. text in countries.rs
 #. a country's name (where a download's server is)
 #, machine

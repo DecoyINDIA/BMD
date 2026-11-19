@@ -26,9 +26,9 @@ opens it (and makes it the first time). It is in BMD's data folder:
 
 | System | Folder |
 |---|---|
-| Windows | `%APPDATA%\misterdownloadmanager\themes` |
-| Linux | `~/.local/share/misterdownloadmanager/themes` |
-| macOS | `~/Library/Application Support/misterdownloadmanager/themes` |
+| Windows | `%APPDATA%\bmd\themes` |
+| Linux | `~/.local/share/bmd/themes` |
+| macOS | `~/Library/Application Support/bmd/themes` |
 | [Portable copy](portable.md) | `data\themes` beside the program |
 
 Within two seconds a new file shows in **View → Theme**, under the built-in themes, by the `name`

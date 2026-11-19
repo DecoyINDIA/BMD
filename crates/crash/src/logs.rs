@@ -327,15 +327,15 @@ impl<'a> tracing_subscriber::fmt::MakeWriter<'a> for Rolling {
 }
 
 /// Start logging into `<data>/logs`: BMD's own crates at `info`, everything else (egui, winit,
-/// the network stack) at `warn`; `MDM_LOG` overrides it with an `EnvFilter` (e.g.
-/// `MDM_LOG=debug`). Returns false when the folder can't be written (BMD runs on without a log).
+/// the network stack) at `warn`; `BMD_LOG` overrides it with an `EnvFilter` (e.g.
+/// `BMD_LOG=debug`). Returns false when the folder can't be written (BMD runs on without a log).
 pub fn init(data: &Path, name: &'static str) -> bool {
     use tracing_subscriber::EnvFilter;
     let Ok(writer) = Rolling::new(dir(data), name) else {
         return false;
     };
     let _ = LOG.set(writer.clone());
-    let filter = std::env::var("MDM_LOG")
+    let filter = std::env::var("BMD_LOG")
         .ok()
         .and_then(|f| EnvFilter::try_new(f).ok())
         .unwrap_or_else(|| EnvFilter::new("warn,minidump=error,minidump_processor=error,minidump_unwind=error,breakpad_symbols=error,bmd=info,bmd_app=info,bmd=info,bmd_engine=info,bmd_torrent=info,bmd_crash=info,bmd_tools=info,bmd_ipc=info"));
