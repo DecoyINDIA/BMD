@@ -1494,7 +1494,7 @@ mod tests {
         );
         assert!(!notice.link.is_empty());
         assert!(
-            notice.url.starts_with("https://misterdownloadmanager.com/")
+            notice.url.starts_with("https://bmd.example.com/")
                 && notice.url.ends_with("/help/video.html#javascript-runtime"),
             "{}",
             notice.url

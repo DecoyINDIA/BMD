@@ -26,7 +26,8 @@ pub const CHECK_AFTER_START: std::time::Duration = std::time::Duration::from_sec
 
 /// The official website: the home page and the user guide, docs/*.md made into pages by
 /// tools/website/build.py. GitHub (REPO) keeps what is GitHub's: issues, releases, the source.
-pub const SITE: &str = "https://misterdownloadmanager.com";
+/// A placeholder (example.com is reserved) until BMD has a domain: the same as build.py's SITE.
+pub const SITE: &str = "https://bmd.example.com";
 
 /// The website's languages besides English, its folders (`/de/help/`): tools/website/sitei18n.py's
 /// LANGS, which a test keeps this list equal to. English is at the root.
@@ -1615,21 +1616,18 @@ mod tests {
     #[test]
     fn help_pages_are_the_websites_in_the_interface_language() {
         let at = |doc, lang| page_url(doc, lang);
-        assert_eq!(
-            at("README.md", "en"),
-            "https://misterdownloadmanager.com/help/"
-        );
+        assert_eq!(at("README.md", "en"), "https://bmd.example.com/help/");
         assert_eq!(
             at("README.md#tutorials", "en"),
-            "https://misterdownloadmanager.com/help/#tutorials"
+            "https://bmd.example.com/help/#tutorials"
         );
         assert_eq!(
             at("video.md", "de"),
-            "https://misterdownloadmanager.com/de/help/video.html"
+            "https://bmd.example.com/de/help/video.html"
         );
         assert_eq!(
             at("queues-and-scheduler.md#the-scheduler-window", "ar"),
-            "https://misterdownloadmanager.com/ar/help/queues-and-scheduler.html#the-scheduler-window"
+            "https://bmd.example.com/ar/help/queues-and-scheduler.html#the-scheduler-window"
         );
         assert_eq!(at("", "fr"), REPO);
         assert_eq!(at("", "en"), REPO);
@@ -1648,7 +1646,7 @@ mod tests {
         ] {
             assert_eq!(
                 at("options.md", lang),
-                format!("https://misterdownloadmanager.com{folder}/help/options.html"),
+                format!("https://bmd.example.com{folder}/help/options.html"),
                 "{lang}"
             );
         }
@@ -1680,21 +1678,21 @@ mod tests {
         // page_url's pages do.
         assert_eq!(
             contributors_page("en"),
-            "https://misterdownloadmanager.com/contributors.html"
+            "https://bmd.example.com/contributors.html"
         );
         assert_eq!(
             contributors_page("de"),
-            "https://misterdownloadmanager.com/de/contributors.html"
+            "https://bmd.example.com/de/contributors.html"
         );
         // A regional code reads its base language.
         assert_eq!(
             contributors_page("es-mx"),
-            "https://misterdownloadmanager.com/es/contributors.html"
+            "https://bmd.example.com/es/contributors.html"
         );
         // The site has Simplified Chinese only.
         assert_eq!(
             contributors_page("zh-hant"),
-            "https://misterdownloadmanager.com/contributors.html"
+            "https://bmd.example.com/contributors.html"
         );
     }
 
@@ -1710,8 +1708,7 @@ mod tests {
         }
         let calls = regex::Regex::new(r#"(?:open_page|HelpPage)\(\s*"([^"]+)""#).unwrap();
         let site =
-            regex::Regex::new(r"https://misterdownloadmanager\.com/help/([\w.-]*)(#[\w-]+)?")
-                .unwrap();
+            regex::Regex::new(r"https://bmd\.example\.com/help/([\w.-]*)(#[\w-]+)?").unwrap();
         let mut files = vec![];
         let mut dirs = vec![root().join("crates"), root().join("extension")];
         while let Some(dir) = dirs.pop() {

@@ -3751,8 +3751,8 @@
    "text": "목록의 빈 공간을 마우스 오른쪽 버튼으로 클릭하면 <g1>새 다운로드 추가</g1>, <g2>모두 선택</g2>, <g3>파일 정렬</g3>, <g4>모든 필터 지우기</g4>, <g5>완료된 항목 모두 삭제</g5>를 사용할 수 있습니다."
   },
   "36919d7c5630c182": {
-   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and misterdownloadmanager.com",
-   "text": "최종 업데이트: 2026년 11월 18일 · 앱, 브라우저 확장 프로그램 및 misterdownloadmanager.com에 적용됩니다."
+   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and bmd.example.com",
+   "text": "최종 업데이트: 2026년 11월 18일 · 앱, 브라우저 확장 프로그램 및 bmd.example.com에 적용됩니다."
   },
   "36a1df60e5ee30b9": {
    "source": "<g1><x2/></g1> — what <g3>View → Theme</g3> lists; the file's name when there is none.",
@@ -4415,8 +4415,8 @@
    "text": "1.0초"
   },
   "40056f59278920a5": {
-   "source": "BMD (\"BMD\", \"the software\") and the website misterdownloadmanager.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
-   "text": "BMD(\"BMD\", \"소프트웨어\") 및 웹사이트 misterdownloadmanager.com(\"사이트\")은 Ahmed Nefzaoui와 기여자들(\"당사\")이 만들었습니다. 소프트웨어 또는 사이트를 사용함으로써 귀하는 본 약관에 동의합니다. 동의하지 않는 경우, 사용하지 마십시오."
+   "source": "BMD (\"BMD\", \"the software\") and the website bmd.example.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
+   "text": "BMD(\"BMD\", \"소프트웨어\") 및 웹사이트 bmd.example.com(\"사이트\")은 Ahmed Nefzaoui와 기여자들(\"당사\")이 만들었습니다. 소프트웨어 또는 사이트를 사용함으로써 귀하는 본 약관에 동의합니다. 동의하지 않는 경우, 사용하지 마십시오."
   },
   "400e2d4fd45ae70d": {
    "source": "BMD has to be running for a schedule to fire. It can sit in the tray: closing the main window doesn't quit it.",
@@ -6327,8 +6327,8 @@
    "text": "갤러리 이름으로 된 폴더에 갤러리를 다운로드합니다. <g1>명령줄 및 자동화</g1>를 참조하세요."
   },
   "5d0bbcc71d941fe0": {
-   "source": "misterdownloadmanager.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
-   "text": "misterdownloadmanager.com의 자체 페이지(홈, 다운로드, 기능, 테마, FAQ); <x1/>은 <x2/>의 도움말과 CHANGELOG의 소식을 22개 언어로 추가하며, GitHub Pages에서 게시합니다."
+   "source": "bmd.example.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
+   "text": "bmd.example.com의 자체 페이지(홈, 다운로드, 기능, 테마, FAQ); <x1/>은 <x2/>의 도움말과 CHANGELOG의 소식을 22개 언어로 추가하며, GitHub Pages에서 게시합니다."
   },
   "5d199508494f7f75": {
    "source": "Windows, menus and dialogs",
@@ -10019,8 +10019,8 @@
    "text": "<g1>\"파일 정보 다운로드\" 대화 상자를 표시하는 동안 즉시 다운로드 시작</g1> — 기본적으로 켜져 있으므로 폴더를 선택하는 동안에도 다운로드가 이미 진행 중입니다."
   },
   "9289eb0f078ac8f3": {
-   "source": "The terms for using BMD and misterdownloadmanager.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
-   "text": "BMD 및 misterdownloadmanager.com 사용 약관: GNU GPL 3.0에 따라 제공되는 무료 소프트웨어이며, 사용자의 책임 하에 다운로드할 권리가 있는 콘텐츠에 한해 사용해야 합니다."
+   "source": "The terms for using BMD and bmd.example.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
+   "text": "BMD 및 bmd.example.com 사용 약관: GNU GPL 3.0에 따라 제공되는 무료 소프트웨어이며, 사용자의 책임 하에 다운로드할 권리가 있는 콘텐츠에 한해 사용해야 합니다."
   },
   "92abe6de5cd6999e": {
    "source": "<g1>Hide tab</g1> takes a tab off this download's window and goes back to <g2>Download status</g2>. To bring the tabs back, right-click the tab row and choose <g3>Show hidden tabs</g3>; closing the window and opening it again brings them back too.",
@@ -12291,8 +12291,8 @@
    "text": "브라우저 통합을 위해서는 각 브라우저에서 한 단계 더 필요합니다: 확장 프로그램 추가. Firefox에서는 <g2>addons.mozilla.org 페이지</g2>에서 <g1>Firefox에 추가</g1>를 클릭하고, Chrome, Edge, Brave, Opera, Vivaldi에서는 <g4>Chrome 웹 스토어 페이지</g4>에서 <g3>Chrome에 추가</g3>를 클릭하세요. <g5>브라우저 통합</g5>에서 방법을 보여줍니다."
   },
   "b25b5595e4410599": {
-   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open misterdownloadmanager.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
-   "text": "<g1>도움말이 웹사이트의 도움말 페이지를 사용자 언어로 엽니다</g1> (<g2>#227</g2>): <g3>도움말 내용</g3>, <g4>자습서</g4>, <g5>스케줄러 및 큐</g5>, <g6>비디오 다운로드</g6>, 옵션 및 스케줄러의 <g7>도움말</g7> 버튼, 그리고 브라우저 확장 프로그램 창의 자습서 및 도움말 링크는 GitHub의 문서를 열었습니다(옵션 및 스케줄러 버튼은 존재하지 않는 페이지를 열었음). 이제 misterdownloadmanager.com의 동일한 섹션을 열며, 웹사이트에 해당 언어가 있는 경우 인터페이스 언어로 표시되고(그렇지 않으면 영어), <g8>홈페이지</g8>도 웹사이트를 엽니다. 명령줄 및 MCP 서버의 도움말은 웹사이트 가이드를 참조합니다. 문제 보고서, 릴리스 및 소스는 GitHub에 유지됩니다."
+   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open bmd.example.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
+   "text": "<g1>도움말이 웹사이트의 도움말 페이지를 사용자 언어로 엽니다</g1> (<g2>#227</g2>): <g3>도움말 내용</g3>, <g4>자습서</g4>, <g5>스케줄러 및 큐</g5>, <g6>비디오 다운로드</g6>, 옵션 및 스케줄러의 <g7>도움말</g7> 버튼, 그리고 브라우저 확장 프로그램 창의 자습서 및 도움말 링크는 GitHub의 문서를 열었습니다(옵션 및 스케줄러 버튼은 존재하지 않는 페이지를 열었음). 이제 bmd.example.com의 동일한 섹션을 열며, 웹사이트에 해당 언어가 있는 경우 인터페이스 언어로 표시되고(그렇지 않으면 영어), <g8>홈페이지</g8>도 웹사이트를 엽니다. 명령줄 및 MCP 서버의 도움말은 웹사이트 가이드를 참조합니다. 문제 보고서, 릴리스 및 소스는 GitHub에 유지됩니다."
   },
   "b26c000488bb45a1": {
    "source": "<g1>Windows</g1>: <x2/>, or <x3/>. The installers on <g4>deno.com</g4> and <g5>nodejs.org</g5> work too.",
@@ -14399,8 +14399,8 @@
    "text": "도구 모음의 <g1>대기열 시작</g1> 및 <g2>대기열 중지</g2>는 <g3>기본 다운로드 대기열</g3>을 시작하고 중지합니다. 각 버튼 옆의 화살표는 모든 대기열을 나열합니다."
   },
   "d01313dd0d5afa65": {
-   "source": "misterdownloadmanager.com is a static site. Three companies take part in showing it to you:",
-   "text": "misterdownloadmanager.com은 정적 사이트입니다. 다음 세 회사가 이 사이트를 사용자에게 표시하는 데 참여합니다."
+   "source": "bmd.example.com is a static site. Three companies take part in showing it to you:",
+   "text": "bmd.example.com은 정적 사이트입니다. 다음 세 회사가 이 사이트를 사용자에게 표시하는 데 참여합니다."
   },
   "d013797562de4ed8": {
    "source": "<g1>Download in order</g1> — downloads the torrent's files from their start (see below). Click it again to go back to the rarest pieces first.",

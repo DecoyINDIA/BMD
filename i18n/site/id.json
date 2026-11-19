@@ -3751,8 +3751,8 @@
    "text": "Klik kanan ruang kosong di daftar untuk membuka <g1>Tambahkan unduhan baru</g1>, <g2>Pilih semua</g2>, <g3>Atur file</g3>, <g4>Hapus semua filter</g4>, dan <g5>Hapus Semua yang Selesai</g5>."
   },
   "36919d7c5630c182": {
-   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and misterdownloadmanager.com",
-   "text": "Terakhir diperbarui 2026-11-18 · berlaku untuk aplikasi, ekstensi peramban, dan misterdownloadmanager.com"
+   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and bmd.example.com",
+   "text": "Terakhir diperbarui 2026-11-18 · berlaku untuk aplikasi, ekstensi peramban, dan bmd.example.com"
   },
   "36a1df60e5ee30b9": {
    "source": "<g1><x2/></g1> — what <g3>View → Theme</g3> lists; the file's name when there is none.",
@@ -4415,8 +4415,8 @@
    "text": "1,0 dtk"
   },
   "40056f59278920a5": {
-   "source": "BMD (\"BMD\", \"the software\") and the website misterdownloadmanager.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
-   "text": "BMD (\"BMD\", \"perangkat lunak\") dan situs web misterdownloadmanager.com (\"situs\") dibuat oleh Ahmed Nefzaoui dan para kontributor (\"kami\"). Dengan menggunakan perangkat lunak atau situs, Anda menyetujui ketentuan ini. Jika tidak, jangan gunakan perangkat lunak atau situs ini."
+   "source": "BMD (\"BMD\", \"the software\") and the website bmd.example.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
+   "text": "BMD (\"BMD\", \"perangkat lunak\") dan situs web bmd.example.com (\"situs\") dibuat oleh Ahmed Nefzaoui dan para kontributor (\"kami\"). Dengan menggunakan perangkat lunak atau situs, Anda menyetujui ketentuan ini. Jika tidak, jangan gunakan perangkat lunak atau situs ini."
   },
   "400e2d4fd45ae70d": {
    "source": "BMD has to be running for a schedule to fire. It can sit in the tray: closing the main window doesn't quit it.",
@@ -6327,8 +6327,8 @@
    "text": "mengunduh galeri ke dalam folder yang dinamai sesuai galeri tersebut. Lihat <g1>Baris perintah dan otomatisasi</g1>."
   },
   "5d0bbcc71d941fe0": {
-   "source": "misterdownloadmanager.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
-   "text": "Halaman misterdownloadmanager.com sendiri (beranda, unduh, fitur, tema, FAQ); <x1/> menambahkan bantuan dari <x2/> dan berita dari CHANGELOG, dalam 22 bahasa, dan GitHub Pages memublikasikannya"
+   "source": "bmd.example.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
+   "text": "Halaman bmd.example.com sendiri (beranda, unduh, fitur, tema, FAQ); <x1/> menambahkan bantuan dari <x2/> dan berita dari CHANGELOG, dalam 22 bahasa, dan GitHub Pages memublikasikannya"
   },
   "5d199508494f7f75": {
    "source": "Windows, menus and dialogs",
@@ -10019,8 +10019,8 @@
    "text": "<g1>Mulai mengunduh segera saat dialog \"Info File Unduhan\" ditampilkan</g1> — aktif secara default, sehingga unduhan sudah berjalan saat Anda memilih folder."
   },
   "9289eb0f078ac8f3": {
-   "source": "The terms for using BMD and misterdownloadmanager.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
-   "text": "Ketentuan penggunaan BMD dan misterdownloadmanager.com: perangkat lunak gratis di bawah GNU GPL 3.0, digunakan atas risiko Anda sendiri, untuk unduhan yang Anda berhak lakukan."
+   "source": "The terms for using BMD and bmd.example.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
+   "text": "Ketentuan penggunaan BMD dan bmd.example.com: perangkat lunak gratis di bawah GNU GPL 3.0, digunakan atas risiko Anda sendiri, untuk unduhan yang Anda berhak lakukan."
   },
   "92abe6de5cd6999e": {
    "source": "<g1>Hide tab</g1> takes a tab off this download's window and goes back to <g2>Download status</g2>. To bring the tabs back, right-click the tab row and choose <g3>Show hidden tabs</g3>; closing the window and opening it again brings them back too.",
@@ -12291,8 +12291,8 @@
    "text": "Integrasi browser memerlukan satu langkah lagi di setiap browser: menambahkan ekstensi. Di Firefox, klik <g1>Tambahkan ke Firefox</g1> di <g2>halamannya di addons.mozilla.org</g2>; di Chrome, Edge, Brave, Opera, dan Vivaldi, <g3>Tambahkan ke Chrome</g3> di <g4>halamannya di Chrome Web Store</g4>. <g5>Integrasi browser</g5> menunjukkan caranya."
   },
   "b25b5595e4410599": {
-   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open misterdownloadmanager.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
-   "text": "<g1>Bantuan membuka halaman bantuan situs web, dalam bahasa Anda</g1> (<g2>#227</g2>): <g3>Isi bantuan</g3>, <g4>Tutorial</g4>, <g5>Penjadwal dan antrean</g5>, <g6>Unduhan video</g6>, tombol <g7>Bantuan</g7> di Opsi dan Penjadwal, serta tautan tutorial dan bantuan jendela ekstensi peramban membuka dokumen di GitHub (tombol Opsi dan Penjadwal membuka halaman yang tidak ada). Kini mereka membuka misterdownloadmanager.com, di bagian yang sama, dalam bahasa antarmuka jika situs web memilikinya (jika tidak, bahasa Inggris), dan <g8>Halaman Beranda</g8> juga membuka situs web. Bantuan baris perintah dan server MCP menyebutkan panduan situs web. Laporan masalah, rilis, dan sumber tetap di GitHub."
+   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open bmd.example.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
+   "text": "<g1>Bantuan membuka halaman bantuan situs web, dalam bahasa Anda</g1> (<g2>#227</g2>): <g3>Isi bantuan</g3>, <g4>Tutorial</g4>, <g5>Penjadwal dan antrean</g5>, <g6>Unduhan video</g6>, tombol <g7>Bantuan</g7> di Opsi dan Penjadwal, serta tautan tutorial dan bantuan jendela ekstensi peramban membuka dokumen di GitHub (tombol Opsi dan Penjadwal membuka halaman yang tidak ada). Kini mereka membuka bmd.example.com, di bagian yang sama, dalam bahasa antarmuka jika situs web memilikinya (jika tidak, bahasa Inggris), dan <g8>Halaman Beranda</g8> juga membuka situs web. Bantuan baris perintah dan server MCP menyebutkan panduan situs web. Laporan masalah, rilis, dan sumber tetap di GitHub."
   },
   "b26c000488bb45a1": {
    "source": "<g1>Windows</g1>: <x2/>, or <x3/>. The installers on <g4>deno.com</g4> and <g5>nodejs.org</g5> work too.",
@@ -14399,8 +14399,8 @@
    "text": "<g1>Mulai Antrean</g1> dan <g2>Hentikan Antrean</g2> pada bilah alat memulai dan menghentikan <g3>Antrean unduhan utama</g3>. Panah di sebelah setiap tombol mencantumkan setiap antrean."
   },
   "d01313dd0d5afa65": {
-   "source": "misterdownloadmanager.com is a static site. Three companies take part in showing it to you:",
-   "text": "misterdownloadmanager.com adalah situs statis. Tiga perusahaan terlibat dalam menampilkannya kepada Anda:"
+   "source": "bmd.example.com is a static site. Three companies take part in showing it to you:",
+   "text": "bmd.example.com adalah situs statis. Tiga perusahaan terlibat dalam menampilkannya kepada Anda:"
   },
   "d013797562de4ed8": {
    "source": "<g1>Download in order</g1> — downloads the torrent's files from their start (see below). Click it again to go back to the rarest pieces first.",

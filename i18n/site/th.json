@@ -3751,8 +3751,8 @@
    "text": "คลิกขวาที่พื้นที่ว่างของรายการเพื่อเลือก <g1>เพิ่มการดาวน์โหลดใหม่</g1>, <g2>เลือกทั้งหมด</g2>, <g3>จัดเรียงไฟล์</g3>, <g4>ล้างตัวกรองทั้งหมด</g4> หรือ <g5>ลบที่เสร็จสมบูรณ์ทั้งหมด</g5>"
   },
   "36919d7c5630c182": {
-   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and misterdownloadmanager.com",
-   "text": "อัปเดตล่าสุด 18 พฤศจิกายน 2569 · ใช้กับแอป ส่วนขยายเบราว์เซอร์ และ misterdownloadmanager.com"
+   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and bmd.example.com",
+   "text": "อัปเดตล่าสุด 18 พฤศจิกายน 2569 · ใช้กับแอป ส่วนขยายเบราว์เซอร์ และ bmd.example.com"
   },
   "36a1df60e5ee30b9": {
    "source": "<g1><x2/></g1> — what <g3>View → Theme</g3> lists; the file's name when there is none.",
@@ -4415,8 +4415,8 @@
    "text": "1.0 วินาที"
   },
   "40056f59278920a5": {
-   "source": "BMD (\"BMD\", \"the software\") and the website misterdownloadmanager.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
-   "text": "BMD (\"BMD\", \"ซอฟต์แวร์\") และเว็บไซต์ misterdownloadmanager.com (\"เว็บไซต์\") สร้างขึ้นโดย Ahmed Nefzaoui และผู้ร่วมพัฒนา (\"เรา\") การใช้ซอฟต์แวร์หรือเว็บไซต์ถือว่าคุณยอมรับข้อกำหนดเหล่านี้ หากคุณไม่ยอมรับ โปรดอย่าใช้งาน"
+   "source": "BMD (\"BMD\", \"the software\") and the website bmd.example.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
+   "text": "BMD (\"BMD\", \"ซอฟต์แวร์\") และเว็บไซต์ bmd.example.com (\"เว็บไซต์\") สร้างขึ้นโดย Ahmed Nefzaoui และผู้ร่วมพัฒนา (\"เรา\") การใช้ซอฟต์แวร์หรือเว็บไซต์ถือว่าคุณยอมรับข้อกำหนดเหล่านี้ หากคุณไม่ยอมรับ โปรดอย่าใช้งาน"
   },
   "400e2d4fd45ae70d": {
    "source": "BMD has to be running for a schedule to fire. It can sit in the tray: closing the main window doesn't quit it.",
@@ -6327,8 +6327,8 @@
    "text": "ดาวน์โหลดแกลเลอรีลงในโฟลเดอร์ที่ตั้งชื่อตามแกลเลอรีนั้น ดู <g1>บรรทัดคำสั่งและการทำงานอัตโนมัติ</g1>"
   },
   "5d0bbcc71d941fe0": {
-   "source": "misterdownloadmanager.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
-   "text": "หน้าเว็บของ misterdownloadmanager.com เอง (หน้าแรก, ดาวน์โหลด, คุณสมบัติ, ชุดรูปแบบ, คำถามที่พบบ่อย); <x1/> เพิ่มความช่วยเหลือจาก <x2/> และข่าวสารจาก CHANGELOG ใน 22 ภาษา และ GitHub Pages เป็นผู้เผยแพร่"
+   "source": "bmd.example.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
+   "text": "หน้าเว็บของ bmd.example.com เอง (หน้าแรก, ดาวน์โหลด, คุณสมบัติ, ชุดรูปแบบ, คำถามที่พบบ่อย); <x1/> เพิ่มความช่วยเหลือจาก <x2/> และข่าวสารจาก CHANGELOG ใน 22 ภาษา และ GitHub Pages เป็นผู้เผยแพร่"
   },
   "5d199508494f7f75": {
    "source": "Windows, menus and dialogs",
@@ -10019,8 +10019,8 @@
    "text": "<g1>เริ่มดาวน์โหลดทันทีขณะแสดงกล่องโต้ตอบ \"ข้อมูลไฟล์ดาวน์โหลด\"</g1> — เปิดอยู่โดยค่าเริ่มต้น ดังนั้นการดาวน์โหลดจึงกำลังดำเนินอยู่ขณะที่คุณเลือกโฟลเดอร์"
   },
   "9289eb0f078ac8f3": {
-   "source": "The terms for using BMD and misterdownloadmanager.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
-   "text": "ข้อกำหนดในการใช้งาน BMD และ misterdownloadmanager.com: ซอฟต์แวร์ฟรีภายใต้ GNU GPL 3.0 ใช้งานโดยยอมรับความเสี่ยงเอง สำหรับการดาวน์โหลดที่คุณมีสิทธิ์ทำ"
+   "source": "The terms for using BMD and bmd.example.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
+   "text": "ข้อกำหนดในการใช้งาน BMD และ bmd.example.com: ซอฟต์แวร์ฟรีภายใต้ GNU GPL 3.0 ใช้งานโดยยอมรับความเสี่ยงเอง สำหรับการดาวน์โหลดที่คุณมีสิทธิ์ทำ"
   },
   "92abe6de5cd6999e": {
    "source": "<g1>Hide tab</g1> takes a tab off this download's window and goes back to <g2>Download status</g2>. To bring the tabs back, right-click the tab row and choose <g3>Show hidden tabs</g3>; closing the window and opening it again brings them back too.",
@@ -12291,8 +12291,8 @@
    "text": "การเชื่อมต่อกับเบราว์เซอร์ต้องทำอีกขั้นตอนในแต่ละเบราว์เซอร์ นั่นคือการเพิ่มส่วนขยาย ใน Firefox ให้คลิก <g1>เพิ่มไปยัง Firefox</g1> ที่ <g2>หน้าส่วนขยายบน addons.mozilla.org</g2> ส่วนใน Chrome, Edge, Brave, Opera และ Vivaldi ให้คลิก <g3>เพิ่มไปยัง Chrome</g3> ที่ <g4>หน้าส่วนขยายใน Chrome Web Store</g4> ดูวิธีได้ที่ <g5>การเชื่อมต่อกับเบราว์เซอร์</g5>"
   },
   "b25b5595e4410599": {
-   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open misterdownloadmanager.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
-   "text": "<g1>วิธีใช้เปิดหน้าวิธีใช้ของเว็บไซต์ ในภาษาของคุณ</g1> (<g2>#227</g2>): <g3>เนื้อหาวิธีใช้</g3>, <g4>บทช่วยสอน</g4>, <g5>ตัวจัดกำหนดการและคิว</g5>, <g6>ดาวน์โหลดวิดีโอ</g6>, ปุ่ม <g7>วิธีใช้</g7> ของ ตัวเลือก และ ตัวจัดกำหนดการ และลิงก์บทช่วยสอนและวิธีใช้ของหน้าต่างส่วนขยายเบราว์เซอร์ที่เคยเปิดเอกสารบน GitHub (ปุ่ม ตัวเลือก และ ตัวจัดกำหนดการ เปิดหน้าเว็บที่ไม่มีอยู่) ตอนนี้จะเปิด misterdownloadmanager.com ในส่วนเดียวกัน ในภาษาของอินเทอร์เฟซเมื่อเว็บไซต์มี (มิฉะนั้นจะเป็นภาษาอังกฤษ) และ <g8>หน้าแรก</g8> ก็เปิดเว็บไซต์ด้วย วิธีใช้ของบรรทัดคำสั่งและเซิร์ฟเวอร์ MCP จะอ้างถึงคู่มือของเว็บไซต์ รายงานปัญหา การเผยแพร่ และซอร์สโค้ดยังคงอยู่บน GitHub"
+   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open bmd.example.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
+   "text": "<g1>วิธีใช้เปิดหน้าวิธีใช้ของเว็บไซต์ ในภาษาของคุณ</g1> (<g2>#227</g2>): <g3>เนื้อหาวิธีใช้</g3>, <g4>บทช่วยสอน</g4>, <g5>ตัวจัดกำหนดการและคิว</g5>, <g6>ดาวน์โหลดวิดีโอ</g6>, ปุ่ม <g7>วิธีใช้</g7> ของ ตัวเลือก และ ตัวจัดกำหนดการ และลิงก์บทช่วยสอนและวิธีใช้ของหน้าต่างส่วนขยายเบราว์เซอร์ที่เคยเปิดเอกสารบน GitHub (ปุ่ม ตัวเลือก และ ตัวจัดกำหนดการ เปิดหน้าเว็บที่ไม่มีอยู่) ตอนนี้จะเปิด bmd.example.com ในส่วนเดียวกัน ในภาษาของอินเทอร์เฟซเมื่อเว็บไซต์มี (มิฉะนั้นจะเป็นภาษาอังกฤษ) และ <g8>หน้าแรก</g8> ก็เปิดเว็บไซต์ด้วย วิธีใช้ของบรรทัดคำสั่งและเซิร์ฟเวอร์ MCP จะอ้างถึงคู่มือของเว็บไซต์ รายงานปัญหา การเผยแพร่ และซอร์สโค้ดยังคงอยู่บน GitHub"
   },
   "b26c000488bb45a1": {
    "source": "<g1>Windows</g1>: <x2/>, or <x3/>. The installers on <g4>deno.com</g4> and <g5>nodejs.org</g5> work too.",
@@ -14395,8 +14395,8 @@
    "text": "<g1>เริ่มคิว</g1> และ <g2>หยุดคิว</g2> บนแถบเครื่องมือจะเริ่มและหยุด <g3>คิวการดาวน์โหลดหลัก</g3> ลูกศรถัดจากแต่ละปุ่มจะแสดงรายการคิวทั้งหมด"
   },
   "d01313dd0d5afa65": {
-   "source": "misterdownloadmanager.com is a static site. Three companies take part in showing it to you:",
-   "text": "misterdownloadmanager.com เป็นเว็บไซต์แบบคงที่ มีสามบริษัทที่เกี่ยวข้องกับการแสดงเว็บไซต์นี้ให้คุณเห็น:"
+   "source": "bmd.example.com is a static site. Three companies take part in showing it to you:",
+   "text": "bmd.example.com เป็นเว็บไซต์แบบคงที่ มีสามบริษัทที่เกี่ยวข้องกับการแสดงเว็บไซต์นี้ให้คุณเห็น:"
   },
   "d013797562de4ed8": {
    "source": "<g1>Download in order</g1> — downloads the torrent's files from their start (see below). Click it again to go back to the rarest pieces first.",

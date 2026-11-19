@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds misterdownloadmanager.com into target/site (GitHub Pages publishes it, .github/workflows/
+"""Builds bmd.example.com into target/site (GitHub Pages publishes it, .github/workflows/
 pages.yml). No framework: website/ holds the hand-written home page, styles, scripts and assets;
 website/content/ the pages written as Markdown (FAQ, legal); the rest comes from the repository
 itself so the site never drifts from it: docs/*.md become the help pages, CHANGELOG.md the news
@@ -42,7 +42,9 @@ ROOT = Path(__file__).resolve().parents[2]
 WEB = ROOT / "website"
 CONTENT = WEB / "content"
 OUT = ROOT / "target" / "site"
-SITE = "https://misterdownloadmanager.com"
+# A placeholder until BMD has a domain of its own (example.com is reserved: it never resolves to
+# anyone's site). Change it here, in crates/app/src/help.rs (SITE) and wherever else it is written.
+SITE = "https://bmd.example.com"
 REPO = "https://github.com/DecoyINDIA/BMD"
 # The Firefox add-on's listing (crates/ipc/src/extension.rs FIREFOX_PAGE): {{AMO}} in pages, and
 # <!--@amo--> for its Add to Firefox button.
@@ -180,7 +182,7 @@ FAQ_MD: list[tuple[str, str, str]] = []
 
 # The visit counter (privacy.md says what it records). Statcounter's own code, as given.
 STATCOUNTER = """<!-- Default Statcounter code for BMD
-https://misterdownloadmanager.com/ -->
+https://bmd.example.com/ -->
 <script type="text/javascript">
 var sc_project=13364153;
 var sc_invisible=1;
@@ -1169,33 +1171,28 @@ def build_contributors() -> None:
 
 # ---- What others say: the stores' figures, quotes, /press.html ------------------------------------
 
-TRENDSHIFT = "https://trendshift.io/repositories/337427"
-SOURCEFORGE = "https://sourceforge.net/projects/mister-download-manager.mirror/files/"
 # The figures the home page and /press.html show, as each source showed them on FIGURES_CHECKED,
 # rounded down. Read them again where they come from before changing them (and the date): the
 # Chrome Web Store listing (users, rating); the add-ons API, addons.mozilla.org/api/v5/addons/addon/
 # mister-download-manager/ (average_daily_users, ratings); GitHub's releases API, the
 # download_count of the app's own files in every release (installers, zips, .dmg, AppImage, .deb,
-# .rpm, .tar.gz: not the checksums, symbols or extensions); Trendshift's page (its placements).
+# .rpm, .tar.gz: not the checksums, symbols or extensions).
 FIGURES_CHECKED = "2026-11-18"
 FIGURES = [
     # (field name, where it comes from, value, its fine print)
     ("Chrome Web Store", CWS, "50,000+ users", "4.9 out of 5, from 43 ratings"),
     ("Firefox Add-ons", AMO, "3,800+ daily users", "4.7 out of 5, from 7 ratings"),
     ("GitHub Releases", f"{REPO}/releases", "280,000+ downloads", "of the app, every version together"),
-    ("Trendshift", TRENDSHIFT, "#1 in Rust",
-     'repository of the day on <time datetime="2026-11-09" translate="no">2026-11-09</time>'),
 ]
 # Where BMD comes from, for /press.html's "Available on": (name, link, what it is). The official
 # places first; the community's packages are made by volunteers, each checked to install the
 # release's own files (their checksums match SHA256SUMS.txt) when it was added.
 OFFICIAL = [
-    ("GitHub Releases", f"{REPO}/releases", "Every file of every version, with SHA256SUMS.txt and its signature"),
-    ("misterdownloadmanager.com", "/download.html", "This website: its download links lead to GitHub Releases"),
+    ("GitHub Releases", f"{REPO}/releases", "Every file of every version, with SHA256SUMS.txt"),
+    ("bmd.example.com", "/download.html", "This website: its download links lead to GitHub Releases"),
     ("Chrome Web Store", CWS, "The browser extension, for Chrome, Edge, Brave, Opera and Vivaldi"),
     ("Firefox Add-ons", AMO, "The browser extension for Firefox"),
     ("WinGet", "/download.html#winget", "Windows' package manager installs the setup from GitHub Releases"),
-    ("SourceForge mirror", SOURCEFORGE, "An automatic, exact copy of the GitHub releases; SourceForge shows ads around its downloads"),
 ]
 COMMUNITY = [
     ("AUR: bmd-bin", "https://aur.archlinux.org/packages/bmd-bin", "Arch Linux, from the release's .tar.gz"),
@@ -1523,7 +1520,7 @@ def fill(text: str) -> str:
     text = text.replace("<!--@crew-->", crew_pile()).replace("<!--@signed-->", signed_sheet())
     text = text.replace("<!--@fields-->", waybill_fields()).replace("<!--@barcode-->", barcode.svg(f"BMD {VERSION}"))
     return (text.replace("{{VERSION}}", VERSION).replace("{{REPO}}", REPO).replace("{{SITE}}", SITE)
-            .replace("{{SPONSORS}}", SPONSORS).replace("{{SOURCEFORGE}}", SOURCEFORGE).replace("{{SOFTWARE_LD}}", json.dumps(SOFTWARE_LD, ensure_ascii=False, separators=(",", ":"))))
+            .replace("{{SPONSORS}}", SPONSORS).replace("{{SOFTWARE_LD}}", json.dumps(SOFTWARE_LD, ensure_ascii=False, separators=(",", ":"))))
 
 
 def build_templated(name: str, path: str, section: str, priority: str) -> None:
@@ -1919,7 +1916,10 @@ def copy_static() -> None:
     schema = ROOT / "docs" / "automation-api.schema.json"
     if schema.is_file():
         shutil.copy2(schema, OUT / "automation-api.schema.json")
-    (OUT / "CNAME").write_text("misterdownloadmanager.com\n", "utf-8")
+    # GitHub Pages serves the custom domain CNAME names: none while SITE is the placeholder.
+    host = SITE.split("://", 1)[1]
+    if not host.endswith(".example.com"):
+        (OUT / "CNAME").write_text(host + "\n", "utf-8")
     (OUT / ".nojekyll").write_text("", "utf-8")
     (OUT / "site.webmanifest").write_text(json.dumps({
         "name": NAME, "short_name": "BMD", "start_url": "/", "display": "browser",

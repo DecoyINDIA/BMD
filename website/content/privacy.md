@@ -2,7 +2,7 @@
 title: Privacy policy
 description: What BMD, its browser extension and this website do with your data: the app and extension collect nothing; the website counts visits with Statcounter.
 lede: Short version: the BMD app and its browser extension don't collect anything about you. No accounts, no analytics, no telemetry, no ads. This website counts its visits with Statcounter.
-fine: Last updated {{TODAY}} · applies to the app, the browser extension and misterdownloadmanager.com
+fine: Last updated {{TODAY}} · applies to the app, the browser extension and bmd.example.com
 priority: 0.4
 ---
 
@@ -77,7 +77,7 @@ Its permissions, and why: *downloads* to see and hand over downloads; *cookies* 
 
 ## This website
 
-misterdownloadmanager.com is a static site. Three companies take part in showing it to you:
+bmd.example.com is a static site. Three companies take part in showing it to you:
 
 - **GitHub Pages** hosts it. GitHub receives your IP address and browser details when you visit and may keep them in its server logs for security; see the [GitHub Privacy Statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement). Download links lead to GitHub Releases.
 - **Cloudflare** sits in front of the site: every request passes through its network, which sees your IP address and browser details, protects the site from attacks and may set a cookie needed for that. See [Cloudflare's privacy policy](https://www.cloudflare.com/privacypolicy/).

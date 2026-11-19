@@ -3751,8 +3751,8 @@
    "text": "Klik met de rechtermuisknop op de lege ruimte van de lijst voor <g1>Nieuwe download toevoegen</g1>, <g2>Alles selecteren</g2>, <g3>Bestanden rangschikken</g3>, <g4>Alle filters wissen</g4> en <g5>Alle voltooide downloads verwijderen</g5>."
   },
   "36919d7c5630c182": {
-   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and misterdownloadmanager.com",
-   "text": "Laatst bijgewerkt op 18-11-2026 · geldt voor de app, de browserextensie en misterdownloadmanager.com"
+   "source": "Last updated 2026-11-18 · applies to the app, the browser extension and bmd.example.com",
+   "text": "Laatst bijgewerkt op 18-11-2026 · geldt voor de app, de browserextensie en bmd.example.com"
   },
   "36a1df60e5ee30b9": {
    "source": "<g1><x2/></g1> — what <g3>View → Theme</g3> lists; the file's name when there is none.",
@@ -4415,8 +4415,8 @@
    "text": "1,0 s"
   },
   "40056f59278920a5": {
-   "source": "BMD (\"BMD\", \"the software\") and the website misterdownloadmanager.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
-   "text": "BMD (\"BMD\", \"de software\") en de website misterdownloadmanager.com (\"de site\") zijn gemaakt door Ahmed Nefzaoui en medewerkers (\"wij\"). Door de software of de site te gebruiken, accepteert u deze voorwaarden. Als u dit niet doet, gebruik ze dan alstublieft niet."
+   "source": "BMD (\"BMD\", \"the software\") and the website bmd.example.com (\"the site\") are made by Ahmed Nefzaoui and contributors (\"we\"). By using the software or the site you accept these terms. If you don't, please don't use them.",
+   "text": "BMD (\"BMD\", \"de software\") en de website bmd.example.com (\"de site\") zijn gemaakt door Ahmed Nefzaoui en medewerkers (\"wij\"). Door de software of de site te gebruiken, accepteert u deze voorwaarden. Als u dit niet doet, gebruik ze dan alstublieft niet."
   },
   "400e2d4fd45ae70d": {
    "source": "BMD has to be running for a schedule to fire. It can sit in the tray: closing the main window doesn't quit it.",
@@ -6327,8 +6327,8 @@
    "text": "downloadt een galerij in een map die ernaar is genoemd. Zie <g1>Opdrachtregel en automatisering</g1>."
   },
   "5d0bbcc71d941fe0": {
-   "source": "misterdownloadmanager.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
-   "text": "De eigen pagina's van misterdownloadmanager.com (home, download, features, themes, FAQ); <x1/> voegt de help van <x2/> en het nieuws van de CHANGELOG toe, in 22 talen, en GitHub Pages publiceert het"
+   "source": "bmd.example.com's own pages (home, download, features, themes, FAQ); <x1/> adds the help from <x2/> and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it",
+   "text": "De eigen pagina's van bmd.example.com (home, download, features, themes, FAQ); <x1/> voegt de help van <x2/> en het nieuws van de CHANGELOG toe, in 22 talen, en GitHub Pages publiceert het"
   },
   "5d199508494f7f75": {
    "source": "Windows, menus and dialogs",
@@ -10019,8 +10019,8 @@
    "text": "<g1>Direct beginnen met downloaden terwijl het dialoogvenster \"Bestandsinfo downloaden\" wordt weergegeven</g1> — standaard ingeschakeld, zodat de download al bezig is terwijl u een map kiest."
   },
   "9289eb0f078ac8f3": {
-   "source": "The terms for using BMD and misterdownloadmanager.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
-   "text": "De voorwaarden voor het gebruik van BMD en misterdownloadmanager.com: gratis software onder de GNU GPL 3.0, gebruikt op eigen risico, voor downloads die u rechtmatig mag maken."
+   "source": "The terms for using BMD and bmd.example.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.",
+   "text": "De voorwaarden voor het gebruik van BMD en bmd.example.com: gratis software onder de GNU GPL 3.0, gebruikt op eigen risico, voor downloads die u rechtmatig mag maken."
   },
   "92abe6de5cd6999e": {
    "source": "<g1>Hide tab</g1> takes a tab off this download's window and goes back to <g2>Download status</g2>. To bring the tabs back, right-click the tab row and choose <g3>Show hidden tabs</g3>; closing the window and opening it again brings them back too.",
@@ -12291,8 +12291,8 @@
    "text": "Browserintegratie vereist nog één stap in elke browser: het toevoegen van de extensie. Klik in Firefox op <g1>Toevoegen aan Firefox</g1> op <g2>de pagina op addons.mozilla.org</g2>; in Chrome, Edge, Brave, Opera en Vivaldi op <g3>Toevoegen aan Chrome</g3> op <g4>de pagina in de Chrome Web Store</g4>. <g5>Browserintegratie</g5> laat zien hoe."
   },
   "b25b5595e4410599": {
-   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open misterdownloadmanager.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
-   "text": "<g1>Help opent de helppagina's van de website, in uw taal</g1> (<g2>#227</g2>): <g3>Hulpinhoud</g3>, <g4>Handleidingen</g4>, <g5>Planner en wachtrijen</g5>, <g6>Video downloads</g6>, de <g7>Help</g7>-knoppen van Opties en de Planner, en de tutorial- en helplinks van het browserextensievenster openden de documentatie op GitHub (de knoppen Opties en Planner een pagina die er niet was). Ze openen nu misterdownloadmanager.com, op dezelfde sectie, in de interfacetaal wanneer de website die heeft (anders Engels), en <g8>Startpagina</g8> opent ook de website. De help van de opdrachtregel en de MCP-server verwijzen naar de handleiding van de website. Probleemrapporten, releases en de bron blijven op GitHub."
+   "source": "<g1>Help opens the website's help pages, in your language</g1> (<g2>#227</g2>): <g3>Help contents</g3>, <g4>Tutorials</g4>, <g5>Scheduler and queues</g5>, <g6>Video downloads</g6>, the <g7>Help</g7> buttons of Options and the Scheduler, and the browser extension window's tutorial and help links opened the docs on GitHub (the Options and Scheduler buttons a page that wasn't there). They open bmd.example.com now, at the same section, in the interface language when the website has it (else English), and <g8>Home Page</g8> opens the website too. The command line's and the MCP server's help name the website's guide. Problem reports, releases and the source stay on GitHub.",
+   "text": "<g1>Help opent de helppagina's van de website, in uw taal</g1> (<g2>#227</g2>): <g3>Hulpinhoud</g3>, <g4>Handleidingen</g4>, <g5>Planner en wachtrijen</g5>, <g6>Video downloads</g6>, de <g7>Help</g7>-knoppen van Opties en de Planner, en de tutorial- en helplinks van het browserextensievenster openden de documentatie op GitHub (de knoppen Opties en Planner een pagina die er niet was). Ze openen nu bmd.example.com, op dezelfde sectie, in de interfacetaal wanneer de website die heeft (anders Engels), en <g8>Startpagina</g8> opent ook de website. De help van de opdrachtregel en de MCP-server verwijzen naar de handleiding van de website. Probleemrapporten, releases en de bron blijven op GitHub."
   },
   "b26c000488bb45a1": {
    "source": "<g1>Windows</g1>: <x2/>, or <x3/>. The installers on <g4>deno.com</g4> and <g5>nodejs.org</g5> work too.",
@@ -14395,8 +14395,8 @@
    "text": "<g1>Wachtrij starten</g1> en <g2>Wachtrij stoppen</g2> op de werkbalk starten en stoppen de <g3>Hoofd-downloadwachtrij</g3>. De pijl naast elke knop toont elke wachtrij."
   },
   "d01313dd0d5afa65": {
-   "source": "misterdownloadmanager.com is a static site. Three companies take part in showing it to you:",
-   "text": "misterdownloadmanager.com is een statische site. Drie bedrijven helpen mee om deze aan u te tonen:"
+   "source": "bmd.example.com is a static site. Three companies take part in showing it to you:",
+   "text": "bmd.example.com is een statische site. Drie bedrijven helpen mee om deze aan u te tonen:"
   },
   "d013797562de4ed8": {
    "source": "<g1>Download in order</g1> — downloads the torrent's files from their start (see below). Click it again to go back to the rarest pieces first.",

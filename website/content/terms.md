@@ -1,6 +1,6 @@
 ---
 title: Terms of use
-description: The terms for using BMD and misterdownloadmanager.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.
+description: The terms for using BMD and bmd.example.com: free software under the GNU GPL 3.0, used at your own risk, for downloads you have the right to make.
 lede: BMD is free software. These terms are short because the GNU General Public License already says most of it.
 fine: Last updated {{TODAY}}
 priority: 0.3
@@ -19,7 +19,7 @@ priority: 0.3
 
 ## 1. Who we are
 
-BMD ("BMD", "the software") and the website misterdownloadmanager.com ("the site") are made by Ahmed Nefzaoui and contributors ("we"). By using the software or the site you accept these terms. If you don't, please don't use them.
+BMD ("BMD", "the software") and the website bmd.example.com ("the site") are made by Ahmed Nefzaoui and contributors ("we"). By using the software or the site you accept these terms. If you don't, please don't use them.
 
 ## 2. The software's licence
 
