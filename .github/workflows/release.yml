@@ -476,12 +476,20 @@ jobs:
             # Links into the repository (docs/x.md) would resolve against the release's page:
             # point them at the tagged files.
             $notes = $m.Groups[1].Value.Trim() -replace '\]\((?![a-z]+:|#)([^)\s]+)\)', '](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/$1)'
+            # GitHub refuses release notes over 125000 characters (HTTP 422): a longer section
+            # (the first release carries all of its history) is replaced by a link to the file.
+            if (($invite + $notes + $thanks).Length -gt 120000) {
+              $notes = "Every change is in the [changelog](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/CHANGELOG.md)."
+            }
             Set-Content -Encoding utf8 notes.md ($invite + $notes + $thanks)
             gh release create "${{ github.ref_name }}" --latest --title $title --notes-file notes.md $all
           } else {
             Set-Content -Encoding utf8 notes.md ($invite + $thanks.Trim())
             gh release create "${{ github.ref_name }}" --latest --title $title --notes-file notes.md --generate-notes $all
           }
+          # A failing native command doesn't stop a pwsh step: without this, a refused release
+          # (as above) would leave the job green and no release behind.
+          if ($LASTEXITCODE -ne 0) { throw "gh release create failed ($LASTEXITCODE): no release" }
           # The website links to the latest published release: rebuild it now that the files are
           # there (a release made with this token starts no workflow by itself).
           gh workflow run pages.yml --ref main
