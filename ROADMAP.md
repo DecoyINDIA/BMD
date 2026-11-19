@@ -564,6 +564,8 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 These ship in the next version.
 
+- ✅ Updates are checked against iDM's own release key, the key of the repository the app updates
+  from (rather than upstream's), and a release can't be published unsigned or signed by another key
 - ✅ A Docker image of the headless server is published with each release, at
   `ghcr.io/anefzaoui/misterdownloadmanager` (x86-64 only for now, thanks to
   [@kngkatak](https://github.com/kngkatak))

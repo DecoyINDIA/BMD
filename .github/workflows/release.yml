@@ -444,22 +444,27 @@ jobs:
           $files = Get-ChildItem dist -File | Sort-Object Name
           $sums = $files | ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)" }
           Set-Content -Encoding ascii dist/SHA256SUMS.txt $sums
-          # Signed with MDM's release key (fingerprint 5826D399249DE856EA087D802E293C28E8A69D74):
-          # MDM updates itself only from a list it signed
-          # (crates/tools/src/update.rs; the public key is crates/tools/keys/mdm-release.asc).
-          if ($env:MDM_RELEASE_KEY) {
-            $key = Join-Path $env:RUNNER_TEMP "mdm-release.asc"
-            Set-Content -Encoding ascii $key $env:MDM_RELEASE_KEY
-            gpg --batch --quiet --import $key
-            Remove-Item $key
-            gpg --batch --yes --detach-sign --local-user 5826D399249DE856EA087D802E293C28E8A69D74 `
-              --output dist/SHA256SUMS.txt.sig dist/SHA256SUMS.txt
-            if ($LASTEXITCODE) { throw "signing SHA256SUMS.txt failed" }
-            gpg --batch --verify dist/SHA256SUMS.txt.sig dist/SHA256SUMS.txt
-            if ($LASTEXITCODE) { throw "the signature of SHA256SUMS.txt doesn't verify" }
-          } else {
-            Write-Warning "MDM_RELEASE_KEY isn't set: this release is unsigned, and MDM won't update to it by itself."
-          }
+          # Signed with this repository's release key (fingerprint
+          # ED4D65B61F3809DA1AF22D954EFF92B31405DDFB): the app updates itself only from a list it
+          # signed (crates/tools/src/update.rs; the public key is crates/tools/keys/mdm-release.asc).
+          # No key, no release: an unsigned release is one no installed copy can update to.
+          $fpr = "ED4D65B61F3809DA1AF22D954EFF92B31405DDFB"
+          if (-not $env:MDM_RELEASE_KEY) { throw "the MDM_RELEASE_KEY secret isn't set: no unsigned release" }
+          $key = Join-Path $env:RUNNER_TEMP "mdm-release.asc"
+          Set-Content -Encoding ascii $key $env:MDM_RELEASE_KEY
+          gpg --batch --quiet --import $key
+          $imported = $LASTEXITCODE
+          Remove-Item $key
+          if ($imported) { throw "the MDM_RELEASE_KEY secret can't be imported" }
+          gpg --batch --yes --detach-sign --local-user $fpr `
+            --output dist/SHA256SUMS.txt.sig dist/SHA256SUMS.txt
+          if ($LASTEXITCODE) { throw "signing SHA256SUMS.txt failed: is MDM_RELEASE_KEY the key $fpr?" }
+          # Checked the way the app checks it: against the public key built into it, alone.
+          $pub = Join-Path $env:RUNNER_TEMP "gnupg-pub"
+          New-Item -ItemType Directory -Force $pub | Out-Null
+          gpg --homedir $pub --batch --quiet --import crates/tools/keys/mdm-release.asc
+          gpg --homedir $pub --batch --verify dist/SHA256SUMS.txt.sig dist/SHA256SUMS.txt
+          if ($LASTEXITCODE) { throw "SHA256SUMS.txt.sig doesn't verify with crates/tools/keys/mdm-release.asc" }
           # Notes: the version's section of CHANGELOG.md ("## [X.Y.Z]" up to the next "## "),
           # else GitHub's list of changes since the last tag; first, the invitation to try the
           # macOS builds when they are there (Linux's files are no longer "-experimental").
