@@ -4,28 +4,23 @@
 
 # Black Marlin Downloader
 
-Black Marlin Downloader (BMD) is a free, open-source download manager maintained by DecoyINDIA. It runs on Windows and Linux, with experimental macOS support.
+Losing your connection halfway through a big download shouldn't cost you the first half. With Black Marlin, you can pick up where you left off when the server supports resume. You can also queue your next few files and let them run while you sleep.
 
-![BMD segmented downloads. Four parallel connections write different segments to the same file.](docs/images/segmented-download.svg)
+**[Download Black Marlin for Windows or Linux](https://github.com/DecoyINDIA/BMD/releases)**
 
-## Features
+Free and open source. No ads, trials, or sign-up. Experimental macOS builds are available on the same releases page.
 
-- Split downloads across multiple connections and resume interrupted transfers.
-- Organize downloads into queues and schedule when they run.
-- Send downloads from your browser to BMD.
-- Open magnet links and download files with BitTorrent.
+![Four parts of a file download together, pause with their progress saved, then resume and finish.](docs/images/segmented-download.svg)
 
-## App preview
+## Make room for the way you work
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/images/main-dark.webp">
-  <img src="docs/images/main-light.webp" alt="BMD on Windows with download categories, a toolbar, and active and completed downloads">
-</picture>
+- **Get large files sooner.** Black Marlin can fetch several parts of a file at once when the server supports it. That helps you use more of the bandwidth you already have.
+- **Keep your call running smoothly.** Set a speed limit while you're on a video call, or schedule the whole queue for after work.
+- **Send a file straight from your browser.** The browser extension hands the download to Black Marlin so you can close the tab and carry on.
+- **Pick the files you want from a torrent.** Open a magnet link, select what you need, and follow its progress alongside your other downloads.
 
-## Project links
+The [user guide](docs/README.md) walks you through your first download, browser setup, and scheduling.
 
-- [GitHub Releases](https://github.com/DecoyINDIA/BMD/releases)
-- [User guide](docs/README.md)
-- [Build from source](CONTRIBUTING.md#getting-set-up)
-- [Report a problem](https://github.com/DecoyINDIA/BMD/issues/new/choose)
-- [View the roadmap](ROADMAP.md)
+## Get involved
+
+You can [build Black Marlin from source](CONTRIBUTING.md#getting-set-up), [report a problem](https://github.com/DecoyINDIA/BMD/issues/new/choose), or [see what's on the roadmap](ROADMAP.md).
