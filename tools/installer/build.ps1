@@ -11,11 +11,11 @@
 # Needs Inno Setup 6.3 or later (ISCC.exe on PATH, in $env:ISCC, or in its default folders), and
 # Rust's target for the processor (rustup target add aarch64-pc-windows-msvc / i686-pc-windows-msvc).
 # The programs are built in target/<Rust's target>/release.
-# Code signing: set $env:MDM_SIGN_COMMAND to a signtool command line with $f for the file, e.g.
+# Code signing: set $env:BMD_SIGN_COMMAND to a signtool command line with $f for the file, e.g.
 #   signtool sign /fd sha256 /tr http://timestamp.digicert.com /td sha256 /a $f
 # Inno Setup then signs the programs (in place, so the zip carries them signed too), the
 # installer and its uninstaller.
-param([switch]$NoBuild, [string]$SignCommand = $env:MDM_SIGN_COMMAND,
+param([switch]$NoBuild, [string]$SignCommand = $env:BMD_SIGN_COMMAND,
   [ValidateSet("x64", "arm64", "x86")][string]$Arch = "x64")
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
@@ -56,7 +56,7 @@ if (-not $iscc) { throw "Inno Setup 6 (ISCC.exe) not found" }
 
 New-Item -ItemType Directory -Force $dist | Out-Null
 $isccArgs = @("/Qp", "/DAppVersion=$version", "/DArch=$Arch", "/DBin=$bin")
-if ($SignCommand) { $isccArgs += @("/DSign", "/Smdmsign=$SignCommand") }
+if ($SignCommand) { $isccArgs += @("/DSign", "/Sbmdsign=$SignCommand") }
 & $iscc @isccArgs (Join-Path $PSScriptRoot "bmd.iss")
 if ($LASTEXITCODE) { throw "ISCC failed" }
 

@@ -1223,8 +1223,8 @@
    "text": "أدوار الفريق"
   },
   "1171655e77148bd2": {
-   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/anefzaoui/misterdownloadmanager</g2> under the GNU GPL, version 3.",
-   "text": "كل إصدار، مع ملاحظاته وملفاته، موجود على <g1>GitHub Releases</g1>. شفرة المصدر موجودة على <g2>github.com/anefzaoui/misterdownloadmanager</g2> بموجب ترخيص GNU GPL، الإصدار 3."
+   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/DecoyINDIA/BMD</g2> under the GNU GPL, version 3.",
+   "text": "كل إصدار، مع ملاحظاته وملفاته، موجود على <g1>GitHub Releases</g1>. شفرة المصدر موجودة على <g2>github.com/DecoyINDIA/BMD</g2> بموجب ترخيص GNU GPL، الإصدار 3."
   },
   "1173fd2e0a9c235b": {
    "source": "The app has no accounts, telemetry or tracking",
@@ -14299,8 +14299,8 @@
    "text": "تحفظ مقاطع الفيديو في مجلد داخل <g1>حفظ في</g1>، يحمل اسم القائمة، ويحفظ كل مقطع بعنوانه."
   },
   "ceb8f4f5a72cba4a": {
-   "source": "Every signed file is built from the public source code at <g1>github.com/anefzaoui/misterdownloadmanager</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
-   "text": "يتم إنشاء كل ملف موقع من شفرة المصدر العامة على <g1>github.com/anefzaoui/misterdownloadmanager</g1> بواسطة GitHub Actions، على خوادم GitHub، وليس على جهاز كمبيوتر شخصي أبدا. ويشير كل منها إلى أنه BMD وإلى رقم إصداره."
+   "source": "Every signed file is built from the public source code at <g1>github.com/DecoyINDIA/BMD</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
+   "text": "يتم إنشاء كل ملف موقع من شفرة المصدر العامة على <g1>github.com/DecoyINDIA/BMD</g1> بواسطة GitHub Actions، على خوادم GitHub، وليس على جهاز كمبيوتر شخصي أبدا. ويشير كل منها إلى أنه BMD وإلى رقم إصداره."
   },
   "cee8fa5faa008467": {
    "source": "To save your own list, use <g1>Tasks → Export → To text file</g1> (one address per line) or <g2>To IDM export file</g2>.",
@@ -14699,8 +14699,8 @@
    "text": "<g1>librqbit</g1><g2> لمحرك التورنت</g2>"
   },
   "d3bb5a30d659061d": {
-   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/anefzaoui/misterdownloadmanager</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
-   "text": "BMD (\"BMD\") برنامج مجاني ومفتوح المصدر، طوره أحمد نفزاوي ومساهمون آخرون. وبما أن شفرته المصدرية كاملة ومتاحة للعامة على <g1>github.com/anefzaoui/misterdownloadmanager</g1>، فلا داعي لأن تصدق ما تقوله هذه الصفحة: يمكنك التحقق من كل اتصال بالشبكة موصوف هنا في الشفرة."
+   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/DecoyINDIA/BMD</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
+   "text": "BMD (\"BMD\") برنامج مجاني ومفتوح المصدر، طوره أحمد نفزاوي ومساهمون آخرون. وبما أن شفرته المصدرية كاملة ومتاحة للعامة على <g1>github.com/DecoyINDIA/BMD</g1>، فلا داعي لأن تصدق ما تقوله هذه الصفحة: يمكنك التحقق من كل اتصال بالشبكة موصوف هنا في الشفرة."
   },
   "d3da8c9dc89aaa97": {
    "source": "What's new in version 0.5.1 <g1>2026-11-08</g1>",

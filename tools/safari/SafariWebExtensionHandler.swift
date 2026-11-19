@@ -37,12 +37,12 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
     }
 
     /// BMD's data folder in the user's real home: the sandbox gives this process a home of its
-    /// own, where the app's files are not (the helper reads MDM_DATA_DIR before anything).
+    /// own, where the app's files are not (the helper reads BMD_DATA_DIR before anything).
     private static var dataFolder: String? {
         // (selftest.sh points it at a folder of its own.)
-        if let given = ProcessInfo.processInfo.environment["MDM_DATA_DIR"] { return given }
+        if let given = ProcessInfo.processInfo.environment["BMD_DATA_DIR"] { return given }
         guard let entry = getpwuid(getuid()) else { return nil }
-        return String(cString: entry.pointee.pw_dir) + "/Library/Application Support/misterdownloadmanager"
+        return String(cString: entry.pointee.pw_dir) + "/Library/Application Support/bmd"
     }
 
     static func relay(_ message: Any?) -> [String: Any]? {
@@ -52,7 +52,7 @@ final class SafariWebExtensionHandler: NSObject, NSExtensionRequestHandling {
         process.executableURL = helper
         process.arguments = ["--safari"]
         if let folder = dataFolder {
-            process.environment = ProcessInfo.processInfo.environment.merging(["MDM_DATA_DIR": folder]) { $1 }
+            process.environment = ProcessInfo.processInfo.environment.merging(["BMD_DATA_DIR": folder]) { $1 }
         }
         let input = Pipe(), output = Pipe()
         process.standardInput = input

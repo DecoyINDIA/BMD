@@ -151,31 +151,29 @@ def torrents() -> None:
 
 
 def signatures() -> None:
-    keys = TOOLS.parent.parent / "keys"
-    bmd = (TOOLS / "mdm-SHA256SUMS.txt").read_bytes()
-    seed("signature", "bmd", b"\x00" + (TOOLS / "mdm-SHA256SUMS.txt.sig").read_bytes() + SEP + bmd)
+    signed = (TOOLS / "ed25519-signed.txt").read_bytes()
     seed(
         "signature",
         "ytdlp",
-        b"\x01" + (TOOLS / "SHA2-256SUMS.sig").read_bytes() + SEP + (TOOLS / "SHA2-256SUMS").read_bytes(),
+        b"\x00" + (TOOLS / "SHA2-256SUMS.sig").read_bytes() + SEP + (TOOLS / "SHA2-256SUMS").read_bytes(),
     )
     seed(
         "signature",
         "gallery-dl",
-        b"\x02"
+        b"\x01"
         + (TOOLS / "gallery-dl-SHA256SUMS.sig").read_bytes()
         + SEP
         + (TOOLS / "gallery-dl-SHA256SUMS").read_bytes(),
     )
     seed(
         "signature",
-        "bmd-key",
-        b"\x03"
-        + (keys / "bmd-release.asc").read_bytes()
+        "ed25519-key",
+        b"\x02"
+        + (TOOLS / "ed25519-test-key.asc").read_bytes()
         + SEP
-        + (TOOLS / "mdm-SHA256SUMS.txt.sig").read_bytes()
+        + (TOOLS / "ed25519-signed.txt.sig").read_bytes()
         + SEP
-        + bmd,
+        + signed,
     )
 
 

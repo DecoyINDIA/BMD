@@ -3,7 +3,7 @@
 # GitHub's Windows runner (.github/workflows/docs-shots.yml), a stock Windows whose file icons are
 # Windows' own; a run here shows this PC's. At 1x: BMD_ZOOM=2 draws the content
 # twice as large but Windows keeps the title bar at the display's scale, out of proportion. Runs its
-# own BMD instance (its own data folder, MDM_DATA_DIR) and its own labserver,
+# own BMD instance (its own data folder, BMD_DATA_DIR) and its own labserver,
 # both addressed by process id: the user's own instance and anything else running are never
 # touched. Nothing shows on the screen: with BMD_OFFSCREEN=1 the app opens every window far off
 # the screens, without focus, taskbar button, tray icon or sound, and PrintWindow captures them
@@ -176,7 +176,7 @@ try {
   $base = if ($Port -eq 80) { "http://$UrlHost" } else { "http://${UrlHost}:$Port" }
   # /show crash-test:freeze for the crash report window's shot.
   $env:BMD_CRASH_TEST = "1"
-  $env:MDM_DATA_DIR = "$work\data"
+  $env:BMD_DATA_DIR = "$work\data"
   # Only when asked: BMD_ZOOM overrides View → Interface size (-Settings '"interface_size":150').
   if ($Zoom -ne 1) { $env:BMD_ZOOM = "$Zoom" } else { Remove-Item Env:BMD_ZOOM -ErrorAction SilentlyContinue }
   $env:BMD_OFFSCREEN = "1"
@@ -355,7 +355,7 @@ try {
   # A copy started again by itself, and its crash monitor: ours as well.
   Ours | ForEach-Object { Stop-Process -Id $_.ProcessId -ErrorAction SilentlyContinue }
   if ($srv) { Stop-Process -Id $srv.Id -ErrorAction SilentlyContinue }
-  Remove-Item Env:MDM_DATA_DIR, Env:BMD_ZOOM, Env:BMD_OFFSCREEN, Env:BMD_OFFSCREEN_AT, Env:BMD_CRASH_TEST -ErrorAction SilentlyContinue
+  Remove-Item Env:BMD_DATA_DIR, Env:BMD_ZOOM, Env:BMD_OFFSCREEN, Env:BMD_OFFSCREEN_AT, Env:BMD_CRASH_TEST -ErrorAction SilentlyContinue
   # The downloads (a 6 GB file partly fetched) don't stay behind.
   Start-Sleep 1
   Remove-Item $work -Recurse -Force -ErrorAction SilentlyContinue

@@ -1,5 +1,5 @@
 //! Updating in place (Help → Check for updates → Update now): this copy's release file, fetched
-//! and checked in the background (`bmd_tools::update`: the release's signed checksum list), then
+//! and checked in the background (`bmd_tools::update`: the release's checksum list), then
 //! put where this copy is, on a thread of its own too (unpacking, `tar`, `hdiutil`, `ditto`: the
 //! window's thread waits for none of them, #222). BMD closes for it; the new copy starts with
 //! `/updated`, waits for the old one to be gone, and removes what the update set aside.
@@ -28,7 +28,7 @@ pub enum Next {
 
 /// The release file this copy updates from, when `assets` (name, address) has it (by either of
 /// its names, [`Install::assets`]: the one for this build's own processor, x64, ARM64 or 32-bit)
-/// and the signature of the release's checksum list.
+/// and the release's checksum list.
 pub fn asset_for(install: Install, version: &str, assets: &[(String, String)]) -> Option<String> {
     asset_on(install, Arch::THIS, version, assets)
 }
@@ -41,7 +41,7 @@ fn asset_on(
     assets: &[(String, String)],
 ) -> Option<String> {
     let has = |n: &str| assets.iter().any(|(a, _)| a == n);
-    if !(has("SHA256SUMS.txt") && has("SHA256SUMS.txt.sig")) {
+    if !has("SHA256SUMS.txt") {
         return None;
     }
     install
@@ -309,25 +309,21 @@ mod tests {
     const X64: Option<Arch> = Some(Arch::X64);
 
     #[test]
-    fn only_a_signed_release_with_this_copys_file_updates_it() {
+    fn only_a_release_with_its_checksums_and_this_copys_file_updates_it() {
         let a = |names: &[&str]| -> Vec<(String, String)> {
             names
                 .iter()
                 .map(|n| (n.to_string(), format!("https://x/{n}")))
                 .collect()
         };
-        let full = a(&[
-            "BMD-0.2.2-setup.exe",
-            "SHA256SUMS.txt",
-            "SHA256SUMS.txt.sig",
-        ]);
+        let full = a(&["BMD-0.2.2-setup.exe", "SHA256SUMS.txt"]);
         assert_eq!(
             asset_on(Install::Installer, X64, "0.2.2", &full).as_deref(),
             Some("BMD-0.2.2-setup.exe")
         );
-        // An unsigned release, another kind's file, a build from source: no.
-        let unsigned = a(&["BMD-0.2.2-setup.exe", "SHA256SUMS.txt"]);
-        assert_eq!(asset_on(Install::Installer, X64, "0.2.2", &unsigned), None);
+        // A release without its checksums, another kind's file, a build from source: no.
+        let unchecked = a(&["BMD-0.2.2-setup.exe"]);
+        assert_eq!(asset_on(Install::Installer, X64, "0.2.2", &unchecked), None);
         assert_eq!(asset_on(Install::PortableZip, X64, "0.2.2", &full), None);
         assert_eq!(asset_on(Install::Source, X64, "0.2.2", &full), None);
     }
@@ -339,7 +335,7 @@ mod tests {
         let release = |names: &[&str]| -> Vec<(String, String)> {
             names
                 .iter()
-                .chain(&["SHA256SUMS.txt", "SHA256SUMS.txt.sig"])
+                .chain(&["SHA256SUMS.txt"])
                 .map(|n| (n.to_string(), format!("https://x/{n}")))
                 .collect()
         };
@@ -362,9 +358,9 @@ mod tests {
             asset_on(Install::Deb, X64, "0.3.0", &release(&[new, deb])).as_deref(),
             Some(deb)
         );
-        // Unsigned: neither.
-        let unsigned = vec![(new.to_string(), format!("https://x/{new}"))];
-        assert_eq!(asset_on(Install::AppImage, X64, "0.3.0", &unsigned), None);
+        // Without its checksums: neither.
+        let unchecked = vec![(new.to_string(), format!("https://x/{new}"))];
+        assert_eq!(asset_on(Install::AppImage, X64, "0.3.0", &unchecked), None);
     }
 
     /// A release with every processor's files: each copy takes its own processor's, an x64 copy
@@ -386,7 +382,6 @@ mod tests {
             "BMD-1.0.0-linux-x86_64.deb",
             "BMD-1.0.0-linux-arm64.deb",
             "SHA256SUMS.txt",
-            "SHA256SUMS.txt.sig",
         ];
         let assets: Vec<(String, String)> = names
             .iter()

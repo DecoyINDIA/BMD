@@ -614,20 +614,20 @@ pub fn is_format_char(c: char) -> bool {
 }
 
 /// Longest file name [`sanitize`] makes, in the system's units ([`Limits`]): a name may have
-/// 255, the part file adds ".mdm.part" (9) and a duplicate may add " (NNN)" (6). The extension
+/// 255, the part file adds ".bmd.part" (9) and a duplicate may add " (NNN)" (6). The extension
 /// is kept.
 const MAX_NAME: usize = 230;
-/// What our files add to a destination: ".mdm.part" / ".mdm.json".
+/// What our files add to a destination: ".bmd.part" / ".bmd.json".
 const SIDECAR: usize = 9;
 /// What a duplicate's number adds: " (NNN)".
 const DUPLICATE: usize = 6;
 /// Shortest name worth making when a deep folder leaves little room.
 const MIN_NAME: usize = 20;
 /// The most a video's files add to its stem (#1102), BMD's engine's and yt-dlp's alike: a
-/// stream's pieces, `<stem>.f<id>.<ext>.mdm.pieces/000123.mdm.part` (2 + a format id of up to
+/// stream's pieces, `<stem>.f<id>.<ext>.bmd.pieces/000123.bmd.part` (2 + a format id of up to
 /// 32 + 1 + an extension of up to 5 + 11 + 1 + 15), longer than yt-dlp's own
 /// `<stem>.f<id>.<ext>.part`, `.ytdl` and `.part-Frag<N>.part`, its merge's `<stem>.temp.<ext>`,
-/// the subtitles' `<stem>.<lang>.srt` and the engine's `<stem>.f<id>.<ext>.mdm.part`. A longer
+/// the subtitles' `<stem>.<lang>.srt` and the engine's `<stem>.f<id>.<ext>.bmd.part`. A longer
 /// format id (rare) ends in yt-dlp's error, which then names the path that was too long
 /// (`bmd_tools::video::too_long`).
 pub const HELPER_FILES: usize = 67;
@@ -979,7 +979,7 @@ fn cut(s: &str, max: usize, limits: Limits) -> String {
 /// The part file a download is written to before it is complete.
 pub fn part_path(dest: &Path) -> PathBuf {
     let mut s = dest.as_os_str().to_owned();
-    s.push(".mdm.part");
+    s.push(".bmd.part");
     PathBuf::from(s)
 }
 
@@ -2029,11 +2029,11 @@ mod tests {
                 ".part",
                 ".ytdl",
                 ".part-Frag123456.part",
-                ".mdm.part",
-                ".mdm.json",
-                ".mdm.pieces",
-                ".mdm.pieces/000123",
-                ".mdm.pieces/000123.mdm.part",
+                ".bmd.part",
+                ".bmd.json",
+                ".bmd.pieces",
+                ".bmd.pieces/000123",
+                ".bmd.pieces/000123.bmd.part",
             ] {
                 all.push(format!("{stream}{after}"));
             }
@@ -2110,7 +2110,7 @@ mod tests {
         );
         // The longest file, numbered ` (999)`, ends at 259 exactly.
         let longest = format!(
-            "{}\\{exact} (999).f{}.mhtml.mdm.pieces\\000123.mdm.part",
+            "{}\\{exact} (999).f{}.mhtml.bmd.pieces\\000123.bmd.part",
             dir.display(),
             "x".repeat(32)
         );

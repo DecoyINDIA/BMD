@@ -10,7 +10,7 @@
 //    to the app (message `link`); if the app doesn't take it, the click goes on as if never held.
 (() => {
   // One watcher per page: a copy cut off from the extension (after an update) gives way.
-  const prev = globalThis.__mdmPage;
+  const prev = globalThis.__bmdPage;
   if (prev && typeof prev === "object" && prev.alive()) return;
   if (prev && typeof prev.stop === "function") prev.stop();
   const ext = globalThis.browser ?? globalThis.chrome;
@@ -133,7 +133,7 @@
   // After the page's own listeners on the link and its document: a click bubbles to the window
   // last.
   addEventListener("click", follow, false);
-  globalThis.__mdmPage = {
+  globalThis.__bmdPage = {
     alive: () => Boolean(ext.runtime?.id),
     stop: () => {
       removeEventListener("pointerdown", press, true);

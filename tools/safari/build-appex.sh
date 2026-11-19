@@ -16,7 +16,7 @@ set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 app="$1" target="$2" ext="$3" helper="$4" version="$5" identity="${6:--}"
 min_macos="${target##*macos}"
-bundle_id="io.github.anefzaoui.misterdownloadmanager.safari"
+bundle_id="io.github.decoyindia.bmd.safari"
 appex="$app/Contents/PlugIns/BMD.appex"
 
 # A real identity: the hardened runtime and Apple's timestamp, which notarization asks for.
@@ -28,9 +28,9 @@ mkdir -p "$appex/Contents/MacOS" "$appex/Contents/Resources"
 
 # -e _NSExtensionMain: an app extension starts in the system's extension host, not in main().
 xcrun swiftc -O -parse-as-library -application-extension \
-  -module-name MisterDownloadManagerExtension -target "$target" \
+  -module-name BlackMarlinDownloaderExtension -target "$target" \
   -framework SafariServices -Xlinker -e -Xlinker _NSExtensionMain \
-  -o "$appex/Contents/MacOS/MisterDownloadManagerExtension" \
+  -o "$appex/Contents/MacOS/BlackMarlinDownloaderExtension" \
   "$here/SafariWebExtensionHandler.swift"
 
 sed -e "s|@BUNDLE_ID@|$bundle_id|" -e "s|@VERSION@|$version|" -e "s|@MIN_MACOS@|$min_macos|" \

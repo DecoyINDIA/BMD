@@ -5,7 +5,7 @@
 Each run hands one download to a client through its command line (IDM's documented
 `/d URL /p DIR /f NAME /n`, which BMD's app accepts too) and measures:
   * end to end: command issued -> the finished file is complete under its final name, polled
-    every millisecond with a monotonic clock (BMD renames a finished `.mdm.part` into place; IDM
+    every millisecond with a monotonic clock (BMD renames a finished `.bmd.part` into place; IDM
     creates the final file early and fills it while assembling, so completion is its full size);
   * the network phase, from the lab server's own log: first request -> last byte sent;
   * connections, requests, bytes sent (over the file size = waste), refusals and drops;
@@ -198,7 +198,7 @@ def settle(limit=240):
 
 def one_run(client, exe, env, url, dest, name, timeout, handle, expected):
     final = dest / name
-    for p in (final, dest / (name + ".mdm.part"), dest / (name + ".mdm.json")):
+    for p in (final, dest / (name + ".bmd.part"), dest / (name + ".bmd.json")):
         if p.exists():
             p.unlink()
     sampler = Sampler(handle)
@@ -260,7 +260,7 @@ def main():
     lab = subprocess.Popen([str(LAB_EXE), "--bind", f"127.0.0.1:{PORT}", "--log-file", str(log)],
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     # BMD: its own instance, own data folder (the user's copy is untouched).
-    bmd_env = dict(os.environ, MDM_DATA_DIR=str(out / "bmd-data"))
+    bmd_env = dict(os.environ, BMD_DATA_DIR=str(out / "bmd-data"))
     bmd = subprocess.Popen([str(BMD_EXE)], env=bmd_env)
     time.sleep(3)
     # (BMD is restarted for every scenario, below: what it learns about a server in one scenario

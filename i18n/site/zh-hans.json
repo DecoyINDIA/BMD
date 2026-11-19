@@ -1223,8 +1223,8 @@
    "text": "团队角色"
   },
   "1171655e77148bd2": {
-   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/anefzaoui/misterdownloadmanager</g2> under the GNU GPL, version 3.",
-   "text": "所有发布版本及其说明和文件都在<g1>GitHub Releases</g1>上。源代码位于<g2>github.com/anefzaoui/misterdownloadmanager</g2>，遵循 GNU GPL v3 许可。"
+   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/DecoyINDIA/BMD</g2> under the GNU GPL, version 3.",
+   "text": "所有发布版本及其说明和文件都在<g1>GitHub Releases</g1>上。源代码位于<g2>github.com/DecoyINDIA/BMD</g2>，遵循 GNU GPL v3 许可。"
   },
   "1173fd2e0a9c235b": {
    "source": "The app has no accounts, telemetry or tracking",
@@ -14299,8 +14299,8 @@
    "text": "视频会分别按其标题命名，并保存到<g1>保存到</g1>中以列表命名的文件夹里。"
   },
   "ceb8f4f5a72cba4a": {
-   "source": "Every signed file is built from the public source code at <g1>github.com/anefzaoui/misterdownloadmanager</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
-   "text": "每个签名文件都由 GitHub Actions 在 GitHub 服务器上，而非个人计算机上，从 <g1>github.com/anefzaoui/misterdownloadmanager</g1> 的公共源代码构建。每个文件都表明它是 BMD 及其版本。"
+   "source": "Every signed file is built from the public source code at <g1>github.com/DecoyINDIA/BMD</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
+   "text": "每个签名文件都由 GitHub Actions 在 GitHub 服务器上，而非个人计算机上，从 <g1>github.com/DecoyINDIA/BMD</g1> 的公共源代码构建。每个文件都表明它是 BMD 及其版本。"
   },
   "cee8fa5faa008467": {
    "source": "To save your own list, use <g1>Tasks → Export → To text file</g1> (one address per line) or <g2>To IDM export file</g2>.",
@@ -14699,8 +14699,8 @@
    "text": "<g1>librqbit</g1><g2>种子引擎</g2>"
   },
   "d3bb5a30d659061d": {
-   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/anefzaoui/misterdownloadmanager</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
-   "text": "BMD（“BMD”）是由 Ahmed Nefzaoui 和贡献者开发的免费开源软件。由于其全部源代码在<g1>github.com/anefzaoui/misterdownloadmanager</g1>上公开，您无需相信本页面的说法：此处描述的每个网络连接都可以在代码中进行检查。"
+   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/DecoyINDIA/BMD</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
+   "text": "BMD（“BMD”）是由 Ahmed Nefzaoui 和贡献者开发的免费开源软件。由于其全部源代码在<g1>github.com/DecoyINDIA/BMD</g1>上公开，您无需相信本页面的说法：此处描述的每个网络连接都可以在代码中进行检查。"
   },
   "d3da8c9dc89aaa97": {
    "source": "What's new in version 0.5.1 <g1>2026-11-08</g1>",

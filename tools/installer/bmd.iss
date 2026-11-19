@@ -1,6 +1,6 @@
 ; BMD's Windows installer (Inno Setup 6). Built by tools/installer/build.ps1,
 ; which passes /DAppVersion=..., /DArch=... and /DBin=... and, when a certificate is set up,
-; /DSign with /Smdmsign=...
+; /DSign with /Sbmdsign=...
 ;
 ; Install for the current user (no administrator rights, %LOCALAPPDATA%\Programs) or for
 ; everyone (Program Files); the wizard asks. Tasks: browser integration (native messaging host
@@ -27,7 +27,7 @@
 
 [Setup]
 ; Never change AppId: upgrades and the uninstaller find the installation by it.
-AppId={{667DB4D8-32C2-4487-A0E5-5825BF29778C}
+AppId={{1F73B768-2362-49F4-9ADD-89F142B3DEF1}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppName} {#AppVersion}
@@ -74,7 +74,7 @@ OutputBaseFilename=BMD-{#AppVersion}-setup-{#Arch}
 Compression=lzma2/ultra64
 SolidCompression=yes
 ChangesAssociations=yes
-; A running BMD is asked to quit by [Code] (it holds the mutex MisterDownloadManager.Running);
+; A running BMD is asked to quit by [Code] (it holds the mutex BlackMarlinDownloader.Running);
 ; AppMutex isn't used because it would refuse to start before that. Restart Manager is the
 ; fallback for anything else holding the files (a browser running the host).
 CloseApplications=yes
@@ -83,7 +83,7 @@ VersionInfoCompany=DecoyINDIA
 VersionInfoDescription={#AppName} setup
 VersionInfoProductName={#AppName}
 #ifdef Sign
-SignTool=mdmsign
+SignTool=bmdsign
 SignedUninstaller=yes
   #define SignFlag "signonce"
 #else
@@ -135,21 +135,21 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; Tasks: desktopico
 ; The language chosen in the wizard ({language}: "lang_" + a languages.tsv code with "_" for "-",
 ; see languages.py inno_name). The app
 ; takes it on its first start, when it has no language setting yet (settings.rs), then deletes it.
-Root: HKCU; Subkey: "Software\MisterDownloadManager"; ValueType: string; ValueName: "InstallLanguage"; ValueData: "{language}"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCU; Subkey: "Software\BlackMarlinDownloader"; ValueType: string; ValueName: "InstallLanguage"; ValueData: "{language}"; Flags: uninsdeletevalue uninsdeletekeyifempty
 ; Start with Windows: the same value Options -> "Launch on startup" writes and reads, with the
 ; argument that starts BMD in the notification area (#226; win32.rs startup_command).
-Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "MisterDownloadManager"; ValueData: """{app}\{#AppExe}"" /startup"; Flags: uninsdeletevalue; Tasks: startup
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "BlackMarlinDownloader"; ValueData: """{app}\{#AppExe}"" /startup"; Flags: uninsdeletevalue; Tasks: startup
 ; The "torrents" task, ticked or not: Torrent settings' switch on the app's first start that hasn't
 ; decided it (#1058: it then also decides whether the browser hands .torrent downloads over;
 ; settings.rs settle_torrent_handler). Only read, once.
-Root: HKCU; Subkey: "Software\MisterDownloadManager"; ValueType: string; ValueName: "InstallTorrents"; ValueData: "1"; Flags: uninsdeletevalue uninsdeletekeyifempty; Tasks: torrents
-Root: HKCU; Subkey: "Software\MisterDownloadManager"; ValueType: string; ValueName: "InstallTorrents"; ValueData: "0"; Flags: uninsdeletevalue uninsdeletekeyifempty; Tasks: not torrents
+Root: HKCU; Subkey: "Software\BlackMarlinDownloader"; ValueType: string; ValueName: "InstallTorrents"; ValueData: "1"; Flags: uninsdeletevalue uninsdeletekeyifempty; Tasks: torrents
+Root: HKCU; Subkey: "Software\BlackMarlinDownloader"; ValueType: string; ValueName: "InstallTorrents"; ValueData: "0"; Flags: uninsdeletevalue uninsdeletekeyifempty; Tasks: not torrents
 ; .torrent files and magnet links (HKA: the user's or everyone's classes, as installed).
-Root: HKA; Subkey: "Software\Classes\MisterDownloadManager.torrent"; ValueType: string; ValueName: ""; ValueData: "Torrent file"; Flags: uninsdeletekey; Tasks: torrents
-Root: HKA; Subkey: "Software\Classes\MisterDownloadManager.torrent\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#AppExe},0"; Tasks: torrents
-Root: HKA; Subkey: "Software\Classes\MisterDownloadManager.torrent\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExe}"" ""%1"""; Tasks: torrents
-Root: HKA; Subkey: "Software\Classes\.torrent"; ValueType: string; ValueName: ""; ValueData: "MisterDownloadManager.torrent"; Flags: uninsdeletekeyifempty; Tasks: torrents
-Root: HKA; Subkey: "Software\Classes\.torrent\OpenWithProgids"; ValueType: string; ValueName: "MisterDownloadManager.torrent"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty; Tasks: torrents
+Root: HKA; Subkey: "Software\Classes\BlackMarlinDownloader.torrent"; ValueType: string; ValueName: ""; ValueData: "Torrent file"; Flags: uninsdeletekey; Tasks: torrents
+Root: HKA; Subkey: "Software\Classes\BlackMarlinDownloader.torrent\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#AppExe},0"; Tasks: torrents
+Root: HKA; Subkey: "Software\Classes\BlackMarlinDownloader.torrent\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExe}"" ""%1"""; Tasks: torrents
+Root: HKA; Subkey: "Software\Classes\.torrent"; ValueType: string; ValueName: ""; ValueData: "BlackMarlinDownloader.torrent"; Flags: uninsdeletekeyifempty; Tasks: torrents
+Root: HKA; Subkey: "Software\Classes\.torrent\OpenWithProgids"; ValueType: string; ValueName: "BlackMarlinDownloader.torrent"; ValueData: ""; Flags: uninsdeletevalue uninsdeletekeyifempty; Tasks: torrents
 Root: HKA; Subkey: "Software\Classes\magnet"; ValueType: string; ValueName: ""; ValueData: "URL:Magnet link"; Tasks: torrents
 Root: HKA; Subkey: "Software\Classes\magnet"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""; Tasks: torrents
 Root: HKA; Subkey: "Software\Classes\magnet\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\{#AppExe},0"; Tasks: torrents
@@ -159,17 +159,16 @@ Root: HKA; Subkey: "Software\Classes\magnet\shell\open\command"; ValueType: stri
 ; same keys and names as win32.rs set_torrent_handlers; ApplicationName matches the
 ; RegisteredApplications value's name, and each association has an BMD-only ProgID. The app
 ; writes its description in the interface language for the user's own registration.
-Root: HKA; Subkey: "Software\Classes\MisterDownloadManager.Magnet"; ValueType: string; ValueName: ""; ValueData: "URL:Magnet link"; Flags: uninsdeletekey; Tasks: torrents
-Root: HKA; Subkey: "Software\Classes\MisterDownloadManager.Magnet"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""; Tasks: torrents
-Root: HKA; Subkey: "Software\Classes\MisterDownloadManager.Magnet\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExe}"",0"; Tasks: torrents
-Root: HKA; Subkey: "Software\Classes\MisterDownloadManager.Magnet\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExe}"" ""%1"""; Tasks: torrents
-Root: HKA; Subkey: "Software\MisterDownloadManager\Capabilities"; ValueType: string; ValueName: "ApplicationName"; ValueData: "{#AppName}"; Flags: uninsdeletekey; Tasks: torrents
-Root: HKA; Subkey: "Software\MisterDownloadManager\Capabilities"; ValueType: string; ValueName: "ApplicationDescription"; ValueData: "Downloads files, videos and torrents"; Tasks: torrents
-Root: HKA; Subkey: "Software\MisterDownloadManager\Capabilities"; ValueType: string; ValueName: "ApplicationIcon"; ValueData: """{app}\{#AppExe}"",0"; Tasks: torrents
-Root: HKA; Subkey: "Software\MisterDownloadManager\Capabilities\FileAssociations"; ValueType: string; ValueName: ".torrent"; ValueData: "MisterDownloadManager.Torrent"; Tasks: torrents
-Root: HKA; Subkey: "Software\MisterDownloadManager\Capabilities\UrlAssociations"; ValueType: string; ValueName: "magnet"; ValueData: "MisterDownloadManager.Magnet"; Tasks: torrents
-Root: HKA; Subkey: "Software\RegisteredApplications"; ValueType: string; ValueName: "{#AppName}"; ValueData: "Software\MisterDownloadManager\Capabilities"; Flags: uninsdeletevalue; Tasks: torrents
-Root: HKA; Subkey: "Software\RegisteredApplications"; ValueType: none; ValueName: "iDM"; Flags: deletevalue; Check: HasLegacyRegistration
+Root: HKA; Subkey: "Software\Classes\BlackMarlinDownloader.Magnet"; ValueType: string; ValueName: ""; ValueData: "URL:Magnet link"; Flags: uninsdeletekey; Tasks: torrents
+Root: HKA; Subkey: "Software\Classes\BlackMarlinDownloader.Magnet"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""; Tasks: torrents
+Root: HKA; Subkey: "Software\Classes\BlackMarlinDownloader.Magnet\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExe}"",0"; Tasks: torrents
+Root: HKA; Subkey: "Software\Classes\BlackMarlinDownloader.Magnet\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExe}"" ""%1"""; Tasks: torrents
+Root: HKA; Subkey: "Software\BlackMarlinDownloader\Capabilities"; ValueType: string; ValueName: "ApplicationName"; ValueData: "{#AppName}"; Flags: uninsdeletekey; Tasks: torrents
+Root: HKA; Subkey: "Software\BlackMarlinDownloader\Capabilities"; ValueType: string; ValueName: "ApplicationDescription"; ValueData: "Downloads files, videos and torrents"; Tasks: torrents
+Root: HKA; Subkey: "Software\BlackMarlinDownloader\Capabilities"; ValueType: string; ValueName: "ApplicationIcon"; ValueData: """{app}\{#AppExe}"",0"; Tasks: torrents
+Root: HKA; Subkey: "Software\BlackMarlinDownloader\Capabilities\FileAssociations"; ValueType: string; ValueName: ".torrent"; ValueData: "BlackMarlinDownloader.Torrent"; Tasks: torrents
+Root: HKA; Subkey: "Software\BlackMarlinDownloader\Capabilities\UrlAssociations"; ValueType: string; ValueName: "magnet"; ValueData: "BlackMarlinDownloader.Magnet"; Tasks: torrents
+Root: HKA; Subkey: "Software\RegisteredApplications"; ValueType: string; ValueName: "{#AppName}"; ValueData: "Software\BlackMarlinDownloader\Capabilities"; Flags: uninsdeletevalue; Tasks: torrents
 
 [Run]
 Filename: "{app}\{#HostExe}"; Parameters: "--register"; Flags: runhidden; Tasks: browser; Check: not IsAdminInstallMode
@@ -184,34 +183,11 @@ Filename: "{app}\{#HostExe}"; Parameters: "--unregister"; Flags: runhidden; RunO
 Filename: "{app}\{#HostExe}"; Parameters: "--unregister --all-users"; Flags: runhidden; RunOnceId: "UnregisterAll"; Check: IsAdminInstallMode
 
 [UninstallDelete]
-Type: files; Name: "{app}\com.misterdownloadmanager.host*.json"
-
-[InstallDelete]
-Type: files; Name: "{autoprograms}\iDM.lnk"; Check: HasLegacyExecutable
-Type: files; Name: "{autodesktop}\iDM.lnk"; Check: HasLegacyExecutable
-Type: files; Name: "{app}\misterdownloadmanager.exe"
-Type: files; Name: "{app}\misterdownloadmanager-cli.exe"
-Type: files; Name: "{app}\misterdownloadmanager-mcp.exe"
-Type: files; Name: "{app}\misterdownloadmanager-nmhost.exe"
-Type: files; Name: "{app}\extension\mdm-firefox.xpi"
+Type: files; Name: "{app}\com.blackmarlindownloader.host*.json"
 
 [Code]
 const
-  RunningMutex = 'MisterDownloadManager.Running';
-  LegacyExe = '{app}\misterdownloadmanager.exe';
-
-function HasLegacyExecutable: Boolean;
-begin
-  Result := FileExists(ExpandConstant(LegacyExe));
-end;
-
-function HasLegacyRegistration: Boolean;
-var
-  Value: String;
-begin
-  Result := RegQueryStringValue(HKA, 'Software\RegisteredApplications', 'iDM', Value)
-    and (CompareText(Value, 'Software\MisterDownloadManager\Capabilities') = 0);
-end;
+  RunningMutex = 'BlackMarlinDownloader.Running';
 
 { /relaunch=1 on the command line (BMD's Update now): start BMD again after installing. }
 function Relaunch: Boolean;
@@ -238,10 +214,7 @@ end;
 
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
-  if HasLegacyExecutable then
-    ExitRunningApp(ExpandConstant(LegacyExe))
-  else
-    ExitRunningApp(ExpandConstant('{app}\{#AppExe}'));
+  ExitRunningApp(ExpandConstant('{app}\{#AppExe}'));
   Result := '';
 end;
 
@@ -271,19 +244,19 @@ var
   Value, Data: String;
   Code: Integer;
 begin
-  Data := ExpandConstant('{userappdata}\misterdownloadmanager');
+  Data := ExpandConstant('{userappdata}\bmd');
   if CurUninstallStep = usUninstall then
   begin
     ForgetIfOurs('Software\Classes\magnet', ExpandConstant('{app}\{#AppExe}'));
-    if RegQueryStringValue(HKA, 'Software\Classes\.torrent', '', Value) and (Value = 'MisterDownloadManager.torrent') then
+    if RegQueryStringValue(HKA, 'Software\Classes\.torrent', '', Value) and (Value = 'BlackMarlinDownloader.torrent') then
       RegDeleteValue(HKA, 'Software\Classes\.torrent', '');
     { Default apps (#1091): what the app registered for this user (Torrent settings' switch),
       also when this install was everyone's. }
-    if RegQueryStringValue(HKCU, 'Software\RegisteredApplications', '{#AppName}', Value) and (CompareText(Value, 'Software\MisterDownloadManager\Capabilities') = 0) then
+    if RegQueryStringValue(HKCU, 'Software\RegisteredApplications', '{#AppName}', Value) and (CompareText(Value, 'Software\BlackMarlinDownloader\Capabilities') = 0) then
       RegDeleteValue(HKCU, 'Software\RegisteredApplications', '{#AppName}');
-    RegDeleteKeyIncludingSubkeys(HKCU, 'Software\MisterDownloadManager\Capabilities');
-    if RegQueryStringValue(HKCU, 'Software\Classes\MisterDownloadManager.Magnet\shell\open\command', '', Value) and (Pos(Lowercase(ExpandConstant('{app}\{#AppExe}')), Lowercase(Value)) > 0) then
-      RegDeleteKeyIncludingSubkeys(HKCU, 'Software\Classes\MisterDownloadManager.Magnet');
+    RegDeleteKeyIncludingSubkeys(HKCU, 'Software\BlackMarlinDownloader\Capabilities');
+    if RegQueryStringValue(HKCU, 'Software\Classes\BlackMarlinDownloader.Magnet\shell\open\command', '', Value) and (Pos(Lowercase(ExpandConstant('{app}\{#AppExe}')), Lowercase(Value)) > 0) then
+      RegDeleteKeyIncludingSubkeys(HKCU, 'Software\Classes\BlackMarlinDownloader.Magnet');
     RemoveData := False;
     if DirExists(Data) and not UninstallSilent() then
       RemoveData := MsgBox(CustomMessage('KeepData'), mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES;

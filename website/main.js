@@ -150,9 +150,9 @@
     { label: "faster", note: t("A server that allows two connections. BMD learns it and keeps to two; IDM opened 480."),
       bmd: [14, 12546, 9], idm: [3069, 12733, 48], e2e: [12568, 15864], ratio: 1.26, bytes: 52428800 }
   ];
-  // mdmRace(box, races): sets up one race box; the benchmark page calls it with every scenario
+  // bmdRace(box, races): sets up one race box; the benchmark page calls it with every scenario
   // from bench/results.json and fills in the tabs itself (data-race-src).
-  window.mdmRace = function (box, RACES) {
+  window.bmdRace = function (box, RACES) {
     var lanes = { bmd: box.querySelector('[data-lane="bmd"]'), idm: box.querySelector('[data-lane="idm"]') };
     var tabList = box.querySelector(".race-tabs");
     if (!tabList.children.length) {
@@ -242,7 +242,7 @@
       seen.observe(box);
     } else run(0);
   };
-  each("[data-race]:not([data-race-src])", function (box) { window.mdmRace(box, RACES); });
+  each("[data-race]:not([data-race-src])", function (box) { window.bmdRace(box, RACES); });
 
   // ---- Hello in the app's languages: each word written in, its chip lit -----------------------
   var stage = document.querySelector("[data-hello]");

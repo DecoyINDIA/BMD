@@ -15,9 +15,9 @@ services:
       - "8463:8463"
     environment:
       # The address you open the page with (the server's, with the port above).
-      MDM_REMOTE_URL: "https://192.168.1.10:8463/"
+      BMD_REMOTE_URL: "https://192.168.1.10:8463/"
       # Names besides the server's address you open the page with (comma-separated).
-      MDM_REMOTE_HOSTS: "nas.local"
+      BMD_REMOTE_HOSTS: "nas.local"
     volumes:
       - ./config:/config
       # Where downloads land: a folder of the server, or a network share mounted on it.

@@ -1,5 +1,5 @@
 # Update now, end to end, on Windows: the portable zip path (README.md). Off-screen test copies in
-# folders of their own (never the installed BMD), fake 9.9.9 releases signed with a throwaway key
+# folders of their own (never the installed BMD), fake 9.9.9 releases
 # made for this run (mkrel.py), served by the lab server on 127.0.0.1. Needs a release-mode build
 # with the `test-update` feature (Install::detect says "built from source" in debug builds).
 #
@@ -11,7 +11,6 @@
 # Scenarios and what each must show (the run fails otherwise, exit code 1):
 #   good            downloaded, checked, put in place, the new copy started with /updated, the old ended
 #   bad-hash        refused: nothing replaced, nothing started
-#   other-key       the checksum list signed by another key: refused, nothing replaced or started
 #   close-download  the window closed while it downloads (1 MB/s): nothing replaced or started
 #   close-install   the window closed during "Installing the update...": replaced, nothing started
 param(
@@ -65,25 +64,22 @@ function Log([string]$m) {
 }
 $WM_CLOSE = 0x10
 
-# --- The releases: one folder each, signed with this run's throwaway keys.
-$keys = "$Work\keys"
+# --- The releases: one folder each.
 $base = "http://127.0.0.1:$Port/files"
 $asset = "BMD-9.9.9-portable.zip"
 function Release([string]$name, [string[]]$more) {
   $out = "$Work\rel-$name"
-  & python "$PSScriptRoot\mkrel.py" --keys $keys --out $out --base $base --asset $asset --kind zip `
+  & python "$PSScriptRoot\mkrel.py" --out $out --base $base --asset $asset --kind zip `
     --program $Exe --program-name bmd.exe @more | ForEach-Object { Log "  $_" }
   if ($LASTEXITCODE) { throw "mkrel.py failed" }
   $out
 }
-Log "making the fake releases (throwaway keys in $keys)"
+Log "making the fake releases"
 $rel = @{
   "good" = Release "good" @()
   "bad-hash" = Release "bad-hash" @("--sums", "bad")
-  "other-key" = Release "other-key" @("--signer", "other")
   "slow" = Release "slow" @("--pad", "30", "--asset-base", "http://127.0.0.1:$SlowPort")
 }
-$key = "$keys\test-key.asc"
 
 # --- One run: a copy in its own folder (portable: data\ beside it), its update window, Update now.
 function Run([string]$name, [string]$relDir, [int]$hold = 0, [string]$close = "", [string]$lang = "en",
@@ -110,7 +106,6 @@ json.dump({"next_id": 1, "items": [], "version": 2, "settings": s}, open(path, "
   }
   $env:BMD_OFFSCREEN = "1"
   $env:BMD_UPDATE_FEED = "$base/latest.json"
-  $env:BMD_TEST_UPDATE_KEY = $key
   if ($hold) { $env:BMD_TEST_UPDATE_HOLD = "$hold" } else { Remove-Item Env:BMD_TEST_UPDATE_HOLD -ErrorAction SilentlyContinue }
   $r = @{ started = $false; oldEnded = $false; marker = $false }
   try {
@@ -178,7 +173,7 @@ json.dump({"next_id": 1, "items": [], "version": 2, "settings": s}, open(path, "
     if ($app -and -not $app.HasExited) { Stop-Process -Id $app.Id -Force -ErrorAction SilentlyContinue }
     Stop-Process -Id $srv.Id -Force -ErrorAction SilentlyContinue
     if ($slow) { Stop-Process -Id $slow.Id -Force -ErrorAction SilentlyContinue }
-    Remove-Item Env:BMD_OFFSCREEN, Env:BMD_UPDATE_FEED, Env:BMD_TEST_UPDATE_KEY, Env:BMD_TEST_UPDATE_HOLD -ErrorAction SilentlyContinue
+    Remove-Item Env:BMD_OFFSCREEN, Env:BMD_UPDATE_FEED, Env:BMD_TEST_UPDATE_HOLD -ErrorAction SilentlyContinue
     Start-Sleep 1
   }
 }
@@ -187,7 +182,6 @@ json.dump({"next_id": 1, "items": [], "version": 2, "settings": s}, open(path, "
 $scenarios = [ordered]@{
   "good"           = @{ rel = "good";      hold = 4; close = "";         want = @{ started = $true;  oldEnded = $true;  marker = $true } }
   "bad-hash"       = @{ rel = "bad-hash";  hold = 0; close = "";         want = @{ started = $false; oldEnded = $false; marker = $false } }
-  "other-key"      = @{ rel = "other-key"; hold = 0; close = "";         want = @{ started = $false; oldEnded = $false; marker = $false } }
   "close-download" = @{ rel = "slow";      hold = 0; close = "download"; want = @{ started = $false; oldEnded = $false; marker = $false } }
   "close-install"  = @{ rel = "good";      hold = 8; close = "install";  want = @{ started = $false; oldEnded = $false; marker = $true } }
 }

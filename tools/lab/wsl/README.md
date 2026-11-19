@@ -68,13 +68,13 @@ dialogs of `tools/lab/docs-shots.ps1` (`<file name>=<show argument>` when they d
 take commas: `wsl.exe` hands its command line to a shell again, which splits quoted spaces. A
 `menu:...` show is shot with the main window, grown by `BMD_GROW` pixels (default 300).
 
-Each run has its own data folder (`MDM_DATA_DIR`), download folder and lab server (port 8197),
+Each run has its own data folder (`BMD_DATA_DIR`), download folder and lab server (port 8197),
 under `~/lab/run/<label>`; the list is downloaded once, for the first language, and given to the
 others. `--finished-only` leaves out the download still running (shots that must not change
 between runs); `--keep-list` reuses the label's last list (the same names and dates: two runs
 compared pixel by pixel). Shots land in `~/lab/shots/<label>/<lang>-<mode>/` with `timing.txt`.
 `BMD_SET` adds settings (a JSON object), as in `../linux-vm/win.sh`; other `BMD_*` variables
-(`MDM_RENDERER`, `BMD_OFFSCREEN`, ...) reach BMD.
+(`BMD_RENDERER`, `BMD_OFFSCREEN`, ...) reach BMD.
 
 `renderers.sh <label>` compares OpenGL and Vulkan (lavapipe) on nine windows, pixel by pixel
 (`pixdiff.py` from `../linux-vm/`), for builds with View → Draw with → Vulkan: forced, as the

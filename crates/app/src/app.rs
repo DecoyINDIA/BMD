@@ -13772,7 +13772,7 @@ mod duplicate_tests {
             "Clip.f137.mp4.part",
             "Clip.f137.mp4.ytdl",
             "CLIP.F137.mp4.part-Frag2",
-            "Clip.v2.zip.mdm.part",
+            "Clip.v2.zip.bmd.part",
         ] {
             std::fs::write(d.join(f), b"x").unwrap();
         }

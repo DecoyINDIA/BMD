@@ -3,7 +3,7 @@
 What's done for version 1.0.0, what's being built, and what's planned. Each item links to its
 issue, where the details and the discussion are. Released changes are in
 [CHANGELOG.md](CHANGELOG.md). Bug reports are welcome in
-[Issues](https://github.com/anefzaoui/misterdownloadmanager/issues), ideas in
+[Issues](https://github.com/DecoyINDIA/BMD/issues), ideas in
 [Discussions](https://github.com/anefzaoui/misterdownloadmanager/discussions/categories/ideas).
 
 ✅ done · 🔄 being built · 📋 planned · 🔍 looking into it
@@ -567,10 +567,13 @@ Everything below ships together, in version 1.0.0, the first release as BMD.
 - ✅ Windows: Options → Launch on startup and the installer's Start when Windows starts keep one
   startup entry again (they had used two names since the rename to BMD)
 - ✅ Adding a video again with overwrite removes the part files of BMD's own downloader too
-- ✅ Updates are checked against BMD's own release key, the key of the repository the app updates
-  from (rather than upstream's), and a release can't be published unsigned or signed by another key
+- ✅ BMD's own names throughout (installer identity, data folder, part files, environment
+  variables, browser helper, Firefox add-on, registry keys), so it runs beside Mister Download
+  Manager without sharing anything with it
+- ✅ Releases are published without a release key: Update now checks each file against the
+  release's SHA256SUMS.txt from BMD's GitHub releases, and every file has build provenance
 - ✅ A Docker image of the headless server is published with each release, at
-  `ghcr.io/anefzaoui/misterdownloadmanager` (x86-64 only for now, thanks to
+  `ghcr.io/DecoyINDIA/BMD` (x86-64 only for now, thanks to
   [@kngkatak](https://github.com/kngkatak))
 - ✅ File names as browsers read them: a server's percent-encoded `filename="My%20Report.pdf"` is
   `My Report.pdf`, as in Chrome and Firefox (it stayed encoded), and RFC 2047's encoded words are
@@ -664,7 +667,7 @@ Everything below ships together, in version 1.0.0, the first release as BMD.
   **Close** and the others pressed nothing), letters of other scripts too, and **Alt** in such a
   window underlines the letters in every look, as in the main window
 - ✅ With **Start immediately** on, picking the folder the early download already saves to in
-  **Save As** keeps its name: the download's own `.mdm.part` and `.mdm.json` no longer count as
+  **Save As** keeps its name: the download's own `.bmd.part` and `.bmd.json` no longer count as
   taken, so it isn't offered as `song (1).mp3` and doesn't start over
   ([#597](https://github.com/anefzaoui/misterdownloadmanager/issues/597))
 - ✅ The crash crate's tests build on 32-bit Windows again: the alternate-stack test uses a

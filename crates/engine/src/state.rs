@@ -1,4 +1,4 @@
-//! Resume state: `<file>.mdm.json` beside the part file (notes/ENGINE.md §3).
+//! Resume state: `<file>.bmd.json` beside the part file (notes/ENGINE.md §3).
 //!
 //! Request headers (cookies, authorization) are deliberately not stored: whoever resumes the
 //! download supplies them again, so no credentials sit in the download folder.
@@ -205,10 +205,10 @@ fn is_strong_date(last_modified: &str, date: Option<&str>) -> bool {
     date >= lm + std::time::Duration::from_secs(1)
 }
 
-/// `<dest>.mdm.json`.
+/// `<dest>.bmd.json`.
 pub fn state_path(dest: &Path) -> PathBuf {
     let mut s = dest.as_os_str().to_owned();
-    s.push(".mdm.json");
+    s.push(".bmd.json");
     PathBuf::from(s)
 }
 
@@ -315,7 +315,7 @@ mod tests {
     #[test]
     fn the_old_single_validator_is_migrated() {
         let dir = tempfile::tempdir().unwrap();
-        let p = dir.path().join("a.bin.mdm.json");
+        let p = dir.path().join("a.bin.bmd.json");
         let old = r#"{"version":1,"url":"http://x/a","final_url":"http://cdn/a","dest":"a.bin",
             "size":5,"validator":"\"e\"","segments":[]}"#;
         std::fs::write(&p, old).unwrap();
@@ -338,7 +338,7 @@ mod tests {
     #[test]
     fn a_segment_that_goes_backwards_holds_no_bytes() {
         let dir = tempfile::tempdir().unwrap();
-        let p = dir.path().join("a.bin.mdm.json");
+        let p = dir.path().join("a.bin.bmd.json");
         std::fs::write(
             &p,
             br#"{"version":1,"url":"http://x/a","final_url":"http://x/a","dest":"a.bin",

@@ -12,7 +12,7 @@ The portable copy of BMD runs from any folder, including a USB stick, without in
 - Passwords (Sites Logins, the proxy's, debrid accounts) stay in `data` too, instead of in Windows Credential Manager. They are sealed for your Windows account: on another computer, or another account, type them again (and sign in to a debrid account again).
 - Nothing is written to the registry.
 
-Delete the `data` folder (or make it read-only) and the same copy behaves like the plain zip: it keeps its data in `%APPDATA%\misterdownloadmanager`.
+Delete the `data` folder (or make it read-only) and the same copy behaves like the plain zip: it keeps its data in `%APPDATA%\bmd`.
 
 ## Set it up
 

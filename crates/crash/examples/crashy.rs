@@ -21,9 +21,9 @@ use bmd_crash::protocol::{Freeze, Panic, Session};
 fn main() {
     // What the connection and the monitor say goes to stderr, which the test leaves to the
     // terminal: a run that fails shows how far it got ("listening, 84 ms after start", "crash
-    // reports are off for this session (…)"). MDM_LOG chooses more.
+    // reports are off for this session (…)"). BMD_LOG chooses more.
     // (Reading the dump, minidump's crates warn of what a report can do without.)
-    let filter = std::env::var("MDM_LOG").unwrap_or_else(|_| {
+    let filter = std::env::var("BMD_LOG").unwrap_or_else(|_| {
         "warn,minidump=off,minidump_processor=off,minidump_unwind=off,bmd_crash=info".into()
     });
     let _ = tracing_subscriber::fmt()

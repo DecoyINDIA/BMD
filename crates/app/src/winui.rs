@@ -1183,13 +1183,8 @@ fn window_edges(p: &Painter) -> (f32, f32) {
 
 /// A tooltip with the whole of a cut text while the pointer is over it (as Windows shows
 /// for truncated list items).
-pub fn full_on_hover(
-    ui: &Ui,
-    rect: Rect,
-    salt: impl std::hash::Hash + std::fmt::Debug,
-    full: &str,
-) {
-    let id = ui.scope_id().with(("full-text", salt));
+pub fn full_on_hover(ui: &Ui, rect: Rect, tag: impl std::hash::Hash + std::fmt::Debug, full: &str) {
+    let id = ui.scope_id().with(("full-text", tag));
     ui.interact(rect, id, egui::Sense::hover())
         .on_hover_text(full);
 }
@@ -1615,10 +1610,10 @@ pub fn row_list(
 
 /// Text that opens or does something when clicked: link colour, underlined under the pointer.
 /// `label` is English (translated here).
-pub fn link(ui: &Ui, p: &Painter, x: f32, baseline: f32, label: &str, salt: &str) -> bool {
+pub fn link(ui: &Ui, p: &Painter, x: f32, baseline: f32, label: &str, tag: &str) -> bool {
     let rect = text(p, x, baseline, crate::i18n::t(label), LINK());
     let resp = ui
-        .interact(rect, ui.scope_id().with(("link", salt)), Sense::click())
+        .interact(rect, ui.scope_id().with(("link", tag)), Sense::click())
         .on_hover_cursor(egui::CursorIcon::PointingHand);
     expose(&resp, egui::Role::Link, crate::i18n::t(label), true, None);
     // A Tab stop shows that it has the keys.
@@ -1637,7 +1632,7 @@ pub fn link(ui: &Ui, p: &Painter, x: f32, baseline: f32, label: &str, salt: &str
 /// first baseline `baseline`, with a [`link`] after it (`label`, English, translated here): on
 /// the note's line when they fit together, else the note wraps and the link ends its second
 /// line. A note longer than that is cut, and shown whole on hover. True when the link is
-/// clicked; `salt` tells notes apart.
+/// clicked; `tag` tells notes apart.
 #[allow(clippy::too_many_arguments)]
 pub fn note_with_link(
     ui: &Ui,
@@ -1649,13 +1644,13 @@ pub fn note_with_link(
     color: Color32,
     right: f32,
     label: &str,
-    salt: &str,
+    tag: &str,
 ) -> bool {
     const GAP: f32 = 8.0;
     let link_w = text_width(p, crate::i18n::t(label));
     if text_width(p, s) + GAP + link_w <= right - x {
         text(p, x, baseline, s, color);
-        return link(ui, p, x + text_width(p, s) + GAP, baseline, label, salt);
+        return link(ui, p, x + text_width(p, s) + GAP, baseline, label, tag);
     }
     let lines = wrap_lines(p, s, (right - x).max(1.0));
     let first = lines.first().map_or("", String::as_str);
@@ -1664,10 +1659,10 @@ pub fn note_with_link(
     let second = baseline + line_h;
     let (rest_rect, cut) = text_fit(p, x, second, &rest, color, right - GAP - link_w);
     if cut {
-        full_on_hover(ui, first_rect.union(rest_rect), (salt, "note"), s);
+        full_on_hover(ui, first_rect.union(rest_rect), (tag, "note"), s);
     }
     let rest_w = text_width(p, &rest).min(right - GAP - link_w - x);
-    link(ui, p, x + rest_w + GAP, second, label, salt)
+    link(ui, p, x + rest_w + GAP, second, label, tag)
 }
 
 /// A disabled control says why on hover: `reason` (English, translated here) while `disabled`.
@@ -1680,7 +1675,7 @@ pub fn why_disabled(resp: Response, disabled: bool, reason: &str) -> Response {
 }
 
 /// [`text_fit`] that shows the whole text on hover whenever it cut it: the one way to draw a
-/// line that may not fit (no caller can forget the hover). `salt` tells the lines apart.
+/// line that may not fit (no caller can forget the hover). `tag` tells the lines apart.
 #[allow(clippy::too_many_arguments)]
 pub fn fit(
     ui: &Ui,
@@ -1690,9 +1685,9 @@ pub fn fit(
     s: &str,
     color: Color32,
     right: f32,
-    salt: impl std::hash::Hash + std::fmt::Debug,
+    tag: impl std::hash::Hash + std::fmt::Debug,
 ) -> Rect {
-    fit_whole(ui, p, x, baseline, s, s, color, right, salt)
+    fit_whole(ui, p, x, baseline, s, s, color, right, tag)
 }
 
 /// [`fit`] for a cell that shows one text and tips another: the Link grabber's Status says a
@@ -1707,11 +1702,11 @@ pub fn fit_whole(
     full: &str,
     color: Color32,
     right: f32,
-    salt: impl std::hash::Hash + std::fmt::Debug,
+    tag: impl std::hash::Hash + std::fmt::Debug,
 ) -> Rect {
     let (rect, cut) = text_fit(p, x, baseline, shown, color, right);
     if cut || shown != full {
-        full_on_hover(ui, rect, salt, full);
+        full_on_hover(ui, rect, tag, full);
     }
     rect
 }
@@ -1727,12 +1722,12 @@ pub fn fit_middle(
     s: &str,
     color: Color32,
     right: f32,
-    salt: impl std::hash::Hash + std::fmt::Debug,
+    tag: impl std::hash::Hash + std::fmt::Debug,
 ) -> Rect {
     let shown = ellipsize_middle(p, &tahoma(), s, (right - x).max(0.0));
     let rect = text(p, x, baseline, &shown, color);
     if shown != s {
-        full_on_hover(ui, rect, salt, s);
+        full_on_hover(ui, rect, tag, s);
     }
     rect
 }
@@ -1743,11 +1738,11 @@ pub fn fit_middle(
 pub fn copyable(
     ui: &Ui,
     rect: Rect,
-    salt: impl std::hash::Hash + std::fmt::Debug,
+    tag: impl std::hash::Hash + std::fmt::Debug,
     text: &str,
     cut: bool,
 ) -> Response {
-    let resp = ui.interact(rect, ui.scope_id().with(("copyable", salt)), pointer_only());
+    let resp = ui.interact(rect, ui.scope_id().with(("copyable", tag)), pointer_only());
     copy_menu(&resp, text);
     if cut { resp.on_hover_text(text) } else { resp }
 }
@@ -2157,9 +2152,9 @@ pub fn edit_frame(p: &Painter, rc: Rect, enabled: bool) {
 
 /// A single-line edit: frame + egui text editing positioned so text starts at x+5 with its
 /// baseline at top+13.
-pub fn edit(ui: &mut Ui, rc: Rect, value: &mut String, enabled: bool, password: bool) -> Response {
+pub fn edit(ui: &mut Ui, rc: Rect, value: &mut String, enabled: bool, masked: bool) -> Response {
     edit_frame(ui.painter(), rc, enabled);
-    let resp = edit_text(ui, rc, value, enabled, password, 5.0);
+    let resp = edit_text(ui, rc, value, enabled, masked, 5.0);
     edit_focus_line(ui, &resp, rc);
     resp
 }
@@ -2216,7 +2211,7 @@ fn edit_text(
     rc: Rect,
     value: &mut String,
     enabled: bool,
-    password: bool,
+    masked: bool,
     inset: f32,
 ) -> Response {
     let color = if enabled {
@@ -2224,16 +2219,7 @@ fn edit_text(
     } else {
         EDIT_TEXT_DISABLED()
     };
-    edit_text_with(
-        ui,
-        rc,
-        value,
-        enabled,
-        password,
-        inset,
-        color,
-        start_align(),
-    )
+    edit_text_with(ui, rc, value, enabled, masked, inset, color, start_align())
 }
 
 /// Text aligned to its start: left, right in RTL.
@@ -2260,7 +2246,7 @@ fn edit_text_with(
     rc: Rect,
     value: &mut String,
     enabled: bool,
-    password: bool,
+    masked: bool,
     inset: f32,
     color: Color32,
     align: egui::Align,
@@ -2316,7 +2302,7 @@ fn edit_text_with(
     // out left of 0, so it never scrolled: its end stayed out of sight, and End, the arrows, a
     // click or typing there went on out of view. A line that fits keeps its alignment: there is
     // nothing to scroll.
-    let align = if align != egui::Align::LEFT && overflows(ui, value, password, inner.width()) {
+    let align = if align != egui::Align::LEFT && overflows(ui, value, masked, inner.width()) {
         egui::Align::LEFT
     } else {
         align
@@ -2328,7 +2314,7 @@ fn edit_text_with(
         .margin(egui::Margin::ZERO)
         .font(tahoma())
         .text_color(color)
-        .password(password)
+        .password(masked)
         // Enter keeps the focus in the box (the dialog's default button answers it; a box that
         // lost the keys on Enter took the next typing nowhere).
         .return_key(None)
@@ -2349,7 +2335,7 @@ fn edit_text_with(
                         modifiers,
                         physical_key,
                         repeat,
-                    } if password
+                    } if masked
                         && modifiers.command
                         && matches!(
                             key,
@@ -2409,14 +2395,14 @@ fn edit_text_with(
         ui.data_mut(|d| d.insert_temp(was_empty, true));
     }
     if enabled {
-        edit_menu(&resp, value, password, false);
+        edit_menu(&resp, value, masked, false);
     }
     resp
 }
 
-/// Is a one-line box's text (`password`: its dots, as egui shows them) wider than `width`?
-fn overflows(ui: &Ui, value: &str, password: bool, width: f32) -> bool {
-    let shown = if password {
+/// Is a one-line box's text (`masked`: its dots, as egui shows them) wider than `width`?
+fn overflows(ui: &Ui, value: &str, masked: bool, width: f32) -> bool {
+    let shown = if masked {
         "\u{2022}".repeat(value.graphemes(true).count())
     } else {
         value.to_owned()
@@ -2621,7 +2607,7 @@ fn readonly_with_icon(
     if cut { resp.on_hover_text(value) } else { resp }
 }
 
-pub fn edit_menu(resp: &Response, value: &mut String, password: bool, multiline: bool) {
+pub fn edit_menu(resp: &Response, value: &mut String, masked: bool, multiline: bool) {
     use crate::chrome::PopupResult;
     use egui::text::{CCursor, CCursorRange};
     use egui::text_edit::TextEditState;
@@ -2668,7 +2654,7 @@ pub fn edit_menu(resp: &Response, value: &mut String, password: bool, multiline:
     let now = (state.cursor.char_range().unwrap_or_default(), value.clone());
     let entries = edit_entries(
         undoer.has_undo(&now),
-        has && !password,
+        has && !masked,
         clip.is_some(),
         has,
         n > 0,
@@ -3795,7 +3781,7 @@ fn edit_light_with(
     value: &mut String,
     enabled: bool,
     align_right: bool,
-    password: bool,
+    masked: bool,
     parent: Color32,
 ) -> Response {
     // `parent`: the surface a box sits on (kept for its callers; the frame paints the inside).
@@ -3812,7 +3798,7 @@ fn edit_light_with(
     } else {
         start_align()
     };
-    let resp = edit_text_with(ui, rc, value, enabled, password, 5.0, color, align);
+    let resp = edit_text_with(ui, rc, value, enabled, masked, 5.0, color, align);
     edit_focus_line(ui, &resp, rc);
     resp
 }
@@ -4543,7 +4529,7 @@ crate::theme::themed! {
 /// check boxes and of the check lists (Options → Browsers, Sounds).
 /// A check box in a list's row ([`row_list`]): its 13 × 13 box at English `at`, ticked by a
 /// click (hot and pressed as any check box), not a Tab stop of its own (the list is: Space
-/// ticks the selected row). `salt` names the item, so the box stays its own while the list
+/// ticks the selected row). `tag` names the item, so the box stays its own while the list
 /// scrolls. True when clicked.
 pub fn row_check(
     ui: &Ui,
@@ -4551,12 +4537,12 @@ pub fn row_check(
     at: Pos2,
     on: &mut bool,
     label: &str,
-    salt: impl std::hash::Hash + std::fmt::Debug,
+    tag: impl std::hash::Hash + std::fmt::Debug,
 ) -> bool {
     let rc = rect(Rect::from_min_size(at, vec2(13.0, 13.0)));
     let resp = ui.interact(
         rc.expand(2.0),
-        widget_id(ui, ("row-check", salt)),
+        widget_id(ui, ("row-check", tag)),
         pointer_only(),
     );
     if resp.clicked() {
@@ -5055,9 +5041,9 @@ pub fn auto_repeat(ui: &Ui, resp: &Response) -> bool {
 /// radio button, tab or list row whether it is on. Our controls are painted by hand, so egui
 /// can't tell otherwise. Call right after the control's `interact`, before any tooltip.
 /// A line of text a window paints (a status, an error) made readable too: a screen reader and UI
-/// Automation find it as static text at `rc`, by `salt`, with `text` as it reads (no mnemonic).
-pub fn readable(ui: &Ui, rc: Rect, salt: impl std::hash::Hash + std::fmt::Debug, text: &str) {
-    let resp = ui.interact(rc, widget_id(ui, ("readable", salt)), Sense::hover());
+/// Automation find it as static text at `rc`, by `tag`, with `text` as it reads (no mnemonic).
+pub fn readable(ui: &Ui, rc: Rect, tag: impl std::hash::Hash + std::fmt::Debug, text: &str) {
+    let resp = ui.interact(rc, widget_id(ui, ("readable", tag)), Sense::hover());
     let text = text.to_owned();
     resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, true, &text));
 }

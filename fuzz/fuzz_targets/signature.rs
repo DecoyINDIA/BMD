@@ -1,9 +1,8 @@
 //! A release's detached OpenPGP signature, downloaded beside its checksum list before BMD
-//! installs yt-dlp, gallery-dl or its own update (`bmd_tools::signed_by*`, a parser of BMD's own
-//! for the packets): checked against the pinned keys, and with a key from the input too.
+//! installs yt-dlp or gallery-dl (`bmd_tools::signed_by*`, a parser of BMD's own for the
+//! packets): checked against the pinned keys, and with a key from the input too.
 //!
-//! The input: one byte for the key (0 BMD's, 1 yt-dlp's, 2 gallery-dl's, else one from the
-//! input), then the parts separated by [`SEP`]: `signature SEP data`, or `key SEP signature SEP
+//! The input: one byte for the key (0 yt-dlp's, 1 gallery-dl's, else one from the input), then the parts separated by [`SEP`]: `signature SEP data`, or `key SEP signature SEP
 //! data` for a key from the input.
 #![no_main]
 
@@ -23,11 +22,10 @@ fuzz_target!(|data: &[u8]| {
         return;
     };
     match which {
-        0..=2 => {
+        0..=1 => {
             let (sig, signed) = split(rest);
             let _ = match which {
-                0 => bmd_tools::signed_by_bmd(signed, sig),
-                1 => bmd_tools::signed_by_ytdlp(signed, sig),
+                0 => bmd_tools::signed_by_ytdlp(signed, sig),
                 _ => bmd_tools::gallery::signed_by_gallery_dl(signed, sig),
             };
         }

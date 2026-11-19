@@ -35,7 +35,7 @@
 //! their way out is Vulkan or Metal, chosen in View → Draw with.
 //!
 //! Testing overrides, in this order: `/renderer <name>` on the command line, then
-//! `MDM_RENDERER=<name>`. Names: `opengl` (`gl`); `direct3d` (`d3d`) on Windows, `vulkan` (`vk`)
+//! `BMD_RENDERER=<name>`. Names: `opengl` (`gl`); `direct3d` (`d3d`) on Windows, `vulkan` (`vk`)
 //! on Linux, `metal` on macOS, or `gpu` for whichever this system has; `warp` (Windows),
 //! `vulkan-software` (`lavapipe`, Linux) or `software`: the system's API drawn by a software
 //! renderer (Microsoft's WARP, Mesa's lavapipe), as on a computer without a graphics driver.
@@ -141,7 +141,7 @@ pub enum Adapters {
     Software,
     /// A card first, else a software renderer: the last way to open the windows at all.
     Any,
-    /// None at all: the API fails to start (`MDM_RENDERER=gpu-none`, or `direct3d-none`…, in
+    /// None at all: the API fails to start (`BMD_RENDERER=gpu-none`, or `direct3d-none`…, in
     /// off-screen test copies, to check the way back to OpenGL).
     Nothing,
 }
@@ -268,7 +268,7 @@ pub enum Because {
     Chosen,
     /// Nothing chosen (or another system's API): this system's default.
     Default,
-    /// `/renderer` or `MDM_RENDERER`.
+    /// `/renderer` or `BMD_RENDERER`.
     Override,
     /// The system's API is the choice, but it failed here before on the card: OpenGL until it is
     /// chosen again.
@@ -292,7 +292,7 @@ impl Because {
         match self {
             Because::Chosen => "chosen in View → Draw with".into(),
             Because::Default => "the default here".into(),
-            Because::Override => "the testing override (/renderer, MDM_RENDERER)".into(),
+            Because::Override => "the testing override (/renderer, BMD_RENDERER)".into(),
             Because::OpenGlUnfit => format!("OpenGL can't draw BMD here: {}", said(Way::OpenGl)),
             Because::FailedBefore => format!("{api} failed here before: {}", said(Way::Card)),
         }
@@ -425,7 +425,7 @@ fn watchable(attempts: &[Attempt], a: Attempt, known: Known) -> bool {
 }
 
 /// The testing override: `/renderer <name>` (or `--renderer`) among the arguments, else
-/// `MDM_RENDERER`.
+/// `BMD_RENDERER`.
 pub fn overridden(args: &[String]) -> Option<String> {
     args.iter()
         .position(|a| {
@@ -433,7 +433,7 @@ pub fn overridden(args: &[String]) -> Option<String> {
                 .eq_ignore_ascii_case("renderer")
         })
         .and_then(|i| args.get(i + 1).cloned())
-        .or_else(|| std::env::var("MDM_RENDERER").ok())
+        .or_else(|| std::env::var("BMD_RENDERER").ok())
         .filter(|s| !s.trim().is_empty())
 }
 
@@ -2023,7 +2023,7 @@ mod gpu {
             std::process::Command::new(exe)
                 .arg(crate::update::UPDATED)
                 // An override would bring the same failure back.
-                .env_remove("MDM_RENDERER")
+                .env_remove("BMD_RENDERER")
                 .spawn()
                 .ok()
         });

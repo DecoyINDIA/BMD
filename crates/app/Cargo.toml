@@ -19,9 +19,8 @@ default = ["browser-connection"]
 # Built from BoringSSL's C sources: tools/dev/check-cross.ps1, which can't cross-compile those,
 # checks the workspace without it.
 browser-connection = ["bmd-engine/browser-connection"]
-# Update now's end-to-end tests only, never in a release (see bmd-tools): a test key for a fake
-# release (BMD_TEST_UPDATE_KEY), `/show update-now` (Update now in the window `/show updates`
-# opens), and BMD_TEST_UPDATE_HOLD (seconds the update waits before it's put in place, to see and
+# Update now's end-to-end tests only, never in a release (see bmd-tools): `/show update-now`
+# (Update now in the window `/show updates` opens), and BMD_TEST_UPDATE_HOLD (seconds the update waits before it's put in place, to see and
 # close the window meanwhile). tools/lab/update runs them.
 test-update = ["bmd-tools/test-update"]
 

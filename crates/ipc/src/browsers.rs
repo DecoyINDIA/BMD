@@ -415,7 +415,7 @@ pub fn windows_can_run_extension(program: &str) -> bool {
 }
 
 /// The host manifest's file name, in every folder.
-pub const HOST_MANIFEST: &str = "com.misterdownloadmanager.host.json";
+pub const HOST_MANIFEST: &str = "com.blackmarlindownloader.host.json";
 
 /// Linux and macOS (`mac`): the folders to write the host manifest into, each with the family
 /// whose manifest goes there, for this user (`home`, `config` = $XDG_CONFIG_HOME) or for
@@ -660,7 +660,7 @@ pub fn manifest_program(manifest: &Path) -> Option<PathBuf> {
 }
 
 /// The native host's name, which its manifests and registry entries carry.
-pub const HOST_NAME: &str = "com.misterdownloadmanager.host";
+pub const HOST_NAME: &str = "com.blackmarlindownloader.host";
 
 /// Windows: the registry keys the browsers look the native host up under (`<key>\HOST_NAME`'s
 /// default value: the manifest's path), under HKCU for one user or HKLM for everyone, each with

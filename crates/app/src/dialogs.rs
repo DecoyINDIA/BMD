@@ -1081,7 +1081,7 @@ pub(crate) struct SaveAsPlace {
     look: Look,
     repaint: Option<egui::Context>,
     /// The early download's own place (#597), if the dialog started one: Save As keeps that
-    /// name even though its `.mdm.part` and `.mdm.json` sit beside it.
+    /// name even though its `.bmd.part` and `.bmd.json` sit beside it.
     own: Option<PathBuf>,
     /// The last question, Save As's text it is for (as the answer set it, once taken), and its
     /// answer to come. A new question asks on a thread of its own: one that hangs on a dead
@@ -4849,7 +4849,7 @@ mod tests {
         assert_eq!(save_as, display_path(&gone.join("a.zip")));
     }
 
-    /// #597: with Start immediately on, the early download's own `.mdm.part` and `.mdm.json`
+    /// #597: with Start immediately on, the early download's own `.bmd.part` and `.bmd.json`
     /// sit beside its name. Picking the same folder in Save As keeps that name, so `adopt_early`
     /// sees no move and the download is not restarted.
     #[test]

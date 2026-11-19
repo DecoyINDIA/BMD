@@ -29,7 +29,7 @@ use crate::win32 as os;
 
 /// The keychain's name for BMD's entries (Credential Manager's targets start with it; Secret
 /// Service's `service` attribute; the macOS keychain's service).
-pub const SERVICE: &str = "Mister Download Manager";
+pub const SERVICE: &str = "Black Marlin Downloader";
 /// What the settings hold in a secret's place.
 pub const REF: &str = "keychain:";
 
@@ -502,10 +502,10 @@ fn scope() -> String {
     format!("{:08x}", (h ^ (h >> 32)) as u32)
 }
 
-/// The service's name: `SERVICE`, or a test's own (`MDM_KEYCHAIN_SERVICE=BMD-test-…`; only names
+/// The service's name: `SERVICE`, or a test's own (`BMD_KEYCHAIN_SERVICE=BMD-test-…`; only names
 /// of that form, so a test never writes BMD's real entries).
 fn service() -> String {
-    std::env::var("MDM_KEYCHAIN_SERVICE")
+    std::env::var("BMD_KEYCHAIN_SERVICE")
         .ok()
         .filter(|s| s.starts_with("BMD-test-") && !s.contains('/'))
         .unwrap_or_else(|| SERVICE.to_owned())
@@ -520,7 +520,7 @@ fn global() -> &'static Arc<Vault> {
         #[cfg(not(test))]
         let store: Box<dyn Store> = Box::new(System);
         let portable =
-            std::env::var_os("MDM_DATA_DIR").is_none() && bmd_ipc::portable_dir().is_some();
+            std::env::var_os("BMD_DATA_DIR").is_none() && bmd_ipc::portable_dir().is_some();
         Arc::new(Vault::new(
             store,
             &service(),

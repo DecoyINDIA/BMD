@@ -15,9 +15,9 @@
 #   does), tray (BMD hides it there itself: `/show tray`, after 0.2.4), minimized,
 #   dialog (Options open, the main window minimized), twice (two in a row, hidden), restoring (a
 #   plain second launch, which shows the window again, right before), all (each in turn).
-# -Renderer: glow or direct3d (MDM_RENDERER; after 0.2.4).
+# -Renderer: glow or direct3d (BMD_RENDERER; after 0.2.4).
 #
-# Each run has its own data folder (MDM_DATA_DIR, deleted after unless -Keep), so nothing touches
+# Each run has its own data folder (BMD_DATA_DIR, deleted after unless -Keep), so nothing touches
 # an installed BMD, its registrations or the browsers. Nothing goes to the internet: the magnet
 # names no tracker, the update check is off, and the torrent engine's DHT, local discovery, UPnP
 # and incoming connections are off. A release that can't turn them off (0.2.4 and older) needs
@@ -109,7 +109,7 @@ function Native-Message([hashtable]$Message) {
   try {
     [IO.File]::WriteAllBytes($msg, [BitConverter]::GetBytes([uint32]$json.Length) + $json)
     $manifest = Join-Path (Split-Path $Exe) "firefox-host.json"
-    $p = Start-Process -FilePath "cmd.exe" -PassThru -WindowStyle Hidden -ArgumentList "/d /c `"`"$Host_`" `"$manifest`" integration@misterdownloadmanager.com < `"$msg`" > `"$out`"`""
+    $p = Start-Process -FilePath "cmd.exe" -PassThru -WindowStyle Hidden -ArgumentList "/d /c `"`"$Host_`" `"$manifest`" integration@bmd.decoyindia.github.io < `"$msg`" > `"$out`"`""
     if (-not $p.WaitForExit(15000)) { throw "the native host didn't quit" }
     $bytes = [IO.File]::ReadAllBytes($out)
     if ($bytes.Length -lt 4) { return "(no reply)" }
@@ -143,9 +143,9 @@ function Run-State([string]$St) {
   if ($NoTorrentEngine) {
     Set-Content -Encoding Ascii (Join-Path $data "torrents") "not a folder (tools/lab/magnet-hidden.ps1)"
   }
-  $env:MDM_DATA_DIR = $data
+  $env:BMD_DATA_DIR = $data
   $env:BMD_OFFSCREEN = "1"
-  if ($Renderer) { $env:MDM_RENDERER = $Renderer } else { Remove-Item Env:MDM_RENDERER -ErrorAction SilentlyContinue }
+  if ($Renderer) { $env:BMD_RENDERER = $Renderer } else { Remove-Item Env:BMD_RENDERER -ErrorAction SilentlyContinue }
   $app = Start-Process -FilePath $Exe -PassThru
   $reply = ""
   try {
@@ -214,7 +214,7 @@ function Run-State([string]$St) {
       }
     }
     if (-not $Keep) { Remove-Item -Recurse -Force $data -ErrorAction SilentlyContinue }
-    Remove-Item Env:MDM_DATA_DIR, Env:BMD_OFFSCREEN, Env:MDM_RENDERER -ErrorAction SilentlyContinue
+    Remove-Item Env:BMD_DATA_DIR, Env:BMD_OFFSCREEN, Env:BMD_RENDERER -ErrorAction SilentlyContinue
   }
 }
 

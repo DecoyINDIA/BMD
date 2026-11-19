@@ -1,7 +1,7 @@
 // The whole browser integration in real browsers, with nothing on the screen: each browser runs
 // headless with its own new profile and loads the extension (target/extension, from pack.ps1);
 // the native messaging host (target/release) hands what it sends to a separate Mister Download
-// Manager instance (its own data folder, MDM_DATA_DIR; off the screens, BMD_OFFSCREEN). Each case
+// Manager instance (its own data folder, BMD_DATA_DIR; off the screens, BMD_OFFSCREEN). Each case
 // checks what BMD received (the lab server's request log, the files in BMD's folders, its list
 // through the automation API, its Download video window through UI Automation) and that the
 // browser kept nothing.
@@ -105,7 +105,7 @@ const proxyLog = [];
 const PAC = `function FindProxyForURL(url, host) { return host === "${PROXY_HOST}" ? "PROXY 127.0.0.1:${PROXY_PORT}" : "DIRECT"; }`;
 // The extension's own address in Firefox (moz-extension://UUID/), fixed in the test profile so
 // its pages (the popup) can be opened in a tab.
-const FIREFOX_ID = "integration@misterdownloadmanager.com";
+const FIREFOX_ID = "integration@bmd.decoyindia.github.io";
 // The extensions the browsers load: pack.ps1's, or their copies for E2E_HOST_NAME (testHost).
 let chromiumExtension = path.join(root, "target", "extension", "chromium");
 let firefoxExtension = { type: "archivePath", path: path.join(root, "target", "extension", "bmd-firefox.xpi") };
@@ -849,7 +849,7 @@ function ipc(cmd, dir = data) {
 }
 
 // The instance's list (the automation API, on in the test settings).
-async function mdmList() {
+async function bmdList() {
   const a = JSON.parse(await ipc({ query: "list" }));
   if (!a.downloads) throw new Error(`the automation API: ${JSON.stringify(a)}`);
   return a.downloads;
@@ -898,7 +898,7 @@ async function startApp() {
   if (ourPids().length) return;
   fs.rmSync(path.join(data, "ipc.json"), { force: true });
   spawn(appExe, [], { env: process.env, stdio: "ignore", detached: false });
-  await until("the test instance", 20000, () => mdmList().then(() => true, () => false));
+  await until("the test instance", 20000, () => bmdList().then(() => true, () => false));
 }
 
 // Saved and quit through its channel; stopped if it doesn't.
@@ -919,7 +919,7 @@ async function arrived(file, size, sub = "Compressed", ms = 45000) {
   let last = null;
   try {
     return await until(`${file} in BMD`, ms, async () => {
-      const item = (await mdmList().catch(() => [])).find((d) => d.file === file);
+      const item = (await bmdList().catch(() => [])).find((d) => d.file === file);
       last = item || last;
       if (item && item.status === "Error") throw new Error(`${file}: BMD's download failed: ${item.error}`);
       if (!item || item.status !== "Complete") return null;
@@ -929,7 +929,7 @@ async function arrived(file, size, sub = "Compressed", ms = 45000) {
   } catch (e) {
     if (last && !/BMD's|saved as/.test(e.message)) e.message += ` (BMD: ${last.status} ${last.downloaded}/${last.size} ${last.path})`;
     if (!last) {
-      const list = await mdmList().catch(() => []);
+      const list = await bmdList().catch(() => []);
       e.message += ` (BMD's latest: ${list.slice(-2).map((d) => `${d.file} ${d.status} ${d.path}`).join("; ") || "none"})`;
     }
     throw e;
@@ -973,7 +973,7 @@ async function remoteServer() {
   const downloads = path.join(dir, "Downloads");
   fs.mkdirSync(rdata, { recursive: true });
   const args = ["--headless", "--data", rdata, "--downloads", downloads, "--listen", "127.0.0.1", "--port", String(REMOTE_PORT)];
-  const proc = spawn(appExe, args, { env: { ...process.env, MDM_DATA_DIR: rdata }, stdio: "ignore", windowsHide: true });
+  const proc = spawn(appExe, args, { env: { ...process.env, BMD_DATA_DIR: rdata }, stdio: "ignore", windowsHide: true });
   const code = async () => {
     const a = JSON.parse(await ipc({ pair: true }, rdata));
     if (!a.code) throw new Error(`no pairing code: ${JSON.stringify(a)}`);
@@ -1278,7 +1278,7 @@ async function hover(session, v) {
 // user does, which opens the app's Download video window (#703: what the button's click did
 // before). Once the video's look-up ended (its rows came): then "All qualities…" stays where it
 // is. "menu" once the window opened.
-async function openInMdm(session, pid, b = null) {
+async function openInBmd(session, pid, b = null) {
   // The button again first, when it faded meanwhile (1.5 s after the pointer rests): the pointer
   // moves over its video, just under it.
   const more = await until("the button's arrow", 8000, async () => {
@@ -1315,7 +1315,7 @@ const mainPart = async (session, b) => {
   return go && go.w ? go.x : b.l + 14;
 };
 
-// The button's menu, then "All qualities and subtitles…" in it (openInMdm): the app's Download
+// The button's menu, then "All qualities and subtitles…" in it (openInBmd): the app's Download
 // video window opens; the address it shows.
 // `shot`: a picture of that window first (PrintWindow: off the screens too), for a PR's body.
 // `open`: the window is left open (closed otherwise).
@@ -1323,7 +1323,7 @@ async function clickButton(session, b, shot = "", open = false) {
   const pid = appPid();
   appWindows(pid, VIDEO_WINDOW);
   await until("the Download video window closed", 5000, () => !appWindows(pid).includes(VIDEO_WINDOW));
-  await openInMdm(session, pid, b);
+  await openInBmd(session, pid, b);
   await until("the Download video window", 15000, () => appWindows(pid).includes(VIDEO_WINDOW));
   const address = await until("the Download video window's address", 10000, () => videoAddress(pid));
   if (shot) {
@@ -1349,11 +1349,11 @@ async function videoButton(session, never) {
   // #703: a click on its main part downloads the video's own plain file at once (no look-up, no
   // window), then says so in green, with "Show" (BMD's window, the download selected). An earlier
   // browser's download of it off the list first: a duplicate would be asked about.
-  const earlier = (await mdmList()).filter((d) => d.url === `${LAB}/gen/1M/clip.mp4`).map((d) => d.id);
+  const earlier = (await bmdList()).filter((d) => d.url === `${LAB}/gen/1M/clip.mp4`).map((d) => d.id);
   if (earlier.length) await ipc({ action: "delete", ids: earlier });
-  const before = new Set((await mdmList()).map((d) => d.id));
+  const before = new Set((await bmdList()).map((d) => d.id));
   await session.mouse(await mainPart(session, b), (b.t + b.b) / 2, "click");
-  const added = await until("the video's file in BMD's list", 15000, async () => (await mdmList()).find((d) => !before.has(d.id))).catch(async (e) => {
+  const added = await until("the video's file in BMD's list", 15000, async () => (await bmdList()).find((d) => !before.has(d.id))).catch(async (e) => {
     throw new Error(`${e.message} (the button: ${JSON.stringify(await session.pill(PILL_STATE))})`);
   });
   if (added.url !== `${LAB}/gen/1M/clip.mp4`) throw new Error(`BMD downloads ${added.url}`);
@@ -1737,7 +1737,7 @@ async function clickLink(t, link) {
 }
 
 // The requests BMD made for `p`: all but the browser's own first one.
-async function mdmRequests(p) {
+async function bmdRequests(p) {
   const all = await requests(p);
   if (all.length < 2) throw new Error(`${p}: only the browser's request reached the server (${all.map(brief).join("; ")})`);
   return all.slice(1);
@@ -1745,11 +1745,11 @@ async function mdmRequests(p) {
 
 // One file through the lab's host (lab.bmd.test, known to the test proxy only): how many of its
 // requests went through the proxy (the browser's own first; BMD's when it got the proxy).
-async function throughProxy(t, label, wantMdm) {
+async function throughProxy(t, label, wantBmd) {
   proxyLog.length = 0;
   const file = `e2e-proxy-${t.name}-${label}.xz`;
   await clickLink(t, `http://${PROXY_HOST}:${PORT}/gen/1M/${file}`);
-  if (wantMdm) await arrived(file, 1 << 20, "");
+  if (wantBmd) await arrived(file, 1 << 20, "");
   else await sleep(8000);
   await keptNothing(t.dl);
   return proxyLog.filter((e) => e.target.includes(file)).length;
@@ -1807,7 +1807,7 @@ function firefoxVpnExtension() {
       version: "1.0",
       permissions: ["proxy", "<all_urls>"],
       background: { scripts: ["background.js"] },
-      browser_specific_settings: { gecko: { id: "vpn-e2e@misterdownloadmanager.com" } },
+      browser_specific_settings: { gecko: { id: "vpn-e2e@bmd.decoyindia.github.io" } },
     }),
   );
   fs.writeFileSync(
@@ -1935,7 +1935,7 @@ const CASES = {
       } catch {
         throw new Error(`the browser saved it as ${JSON.stringify(where())} (want ${path.join(sub, file)})`);
       }
-      const bmd = (await mdmList().catch(() => [])).filter((d) => d.file === file);
+      const bmd = (await bmdList().catch(() => [])).filter((d) => d.file === file);
       if (bmd.length) throw new Error(`BMD took it too: ${JSON.stringify(bmd)}`);
       const got = (await requests(`/gen/64K/${file}`)).map(brief);
       for (const f of fs.readdirSync(t.dl)) fs.rmSync(path.join(t.dl, f), { force: true, recursive: true });
@@ -1962,11 +1962,11 @@ const CASES = {
     const granted = async (popup) => popup.evaluate("browser.permissions.contains({ permissions: ['proxy'] })");
     // One file through the lab's host: how many of its requests went through the proxy (the
     // browser's own first; BMD's when it got the proxy) after `wait` ms.
-    const fetchFile = async (label, wantMdm) => {
+    const fetchFile = async (label, wantBmd) => {
       proxyLog.length = 0;
       const file = `e2e-proxy-${t.name}-${label}.xz`;
       await clickLink(t, `http://${PROXY_HOST}:${PORT}/gen/1M/${file}`);
-      if (wantMdm) await arrived(file, 1 << 20, "");
+      if (wantBmd) await arrived(file, 1 << 20, "");
       else await sleep(8000);
       await keptNothing(t.dl);
       return proxyLog.filter((e) => e.target.includes(file)).length;
@@ -2113,7 +2113,7 @@ const CASES = {
     const link = `/gen/1M/${file}?require_cookie=sid%3D1&require_referer=${encodeURIComponent(prefix)}`;
     await clickLink(t, link);
     await arrived(file, 1 << 20);
-    const bmd = await mdmRequests(`/gen/1M/${file}`);
+    const bmd = await bmdRequests(`/gen/1M/${file}`);
     for (const e of bmd) {
       if (!/(^|;\s*)sid=1(;|$)/.test(e.cookie || "")) throw new Error(`BMD's request without the cookie: ${brief(e)} cookie=${e.cookie}`);
       if (!(e.referer || "").startsWith(prefix)) throw new Error(`BMD's request without the referrer: ${brief(e)} referer=${e.referer}`);
@@ -2188,7 +2188,7 @@ const CASES = {
     await sleep(2000);
     const asked = await requests(p);
     if (asked.length !== 1) throw new Error(`off: ${asked.length} requests (only the browser's expected): ${asked.map(brief).join("; ")}`);
-    if ((await mdmList()).some((d) => d.file === off)) throw new Error("off: BMD took it too");
+    if ((await bmdList()).some((d) => d.file === off)) throw new Error("off: BMD took it too");
     if (WIN && appWindows(appPid()).includes("Add torrent")) throw new Error("off: Add torrent opened");
     // BMD's log says why (the host's line, or the extension's notice it wrote down).
     const logged = () => {
@@ -2265,7 +2265,7 @@ const CASES = {
     await clickLink(t, link);
     const item = await arrived(file, 2 << 20);
     if (item.url !== LAB + link) throw new Error(`BMD's address is ${item.url}, not the one clicked (${LAB + link})`);
-    await mdmRequests(`/gen/2M/${file}`);
+    await bmdRequests(`/gen/2M/${file}`);
     await keptNothing(t.dl);
     return "the address clicked kept, the file from its target";
   },
@@ -2330,7 +2330,7 @@ const CASES = {
     await t.session.navigate(`${LAB}/formpage?size=1M&name=${encodeURIComponent(name)}`);
     await t.session.evaluate("document.getElementById('submit-form').click()");
     await arrived(name, 1 << 20);
-    const posts = await mdmRequests(`/form/1M/${name}`);
+    const posts = await bmdRequests(`/form/1M/${name}`);
     for (const e of posts) {
       if (e.method !== "POST") throw new Error(`BMD didn't post the form again: ${brief(e)}`);
       if (!/(^|&)token=abc(&|$)/.test(e.req_body_head || "")) throw new Error(`BMD's post without token=abc: ${e.req_body_head}`);
@@ -2366,13 +2366,13 @@ const CASES = {
           return names.length === 1 && names[0] === file && fs.statSync(at).size === 1 << 20;
         });
       } catch (e) {
-        const item = (await mdmList()).find((d) => d.file === file);
+        const item = (await bmdList()).find((d) => d.file === file);
         const tab = await t.session.evaluate("location.href").catch((x) => x.message);
         e.message += ` (${label}; BMD: ${item ? `${item.status} ${item.path}` : "nothing"}; the tab: ${tab}; requests: ${(await requests(p)).map(brief).join("; ") || "none"}; the browser's folder: ${fs.readdirSync(t.dl).join(", ") || "empty"})`;
         throw e;
       }
       await sleep(1500);
-      const item = (await mdmList()).find((d) => d.file === file);
+      const item = (await bmdList()).find((d) => d.file === file);
       if (item) throw new Error(`${label}: BMD got it too: ${item.status} ${item.path}`);
       const all = await requests(p);
       if (all.length !== 1) throw new Error(`${label}: ${all.length} requests for it (only the browser's expected): ${all.map(brief).join("; ")}`);
@@ -2415,12 +2415,12 @@ const CASES = {
           return names.length === 1 && names[0] === file && fs.statSync(at).size === 1 << 20;
         });
       } catch (e) {
-        const item = (await mdmList()).find((d) => d.file === file);
+        const item = (await bmdList()).find((d) => d.file === file);
         e.message += ` (BMD: ${item ? `${item.status} ${item.path}` : "nothing"}; requests: ${(await requests(p)).map(brief).join("; ") || "none"})`;
         throw e;
       }
       await sleep(1500);
-      const item = (await mdmList()).find((d) => d.file === file);
+      const item = (await bmdList()).find((d) => d.file === file);
       if (item) throw new Error(`BMD got it too: ${item.status} ${item.path}`);
       const all = await requests(p);
       if (all.length !== 1) throw new Error(`${all.length} requests for it (only the browser's expected): ${all.map(brief).join("; ")}`);
@@ -2604,7 +2604,7 @@ const CASES = {
         );
         if (got !== 256 << 10) throw new Error(`the page read ${got} bytes`);
         await sleep(3000);
-        const item = (await mdmList()).find((d) => d.file === file);
+        const item = (await bmdList()).find((d) => d.file === file);
         if (item) throw new Error(`BMD took it: ${item.status} ${item.path}`);
         const all = await requests(`/gen/256K/${file}`);
         if (all.length !== 1) throw new Error(`${all.length} requests (only the page's expected): ${all.map(brief).join("; ")}`);
@@ -2626,7 +2626,7 @@ const CASES = {
         await t.session.navigate(`${other}/page?link=none`);
         await t.session.evaluate(`(document.body.insertAdjacentHTML("beforeend", ${JSON.stringify(`<iframe src="${pdf(file)}" width=600 height=400></iframe>`)}), 1)`);
         await sleep(4000);
-        const item = (await mdmList()).find((d) => d.file === file);
+        const item = (await bmdList()).find((d) => d.file === file);
         if (item) throw new Error(`BMD took it: ${item.status} ${item.path}`);
         await keptNothing(t.dl);
         left.push("a listed site's frame: shown by the browser");
@@ -2835,8 +2835,8 @@ const CASES = {
   // answering as YouTube's do (getVideoData). The button stays while the pointer is on it, and a
   // click sends the preview's video, never the one watched last.
   async ytpreview(t) {
-    const PREVIEW = "mdmPreview1";
-    const WATCHED = "mdmWatched1";
+    const PREVIEW = "bmdPreview1";
+    const WATCHED = "bmdWatched1";
     const html = `<!doctype html><meta charset="utf-8"><title>YouTube</title>
 <style>body{margin:0;font:14px sans-serif}#player{display:none}.card{position:absolute;left:120px;top:100px;width:480px}
 .thumb{display:block;position:relative;width:480px;height:270px;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#3b6ea5,#a7c7e7)}
@@ -3010,11 +3010,11 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
       if (state !== "done") throw new Error(`the page's ${kind} player: ${state}`);
       const page = await t.session.evaluate("location.href");
       const v = await rect(t.session, "#player");
-      // The button over the player: its menu, then "All qualities and subtitles…" (openInMdm).
+      // The button over the player: its menu, then "All qualities and subtitles…" (openInBmd).
       done.push(await named(`${kind} button`, () => streamLookedUp(async () => {
         const b = await hover(t.session, v);
         if (!b) throw new Error("no button over the stream's player");
-        await openInMdm(t.session, appPid());
+        await openInBmd(t.session, appPid());
       }, manifest, page, cookie)));
       // The right-click menu on the player (Firefox: its menu can be driven headless).
       if (t.session.menu) {
@@ -3253,7 +3253,7 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
     const page = (week, src) => `${LAB}/page?title=${encodeURIComponent(`Lab lecture: week ${week}`)}&video=${encodeURIComponent(src)}`;
     const said = [];
     // An earlier browser's files of the same names off the list and the disk: they'd be numbered.
-    const earlier = (await mdmList()).filter((d) => /^Lab lecture/.test(d.file)).map((d) => d.id);
+    const earlier = (await bmdList()).filter((d) => /^Lab lecture/.test(d.file)).map((d) => d.id);
     if (earlier.length) await ipc({ action: "delete", ids: earlier });
     // The list: named after the page, typed by its server.
     await t.session.navigate(page(1, `/remote_control.php?id=${t.name}&seed=11`));
@@ -3300,10 +3300,10 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
     await until("yt-dlp's lookup (Download Now enabled)", 60000, () => videoReady(pid));
     await sleep(1000);
     if (shots) spawnSync("powershell", ["-NoProfile", "-File", path.join(root, "tools", "lab", "cap-own.ps1"), "-ProcessId", String(pid), "-Title", VIDEO_WINDOW, "-Out", path.join(shots, `${lang}-video-window.png`)]);
-    const before = new Set((await mdmList()).map((d) => d.id));
+    const before = new Set((await bmdList()).map((d) => d.id));
     if (!videoDownloadNow(pid)) throw new Error("no Download Now to press");
     const done = await until("the Download video window's download", 60000, async () => {
-      const d = (await mdmList()).find((x) => !before.has(x.id));
+      const d = (await bmdList()).find((x) => !before.has(x.id));
       if (d && d.status === "Error") throw new Error(`it failed: ${d.error}`);
       return d && d.status === "Complete" ? d : null;
     });
@@ -3344,7 +3344,7 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
     fs.rmSync(path.join(data, "ipc.json"), { force: true });
     spawn(appExe, ["/startup"], { env: process.env, stdio: "ignore", detached: false });
     try {
-      await until("the test instance, in the notification area", 20000, () => mdmList().then(() => true, () => false));
+      await until("the test instance, in the notification area", 20000, () => bmdList().then(() => true, () => false));
       const pid = appPid();
       const main = (titles) => titles.filter((x) => /^BMD \d/.test(x));
       const progress = (titles) => titles.find((x) => /^\d+% /.test(x));
@@ -3374,11 +3374,11 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
       const restMs = early - rested;
       // An earlier browser's downloads of this stream off the list (with their files): the same
       // quality again would be a duplicate, which Options' default asks about.
-      const earlier = (await mdmList()).filter((d) => d.url.startsWith(`${LAB}/hls/`)).map((d) => d.id);
+      const earlier = (await bmdList()).filter((d) => d.url.startsWith(`${LAB}/hls/`)).map((d) => d.id);
       if (earlier.length) await ipc({ action: "delete", ids: earlier });
-      const before = new Set((await mdmList()).map((d) => d.id));
+      const before = new Set((await bmdList()).map((d) => d.id));
       // What the page's own shortcuts would see (a player's Space and arrows).
-      await t.session.evaluate('(() => { window.__mdmKeys = 0; document.addEventListener("keydown", () => { window.__mdmKeys += 1; }); return 0; })()');
+      await t.session.evaluate('(() => { window.__bmdKeys = 0; document.addEventListener("keydown", () => { window.__bmdKeys += 1; }); return 0; })()');
       // #703: the look-up starts as the button shows; its chip then names the best quality.
       const chipped = await until("the best quality on the button's chip", 60000, async () => {
         const p = await t.session.pill(PILL_STATE);
@@ -3416,7 +3416,7 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
       // The arrows move through the menu, and the page's shortcuts don't hear them.
       await t.session.key("ArrowDown");
       await t.session.key("ArrowUp");
-      const heard = await t.session.evaluate("window.__mdmKeys");
+      const heard = await t.session.evaluate("window.__bmdKeys");
       if (heard !== 0) throw new Error(`the page heard ${heard} keys the menu used`);
       // "Download best" first, then the picture's qualities under VIDEO and the sound's under AUDIO
       // (the ffmpeg gives MP3, Opus and FLAC beside the picture's), each line its own kind.
@@ -3439,7 +3439,7 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
       const picked = Date.now();
       await t.session.mouse(row.x, row.y, "click");
       // BMD downloads the stream's manifest, with only the download's progress window.
-      const item = await until("the quality picked, in BMD's list", 15000, async () => (await mdmList()).find((d) => !before.has(d.id)));
+      const item = await until("the quality picked, in BMD's list", 15000, async () => (await bmdList()).find((d) => !before.has(d.id)));
       if (item.url !== `${LAB}/hls/master.m3u8`) throw new Error(`BMD downloads ${item.url}, not the stream's manifest`);
       const opened = await until("the download's progress window", 15000, () => progress(appWindows(pid)));
       const startMs = Date.now() - picked;
@@ -3453,9 +3453,9 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
       await sleep(7000);
       const b2 = await hover(t.session, v);
       if (!b2) throw new Error("no button for the second click");
-      const beforeBest = new Set((await mdmList()).map((d) => d.id));
+      const beforeBest = new Set((await bmdList()).map((d) => d.id));
       await t.session.mouse(await mainPart(t.session, b2), (b2.t + b2.b) / 2, "click");
-      const best = await until("the best quality, in BMD's list", 60000, async () => (await mdmList()).find((d) => !beforeBest.has(d.id)));
+      const best = await until("the best quality, in BMD's list", 60000, async () => (await bmdList()).find((d) => !beforeBest.has(d.id)));
       const green = await until("the button's green state", 10000, async () => {
         const p = await t.session.pill(PILL_STATE);
         return p && p.state === "sent" ? p : null;
@@ -3486,11 +3486,11 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
     fs.rmSync(path.join(data, "ipc.json"), { force: true });
     spawn(appExe, ["/startup"], { env: process.env, stdio: "ignore", detached: false });
     try {
-      await until("the test instance, in the notification area", 20000, () => mdmList().then(() => true, () => false));
+      await until("the test instance, in the notification area", 20000, () => bmdList().then(() => true, () => false));
       const s = t.session;
       const FILE_A = "/gen/2M/feed-a.mp4";
       // An earlier browser's downloads of these off the list (with their files).
-      const earlier = (await mdmList()).filter((d) => d.url.startsWith(`${LAB}${FILE_A}`) || d.url.startsWith(`${LAB}/hls/`)).map((d) => d.id);
+      const earlier = (await bmdList()).filter((d) => d.url.startsWith(`${LAB}${FILE_A}`) || d.url.startsWith(`${LAB}/hls/`)).map((d) => d.id);
       if (earlier.length) await ipc({ action: "delete", ids: earlier });
       await s.navigate(`${LAB}/feed`);
       const state = await until("the feed's players", 30000, () => s.evaluate("document.body.dataset.feed || ''"));
@@ -3563,9 +3563,9 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
         throw new Error(`#feed1's menu: ${rows(one.m)}`);
       }
       await clearLog();
-      const before = new Set((await mdmList()).map((d) => d.id));
+      const before = new Set((await bmdList()).map((d) => d.id));
       await s.mouse(top.x, top.y, "click");
-      const item = await until("#feed1's file, in BMD's list", 15000, async () => (await mdmList().catch(() => [])).find((d) => !before.has(d.id))).catch(async (e) => {
+      const item = await until("#feed1's file, in BMD's list", 15000, async () => (await bmdList().catch(() => [])).find((d) => !before.has(d.id))).catch(async (e) => {
         throw new Error(`${e.message} (the button: ${JSON.stringify(await s.pill(PILL_STATE))}, the menu: ${JSON.stringify(await s.picks())})`);
       });
       if (!item.url.startsWith(`${LAB}${FILE_A}?`)) throw new Error(`BMD downloads ${item.url}, not #feed1's file`);
@@ -3574,7 +3574,7 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
         return q && q.state === "sent" ? q : null;
       });
       const done = await until(`${item.file}, complete`, 45000, async () => {
-        const d = (await mdmList().catch(() => [])).find((x) => x.id === item.id);
+        const d = (await bmdList().catch(() => [])).find((x) => x.id === item.id);
         if (d && d.status === "Error") throw new Error(`${item.file}: ${d.error}`);
         return d && d.status === "Complete" ? d : null;
       });
@@ -3586,12 +3586,12 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
       const two = await menuOver("#feed2", "720p", "played-stream");
       const q360 = two.m.rows.find((r) => r.kind === "video" && /\b360p\b/.test(r.name));
       if (!q360 || !two.m.rows.some((r) => /\b720p\b/.test(r.name))) throw new Error(`#feed2's menu: ${rows(two.m)}`);
-      const before2 = new Set((await mdmList()).map((d) => d.id));
+      const before2 = new Set((await bmdList()).map((d) => d.id));
       await s.mouse(q360.x, q360.y, "click");
-      const stream = await until("#feed2's 360p, in BMD's list", 15000, async () => (await mdmList().catch(() => [])).find((d) => !before2.has(d.id)));
+      const stream = await until("#feed2's 360p, in BMD's list", 15000, async () => (await bmdList().catch(() => [])).find((d) => !before2.has(d.id)));
       if (stream.url !== `${LAB}/hls/master.m3u8`) throw new Error(`BMD downloads ${stream.url}, not #feed2's stream`);
       const streamed = await until(`${stream.file}, complete`, 90000, async () => {
-        const d = (await mdmList().catch(() => [])).find((x) => x.id === stream.id);
+        const d = (await bmdList().catch(() => [])).find((x) => x.id === stream.id);
         if (d && d.status === "Error") throw new Error(`${stream.file}: ${d.error}`);
         return d && d.status === "Complete" ? d : null;
       });
@@ -3626,13 +3626,13 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
     // Without the page's Origin, the stream's server refuses it, as the issue's did.
     const bare = await fetch(`${LAB}/hlsg/${site}/master.m3u8`, { headers: { Referer: `${page}/page` } });
     if (bare.status !== 403) throw new Error(`the guarded stream answered ${bare.status} without the page's Origin`);
-    const earlier = (await mdmList()).filter((d) => d.url.startsWith(`${LAB}/hlsg/`)).map((d) => d.id);
+    const earlier = (await bmdList()).filter((d) => d.url.startsWith(`${LAB}/hlsg/`)).map((d) => d.id);
     if (earlier.length) await ipc({ action: "delete", ids: earlier });
     await clearLog();
     const v = await rect(t.session, "#player");
     const b = await hover(t.session, v);
     if (!b) throw new Error("no button over the stream's player");
-    const before = new Set((await mdmList()).map((d) => d.id));
+    const before = new Set((await bmdList()).map((d) => d.id));
     const bmd = async () => (await (await fetch(`${LAB}/_log`)).json()).filter(guarded);
     const refused = async () => (await bmd()).filter((x) => x.status !== 200).map((x) => `${x.path} ${x.status} (origin ${x.origin || "none"}, referer ${x.referer || "none"})`);
     // The look-up: its chip names the best quality (a failed one names none).
@@ -3658,9 +3658,9 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
     const row = m.rows.find((r) => r.kind === "audio" && /original/i.test(r.name));
     if (!row) throw new Error(`no original sound in the menu: ${JSON.stringify(m.rows.map((r) => r.name))}`);
     await t.session.mouse(row.x, row.y, "click");
-    const item = await until("the stream, in BMD's list", 60000, async () => (await mdmList()).find((d) => !before.has(d.id)));
+    const item = await until("the stream, in BMD's list", 60000, async () => (await bmdList()).find((d) => !before.has(d.id)));
     const done = await until("the download's end", 120000, async () => {
-      const d = (await mdmList()).find((x) => x.id === item.id);
+      const d = (await bmdList()).find((x) => x.id === item.id);
       if (d && d.status === "Error") throw new Error(`the download failed: ${d.error}; refused: ${(await refused()).join(", ")}`);
       return d && d.status === "Complete" ? d : null;
     });
@@ -3695,7 +3695,7 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
     fs.rmSync(path.join(data, "ipc.json"), { force: true });
     spawn(appExe, ["/startup"], { env: process.env, stdio: "ignore", detached: false });
     try {
-      await until("the test instance, in the notification area", 20000, () => mdmList().then(() => true, () => false));
+      await until("the test instance, in the notification area", 20000, () => bmdList().then(() => true, () => false));
       await t.session.navigate(address);
       // Timing the click: the video playing, as a person watching it would have it (a player
       // that waits for its play button shows no picture before).
@@ -3753,11 +3753,11 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
       const now = await t.session.picks();
       const seen = now.rows.find((r) => r.choice === row.choice) || row;
       if (shots) await snap("page-pick", now);
-      const before = new Set((await mdmList()).map((d) => d.id));
+      const before = new Set((await bmdList()).map((d) => d.id));
       await t.session.mouse(seen.x, seen.y, "click");
-      const item = await until("the line picked, in BMD's list", 30000, async () => (await mdmList()).find((d) => !before.has(d.id)));
+      const item = await until("the line picked, in BMD's list", 30000, async () => (await bmdList()).find((d) => !before.has(d.id)));
       const done = await until("the download's end", 20 * 60000, async () => {
-        const d = (await mdmList()).find((x) => x.id === item.id);
+        const d = (await bmdList()).find((x) => x.id === item.id);
         if (d && d.status === "Error") throw new Error(`the download failed: ${d.error}`);
         return d && d.status === "Complete" ? d : null;
       });
@@ -3941,12 +3941,12 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
       // BMD isn't running: the click starts it, which takes the video. (Its earlier copy of the
       // file first off its list: a duplicate would be asked about.)
       await startApp();
-      const earlier = (await mdmList()).filter((d) => d.url === clip).map((d) => d.id);
+      const earlier = (await bmdList()).filter((d) => d.url === clip).map((d) => d.id);
       if (earlier.length) await ipc({ action: "delete", ids: earlier });
       await stopApp();
       await click(v, "BMD not running");
       const first = await until("the video's file in BMD's list (BMD started by the host)", 45000, async () =>
-        (await mdmList().catch(() => [])).find((d) => d.url === clip),
+        (await bmdList().catch(() => [])).find((d) => d.url === clip),
       );
       if (ourApps().length !== 1) throw new Error(`${ourApps().length} instances run after the click`);
       const said = await status();
@@ -3956,12 +3956,12 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
       await ipc({ action: "delete", ids: [first.id] });
       await stopApp();
       await startApp();
-      const before = new Set((await mdmList()).map((d) => d.id));
+      const before = new Set((await bmdList()).map((d) => d.id));
       // The first click's green "Added to BMD" over (6 s): a click on it isn't a new one.
       await s.mouse(5, 5);
       await until("the first click's state over", 10000, async () => (await s.pill(PILL_STATE).catch(() => null))?.state !== "sent");
       await click(v, "BMD started again");
-      const again = await until("the video's file in the restarted BMD's list", 15000, async () => (await mdmList()).find((d) => !before.has(d.id))).catch(async (e) => {
+      const again = await until("the video's file in the restarted BMD's list", 15000, async () => (await bmdList()).find((d) => !before.has(d.id))).catch(async (e) => {
         throw new Error(`${e.message} (the button: ${JSON.stringify(await s.pill(PILL_STATE))})`);
       });
       if (again.url !== clip) throw new Error(`BMD downloads ${again.url}`);
@@ -4034,7 +4034,7 @@ thumb.addEventListener("mouseleave", () => { preview.classList.add("off"); docum
       const theirs = (await requests(`/gen/1M/${file}`)).filter((e) => e.user_agent !== t.ua);
       if (!theirs.length) throw new Error("no request from the server");
       if (theirs.some((e) => (e.cookie || "").length)) throw new Error(`a cookie went to the server's download: ${theirs.map((e) => e.cookie).join("; ")}`);
-      if ((await mdmList().catch(() => [])).some((d) => d.file === file)) throw new Error("this computer's BMD got it too");
+      if ((await bmdList().catch(() => [])).some((d) => d.file === file)) throw new Error("this computer's BMD got it too");
       await keptNothing(t.dl);
       return `paired (${said}); ${file} downloaded by the server into ${path.relative(r.downloads, at)} (${theirs.length} request(s), no cookie), not by this computer`;
     } finally {
@@ -4057,7 +4057,7 @@ const KNOWN_BUGS = {};
 // Also this account's .torrent and magnet associations (TORRENT_KEYS), which Torrent settings'
 // switch writes (win32.rs set_torrent_handlers): no test instance may touch them (#1058); one
 // changed fails the run, after being put back.
-const HOST = "com.misterdownloadmanager.host";
+const HOST = "com.blackmarlindownloader.host";
 const REG_KEYS = ["HKCU", "HKLM"].flatMap((root) => [
   ...[
     "Software\\Google\\Chrome\\NativeMessagingHosts",
@@ -4067,7 +4067,7 @@ const REG_KEYS = ["HKCU", "HKLM"].flatMap((root) => [
     "Software\\Mozilla\\NativeMessagingHosts",
   ].map((k) => [`${root}\\${k}\\${HOST}`, false]),
   [`${root}\\Software\\Google\\Chrome\\Extensions`, true],
-]).concat([".torrent", "magnet", "MisterDownloadManager.Torrent"].map((k) => [`HKCU\\Software\\Classes\\${k}`, false]));
+]).concat([".torrent", "magnet", "BlackMarlinDownloader.Torrent"].map((k) => [`HKCU\\Software\\Classes\\${k}`, false]));
 const TORRENT_KEYS = new Set(REG_KEYS.filter(([k]) => k.includes("\\Classes\\")).map(([k]) => k));
 
 // Linux and macOS: the host's manifests (`<HOST>.json`) in the home folder's browser folders,
@@ -4307,7 +4307,7 @@ async function run() {
     fs.writeFileSync(path.join(data, "tools", "programs.json"), JSON.stringify(programs));
   }
   // The browsers pass these on to the host, and the host to an app it starts.
-  process.env.MDM_DATA_DIR = data;
+  process.env.BMD_DATA_DIR = data;
   process.env.BMD_OFFSCREEN = "1";
 
   before = new Set(appProcesses().map(([pid]) => pid));
@@ -4330,7 +4330,7 @@ async function run() {
     // Linux and macOS: its manifests (files) are put back byte for byte at the end, so a lab
     // machine's (E2E_REPLACE_HOST=1) may be replaced while the run lasts. E2E_HOST_NAME never
     // touches the real name (testHost), so it runs beside an installed copy.
-    const key = "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.misterdownloadmanager.host";
+    const key = "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.blackmarlindownloader.host";
     const installed = WIN ? spawnSync("reg", ["query", key], { stdio: "ignore" }).status === 0 : regSnapshot().some((m) => m.bytes) && process.env.E2E_REPLACE_HOST !== "1";
     if (installed && !process.env.E2E_HOST_NAME) {
       throw new Error("BMD's host is already registered (an installed copy): not touching it (E2E_HOST_NAME runs beside it)");
@@ -4349,7 +4349,7 @@ async function run() {
       const [kind, candidates] = BROWSERS[name];
       const bin = candidates.find((p) => fs.existsSync(p));
       // A Snap (Ubuntu's Firefox) reads its profile only from its own folder, and starts the host
-      // through the desktop portal, without the browser's environment (MDM_DATA_DIR): the host
+      // through the desktop portal, without the browser's environment (BMD_DATA_DIR): the host
       // would reach this computer's own BMD, not the test instance, so only the remote case runs.
       const snap = Boolean(bin) && bin.startsWith("/snap/");
       const profile = snap ? path.join(process.env.HOME, "snap", name, "common", "bmd-e2e-profile") : path.join(work, `profile-${name}`);

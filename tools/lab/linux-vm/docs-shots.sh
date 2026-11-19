@@ -2,7 +2,7 @@
 # The README's, docs' and site's Linux screenshots, on a real desktop: GNOME, KDE Plasma,
 # Cinnamon or Xfce in a lab VM (docs-shots-host.ps1 runs this from the Windows host and makes the
 # WebP files). The Linux counterpart of tools/lab/docs-shots.ps1: an BMD of its own (its own data
-# folder, MDM_DATA_DIR, and download folders), its own lab server with neutral files, every window
+# folder, BMD_DATA_DIR, and download folders), its own lab server with neutral files, every window
 # opened through BMD's own command line (`/show <window>`), at 1x.
 #
 #   docs-shots.sh <label> [out folder] [light,dark] [main,add-url,...]
@@ -123,7 +123,7 @@ for mode in "${mode_list[@]}"; do
   pkill -f "^$app$" 2>/dev/null; sleep 1
   desktop_mode "$mode"
   rm -rf "$work"; mkdir -p "$work/data" "$work/Downloads"
-  export MDM_DATA_DIR=$work/data
+  export BMD_DATA_DIR=$work/data
   # Its own list and settings: the language chosen, light or dark whatever the desktop's mode,
   # every category's folder under the run's own, nothing reaching out (no update check; the
   # torrent engine neither listens nor uses the DHT, UPnP or local discovery).

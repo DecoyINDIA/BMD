@@ -1403,7 +1403,7 @@ fn bar_shares_window() -> bool {
     {
         !crate::unix::on_wayland()
     }
-    // Windows and macOS: one window per menu, as before. Native Wayland (MDM_WAYLAND=1) too: a
+    // Windows and macOS: one window per menu, as before. Native Wayland (BMD_WAYLAND=1) too: a
     // program can't move its windows there (winit 0.30 has no popup windows on Wayland), so a
     // shared window would stay where the first menu opened.
     #[cfg(not(target_os = "linux"))]

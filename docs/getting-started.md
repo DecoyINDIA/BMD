@@ -14,7 +14,7 @@ Published BMD builds will appear on the [Releases](https://github.com/DecoyINDIA
 |---|---|
 | `BMD-<version>-setup.exe` | The installer. Pick this one unless you have a reason not to. It can set up browser integration and open `.torrent` files and magnet links with BMD. |
 | `BMD-<version>-portable.zip` | A portable copy. The download list and settings stay in a `data` folder next to the program, and nothing is written to the registry. Browser integration needs the installer. See [Portable mode](portable.md). |
-| `BMD-<version>-x64.zip` | The same programs without an installer. It keeps its data in `%APPDATA%\misterdownloadmanager`, like an installed copy. |
+| `BMD-<version>-x64.zip` | The same programs without an installer. It keeps its data in `%APPDATA%\bmd`, like an installed copy. |
 
 These three are for 64-bit Windows on an Intel or AMD processor (x64), the usual PC. From the
 version after 0.5.2, each comes for two more kinds of PC too, with the processor in its name:
@@ -65,7 +65,7 @@ readers (Orca) don't read BMD's windows; browsers installed as a Flatpak can't r
 from Flathub may, through the desktop as the Snap does, but that isn't checked yet); and **View →
 Draw with → Vulkan** is a choice, OpenGL stays the default.
 
-In a Wayland session, BMD chooses its windows' system as it starts, the same way however it was started (its menu entry, the browser's helper, the session's autostart). Its windows run through XWayland where X11 programs look right: only X11 lets BMD open its menus and drop-down lists right under what you clicked (on Wayland they open where the compositor puts new windows, often the middle of the screen) and hide its window in the notification area. That is GNOME and KDE Plasma, which tell X11 programs the screen's scale, and any desktop whose screens aren't scaled. On a scaled screen where nothing tells X11 programs the scale (Hyprland, labwc, sway and other wlroots compositors), the compositor would scale BMD's windows up, blurry, so BMD uses Wayland's own windows there. **View → Window system** picks **X11 (XWayland)** or **Wayland** instead, from the next start, for every way BMD starts (**Automatic** goes back to BMD's choice); `MDM_WAYLAND=1` or `MDM_WAYLAND=0` decides for one start. If the system lacks a library X11 windows need (such as libxkbcommon-x11, which the .deb and .rpm bring but the AppImage and the tar.gz can't), BMD opens on Wayland instead; with no window system it can use, it names what's missing and the command that installs it.
+In a Wayland session, BMD chooses its windows' system as it starts, the same way however it was started (its menu entry, the browser's helper, the session's autostart). Its windows run through XWayland where X11 programs look right: only X11 lets BMD open its menus and drop-down lists right under what you clicked (on Wayland they open where the compositor puts new windows, often the middle of the screen) and hide its window in the notification area. That is GNOME and KDE Plasma, which tell X11 programs the screen's scale, and any desktop whose screens aren't scaled. On a scaled screen where nothing tells X11 programs the scale (Hyprland, labwc, sway and other wlroots compositors), the compositor would scale BMD's windows up, blurry, so BMD uses Wayland's own windows there. **View → Window system** picks **X11 (XWayland)** or **Wayland** instead, from the next start, for every way BMD starts (**Automatic** goes back to BMD's choice); `BMD_WAYLAND=1` or `BMD_WAYLAND=0` decides for one start. If the system lacks a library X11 windows need (such as libxkbcommon-x11, which the .deb and .rpm bring but the AppImage and the tar.gz can't), BMD opens on Wayland instead; with no window system it can use, it names what's missing and the command that installs it.
 
 The windows are the ones described in this help, with the desktop's fonts, file icons and title
 bars:
@@ -85,14 +85,14 @@ bars:
 
 #### Uninstall on Linux {#uninstall-linux}
 
-`sudo apt remove misterdownloadmanager` (or `sudo dnf remove misterdownloadmanager`) removes the
+`sudo apt remove bmd` (or `sudo dnf remove bmd`) removes the
 programs, and the small files that tell your browsers where BMD's helper is: the .deb and .rpm
 install those for everyone (in `/etc` and `/usr/lib`), for Chrome, Chromium, Edge, Brave, Vivaldi,
 Helium and Firefox (the Snap too), so BMD doesn't write them in your home folder. For the AppImage
 or the tar.gz, delete the file or the folder.
 
 What BMD keeps in your home folder stays, as with any package: your list and settings
-(`~/.local/share/misterdownloadmanager`), the AppImage's and the tar.gz's browser files, and
+(`~/.local/share/bmd`), the AppImage's and the tar.gz's browser files, and
 those of the browsers that read them only there (Opera, Helium, Thorium, and Firefox's forks:
 Zen, LibreWolf, Floorp, Waterfox). A package can't remove those: it never touches
 home folders. Without BMD they lead nowhere, so the extension says it can't reach BMD. To remove
@@ -102,11 +102,11 @@ them as well, run this as each user who used BMD, **before** uninstalling:
 bmd-nmhost --unregister
 ```
 
-(From the AppImage: `~/.local/share/misterdownloadmanager/browser-host/bmd-nmhost --unregister`.)
+(From the AppImage: `~/.local/share/bmd/browser-host/bmd-nmhost --unregister`.)
 Already uninstalled? This removes the same files:
 
 ```sh
-find ~/.mozilla ~/.librewolf ~/.config -name com.misterdownloadmanager.host.json -delete 2>/dev/null
+find ~/.mozilla ~/.librewolf ~/.config -name com.blackmarlindownloader.host.json -delete 2>/dev/null
 ```
 
 ### On a Mac
@@ -269,7 +269,7 @@ To quit, choose **Tasks → Exit** or **Exit** in the tray menu.
 
 ## Where BMD keeps its data
 
-The download list and settings are in `%APPDATA%\misterdownloadmanager` (`downloads.json`); on Linux in `~/.local/share/misterdownloadmanager`, on a Mac in `~/Library/Application Support/misterdownloadmanager`. A portable copy keeps them in its `data` folder instead. Downloaded files go to your **Downloads** folder, sorted into a folder per category; you can change that in **Options → Save to**.
+The download list and settings are in `%APPDATA%\bmd` (`downloads.json`); on Linux in `~/.local/share/bmd`, on a Mac in `~/Library/Application Support/bmd`. A portable copy keeps them in its `data` folder instead. Downloaded files go to your **Downloads** folder, sorted into a folder per category; you can change that in **Options → Save to**.
 
 ## Next steps
 

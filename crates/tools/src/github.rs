@@ -271,7 +271,7 @@ mod tests {
     fn the_tag_is_read_from_the_release_page_address() {
         // As github.com redirects today (checked 2026-11-17).
         assert_eq!(
-            tag_from("https://github.com/anefzaoui/misterdownloadmanager/releases/tag/v0.5.2"),
+            tag_from("https://github.com/DecoyINDIA/BMD/releases/tag/v0.5.2"),
             Some("v0.5.2".into())
         );
         assert_eq!(
@@ -318,13 +318,8 @@ mod tests {
             "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.26/SHA2-256SUMS.sig"
         );
         assert_eq!(
-            download_url(
-                WEB,
-                "anefzaoui/misterdownloadmanager",
-                "v0.6.0",
-                "MisterDownloadManager-0.6.0-setup-arm64.exe"
-            ),
-            "https://github.com/anefzaoui/misterdownloadmanager/releases/download/v0.6.0/MisterDownloadManager-0.6.0-setup-arm64.exe"
+            download_url(WEB, "DecoyINDIA/BMD", "v0.6.0", "BMD-0.6.0-setup-arm64.exe"),
+            "https://github.com/DecoyINDIA/BMD/releases/download/v0.6.0/BMD-0.6.0-setup-arm64.exe"
         );
         assert_eq!(
             download_url(
@@ -353,9 +348,9 @@ mod tests {
         }
     }
 
-    const REPO: &str = "anefzaoui/misterdownloadmanager";
-    const ZIP: &str = "MisterDownloadManager-9.9.9-x64.zip";
-    const SETUP: &str = "MisterDownloadManager-9.9.9-setup.exe";
+    const REPO: &str = "DecoyINDIA/BMD";
+    const ZIP: &str = "BMD-9.9.9-x64.zip";
+    const SETUP: &str = "BMD-9.9.9-setup.exe";
 
     /// A release on the fake GitHub: its repository, its tag, its files as (name, fixture).
     type FakeRelease<'a> = (&'a str, &'a str, &'a [(&'a str, &'a str)]);
@@ -386,17 +381,16 @@ mod tests {
 
     /// #1337 end to end: GitHub's API refuses for its rate limit, so the latest release is found
     /// on the pages (the tag `releases/latest` redirects to), and its file is downloaded and
-    /// checked as Update now checks it, against the release's list signed by BMD's key; a file
-    /// that isn't the one the list names is still refused. yt-dlp's real signed list is fetched
+    /// checked as Update now checks it, against the release's checksum list; a file that isn't
+    /// the one the list names is still refused. yt-dlp's real signed list is fetched
     /// the same way and passes yt-dlp's key.
     #[tokio::test]
     async fn a_rate_limited_api_gives_way_to_the_release_pages() {
         let bmd_files: &[(&str, &str)] = &[
-            ("SHA256SUMS.txt", "mdm-SHA256SUMS.txt"),
-            ("SHA256SUMS.txt.sig", "mdm-SHA256SUMS.txt.sig"),
+            ("SHA256SUMS.txt", "release-SHA256SUMS.txt"),
             (ZIP, ZIP),
-            // Not what the signed list says it is.
-            (SETUP, "mdm-SHA256SUMS.txt"),
+            // Not what the list says it is.
+            (SETUP, "release-SHA256SUMS.txt"),
         ];
         let ytdlp_files: &[(&str, &str)] = &[
             ("SHA2-256SUMS", "SHA2-256SUMS"),
@@ -410,13 +404,13 @@ mod tests {
         let net = crate::net(bmd_engine::Proxy::None);
         let api = lab.url(&format!("/gh/api/repos/{REPO}/releases/latest"));
         let web = lab.url("/gh/web");
-        let names = ["SHA256SUMS.txt", "SHA256SUMS.txt.sig", ZIP, SETUP];
+        let names = ["SHA256SUMS.txt", ZIP, SETUP];
         let found = latest_release(&net, &api, &web, REPO, &names)
             .await
             .unwrap();
         assert_eq!(found.tag, "v9.9.9");
         assert_eq!(
-            found.files[2],
+            found.files[1],
             (
                 ZIP.to_owned(),
                 format!("{web}/{REPO}/releases/download/v9.9.9/{ZIP}")
@@ -431,7 +425,7 @@ mod tests {
                 format!("/gh/web/{REPO}/releases/latest"),
             ]
         );
-        // Downloaded and checked as Update now does: the signed list, then the file.
+        // Downloaded and checked as Update now does: the list, then the file.
         let dir = tempfile::tempdir().unwrap();
         let progress = crate::update::Progress::default();
         let file = crate::update::fetch(&found.files, ZIP, dir.path(), &net, &progress)
@@ -473,7 +467,7 @@ mod tests {
             &client,
             &url("SHA2-256SUMS"),
             &url("SHA2-256SUMS.sig"),
-            crate::signed_by_bmd,
+            crate::gallery::signed_by_gallery_dl,
         )
         .await;
         assert!(matches!(other, Err(Error::BadSignature)), "{other:?}");

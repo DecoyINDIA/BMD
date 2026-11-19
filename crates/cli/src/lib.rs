@@ -327,9 +327,9 @@ enum Cmd {
         #[arg(value_parser = ["on", "off"])]
         state: String,
     },
-    /// Continue a paused or interrupted download from its `.mdm.json` state file.
+    /// Continue a paused or interrupted download from its `.bmd.json` state file.
     Resume {
-        /// The `<file>.mdm.json` next to the unfinished download.
+        /// The `<file>.bmd.json` next to the unfinished download.
         state: PathBuf,
         /// Maximum connections (1 to 128).
         #[arg(short, long, default_value_t = Options::default().max_connections,
@@ -2113,7 +2113,7 @@ mod tests {
             "get",
             "https://example.test/a.zip"
         ])));
-        assert!(downloads(&args(&["resume", "a.zip.mdm.json"])));
+        assert!(downloads(&args(&["resume", "a.zip.bmd.json"])));
         assert!(!downloads(&args(&["start-queue"])));
         assert!(!downloads(&args(&["stop-queue"])));
         assert!(!downloads(&args(&["add", "https://example.test/a.zip"])));
@@ -2531,7 +2531,7 @@ mod tests {
         let cli = Cli::try_parse_from([
             NAME,
             "resume",
-            "test.mdm.json",
+            "test.bmd.json",
             "-r",
             "https://example.test/source",
             "--user-agent",

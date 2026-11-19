@@ -268,6 +268,9 @@
 #. message or event log entry in the main window; text in the tray icon's menu
 #. title of the note when Tasks → Add batch download from clipboard finds nothing to download
 	Add batch download from clipboard	Add batch download from clipboard
+#. window title in extension.rs
+#. title of the window that offers the browser extension
+	Add BMD to your browser	Add BMD to your browser
 #. text in the Options window
 #. the trailing ... means it is still going on: keep it
 	Add browser...	Add browser...
@@ -276,9 +279,6 @@
 #. button in rssdlg.rs
 #. RSS feeds window: button that subscribes to the feed whose address is typed
 	Add feed	Add feed
-#. window title in extension.rs
-#. title of the window that offers the browser extension
-	Add BMD to your browser	Add BMD to your browser
 #. text in playlistdlg.rs
 #. title of the question asked before a playlist adds many downloads
 	Add many downloads	Add many downloads
@@ -575,6 +575,72 @@
 #. text in the Add torrent window
 #. Torrent settings: the address of an IP blocklist (empty: none)
 	Block the addresses in this list (P2P or eMule format):	Block the addresses in this list (P2P or eMule format):
+#. message or event log entry in the main window; window title in a dialog box; text in the Help menu's windows (About, updates, shortcuts, Tell a friend)
+	BMD	BMD
+#. text in the Options window
+#. Options → Remote → Pair a device: the remote control isn't listening (no network, port taken): the Remote page says why
+	BMD can't be reached on the network now: Options → Remote says why.	BMD can't be reached on the network now: Options → Remote says why.
+#. text in unix.rs
+#. Linux, at start, on the terminal and in a message box: a library the window needs isn't installed; {libraries} = its file names (libxkbcommon-x11.so.0…), left as they are
+	BMD can't open its window: this system lacks {libraries}.	BMD can't open its window: this system lacks {libraries}.
+#. text in remote.rs
+#. remote control page (on a phone): the address typed isn't one BMD downloads (not http, https, ftp or magnet)
+	BMD cannot download this address.	BMD cannot download this address.
+#. text in crashui.rs
+#. crash report window heading: BMD crashed and is gone
+	BMD closed unexpectedly	BMD closed unexpectedly
+#. window title in the Options window
+	BMD Configuration	BMD Configuration
+#. text in remote.rs
+#. remote control page (on a phone): adding a download failed
+	BMD could not add it.	BMD could not add it.
+#. text in remote.rs
+#. remote control page (on a phone): an action failed
+	BMD could not do it.	BMD could not do it.
+#. text in crashui.rs
+	BMD crash report	BMD crash report
+#. text in remote.rs
+#. remote control page (on a phone): BMD can't be reached while pairing
+	BMD does not answer. Check that it is running and on the same network.	BMD does not answer. Check that it is running and on the same network.
+#. text in remote.rs
+#. remote control page (on a phone): BMD can't be reached now; the page keeps trying by itself
+#. the trailing ... means it is still going on: keep it
+	BMD does not answer. Trying again...	BMD does not answer. Trying again...
+#. text in helpers.rs
+#. Video helpers: BMD can't download this helper on this Windows (ffmpeg on 32-bit Windows); "Use another program" is the button below
+	BMD has no copy for this system: install it, or use another program	BMD has no copy for this system: install it, or use another program
+#. text in crashui.rs; text in the Help menu's windows (About, updates, shortcuts, Tell a friend)
+#. crash report window heading: an internal error, BMD still running
+	BMD hit an internal error	BMD hit an internal error
+#. text in wake.rs
+#. why the computer isn't going to sleep, in the system's list of programs that keep it awake (Windows' power requests, Linux's inhibitors)
+	BMD is downloading	BMD is downloading
+#. text in wake.rs
+#. why the computer isn't going to sleep, in the system's list of programs that keep it awake; {queue} = the queue's name
+#. {queue} = a queue name such as "Main queue" (keep the braces as they are)
+	BMD is running the queue "{queue}"	BMD is running the queue "{queue}"
+#. text in remote.rs
+#. remote control page (on a phone): no pairing code is shown in BMD; "Pair a device" is BMD's button
+	BMD shows no code now. Click Pair a device there first.	BMD shows no code now. Click Pair a device there first.
+#. text in crashui.rs
+#. crash report window heading: BMD's window doesn't answer (frozen)
+	BMD stopped responding	BMD stopped responding
+#. text in crashui.rs
+#. crash report window heading: the window of BMD stopped answering, then answered again
+	BMD stopped responding for a while	BMD stopped responding for a while
+#. text in the Options window
+#. \\n starts a new line: break lines where they fit the translation
+	BMD writes every connection straight into the final\nfile (a sparse part file next to it), so no temporary directory and no\nassembling step are needed.	BMD writes every connection straight into the final\nfile (a sparse part file next to it), so no temporary directory and no\nassembling step are needed.
+#. text in the Help menu's windows (About, updates, shortcuts, Tell a friend)
+#. {version} = a version number (keep the braces as they are)
+	BMD {version} is available (released {date}).	BMD {version} is available (released {date}).
+#. text in helpers.rs
+#. Video helpers: {version} = the version of BMD's own copy
+#. {version} = a version number (keep the braces as they are)
+	BMD's own copy, version {version}	BMD's own copy, version {version}
+#. text in unix.rs
+#. Linux, at start, on the terminal: the libraries an X11 window needs aren't installed, so the window opens through Wayland instead, where menus can't be placed under what was clicked; {libraries} = their file names, left as they are
+	BMD's X11 window needs {libraries}, which this system lacks: it opens on Wayland instead, where its menus may open away from their titles.	BMD's X11 window needs {libraries}, which this system lacks: it opens on Wayland instead, where its menus may open away from their titles.
 #. text in countries.rs
 #. a country's name (where a download's server is)
 	Bolivia	Bolivia
@@ -1687,72 +1753,6 @@
 #. text in countries.rs
 #. a country's name (where a download's server is)
 	Iceland	Iceland
-#. message or event log entry in the main window; window title in a dialog box; text in the Help menu's windows (About, updates, shortcuts, Tell a friend)
-	BMD	BMD
-#. text in the Options window
-#. Options → Remote → Pair a device: the remote control isn't listening (no network, port taken): the Remote page says why
-	BMD can't be reached on the network now: Options → Remote says why.	BMD can't be reached on the network now: Options → Remote says why.
-#. text in unix.rs
-#. Linux, at start, on the terminal and in a message box: a library the window needs isn't installed; {libraries} = its file names (libxkbcommon-x11.so.0…), left as they are
-	BMD can't open its window: this system lacks {libraries}.	BMD can't open its window: this system lacks {libraries}.
-#. text in remote.rs
-#. remote control page (on a phone): the address typed isn't one BMD downloads (not http, https, ftp or magnet)
-	BMD cannot download this address.	BMD cannot download this address.
-#. text in crashui.rs
-#. crash report window heading: BMD crashed and is gone
-	BMD closed unexpectedly	BMD closed unexpectedly
-#. window title in the Options window
-	BMD Configuration	BMD Configuration
-#. text in remote.rs
-#. remote control page (on a phone): adding a download failed
-	BMD could not add it.	BMD could not add it.
-#. text in remote.rs
-#. remote control page (on a phone): an action failed
-	BMD could not do it.	BMD could not do it.
-#. text in crashui.rs
-	BMD crash report	BMD crash report
-#. text in remote.rs
-#. remote control page (on a phone): BMD can't be reached while pairing
-	BMD does not answer. Check that it is running and on the same network.	BMD does not answer. Check that it is running and on the same network.
-#. text in remote.rs
-#. remote control page (on a phone): BMD can't be reached now; the page keeps trying by itself
-#. the trailing ... means it is still going on: keep it
-	BMD does not answer. Trying again...	BMD does not answer. Trying again...
-#. text in helpers.rs
-#. Video helpers: BMD can't download this helper on this Windows (ffmpeg on 32-bit Windows); "Use another program" is the button below
-	BMD has no copy for this system: install it, or use another program	BMD has no copy for this system: install it, or use another program
-#. text in crashui.rs; text in the Help menu's windows (About, updates, shortcuts, Tell a friend)
-#. crash report window heading: an internal error, BMD still running
-	BMD hit an internal error	BMD hit an internal error
-#. text in wake.rs
-#. why the computer isn't going to sleep, in the system's list of programs that keep it awake (Windows' power requests, Linux's inhibitors)
-	BMD is downloading	BMD is downloading
-#. text in wake.rs
-#. why the computer isn't going to sleep, in the system's list of programs that keep it awake; {queue} = the queue's name
-#. {queue} = a queue name such as "Main queue" (keep the braces as they are)
-	BMD is running the queue "{queue}"	BMD is running the queue "{queue}"
-#. text in remote.rs
-#. remote control page (on a phone): no pairing code is shown in BMD; "Pair a device" is BMD's button
-	BMD shows no code now. Click Pair a device there first.	BMD shows no code now. Click Pair a device there first.
-#. text in crashui.rs
-#. crash report window heading: BMD's window doesn't answer (frozen)
-	BMD stopped responding	BMD stopped responding
-#. text in crashui.rs
-#. crash report window heading: the window of BMD stopped answering, then answered again
-	BMD stopped responding for a while	BMD stopped responding for a while
-#. text in the Options window
-#. \\n starts a new line: break lines where they fit the translation
-	BMD writes every connection straight into the final\nfile (a sparse part file next to it), so no temporary directory and no\nassembling step are needed.	BMD writes every connection straight into the final\nfile (a sparse part file next to it), so no temporary directory and no\nassembling step are needed.
-#. text in the Help menu's windows (About, updates, shortcuts, Tell a friend)
-#. {version} = a version number (keep the braces as they are)
-	BMD {version} is available (released {date}).	BMD {version} is available (released {date}).
-#. text in helpers.rs
-#. Video helpers: {version} = the version of BMD's own copy
-#. {version} = a version number (keep the braces as they are)
-	BMD's own copy, version {version}	BMD's own copy, version {version}
-#. text in unix.rs
-#. Linux, at start, on the terminal: the libraries an X11 window needs aren't installed, so the window opens through Wayland instead, where menus can't be placed under what was clicked; {libraries} = their file names, left as they are
-	BMD's X11 window needs {libraries}, which this system lacks: it opens on Wayland instead, where its menus may open away from their titles.	BMD's X11 window needs {libraries}, which this system lacks: it opens on Wayland instead, where its menus may open away from their titles.
 #. text in the Options window
 	If a duplicate download link is added:	If a duplicate download link is added:
 #. text in the Options window
@@ -2599,13 +2599,13 @@
 #. title of the message when a downloaded file can't be opened
 #. verb: opens the file
 	Open	Open
+#. text in the tray icon's menu
+	Open BMD	Open BMD
 #. button in crashui.rs; button in a dialog box; text in a dialog box; button in torrentfiles.rs
 #. crash report window button: show the report's file in its folder
 #. title of the message when the folder of a downloaded file can't be shown
 #. button that opens the torrent's containing folder in the file manager
 	Open folder	Open folder
-#. text in the tray icon's menu
-	Open BMD	Open BMD
 #. text in the Link grabber window; text in a download's progress window
 #. Link grabber, a link's status: the remedy from the failure's sentence, for a site link that is a web page, not the file (and a server that sent a web page instead of it). The sentence is the cell's hover tip
 #. Link grabber, a link's status: the remedy from the failure's sentence, for a server that sent a web page instead of the file. The sentence is the cell's hover tip
@@ -4170,11 +4170,11 @@
 	Use authorization	Use authorization
 #. text in the Options window
 	Use automatic configuration script	Use automatic configuration script
-#. checkbox in the Options window
-	Use FTP in PASV mode	Use FTP in PASV mode
 #. button in helpers.rs
 #. Video helpers: button: go back to the copy BMD downloads and checks itself
 	Use BMD's own copy	Use BMD's own copy
+#. checkbox in the Options window
+	Use FTP in PASV mode	Use FTP in PASV mode
 #. text in the Batch download window
 #. why Batch download's OK is greyed
 	Use one * only	Use one * only
@@ -4783,6 +4783,36 @@ extension	Audio	Audio
 #. after the best quality in the menu of the download button over a video, after a star (★ best); lower case; one word
 extension	best	best
 #. text in the browser extension
+#. the extension's name in the browser's list of extensions and on its toolbar button; keep the name BMD as it is
+extension	BMD	BMD
+#. text in the browser extension
+#. on the download button (red) over a video when the app isn't installed or didn't start; 'Get BMD' and 'Retry' buttons follow; BMD is the app's short name, keep it; short
+extension	BMD didn't answer	BMD didn't answer
+#. text in the browser extension
+#. status when the app was started for a download but didn't answer in time; keep the name BMD as it is
+extension	BMD didn't start in time	BMD didn't start in time
+#. text in the browser extension
+#. status when the app refuses this copy of the extension (another copy is installed, or it came from another store); keep the name BMD as it is
+extension	BMD doesn't accept this copy of the extension	BMD doesn't accept this copy of the extension
+#. text in the browser extension
+#. in the menu under the download button over a video: the app is already looking up other videos and can't look this one up now; keep the name BMD as it is
+extension	BMD is busy with other videos	BMD is busy with other videos
+#. text in the browser extension
+#. shown briefly on the download button when the app could not be reached; keep the name BMD as it is
+extension	BMD isn't installed or didn't start	BMD isn't installed or didn't start
+#. text in the browser extension
+#. status when the browser can't find the app's connection; keep the name BMD as it is
+extension	BMD isn't installed, or its browser integration isn't set up	BMD isn't installed, or its browser integration isn't set up
+#. text in the browser extension
+#. in the menu under the download button over a video: the app needs the yt-dlp tool (a program's name, keep it as it is) to find this video's qualities, and it isn't installed; keep the name BMD as it is
+extension	BMD needs yt-dlp for this video	BMD needs yt-dlp for this video
+#. text in the browser extension
+#. tooltip of the switch Send downloads through this browser's proxy or VPN extension; keep the name BMD as it is
+extension	BMD then downloads through the same proxy as this browser. The browser asks you once to allow it; turning this off takes that back.	BMD then downloads through the same proxy as this browser. The browser asks you once to allow it; turning this off takes that back.
+#. text in the browser extension
+#. tooltip of the switch Send downloads through this browser's proxy or VPN extension in Chrome, Edge and the other Chromium browsers (they ask for no permission at the switch); keep the name BMD as it is
+extension	BMD then downloads through the same proxy as this browser. While this is off, the extension doesn't read the browser's proxy.	BMD then downloads through the same proxy as this browser. While this is off, the extension doesn't read the browser's proxy.
+#. text in the browser extension
 #. the name this browser gets in the other BMD's list of paired devices
 extension	Browser extension	Browser extension
 #. text in the browser extension
@@ -4863,36 +4893,6 @@ extension	Hold Alt while clicking a link to let the browser download it.	Hold Al
 #. text in the browser extension
 #. link under a connection problem in the toolbar button's popup, to the help page's section for it
 extension	How to fix it	How to fix it
-#. text in the browser extension
-#. the extension's name in the browser's list of extensions and on its toolbar button; keep the name BMD as it is
-extension	BMD	BMD
-#. text in the browser extension
-#. on the download button (red) over a video when the app isn't installed or didn't start; 'Get BMD' and 'Retry' buttons follow; BMD is the app's short name, keep it; short
-extension	BMD didn't answer	BMD didn't answer
-#. text in the browser extension
-#. status when the app was started for a download but didn't answer in time; keep the name BMD as it is
-extension	BMD didn't start in time	BMD didn't start in time
-#. text in the browser extension
-#. status when the app refuses this copy of the extension (another copy is installed, or it came from another store); keep the name BMD as it is
-extension	BMD doesn't accept this copy of the extension	BMD doesn't accept this copy of the extension
-#. text in the browser extension
-#. in the menu under the download button over a video: the app is already looking up other videos and can't look this one up now; keep the name BMD as it is
-extension	BMD is busy with other videos	BMD is busy with other videos
-#. text in the browser extension
-#. shown briefly on the download button when the app could not be reached; keep the name BMD as it is
-extension	BMD isn't installed or didn't start	BMD isn't installed or didn't start
-#. text in the browser extension
-#. status when the browser can't find the app's connection; keep the name BMD as it is
-extension	BMD isn't installed, or its browser integration isn't set up	BMD isn't installed, or its browser integration isn't set up
-#. text in the browser extension
-#. in the menu under the download button over a video: the app needs the yt-dlp tool (a program's name, keep it as it is) to find this video's qualities, and it isn't installed; keep the name BMD as it is
-extension	BMD needs yt-dlp for this video	BMD needs yt-dlp for this video
-#. text in the browser extension
-#. tooltip of the switch Send downloads through this browser's proxy or VPN extension; keep the name BMD as it is
-extension	BMD then downloads through the same proxy as this browser. The browser asks you once to allow it; turning this off takes that back.	BMD then downloads through the same proxy as this browser. The browser asks you once to allow it; turning this off takes that back.
-#. text in the browser extension
-#. tooltip of the switch Send downloads through this browser's proxy or VPN extension in Chrome, Edge and the other Chromium browsers (they ask for no permission at the switch); keep the name BMD as it is
-extension	BMD then downloads through the same proxy as this browser. While this is off, the extension doesn't read the browser's proxy.	BMD then downloads through the same proxy as this browser. While this is off, the extension doesn't read the browser's proxy.
 #. text in the browser extension
 #. pairing failed for another reason
 extension	It didn't work. Try again.	It didn't work. Try again.
@@ -5308,6 +5308,9 @@ menu	Aqua	Aqua
 #. menu command in the main window
 menu	Arrange files	Arrange files
 #. menu command in the main window
+#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
+menu	BMD &Home Page	BMD &Home Page
+#. menu command in the main window
 #. View → Theme: a style theme's name (KDE Plasma's look, the Linux desktop), a name: keep "Breeze" as written
 menu	Breeze	Breeze
 #. menu command in the main window
@@ -5442,9 +5445,6 @@ menu	Hide drop target	Hide drop target
 #. menu command in the main window
 #. View → Theme: black and white with strong edges, for low vision
 menu	High contrast	High contrast
-#. menu command in the main window
-#. & marks the keyboard shortcut letter: keep one & before a letter of the translation
-menu	BMD &Home Page	BMD &Home Page
 #. menu command in the main window
 #. View → Window system: a greyed note; BMD's windows are Wayland's now
 menu	In use: Wayland	In use: Wayland

@@ -72,7 +72,7 @@ Image.open(sys.argv[1]).convert("RGBA").resize((256, 256), Image.LANCZOS).save(s
 EOF
 # StartupWMClass: the class every window of BMD carries (main.rs APP_ID), so a window pinned to
 # the taskbar or the dock is this entry's, whatever name an AppImage manager gives the entry (#940).
-cat > "$tree/usr/share/applications/misterdownloadmanager.desktop" <<EOF
+cat > "$tree/usr/share/applications/bmd.desktop" <<EOF
 [Desktop Entry]
 Type=Application
 Name=BMD
@@ -112,7 +112,7 @@ cp -r "$system/." "$deb/"
 rm -rf "$deb/usr/lib64"
 mkdir -p "$deb/DEBIAN"
 cat > "$deb/DEBIAN/control" <<EOF
-Package: misterdownloadmanager
+Package: bmd
 Version: $version
 Architecture: $deb_arch
 Maintainer: DecoyINDIA <https://github.com/DecoyINDIA/BMD>
@@ -130,7 +130,7 @@ dpkg-deb --root-owner-group --build "$deb" "$dist/$name.deb"
 rpm="$stage/rpm"
 mkdir -p "$rpm"/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 cat > "$rpm/SPECS/bmd.spec" <<EOF
-Name: misterdownloadmanager
+Name: bmd
 Version: $version
 Release: 1
 Summary: Download manager
@@ -152,7 +152,7 @@ cp -a "$system/." %{buildroot}/
 /usr/bin/bmd-nmhost
 /usr/bin/bmd-cli
 /usr/bin/bmd-mcp
-/usr/share/applications/misterdownloadmanager.desktop
+/usr/share/applications/bmd.desktop
 /usr/share/icons/hicolor/256x256/apps/bmd.png
 /usr/share/bmd
 /usr/share/doc/bmd
@@ -166,7 +166,7 @@ cp "$rpm"/RPMS/$pkg_arch/*.rpm "$dist/$name.rpm"
 appdir="$stage/AppDir"
 cp -r "$tree" "$appdir"
 ln -s usr/bin/bmd "$appdir/AppRun"
-cp "$tree/usr/share/applications/misterdownloadmanager.desktop" "$appdir/"
+cp "$tree/usr/share/applications/bmd.desktop" "$appdir/"
 cp "$tree/usr/share/icons/hicolor/256x256/apps/bmd.png" "$appdir/"
 # appimagetool and the runtime it puts at the front of every AppImage, each at a fixed release and
 # checked by its sha256: their `continuous` tags move with every upstream commit, so the same BMD
@@ -192,7 +192,7 @@ chmod +x "$tool"
 # Update information (#24): AppImageLauncher, Gear Lever and AppImageUpdate read it from the
 # AppImage, find the latest release's .zsync and download only the parts that changed. BMD's own
 # Update now doesn't need it. The pattern also matches the names up to 0.2.4, with "-experimental".
-update="gh-releases-zsync|DecoyINDIA|iDM|latest|BMD-*-linux-$arch*.AppImage.zsync"
+update="gh-releases-zsync|DecoyINDIA|BMD|latest|BMD-*-linux-$arch*.AppImage.zsync"
 # No FUSE on CI runners: the tool runs from its own extracted copy.
 # zstd at its strongest level (#25; unpacking is as fast): the tool's 128K blocks stay, as 1M
 # blocks make the AppImage start slower (AppImage/appimagetool#64).

@@ -125,7 +125,7 @@ pub struct Settings {
     /// View → Window system (Linux, in a Wayland session that also runs XWayland, #624): X11
     /// (XWayland) or Wayland, used from the next start, however BMD is started (its menu entry,
     /// the browser's helper, the session's autostart). None: BMD decides at each start
-    /// (`unix::window_system`). `MDM_WAYLAND=1` or `0` overrides it for one start.
+    /// (`unix::window_system`). `BMD_WAYLAND=1` or `0` overrides it for one start.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub window_system: Option<WindowSystemPick>,
     /// View → Interface size (#262), percent: one of `crate::scale::STEPS` (100 to 200). Every

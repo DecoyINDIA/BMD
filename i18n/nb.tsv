@@ -1531,7 +1531,7 @@
 #. Video helpers: BMD's own yt-dlp is being downloaded
 #. the trailing ... means it is still going on: keep it
 #, machine
-	Downloading BMD's own copy...	Laster ned MDMs egen kopi...
+	Downloading BMD's own copy...	Laster ned BMDs egen kopi...
 #. text in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #. Check for updates, while Update now downloads; {percent} like "42%"
 #, machine
@@ -3245,7 +3245,7 @@
 #. text in the Options window
 #. Options → Accounts: no system keyring/keychain answered (none runs, e.g. a desktop without one), so the sign-ins stay in BMD's settings folder, which only the user's account may read
 #, machine
-	No system keyring answered, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Ingen systemnøkkelring svarte, så pålogginger og passord lagres i MDMs innstillinger, som bare du kan lese.
+	No system keyring answered, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Ingen systemnøkkelring svarte, så pålogginger og passord lagres i BMDs innstillinger, som bare du kan lese.
 #. message or event log entry in the main window
 #. event log entry: Add trackers changed nothing, the torrent had them all
 #, machine
@@ -3464,7 +3464,7 @@
 #. text in the Options window
 #. Options → Remote, at the bottom of the page
 #, machine
-	Only paired devices see or change anything. The first time, the phone's browser warns about BMD's own certificate: its fingerprint is the one above.	Bare parede enheter ser eller endrer noe. Første gang advarer telefonens nettleser om MDMs eget sertifikat: fingeravtrykket er det ovenfor.
+	Only paired devices see or change anything. The first time, the phone's browser warns about BMD's own certificate: its fingerprint is the one above.	Bare parede enheter ser eller endrer noe. Første gang advarer telefonens nettleser om BMDs eget sertifikat: fingeravtrykket er det ovenfor.
 #. text in playlistdlg.rs
 #. in Download video, a list longer than BMD lists: only its first {n} videos are shown
 #. {n} = a number (keep the braces as they are)
@@ -5070,7 +5070,7 @@
 #. text in the Options window
 #. Options → Accounts (Linux): the system keyring is locked (BMD never unlocks it: that would ask for its password), so the sign-ins stay in BMD's settings folder, which only the user's account may read
 #, machine
-	The system keyring is locked and BMD doesn't unlock it, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Systemnøkkelringen er låst, og BMD låser den ikke opp, så pålogginger og passord lagres i MDMs innstillinger, som bare du kan lese.
+	The system keyring is locked and BMD doesn't unlock it, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Systemnøkkelringen er låst, og BMD låser den ikke opp, så pålogginger og passord lagres i BMDs innstillinger, som bare du kan lese.
 #. text in the Options window
 #. Options → Connection → DNS: the operating system's own DNS (the default)
 #, machine
@@ -5601,7 +5601,7 @@
 #. button in helpers.rs
 #. Video helpers: button: go back to the copy BMD downloads and checks itself
 #, machine
-	Use BMD's own copy	Bruk MDMs egen kopi
+	Use BMD's own copy	Bruk BMDs egen kopi
 #. text in the Batch download window
 #. why Batch download's OK is greyed
 #, machine
@@ -5817,7 +5817,7 @@
 #. text in the Options window
 #. Options → Accounts: Windows Credential Manager didn't answer, so the sign-ins stay in BMD's settings, encrypted so that only this Windows account can read them
 #, machine
-	Windows Credential Manager didn't answer, so sign-ins and passwords are kept in BMD's settings, encrypted for your Windows account.	Windows legitimasjonsbehandling svarte ikke, så pålogginger og passord lagres i MDMs innstillinger, kryptert for din Windows-konto.
+	Windows Credential Manager didn't answer, so sign-ins and passwords are kept in BMD's settings, encrypted for your Windows account.	Windows legitimasjonsbehandling svarte ikke, så pålogginger og passord lagres i BMDs innstillinger, kryptert for din Windows-konto.
 #. text in a dialog box
 #. why the computer could not be put to sleep (fills {error})
 #, machine

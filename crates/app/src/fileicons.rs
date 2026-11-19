@@ -60,8 +60,8 @@ pub enum Native {
 
 /// The system's icon for `what` at about `px` pixels (None: it has none).
 pub(crate) fn system(what: &What, px: u32) -> Option<Native> {
-    // MDM_SYSTEM_ICONS=0: Tango's only, as a desktop without icons shows them (checks, shots).
-    if std::env::var_os("MDM_SYSTEM_ICONS").is_some_and(|v| v == "0") {
+    // BMD_SYSTEM_ICONS=0: Tango's only, as a desktop without icons shows them (checks, shots).
+    if std::env::var_os("BMD_SYSTEM_ICONS").is_some_and(|v| v == "0") {
         return None;
     }
     #[cfg(windows)]

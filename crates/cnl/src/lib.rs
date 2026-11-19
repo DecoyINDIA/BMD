@@ -83,14 +83,11 @@ pub fn key_of(jk: &str) -> Option<[u8; 16]> {
     let after = after.trim_start();
     let quote = after.chars().next().filter(|c| *c == '\'' || *c == '"')?;
     let hex = after[1..].split(quote).next()?.trim();
-    if hex.len() != 32 {
+    if hex.len() != 32 || !hex.bytes().all(|b| b.is_ascii_hexdigit()) {
         return None;
     }
-    let mut key = [0u8; 16];
-    for (k, pair) in key.iter_mut().zip(hex.as_bytes().chunks(2)) {
-        *k = u8::from_str_radix(std::str::from_utf8(pair).ok()?, 16).ok()?;
-    }
-    Some(key)
+    // 32 hex digits are one u128; its big-endian bytes are the key, in the page's order.
+    Some(u128::from_str_radix(hex, 16).ok()?.to_be_bytes())
 }
 
 /// `crypted` opened with `jk`'s key: its links.

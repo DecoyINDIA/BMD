@@ -43,7 +43,7 @@ import urllib.request
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-REPO = "anefzaoui/misterdownloadmanager"
+REPO = "DecoyINDIA/BMD"
 MAINTAINER = "anefzaoui"
 API = "https://api.github.com"
 # The README's round avatars (`readme`), committed: GitHub can't round an image in a README.

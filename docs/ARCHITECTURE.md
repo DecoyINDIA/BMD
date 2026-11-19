@@ -38,7 +38,7 @@ Download
  │                       part is split in half (planner.rs, tested by random simulation)
  ├─ Worker × N           one HTTP/1.1 connection each, reused across segments; slow ones
  │                       are dropped and their part re-split
- │    └─ writes at its offset into <name>.mdm.part (created sparse)
+ │    └─ writes at its offset into <name>.bmd.part (created sparse)
  ├─ HostLimits           learns how many connections each server accepts
  ├─ Limiter (shared)     per-download and global token buckets
  ├─ State                segment table saved atomically (craft-atomic) for crash-safe resume
@@ -136,9 +136,9 @@ scrolls.
 ### Data
 
 The download list and settings are saved atomically to the data folder (`downloads.json`):
-`%APPDATA%\misterdownloadmanager\` on Windows, `~/.local/share/misterdownloadmanager` on Linux,
-`~/Library/Application Support/misterdownloadmanager` on macOS, a `data` folder beside a portable
-copy, or `MDM_DATA_DIR` (`bmd_ipc::data_dir`). The browser host reads the same file for the
+`%APPDATA%\bmd\` on Windows, `~/.local/share/bmd` on Linux,
+`~/Library/Application Support/bmd` on macOS, a `data` folder beside a portable
+copy, or `BMD_DATA_DIR` (`bmd_ipc::data_dir`). The browser host reads the same file for the
 capture rules, so a change in Options applies to the next captured download.
 
 Sign-in secrets (debrid accounts, Sites Logins' and the proxy's passwords) live in the system's

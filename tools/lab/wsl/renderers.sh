@@ -6,7 +6,7 @@
 #   renderers.sh <label>          e.g. renderers.sh pr-221 -> ~/lab/vk/<label>/
 #
 # Runs: opengl (the reference), opengl again (what differs between two identical runs: a text
-# caret's blink), lavapipe (MDM_RENDERER: Vulkan forced onto the software driver), the saved
+# caret's blink), lavapipe (BMD_RENDERER: Vulkan forced onto the software driver), the saved
 # choice Vulkan (with no hardware driver: OpenGL, saying why), and the saved choice with
 # BMD_TEST_SOFTWARE_CARD=1 (an off-screen run that takes lavapipe for a card). Each run's
 # "drawing with" lines from BMD's log are printed under it.
@@ -25,9 +25,9 @@ run() { # run <name> <VAR=value...>
   logs
   keep=--keep-list
 }
-run opengl MDM_RENDERER=opengl
-run opengl-again MDM_RENDERER=opengl
-run lavapipe MDM_RENDERER=lavapipe
+run opengl BMD_RENDERER=opengl
+run opengl-again BMD_RENDERER=opengl
+run lavapipe BMD_RENDERER=lavapipe
 run setting-vulkan 'BMD_SET={"renderer":"vulkan"}'
 run setting-vulkan-softcard 'BMD_SET={"renderer":"vulkan"}' BMD_OFFSCREEN=1 BMD_OFFSCREEN_AT=0,0 BMD_TEST_SOFTWARE_CARD=1
 for b in opengl-again lavapipe setting-vulkan setting-vulkan-softcard; do

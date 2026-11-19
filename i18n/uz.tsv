@@ -245,7 +245,7 @@
 #. text in the Options window
 #. Options → Accounts: what these accounts are, and the services' rule against sharing
 #, machine
-	A debrid service downloads a file host's link with your own paid account and gives BMD a direct link. Use only your own account: sharing an account or its links breaks the services' terms and can get it suspended. Downloads the browser already started stay as they are.	Debrid xizmati fayl xostining havolasini oʻzingizning pullik hisobingiz bilan yuklab oladi va MDMga toʻgʻridan-toʻgʻri havola beradi. Faqat oʻzingizning hisobingizdan foydalaning: hisobni yoki uning havolalarini boʻlishish xizmat shartlarini buzadi va uning toʻxtatilishiga olib kelishi mumkin. Brauzer allaqachon boshlagan yuklamalar oʻz holicha qoladi.
+	A debrid service downloads a file host's link with your own paid account and gives BMD a direct link. Use only your own account: sharing an account or its links breaks the services' terms and can get it suspended. Downloads the browser already started stay as they are.	Debrid xizmati fayl xostining havolasini oʻzingizning pullik hisobingiz bilan yuklab oladi va BMDga toʻgʻridan-toʻgʻri havola beradi. Faqat oʻzingizning hisobingizdan foydalaning: hisobni yoki uning havolalarini boʻlishish xizmat shartlarini buzadi va uning toʻxtatilishiga olib kelishi mumkin. Brauzer allaqachon boshlagan yuklamalar oʻz holicha qoladi.
 #. text in a download's progress window
 #. reason shown on the Rename box when the entered name ends with a period
 #, machine
@@ -1650,7 +1650,7 @@
 #. text in crashui.rs
 #. crash report window button: end the frozen BMD and start it again
 #, machine
-	End and restart BMD	MDMni yakunlash va qayta ishga tushirish
+	End and restart BMD	BMDni yakunlash va qayta ishga tushirish
 #. text in the Add torrent window
 #, machine
 	Enter a magnet link or choose a .torrent file	Magnit havolasini kiriting yoki .torrent faylini tanlang
@@ -2587,7 +2587,7 @@
 #. checkbox in the Options window
 #. Options → Remote check box (off by default)
 #, machine
-	Let phones and computers on the local network control BMD	Mahalliy tarmoqdagi telefon va kompyuterlarga MDMni boshqarishga ruxsat berish
+	Let phones and computers on the local network control BMD	Mahalliy tarmoqdagi telefon va kompyuterlarga BMDni boshqarishga ruxsat berish
 #. option (radio button) in the Batch download window
 #. the * in the address runs through letters
 #, machine
@@ -2828,7 +2828,7 @@
 #. text in the Options window
 #. Options → Remote → Pair a device: the remote control isn't listening (no network, port taken): the Remote page says why
 #, machine
-	BMD can't be reached on the network now: Options → Remote says why.	MDMga hozir tarmoq orqali ulanib boʻlmaydi: Parametrlar → Masofaviy boʻlimida sababi koʻrsatilgan.
+	BMD can't be reached on the network now: Options → Remote says why.	BMDga hozir tarmoq orqali ulanib boʻlmaydi: Parametrlar → Masofaviy boʻlimida sababi koʻrsatilgan.
 #. text in remote.rs
 #. remote control page (on a phone): the address typed isn't one BMD downloads (not http, https, ftp or magnet)
 #, machine
@@ -2853,7 +2853,7 @@
 #. text in helpers.rs
 #. Video helpers: BMD can't download this helper on this Windows (ffmpeg on 32-bit Windows); "Use another program" is the button below
 #, machine
-	BMD has no copy for this system: install it, or use another program	MDMda ushbu tizim uchun nusxasi yo‘q: uni o‘rnating yoki boshqa dasturdan foydalaning
+	BMD has no copy for this system: install it, or use another program	BMDda ushbu tizim uchun nusxasi yo‘q: uni o‘rnating yoki boshqa dasturdan foydalaning
 #. text in remote.rs
 #. remote control page (on a phone): no pairing code is shown in BMD; "Pair a device" is BMD's button
 #, machine
@@ -3380,7 +3380,7 @@
 #. text in the Options window
 #. Options → Remote → Status: the remote control is off
 #, machine
-	Off: nothing on the network can reach BMD.	Oʻchirilgan: tarmoqdagi hech narsa MDMga ulanolmaydi.
+	Off: nothing on the network can reach BMD.	Oʻchirilgan: tarmoqdagi hech narsa BMDga ulanolmaydi.
 #. text in rssdlg.rs
 #. RSS feeds window, Download rules: under the rule's feeds; the rule was turned off because every feed it watched was removed
 #, machine
@@ -3464,7 +3464,7 @@
 #. text in the Options window
 #. Options → Remote, at the bottom of the page
 #, machine
-	Only paired devices see or change anything. The first time, the phone's browser warns about BMD's own certificate: its fingerprint is the one above.	Faqat ulangan qurilmalar biror narsani koʻrishi yoki oʻzgartirishi mumkin. Birinchi marta, telefon brauzeri MDMning oʻz sertifikati haqida ogohlantiradi: uning barmoq izi yuqoridagi bilan bir xil.
+	Only paired devices see or change anything. The first time, the phone's browser warns about BMD's own certificate: its fingerprint is the one above.	Faqat ulangan qurilmalar biror narsani koʻrishi yoki oʻzgartirishi mumkin. Birinchi marta, telefon brauzeri BMDning oʻz sertifikati haqida ogohlantiradi: uning barmoq izi yuqoridagi bilan bir xil.
 #. text in playlistdlg.rs
 #. in Download video, a list longer than BMD lists: only its first {n} videos are shown
 #. {n} = a number (keep the braces as they are)
@@ -3910,7 +3910,7 @@
 #. text in crashui.rs
 #. crash report window button: start BMD again
 #, machine
-	Restart BMD	MDMni qayta ishga tushirish
+	Restart BMD	BMDni qayta ishga tushirish
 #. button in the Options window; text in the Options window
 #, machine
 	Restore the built-in categories	Oʻrnatilgan toifalarni tiklash
@@ -4738,7 +4738,7 @@
 #. in Download video, on 32-bit Windows (no button: no ffmpeg build BMD can check exists for it); Helpers... is the button below
 #. the trailing ... means it is still going on: keep it
 #, machine
-	The best qualities, MP3, Opus and FLAC need ffmpeg, which BMD has no copy of for 32-bit Windows: choose your own with Helpers...	Eng yuqori sifatdagi MP3, Opus va FLAC formatlari uchun ffmpeg kerak, MDMda esa 32-bitli Windows uchun ffmpeg nusxasi yo‘q: o‘zingizdagi nusxani Yordamchilar... orqali tanlang...
+	The best qualities, MP3, Opus and FLAC need ffmpeg, which BMD has no copy of for 32-bit Windows: choose your own with Helpers...	Eng yuqori sifatdagi MP3, Opus va FLAC formatlari uchun ffmpeg kerak, BMDda esa 32-bitli Windows uchun ffmpeg nusxasi yo‘q: o‘zingizdagi nusxani Yordamchilar... orqali tanlang...
 #. text in the Download video window
 #. in Download video, on macOS and Linux (no button: the system installs it)
 #, machine
@@ -5010,7 +5010,7 @@
 #. text in errors.rs
 #. why a download failed (#701): a file host answered with its own web page (a countdown before the link, a captcha, a sign-in) where the file was expected. The browser gets past it; BMD's browser extension then hands the real file back to BMD
 #, machine
-	the site sent a web page instead of the file (a waiting page, a captcha or a sign-in): open the link in your browser, finish there, and the download comes back to BMD	Sayt fayl o‘rniga veb-sahifa yubordi (kutish sahifasi, captcha yoki tizimga kirish sahifasi): havolani brauzeringizda oching, u yerda tugating va yuklab olish MDMga qaytadi
+	the site sent a web page instead of the file (a waiting page, a captcha or a sign-in): open the link in your browser, finish there, and the download comes back to BMD	Sayt fayl o‘rniga veb-sahifa yubordi (kutish sahifasi, captcha yoki tizimga kirish sahifasi): havolani brauzeringizda oching, u yerda tugating va yuklab olish BMDga qaytadi
 #. text in the Download video window
 #. the Download video window: the site asked for a sign-in although the browser's extension passed the page's cookies
 #, machine
@@ -5499,7 +5499,7 @@
 #. Options → Add an account: waiting while the user types the code at the service's page; {page} its address, {time} minutes:seconds left
 #. {time} = a time of day (keep the braces as they are)
 #, machine
-	Type this code at {page} and allow BMD; waiting for you (the code expires in {time}).	Ushbu kodni {page} sahifasiga kiriting va MDMga ruxsat bering; sizni kutmoqda (kodning muddati {time} da tugaydi).
+	Type this code at {page} and allow BMD; waiting for you (the code expires in {time}).	Ushbu kodni {page} sahifasiga kiriting va BMDga ruxsat bering; sizni kutmoqda (kodning muddati {time} da tugaydi).
 #. tooltip (why a control is greyed) in the Find window
 #. tooltip of the greyed Find button
 #, machine
@@ -5601,7 +5601,7 @@
 #. button in helpers.rs
 #. Video helpers: button: go back to the copy BMD downloads and checks itself
 #, machine
-	Use BMD's own copy	MDMning oʻz nusxasidan foydalanish
+	Use BMD's own copy	BMDning oʻz nusxasidan foydalanish
 #. text in the Batch download window
 #. why Batch download's OK is greyed
 #, machine
@@ -5853,7 +5853,7 @@
 #. text in remote.rs
 #. remote control page (on a phone): pairing failed and the code is void now
 #, machine
-	Wrong code. Show a new code in BMD and try again.	Notoʻgʻri kod. MDMda yangi kodni koʻrsating va qayta urinib koʻring.
+	Wrong code. Show a new code in BMD and try again.	Notoʻgʻri kod. BMDda yangi kodni koʻrsating va qayta urinib koʻring.
 #. text in remote.rs
 #. remote control page (on a phone): pairing failed; {n} = how many more codes may be tried
 #. {n} = a number (keep the braces as they are)
@@ -5918,7 +5918,7 @@
 #. Video helpers: the person's own gallery-dl is too old and not used; {version} = its version, {oldest} = the oldest BMD can use
 #. {version} = a version number (keep the braces as they are)
 #, machine
-	Your own program ({version}) is too old: BMD needs {oldest} or newer	Sizning dasturingiz ({version}) juda eski: MDMga {oldest} yoki undan yangirogʻi kerak
+	Your own program ({version}) is too old: BMD needs {oldest} or newer	Sizning dasturingiz ({version}) juda eski: BMDga {oldest} yoki undan yangirogʻi kerak
 #. text in helpers.rs
 #. Video helpers: {path} = the program the person chose, {version} = its version
 #. {version} = a version number (keep the braces as they are)
@@ -6037,7 +6037,7 @@
 #. text in the Options window
 #. Options → Remote → Pair a device: done; {device} = the name it was given
 #, machine
-	{device} is paired. It can control BMD now.	{device} juftlandi. Endi u MDMni boshqarishi mumkin.
+	{device} is paired. It can control BMD now.	{device} juftlandi. Endi u BMDni boshqarishi mumkin.
 #. text in remote.rs
 #. remote control page (on a phone): progress; {done} and {size} are sizes ("1.2 MB of 7.5 MB")
 #. {size} = a file size such as "4.2 MB" (keep the braces as they are)
@@ -6175,7 +6175,7 @@
 #. error: a program chosen as a helper is too old; {name} = gallery-dl, {version} = its version, {oldest} = the oldest one BMD can use
 #. {name} = a file name; {version} = a version number (keep the braces as they are)
 #, machine
-	{name} {version} is too old: BMD needs {oldest} or newer	{name} {version} juda eski: MDMga {oldest} yoki undan yangirogʻi kerak
+	{name} {version} is too old: BMD needs {oldest} or newer	{name} {version} juda eski: BMDga {oldest} yoki undan yangirogʻi kerak
 #. text in a dialog box
 #. one failed download in the summary of a group of downloads: {name} its file name, {error} why it failed
 #. {name} = a file name; {error} = an error message (keep the braces as they are)
@@ -6380,7 +6380,7 @@ extension	A list of videos: choose them in BMD	Videolar ro‘yxati: ularni BMD d
 #. text in the browser extension
 #. on the download button (green) over a video after the app added and started the download; a quality may follow ('· 1080p') and a 'Show' button; BMD is the app's short name, keep it; short
 #, machine
-extension	Added to BMD	MDMga qo‘shildi
+extension	Added to BMD	BMDga qo‘shildi
 #. text in the browser extension
 #. shown briefly on the download button over a video after a quality was picked: the download was added to the app's download queue, to start later
 #, machine
@@ -6484,7 +6484,7 @@ extension	Enter its https:// address.	Uning https:// manzilini kiriting.
 #. text in the browser extension
 #. button on the download button over a video when the app didn't answer: opens the app's download page; BMD is the app's short name, keep it; very short
 #, machine
-extension	Get BMD	MDMni yuklab oling
+extension	Get BMD	BMDni yuklab oling
 #. text in the browser extension
 #. the extension's description in the browser's list of extensions; keep the name BMD as it is
 #, machine
@@ -7368,7 +7368,7 @@ menu	OpenGL froze inside the graphics driver here	OpenGL bu yerda grafik drayver
 #. menu command in the main window
 #. View → Draw with: a greyed note; this computer's OpenGL (its graphics driver) is too old, so BMD doesn't draw with it
 #, machine
-menu	OpenGL here is too old to draw BMD	Bu yerdagi OpenGL MDMni chizish uchun juda eski
+menu	OpenGL here is too old to draw BMD	Bu yerdagi OpenGL BMDni chizish uchun juda eski
 #. menu command in the main window
 #. View → Draw with: a greyed note; why BMD no longer draws with OpenGL: its window stayed empty for 10 seconds, so BMD started again another way
 #, machine

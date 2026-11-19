@@ -7,7 +7,7 @@
     "homepage_url": "https://misterdownloadmanager.com/",
     "browser_specific_settings": {
         "gecko": {
-            "id": "integration@misterdownloadmanager.com",
+            "id": "integration@bmd.decoyindia.github.io",
             "strict_min_version": "140.0",
             "data_collection_permissions": {
                 "required": [

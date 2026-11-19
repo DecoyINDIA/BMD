@@ -25,7 +25,7 @@ page](/download.html) offers three files:
 - **The portable copy** (`portable.zip`), which runs from any folder.
 - **The plain zip** (`x64.zip`), the same programs without an installer.
 
-**Help → Check for updates → Update now** downloads a new version, checks its signature, puts it
+**Help → Check for updates → Update now** downloads a new version, checks its checksum, puts it
 in place and restarts, for the setup and both zips.
 
 ## Windows on ARM and 32-bit Windows

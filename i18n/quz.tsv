@@ -245,7 +245,7 @@
 #. text in the Options window
 #. Options → Accounts: what these accounts are, and the services' rule against sharing
 #, machine
-	A debrid service downloads a file host's link with your own paid account and gives BMD a direct link. Use only your own account: sharing an account or its links breaks the services' terms and can get it suspended. Downloads the browser already started stay as they are.	Huk debrid llamk'ayqa huk willañiqita qhawaqpa t'inkinta qullqichasqa yupayniykiwan uraykachin, chaymanta MDMman huk chiqan t'inkita qun. Sapallayki yupayniykita llamk'achiy: huk yupayta utaq t'inkinkunata rakinakuyqa llamk'aykunapa kamachikuykunata p'akiyta atin, chaymanta hark'asqa kayta atin. Ñawpaqtaña qhawaqpa qallarisqan uraykachiykunaqa imaynan kanku hinallataqmi qhipakun.
+	A debrid service downloads a file host's link with your own paid account and gives BMD a direct link. Use only your own account: sharing an account or its links breaks the services' terms and can get it suspended. Downloads the browser already started stay as they are.	Huk debrid llamk'ayqa huk willañiqita qhawaqpa t'inkinta qullqichasqa yupayniykiwan uraykachin, chaymanta BMDman huk chiqan t'inkita qun. Sapallayki yupayniykita llamk'achiy: huk yupayta utaq t'inkinkunata rakinakuyqa llamk'aykunapa kamachikuykunata p'akiyta atin, chaymanta hark'asqa kayta atin. Ñawpaqtaña qhawaqpa qallarisqan uraykachiykunaqa imaynan kanku hinallataqmi qhipakun.
 #. text in a download's progress window
 #. reason shown on the Rename box when the entered name ends with a period
 #, machine
@@ -774,7 +774,7 @@
 	Bosnia and Herzegovina	Bosnia y Herzegovina
 #. text in helpers.rs
 #, machine
-	Both are open source. BMD gets them from their official releases with its own downloader and checks each file's signature before it runs. About 100 MB, once.	Iskayninmi kicha pukyu. MDMqa paykunata oficial lluqsichisqankunamanta kikinpa uraykachana kaqninwanmi chaskikun, chaymanta sapa willañiqipa firmanta qhawarin manaraq purichkaspa. Yaqa 100 MB, huk kutilla.
+	Both are open source. BMD gets them from their official releases with its own downloader and checks each file's signature before it runs. About 100 MB, once.	Iskayninmi kicha pukyu. BMDqa paykunata oficial lluqsichisqankunamanta kikinpa uraykachana kaqninwanmi chaskikun, chaymanta sapa willañiqipa firmanta qhawarin manaraq purichkaspa. Yaqa 100 MB, huk kutilla.
 #. text in countries.rs
 #. a country's name (where a download's server is)
 #, machine
@@ -1218,7 +1218,7 @@
 	Customize "Download progress" dialog	"Uraykachiy puriy" rimanakuyta allichay
 #. text in the Options window
 #, machine
-	Customize keys to prevent or force downloading with BMD	MDMwan uraykachiyta hark'anapaq utaq atipanapaq llaveskunata allichay
+	Customize keys to prevent or force downloading with BMD	BMDwan uraykachiyta hark'anapaq utaq atipanapaq llaveskunata allichay
 #. text in the Options window
 #, machine
 	Customize BMD Download panels in browsers	Wampunakunapi BMD Uraykachiy panelkunata allichay
@@ -1531,7 +1531,7 @@
 #. Video helpers: BMD's own yt-dlp is being downloaded
 #. the trailing ... means it is still going on: keep it
 #, machine
-	Downloading BMD's own copy...	MDMpa kikin khipunta uraykachichkan...
+	Downloading BMD's own copy...	BMDpa kikin khipunta uraykachichkan...
 #. text in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 #. Check for updates, while Update now downloads; {percent} like "42%"
 #, machine
@@ -2583,7 +2583,7 @@
 #. checkbox in the Options window
 #. Options → Remote check box (off by default)
 #, machine
-	Let phones and computers on the local network control BMD	Kay llaqta networkpi kaq telefonokuna utaq ruranakuna MDMta kamachiyta saqiy
+	Let phones and computers on the local network control BMD	Kay llaqta networkpi kaq telefonokuna utaq ruranakuna BMDta kamachiyta saqiy
 #. option (radio button) in the Batch download window
 #. the * in the address runs through letters
 #, machine
@@ -3168,7 +3168,7 @@
 #. text in extension.rs
 #. a check of Test browser integration (Linux, macOS): BMD found no browser it can connect to (one installed as a Flatpak isn't found)
 #, machine
-	No browser BMD can connect to was found	Manam taripayta atinchu mayqin wampunata MDMwan
+	No browser BMD can connect to was found	Manam taripayta atinchu mayqin wampunata BMDwan
 #. text in extension.rs
 #. a check of Test browser integration: no browser's extension has reached BMD
 #, machine
@@ -3241,7 +3241,7 @@
 #. text in the Options window
 #. Options → Accounts: no system keyring/keychain answered (none runs, e.g. a desktop without one), so the sign-ins stay in BMD's settings folder, which only the user's account may read
 #, machine
-	No system keyring answered, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Mana sistima llavero kutichirqanchu, chayrayku yaykuykuna hinaspa contraseñakuna MDMpa allinkayninpi waqaychasqa kanku, chayta qamlla ñawinchayta atinki.
+	No system keyring answered, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Mana sistima llavero kutichirqanchu, chayrayku yaykuykuna hinaspa contraseñakuna BMDpa allinkayninpi waqaychasqa kanku, chayta qamlla ñawinchayta atinki.
 #. message or event log entry in the main window
 #. event log entry: Add trackers changed nothing, the torrent had them all
 #, machine
@@ -3376,7 +3376,7 @@
 #. text in the Options window
 #. Options → Remote → Status: the remote control is off
 #, machine
-	Off: nothing on the network can reach BMD.	Wañuchisqa: manam kanchu networkpi MDMta chayanapaq.
+	Off: nothing on the network can reach BMD.	Wañuchisqa: manam kanchu networkpi BMDta chayanapaq.
 #. text in rssdlg.rs
 #. RSS feeds window, Download rules: under the rule's feeds; the rule was turned off because every feed it watched was removed
 #, machine
@@ -3460,7 +3460,7 @@
 #. text in the Options window
 #. Options → Remote, at the bottom of the page
 #, machine
-	Only paired devices see or change anything. The first time, the phone's browser warns about BMD's own certificate: its fingerprint is the one above.	Chiqanchasqa ruranakuna sapallanku imatapas rikunkuna utaq cambiankuna. Ñawpaq kutita, telefonopa navegadornin MDMpa kikin chiqanchayninmanta willanqa: chaypa fingerprintninqa hanaqpi kaqmi.
+	Only paired devices see or change anything. The first time, the phone's browser warns about BMD's own certificate: its fingerprint is the one above.	Chiqanchasqa ruranakuna sapallanku imatapas rikunkuna utaq cambiankuna. Ñawpaq kutita, telefonopa navegadornin BMDpa kikin chiqanchayninmanta willanqa: chaypa fingerprintninqa hanaqpi kaqmi.
 #. text in playlistdlg.rs
 #. in Download video, a list longer than BMD lists: only its first {n} videos are shown
 #. {n} = a number (keep the braces as they are)
@@ -3906,7 +3906,7 @@
 #. text in crashui.rs
 #. crash report window button: start BMD again
 #, machine
-	Restart BMD	MDMta watiqmanta qallariy
+	Restart BMD	BMDta watiqmanta qallariy
 #. button in the Options window; text in the Options window
 #, machine
 	Restore the built-in categories	Kamasqa rakikunata kutichiy
@@ -5006,7 +5006,7 @@
 #. text in errors.rs
 #. why a download failed (#701): a file host answered with its own web page (a countdown before the link, a captcha, a sign-in) where the file was expected. The browser gets past it; BMD's browser extension then hands the real file back to BMD
 #, machine
-	the site sent a web page instead of the file (a waiting page, a captcha or a sign-in): open the link in your browser, finish there, and the download comes back to BMD	llika p'anqata kachamurqan khipu rantinpi (suyaq p'anqa, captcha utaq yaykuna): wamp'unapi t'inkita kichariy, chaypi tukuy, chaymanta uraykachiy MDMman kutimunqa
+	the site sent a web page instead of the file (a waiting page, a captcha or a sign-in): open the link in your browser, finish there, and the download comes back to BMD	llika p'anqata kachamurqan khipu rantinpi (suyaq p'anqa, captcha utaq yaykuna): wamp'unapi t'inkita kichariy, chaypi tukuy, chaymanta uraykachiy BMDman kutimunqa
 #. text in the Download video window
 #. the Download video window: the site asked for a sign-in although the browser's extension passed the page's cookies
 #, machine
@@ -5066,7 +5066,7 @@
 #. text in the Options window
 #. Options → Accounts (Linux): the system keyring is locked (BMD never unlocks it: that would ask for its password), so the sign-ins stay in BMD's settings folder, which only the user's account may read
 #, machine
-	The system keyring is locked and BMD doesn't unlock it, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Sistimapa llaveroqa wichqasqa kachkan, MDMpas mana kichanchu, chayrayku yaykuykuna hinaspa pakallaykuna MDMpa wakichiykunapi waqaychasqa kanku, chaykunata qamllam ñawinchayta atinki.
+	The system keyring is locked and BMD doesn't unlock it, so sign-ins and passwords are kept in BMD's settings, which only you can read.	Sistimapa llaveroqa wichqasqa kachkan, BMDpas mana kichanchu, chayrayku yaykuykuna hinaspa pakallaykuna BMDpa wakichiykunapi waqaychasqa kanku, chaykunata qamllam ñawinchayta atinki.
 #. text in the Options window
 #. Options → Connection → DNS: the operating system's own DNS (the default)
 #, machine
@@ -5495,7 +5495,7 @@
 #. Options → Add an account: waiting while the user types the code at the service's page; {page} its address, {time} minutes:seconds left
 #. {time} = a time of day (keep the braces as they are)
 #, machine
-	Type this code at {page} and allow BMD; waiting for you (the code expires in {time}).	Kay kudiguta {page} nisqapi qillqay, chaymanta MDMta saqiy; qamta suyaykuchkan (kudiguqa {time} nisqapi p'uchukanqa).
+	Type this code at {page} and allow BMD; waiting for you (the code expires in {time}).	Kay kudiguta {page} nisqapi qillqay, chaymanta BMDta saqiy; qamta suyaykuchkan (kudiguqa {time} nisqapi p'uchukanqa).
 #. tooltip (why a control is greyed) in the Find window
 #. tooltip of the greyed Find button
 #, machine
@@ -5597,7 +5597,7 @@
 #. button in helpers.rs
 #. Video helpers: button: go back to the copy BMD downloads and checks itself
 #, machine
-	Use BMD's own copy	MDMpa kikin churayninta llamk'achiy
+	Use BMD's own copy	BMDpa kikin churayninta llamk'achiy
 #. text in the Batch download window
 #. why Batch download's OK is greyed
 #, machine
@@ -5813,7 +5813,7 @@
 #. text in the Options window
 #. Options → Accounts: Windows Credential Manager didn't answer, so the sign-ins stay in BMD's settings, encrypted so that only this Windows account can read them
 #, machine
-	Windows Credential Manager didn't answer, so sign-ins and passwords are kept in BMD's settings, encrypted for your Windows account.	Windows Credential Manager mana kutichirqanchu, chayrayku yaykuykuna hinaspa contraseñakuna MDMpa allinkayninpi waqaychasqa kanku, qamwan Windows kawsayniykipaq ch'uyanchasqa.
+	Windows Credential Manager didn't answer, so sign-ins and passwords are kept in BMD's settings, encrypted for your Windows account.	Windows Credential Manager mana kutichirqanchu, chayrayku yaykuykuna hinaspa contraseñakuna BMDpa allinkayninpi waqaychasqa kanku, qamwan Windows kawsayniykipaq ch'uyanchasqa.
 #. text in a dialog box
 #. why the computer could not be put to sleep (fills {error})
 #, machine
@@ -5849,7 +5849,7 @@
 #. text in remote.rs
 #. remote control page (on a phone): pairing failed and the code is void now
 #, machine
-	Wrong code. Show a new code in BMD and try again.	Pantay codigo. MDMpi huk mosoq codigota rikuchiy, chaymanta huktawan qallariy.
+	Wrong code. Show a new code in BMD and try again.	Pantay codigo. BMDpi huk mosoq codigota rikuchiy, chaymanta huktawan qallariy.
 #. text in remote.rs
 #. remote control page (on a phone): pairing failed; {n} = how many more codes may be tried
 #. {n} = a number (keep the braces as they are)
@@ -5897,7 +5897,7 @@
 	Your browser	Qanpa maskayniyki
 #. text in the Options window
 #, machine
-	Your default browser isn't one BMD knows: a current Chrome's User-Agent	Maskaq ñawpaqmanta akllasqaykiqa MDMpa riqsisqan manam kanchu: kunan Chrome-pa User-Agentnin
+	Your default browser isn't one BMD knows: a current Chrome's User-Agent	Maskaq ñawpaqmanta akllasqaykiqa BMDpa riqsisqan manam kanchu: kunan Chrome-pa User-Agentnin
 #. text in the Options window
 #. tooltip; {browser} is a browser and its version, e.g. "Brave 157"
 #, machine
@@ -6033,7 +6033,7 @@
 #. text in the Options window
 #. Options → Remote → Pair a device: done; {device} = the name it was given
 #, machine
-	{device} is paired. It can control BMD now.	{device} tupasqa kachkan. Kunanqa MDMta kamachiyta atin.
+	{device} is paired. It can control BMD now.	{device} tupasqa kachkan. Kunanqa BMDta kamachiyta atin.
 #. text in remote.rs
 #. remote control page (on a phone): progress; {done} and {size} are sizes ("1.2 MB of 7.5 MB")
 #. {size} = a file size such as "4.2 MB" (keep the braces as they are)
@@ -6215,7 +6215,7 @@
 #. text in errors.rs
 #. a debrid service's error: too many requests; BMD waits and retries
 #, machine
-	{service} asks to slow down; BMD will try again in a minute	{service}qa aslla mañakuyta mañakun; MDMqa huk minutupi huktawan ruwasaq.
+	{service} asks to slow down; BMD will try again in a minute	{service}qa aslla mañakuyta mañakun; BMDqa huk minutupi huktawan ruwasaq.
 #. text in errors.rs
 #. a debrid service's error: it wants the user to allow this computer (it sent an email)
 #, machine
@@ -6225,7 +6225,7 @@
 	{service} can't get this torrent: nobody shares it, or its link can't be read	{service} kay torrentta chaskiyta mana atinchu: manam pipas rakinchu, utaq k'askachayninta mana ñawiriyta atinchu
 #. text in errors.rs
 #, machine
-	{service} can't reach this file host right now; BMD will try again later	{service}qa kunan kay willañiqi hostman chayayta mana atinchu; MDMqa qhipaman huktawan ruwasaq
+	{service} can't reach this file host right now; BMD will try again later	{service}qa kunan kay willañiqi hostman chayayta mana atinchu; BMDqa qhipaman huktawan ruwasaq
 #. text in errors.rs
 #. a debrid service's error: it isn't answering
 #, machine
@@ -6260,7 +6260,7 @@
 	{service}: this needs a premium account	{service}: kayqa huk premium willayta munakun
 #. text in errors.rs
 #, machine
-	{service}: too many downloads at once through your account; BMD will try again	{service}: achka willañiqikuna kikin pachapi cuenta nisqaykiwan uraykachisqa; MDMqa huktawan yachaykuchinqa
+	{service}: too many downloads at once through your account; BMD will try again	{service}: achka willañiqikuna kikin pachapi cuenta nisqaykiwan uraykachisqa; BMDqa huktawan yachaykuchinqa
 #. text in errors.rs
 #. a debrid service's error: the account's limit (traffic) for this host is used up
 #, machine
@@ -6376,7 +6376,7 @@ extension	A list of videos: choose them in BMD	Videokunapa listan: BMDpi akllay
 #. text in the browser extension
 #. on the download button (green) over a video after the app added and started the download; a quality may follow ('· 1080p') and a 'Show' button; BMD is the app's short name, keep it; short
 #, machine
-extension	Added to BMD	MDMman yapasqa
+extension	Added to BMD	BMDman yapasqa
 #. text in the browser extension
 #. shown briefly on the download button over a video after a quality was picked: the download was added to the app's download queue, to start later
 #, machine
@@ -6480,7 +6480,7 @@ extension	Enter its https:// address.	Chaypa https:// tiyananta qillqay.
 #. text in the browser extension
 #. button on the download button over a video when the app didn't answer: opens the app's download page; BMD is the app's short name, keep it; very short
 #, machine
-extension	Get BMD	MDMta tariy
+extension	Get BMD	BMDta tariy
 #. text in the browser extension
 #. the extension's description in the browser's list of extensions; keep the name BMD as it is
 #, machine
@@ -6697,7 +6697,7 @@ extension	Send downloads to	Ura-ch'aqaykunata kachay
 #. on the download button over a video right after it was clicked, while the download goes to the app; BMD is BMD's short name, keep it as it is; short
 #. the trailing ... means it is still going on: keep it
 #, machine
-extension	Sending to BMD...	MDMman kachachkan...
+extension	Sending to BMD...	BMDman kachachkan...
 #. text in the browser extension
 #. shown briefly on the download button after it was clicked; keep the name BMD as it is
 #, machine
@@ -7364,7 +7364,7 @@ menu	OpenGL froze inside the graphics driver here	OpenGL kaypi gráficos control
 #. menu command in the main window
 #. View → Draw with: a greyed note; this computer's OpenGL (its graphics driver) is too old, so BMD doesn't draw with it
 #, machine
-menu	OpenGL here is too old to draw BMD	Kaypi OpenGLqa MDMta siq'inanpaq ancha machu
+menu	OpenGL here is too old to draw BMD	Kaypi OpenGLqa BMDta siq'inanpaq ancha machu
 #. menu command in the main window
 #. View → Draw with: a greyed note; why BMD no longer draws with OpenGL: its window stayed empty for 10 seconds, so BMD started again another way
 #, machine

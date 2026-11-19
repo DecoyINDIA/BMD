@@ -17,7 +17,7 @@ A code signature lets Windows show who published a program and check that it was
 - the installers, `BMD-<version>-setup.exe` and its ARM64 and 32-bit versions, and the uninstaller they put on your computer;
 - the same programs in the portable and plain zips.
 
-Every signed file is built from the public source code at [github.com/anefzaoui/misterdownloadmanager]({{REPO}}) by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.
+Every signed file is built from the public source code at [github.com/DecoyINDIA/BMD]({{REPO}}) by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.
 
 Whatever the signature, you can still check every download against the release's signed checksums: see [Check your download](/download.html#check-your-download).
 

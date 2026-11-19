@@ -48,7 +48,7 @@
   },
   "0097704677c58459": {
    "source": "On Windows, when OpenGL fails on a card without Direct3D 12, BMD draws with Direct3D on Microsoft's software renderer (WARP) from the next start, and <g1>View → Draw with</g1> says why: OpenGL couldn't start, it is too old to draw BMD (older than 3.0, such as Intel's first HD Graphics, whose OpenGL 2.1 drew BMD's windows as garbage), its first window didn't show within 10 seconds, or BMD froze inside the graphics driver while OpenGL showed a frame (the older Intel HD Graphics and AMD Radeon cards' drivers did). Choosing <g2>OpenGL</g2> there tries it again.",
-   "text": "Unter Windows, wenn OpenGL auf einer Karte ohne Direct3D 12 fehlschlägt, zeichnet BMD ab dem nächsten Start mit Direct3D auf Microsofts Software-Renderer (WARP), und <g1>Ansicht → Zeichnen mit</g1> zeigt den Grund an: OpenGL konnte nicht starten, es ist zu alt, um BMD zu zeichnen (älter als 3.0, wie Intels erste HD Graphics, deren OpenGL 2.1 MDMs Fenster als Müll darstellte), das erste Fenster erschien nicht innerhalb von 10 Sekunden, oder BMD fror im Grafiktreiber ein, während OpenGL einen Frame anzeigte (die Treiber älterer Intel HD Graphics- und AMD Radeon-Karten taten dies). Wenn Sie dort <g2>OpenGL</g2> wählen, wird es erneut versucht."
+   "text": "Unter Windows, wenn OpenGL auf einer Karte ohne Direct3D 12 fehlschlägt, zeichnet BMD ab dem nächsten Start mit Direct3D auf Microsofts Software-Renderer (WARP), und <g1>Ansicht → Zeichnen mit</g1> zeigt den Grund an: OpenGL konnte nicht starten, es ist zu alt, um BMD zu zeichnen (älter als 3.0, wie Intels erste HD Graphics, deren OpenGL 2.1 BMDs Fenster als Müll darstellte), das erste Fenster erschien nicht innerhalb von 10 Sekunden, oder BMD fror im Grafiktreiber ein, während OpenGL einen Frame anzeigte (die Treiber älterer Intel HD Graphics- und AMD Radeon-Karten taten dies). Wenn Sie dort <g2>OpenGL</g2> wählen, wird es erneut versucht."
   },
   "00a7253abb008136": {
    "source": "Report a problem with a translation →",
@@ -80,7 +80,7 @@
   },
   "011e457198e2995c": {
    "source": "Videos keep to the <g1>Speed Limiter</g1>: the limit for one file, a video's own limit (the <g2>Speed Limiter</g2> tab of its progress window), and the limit for all downloads together, which they share with every other download. BMD's own downloader brings them in, so a change applies at once, as for a file.",
-   "text": "Videos halten sich an den <g1>Geschwindigkeitsbegrenzer</g1>: die Begrenzung für eine Datei, die eigene Begrenzung eines Videos (der Tab <g2>Geschwindigkeitsbegrenzer</g2> seines Fortschrittsfensters) und die Begrenzung für alle Downloads zusammen, die sie mit jedem anderen Download teilen. MDMs eigener Downloader lädt sie herunter, sodass eine Änderung sofort angewendet wird, wie bei einer Datei."
+   "text": "Videos halten sich an den <g1>Geschwindigkeitsbegrenzer</g1>: die Begrenzung für eine Datei, die eigene Begrenzung eines Videos (der Tab <g2>Geschwindigkeitsbegrenzer</g2> seines Fortschrittsfensters) und die Begrenzung für alle Downloads zusammen, die sie mit jedem anderen Download teilen. BMDs eigener Downloader lädt sie herunter, sodass eine Änderung sofort angewendet wird, wie bei einer Datei."
   },
   "0126a18a504a982f": {
    "source": "Open the extension's page in the Chrome Web Store, <g1>BMD</g1>, and click <g2>Add to Chrome</g2>. In Edge the button is <g3>Get</g3>, and Edge first asks to <g4>Allow extensions from other stores</g4>: click <g5>Allow</g5>.",
@@ -152,7 +152,7 @@
   },
   "023c54f7a577056b": {
    "source": "<g1>Downloads through one network adapter, with a kill switch</g1> (<g2>#35</g2>): <g3>Options → Proxy / Socks → Network adapter</g3>. Pick one, usually your VPN's, and every connection BMD opens goes out through it or not at all: downloads, FTP, the DNS you chose, BMD's own downloads and the update check. When the adapter disconnects, nothing goes out through your normal connection. Running downloads stop and start again when it's back. The command line's <x4/> takes <x5/>. PAC scripts' <x6/> no longer opens a network socket on Windows.",
-   "text": "<g1>Downloads über einen Netzwerkadapter, mit Kill Switch</g1> (<g2>#35</g2>): <g3>Optionen → Proxy / SOCKS → Netzwerkadapter</g3>. Wählen Sie einen aus, normalerweise den Ihres VPNs, und jede von BMD geöffnete Verbindung geht darüber oder gar nicht: Downloads, FTP, der von Ihnen gewählte DNS, MDMs eigene Downloads und die Update-Prüfung. Wenn der Adapter die Verbindung trennt, geht nichts über Ihre normale Verbindung. Laufende Downloads werden gestoppt und starten wieder, wenn die Verbindung wiederhergestellt ist. Die Befehlszeile <x4/> akzeptiert <x5/>. PAC-Skripte <x6/> öffnen unter Windows keinen Netzwerk-Socket mehr."
+   "text": "<g1>Downloads über einen Netzwerkadapter, mit Kill Switch</g1> (<g2>#35</g2>): <g3>Optionen → Proxy / SOCKS → Netzwerkadapter</g3>. Wählen Sie einen aus, normalerweise den Ihres VPNs, und jede von BMD geöffnete Verbindung geht darüber oder gar nicht: Downloads, FTP, der von Ihnen gewählte DNS, BMDs eigene Downloads und die Update-Prüfung. Wenn der Adapter die Verbindung trennt, geht nichts über Ihre normale Verbindung. Laufende Downloads werden gestoppt und starten wieder, wenn die Verbindung wiederhergestellt ist. Die Befehlszeile <x4/> akzeptiert <x5/>. PAC-Skripte <x6/> öffnen unter Windows keinen Netzwerk-Socket mehr."
   },
   "02627b049e4a7241": {
    "source": "Image galleries",
@@ -456,7 +456,7 @@
   },
   "07152fe1c5c0adb1": {
    "source": "<g1>Stop</g1> ends BMD's downloads of the pictures, and gallery-dl with everything it started. The pictures saved so far stay.",
-   "text": "<g1>Stopp</g1> beendet MDMs Downloads der Bilder und gallery-dl mit allem, was es gestartet hat. Die bisher gespeicherten Bilder bleiben erhalten."
+   "text": "<g1>Stopp</g1> beendet BMDs Downloads der Bilder und gallery-dl mit allem, was es gestartet hat. Die bisher gespeicherten Bilder bleiben erhalten."
   },
   "0717a2923d7e72cc": {
    "source": "<g1>Chrome, Edge, Brave, Opera and Vivaldi</g1>: one click from the Chrome Web Store, and the browser keeps it up to date. Edge first asks to allow extensions from other stores.",
@@ -624,7 +624,7 @@
   },
   "08f4cec854a60d72": {
    "source": "<g1>The .deb and .rpm bring what BMD's window needs</g1> (part of <g2>#164</g2>): on a system without libxkbcommon-x11 (a minimal install, a container), BMD installed from them stopped at start under X11 and XWayland, and without the CA certificates (Debian's minimal install) no download started. They now require both, and EGL for Wayland windows. They also require the glibc the programs were built against, read from the programs themselves, instead of a fixed version: a package built on a newer system no longer installs on an older one where it can't start.",
-   "text": "<g1>Die .deb- und .rpm-Pakete bringen mit, was MDMs Fenster benötigt</g1> (Teil von <g2>#164</g2>): Auf einem System ohne libxkbcommon-x11 (eine minimale Installation, ein Container) stoppte BMD, das von diesen installiert wurde, beim Start unter X11 und XWayland, und ohne die CA-Zertifikate (Debians minimale Installation) startete kein Download. Sie erfordern jetzt beides und EGL für Wayland-Fenster. Sie erfordern auch die glibc, gegen die die Programme gebaut wurden, aus den Programmen selbst gelesen, anstatt einer festen Version: Ein auf einem neueren System gebautes Paket wird nicht mehr auf einem älteren installiert, wo es nicht starten kann."
+   "text": "<g1>Die .deb- und .rpm-Pakete bringen mit, was BMDs Fenster benötigt</g1> (Teil von <g2>#164</g2>): Auf einem System ohne libxkbcommon-x11 (eine minimale Installation, ein Container) stoppte BMD, das von diesen installiert wurde, beim Start unter X11 und XWayland, und ohne die CA-Zertifikate (Debians minimale Installation) startete kein Download. Sie erfordern jetzt beides und EGL für Wayland-Fenster. Sie erfordern auch die glibc, gegen die die Programme gebaut wurden, aus den Programmen selbst gelesen, anstatt einer festen Version: Ein auf einem neueren System gebautes Paket wird nicht mehr auf einem älteren installiert, wo es nicht starten kann."
   },
   "08f904e3d0a7032e": {
    "source": "<g1>Options → File types → Don't take files smaller than</g1> leaves small files (a receipt, an icon) to the browser. 0 takes any size.",
@@ -792,7 +792,7 @@
   },
   "0b06e256e529aa58": {
    "source": "With <g1>Options → Proxy / Socks → <g2>Network adapter</g2></g1> set, video downloads go through that adapter too, with the same kill switch as other downloads. BMD's own downloader opens its connections through the adapter as for any file; for yt-dlp's look-ups (and what it downloads itself, with the ffmpeg it starts) BMD hands it a proxy of its own on this computer, and opens every connection through the adapter, looking the names up with the DNS you chose in <g3>Options → Connection</g3> (without an adapter, yt-dlp uses the system's DNS). When the adapter disconnects, the video download stops, and it starts again when the adapter is back. Formats sent over RTMP, RTSP, MMS or FTP can't go through it and are refused.",
-   "text": "Wenn <g1>Optionen → Proxy / SOCKS → <g2>Netzwerkadapter</g2></g1> eingestellt ist, laufen Video-Downloads ebenfalls über diesen Adapter, mit demselben Kill-Switch wie andere Downloads. MDMs eigener Downloader öffnet seine Verbindungen über den Adapter wie für jede Datei; für yt-dlps Nachschlagen (und was es selbst herunterlädt, mit dem ffmpeg, das es startet) übergibt BMD ihm einen eigenen Proxy auf diesem Computer und öffnet jede Verbindung über den Adapter, wobei die Namen mit dem DNS aufgelöst werden, das Sie unter <g3>Optionen → Verbindung</g3> gewählt haben (ohne Adapter verwendet yt-dlp das System-DNS). Wenn der Adapter die Verbindung trennt, stoppt der Video-Download und startet erneut, wenn der Adapter wieder verbunden ist. Formate, die über RTMP, RTSP, MMS oder FTP gesendet werden, können nicht darüber laufen und werden abgelehnt."
+   "text": "Wenn <g1>Optionen → Proxy / SOCKS → <g2>Netzwerkadapter</g2></g1> eingestellt ist, laufen Video-Downloads ebenfalls über diesen Adapter, mit demselben Kill-Switch wie andere Downloads. BMDs eigener Downloader öffnet seine Verbindungen über den Adapter wie für jede Datei; für yt-dlps Nachschlagen (und was es selbst herunterlädt, mit dem ffmpeg, das es startet) übergibt BMD ihm einen eigenen Proxy auf diesem Computer und öffnet jede Verbindung über den Adapter, wobei die Namen mit dem DNS aufgelöst werden, das Sie unter <g3>Optionen → Verbindung</g3> gewählt haben (ohne Adapter verwendet yt-dlp das System-DNS). Wenn der Adapter die Verbindung trennt, stoppt der Video-Download und startet erneut, wenn der Adapter wieder verbunden ist. Formate, die über RTMP, RTSP, MMS oder FTP gesendet werden, können nicht darüber laufen und werden abgelehnt."
   },
   "0b12e3d476ace04b": {
    "source": "Start a finished gallery again with <g1>Resume</g1> and BMD fetches only the pictures that aren't in its folder yet. The ones you already have are skipped, so following an artist or an album costs nothing but the new pictures.",
@@ -944,7 +944,7 @@
   },
   "0cf241eac33e7c16": {
    "source": "<g1>Ubuntu's Firefox reaches BMD</g1> (part of <g2>#164</g2>): the Snap Firefox never makes the folder BMD looked for, so browser integration wasn't set up for it and its extension couldn't find BMD. It is now, and the Snap goes through the desktop, which asks once (<g3>Allow</g3>); the help says how to be asked again after <g4>Don't allow</g4>. Chromium as a Snap ran BMD's helper inside its sandbox, away from BMD (it started a second, sandboxed BMD): BMD no longer offers it, and the help says why.",
-   "text": "<g1>Ubuntus Firefox erreicht BMD</g1> (Teil von <g2>#164</g2>): Der Snap Firefox erstellt nie den Ordner, den BMD suchte, daher wurde die Browserintegration dafür nicht eingerichtet und seine Erweiterung konnte BMD nicht finden. Dies ist jetzt der Fall, und der Snap läuft über den Desktop, der einmal fragt (<g3>Zulassen</g3>); die Hilfe erklärt, wie man nach <g4>Nicht zulassen</g4> erneut gefragt wird. Chromium als Snap führte MDMs Helfer innerhalb seiner Sandbox aus, entfernt von BMD (es startete ein zweites, in der Sandbox befindliches BMD): BMD bietet es nicht mehr an, und die Hilfe erklärt, warum."
+   "text": "<g1>Ubuntus Firefox erreicht BMD</g1> (Teil von <g2>#164</g2>): Der Snap Firefox erstellt nie den Ordner, den BMD suchte, daher wurde die Browserintegration dafür nicht eingerichtet und seine Erweiterung konnte BMD nicht finden. Dies ist jetzt der Fall, und der Snap läuft über den Desktop, der einmal fragt (<g3>Zulassen</g3>); die Hilfe erklärt, wie man nach <g4>Nicht zulassen</g4> erneut gefragt wird. Chromium als Snap führte BMDs Helfer innerhalb seiner Sandbox aus, entfernt von BMD (es startete ein zweites, in der Sandbox befindliches BMD): BMD bietet es nicht mehr an, und die Hilfe erklärt, warum."
   },
   "0d0a3f838bf6083d": {
    "source": "Portable copy",
@@ -952,7 +952,7 @@
   },
   "0d0a70e09e14180e": {
    "source": "BMD's main window on Xfce",
-   "text": "MDMs Hauptfenster auf Xfce"
+   "text": "BMDs Hauptfenster auf Xfce"
   },
   "0d119fc4ddc824d4": {
    "source": "Only the files you want",
@@ -1223,8 +1223,8 @@
    "text": "Teamrollen"
   },
   "1171655e77148bd2": {
-   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/anefzaoui/misterdownloadmanager</g2> under the GNU GPL, version 3.",
-   "text": "Jede Veröffentlichung mit ihren Hinweisen und Dateien finden Sie unter <g1>GitHub Releases</g1>. Der Quellcode ist unter <g2>github.com/anefzaoui/misterdownloadmanager</g2> unter der GNU GPL, Version 3, verfügbar."
+   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/DecoyINDIA/BMD</g2> under the GNU GPL, version 3.",
+   "text": "Jede Veröffentlichung mit ihren Hinweisen und Dateien finden Sie unter <g1>GitHub Releases</g1>. Der Quellcode ist unter <g2>github.com/DecoyINDIA/BMD</g2> unter der GNU GPL, Version 3, verfügbar."
   },
   "1173fd2e0a9c235b": {
    "source": "The app has no accounts, telemetry or tracking",
@@ -1820,7 +1820,7 @@
   },
   "1a566d3ea763625a": {
    "source": "It stores its own settings (paused or not, BMD's file types and excluded sites, its connection status, where you dragged the video button on each of the last 200 sites; nothing from private windows) in the browser's extension storage, on your computer.",
-   "text": "Sie speichert ihre eigenen Einstellungen (pausiert oder nicht, MDMs Dateitypen und ausgeschlossene Websites, ihren Verbindungsstatus, wohin Sie die Video-Schaltfläche auf jeder der letzten 200 Websites gezogen haben; nichts aus privaten Fenstern) im Erweiterungsspeicher des Browsers auf Ihrem Computer."
+   "text": "Sie speichert ihre eigenen Einstellungen (pausiert oder nicht, BMDs Dateitypen und ausgeschlossene Websites, ihren Verbindungsstatus, wohin Sie die Video-Schaltfläche auf jeder der letzten 200 Websites gezogen haben; nichts aus privaten Fenstern) im Erweiterungsspeicher des Browsers auf Ihrem Computer."
   },
   "1a60351807a07720": {
    "source": "BMD now goes well beyond single videos: whole playlists, subtitles, sound on its own, and picture galleries.",
@@ -2316,7 +2316,7 @@
   },
   "2190b3fff360f9cd": {
    "source": "The help pages' pictures (<x1/>) come from one list, <x2/>: <x3/> opens each window through BMD's own <x4/> command line in a test instance off the screen, crops and annotates it from the window's accessibility tree, and writes lossless WebP; <x5/> (CI) keeps the list, the pages and the files in step. The published ones are taken on GitHub's Windows runner (<x6/>).",
-   "text": "Die Bilder der Hilfeseiten (<x1/>) stammen aus einer Liste, <x2/>: <x3/> öffnet jedes Fenster über MDMs eigenen <x4/>-Befehlszeilenbefehl in einer Testinstanz außerhalb des Bildschirms, schneidet es zu und kommentiert es aus dem Barrierefreiheitsbaum des Fensters und schreibt verlustfreies WebP; <x5/> (CI) hält die Liste, die Seiten und die Dateien synchron. Die veröffentlichten Bilder werden auf GitHubs Windows-Runner (<x6/>) erstellt."
+   "text": "Die Bilder der Hilfeseiten (<x1/>) stammen aus einer Liste, <x2/>: <x3/> öffnet jedes Fenster über BMDs eigenen <x4/>-Befehlszeilenbefehl in einer Testinstanz außerhalb des Bildschirms, schneidet es zu und kommentiert es aus dem Barrierefreiheitsbaum des Fensters und schreibt verlustfreies WebP; <x5/> (CI) hält die Liste, die Seiten und die Dateien synchron. Die veröffentlichten Bilder werden auf GitHubs Windows-Runner (<x6/>) erstellt."
   },
   "2199d8fb453c007a": {
    "source": "The sorted column's header",
@@ -2596,7 +2596,7 @@
   },
   "2530d7dea7130ce9": {
    "source": "BMD closed with an internal error when a window opened while the main window was minimized or hidden in the notification area, for example Download File Info for a download from the browser, or Add torrent for a magnet link opened in the browser (<g1>#22</g1>, <g2>#145</g2>). The cause was in egui, the toolkit BMD is drawn with (<g3>emilk/egui#8470</g3>), and is fixed in BMD's copy of it.",
-   "text": "BMD schloss sich mit einem internen Fehler, wenn ein Fenster geöffnet wurde, während das Hauptfenster minimiert oder im Infobereich versteckt war, zum Beispiel „Dateiinformationen herunterladen“ für einen Download aus dem Browser oder „Torrent hinzufügen“ für einen im Browser geöffneten Magnet-Link (<g1>#22</g1>, <g2>#145</g2>). Die Ursache lag in egui, dem Toolkit, mit dem BMD gezeichnet wird (<g3>emilk/egui#8470</g3>), und ist in MDMs Kopie davon behoben."
+   "text": "BMD schloss sich mit einem internen Fehler, wenn ein Fenster geöffnet wurde, während das Hauptfenster minimiert oder im Infobereich versteckt war, zum Beispiel „Dateiinformationen herunterladen“ für einen Download aus dem Browser oder „Torrent hinzufügen“ für einen im Browser geöffneten Magnet-Link (<g1>#22</g1>, <g2>#145</g2>). Die Ursache lag in egui, dem Toolkit, mit dem BMD gezeichnet wird (<g3>emilk/egui#8470</g3>), und ist in BMDs Kopie davon behoben."
   },
   "25320eec1bed846e": {
    "source": "BMD sends the service only the links you download through it, and your account's token or key (on Mega-Debrid, or its user name and password). Nothing else. Mega-Debrid's documentation puts them in the address; BMD sends them in the request's body instead, where no proxy or server log keeps them.",
@@ -2788,7 +2788,7 @@
   },
   "27eab5efe4a2b7ab": {
    "source": "<g1>Options → Connection → DNS</g1> picks who turns names into addresses for downloads, FTP, BMD's own downloads and the update check: the system's (the default), Cloudflare, Google, Quad9, AdGuard, NextDNS with your configuration ID, or your own. It is asked over HTTPS (the default) or TLS, so nobody on the way sees or changes the names you look up, or plainly over TCP. <g2>Test</g2> shows how long it takes to answer.",
-   "text": "<g1>Optionen → Verbindung → DNS</g1> wählt aus, wer Namen für Downloads, FTP, MDMs eigene Downloads und die Update-Prüfung in Adressen umwandelt: die des Systems (Standard), Cloudflare, Google, Quad9, AdGuard, NextDNS mit Ihrer Konfigurations-ID oder Ihre eigene. Die Abfrage erfolgt über HTTPS (Standard) oder TLS, sodass niemand auf dem Weg die von Ihnen abgefragten Namen sehen oder ändern kann, oder einfach über TCP. <g2>Testen</g2> zeigt, wie lange die Antwort dauert."
+   "text": "<g1>Optionen → Verbindung → DNS</g1> wählt aus, wer Namen für Downloads, FTP, BMDs eigene Downloads und die Update-Prüfung in Adressen umwandelt: die des Systems (Standard), Cloudflare, Google, Quad9, AdGuard, NextDNS mit Ihrer Konfigurations-ID oder Ihre eigene. Die Abfrage erfolgt über HTTPS (Standard) oder TLS, sodass niemand auf dem Weg die von Ihnen abgefragten Namen sehen oder ändern kann, oder einfach über TCP. <g2>Testen</g2> zeigt, wie lange die Antwort dauert."
   },
   "27f810907d1af7a7": {
    "source": "RSS feeds for torrents, with download rules — BMD",
@@ -3240,7 +3240,7 @@
   },
   "2df23429eb291082": {
    "source": "<g1>Linux: menus appear at once, as menus, on compositors that animate windows</g1> (Hyprland, picom with fading, <g2>#277</g2>). Before the fix above, Hyprland gave BMD's menus a window's border and slid each one down from the top of the screen. And moving from title to title along the menu bar closed one menu window and opened another, so such a compositor faded each menu out and the next one in at every switch. The menu bar's menus now share one window that moves from title to title, as a submenu's window already did from item to item, and each menu window says which menu it is (a drop-down menu, a right-click menu, a drop-down list), as GTK's and Qt's do.",
-   "text": "<g1>Linux: Menüs erscheinen sofort, als Menüs, auf Compositors, die Fenster animieren</g1> (Hyprland, picom mit Fading, <g2>#277</g2>). Vor der obigen Korrektur gab Hyprland MDMs Menüs einen Fensterrahmen und schob jedes einzelne vom oberen Bildschirmrand nach unten. Und das Bewegen von Titel zu Titel entlang der Menüleiste schloss ein Menüfenster und öffnete ein anderes, sodass ein solcher Compositor jedes Menü bei jedem Wechsel aus- und das nächste einblendete. Die Menüs der Menüleiste teilen sich jetzt ein Fenster, das sich von Titel zu Titel bewegt, wie es ein Untermenüfenster bereits von Element zu Element tat, und jedes Menüfenster gibt an, welches Menü es ist (ein Dropdown-Menü, ein Rechtsklick-Menü, eine Dropdown-Liste), wie es GTKs und Qts tun."
+   "text": "<g1>Linux: Menüs erscheinen sofort, als Menüs, auf Compositors, die Fenster animieren</g1> (Hyprland, picom mit Fading, <g2>#277</g2>). Vor der obigen Korrektur gab Hyprland BMDs Menüs einen Fensterrahmen und schob jedes einzelne vom oberen Bildschirmrand nach unten. Und das Bewegen von Titel zu Titel entlang der Menüleiste schloss ein Menüfenster und öffnete ein anderes, sodass ein solcher Compositor jedes Menü bei jedem Wechsel aus- und das nächste einblendete. Die Menüs der Menüleiste teilen sich jetzt ein Fenster, das sich von Titel zu Titel bewegt, wie es ein Untermenüfenster bereits von Element zu Element tat, und jedes Menüfenster gibt an, welches Menü es ist (ein Dropdown-Menü, ein Rechtsklick-Menü, eine Dropdown-Liste), wie es GTKs und Qts tun."
   },
   "2df2d02b778e8596": {
    "source": "Set up once",
@@ -3504,7 +3504,7 @@
   },
   "32066d9858dbee1a": {
    "source": "Release signatures are checked by BMD's own small verifier instead of a full OpenPGP library.",
-   "text": "Release-Signaturen werden von MDMs eigenem kleinen Verifizierer geprüft, anstatt einer vollständigen OpenPGP-Bibliothek."
+   "text": "Release-Signaturen werden von BMDs eigenem kleinen Verifizierer geprüft, anstatt einer vollständigen OpenPGP-Bibliothek."
   },
   "321b381f0f65065d": {
    "source": "<g1>Network adapter:</g1> while one is chosen (<g2>Options → Proxy / Socks → <g3>Network adapter</g3></g2>), galleries go through it too, as video pages do: BMD gives gallery-dl a proxy of its own on this computer, opens every connection through the adapter and looks the names up with the DNS you chose. When the adapter disconnects, the gallery stops with the other downloads; nothing goes out through your normal connection.",
@@ -4136,7 +4136,7 @@
   },
   "3beffc7c9eb5d33e": {
    "source": "The host serves only BMD's own extension. Its IDs are in one place, <x1/> (<x2/>): the unpacked copy's (<x3/>, from the manifest's public key), the Chrome Web Store's (<x4/>, signed with the store's own key: <x5/> leaves the manifest's key out of the store's copy), the Firefox add-on's (<x6/>) and its addons.mozilla.org page; the Edge and Opera stores' are placeholders, never served, until the extension is listed there. The host writes each browser's manifest with those IDs, and the app offers the store's copy (Add to Chrome, Add to Firefox) before the unpacked one.",
-   "text": "Der Host bedient nur MDMs eigene Erweiterung. Ihre IDs befinden sich an einem Ort, <x1/> (<x2/>): die der entpackten Kopie (<x3/>, vom öffentlichen Schlüssel des Manifests), die des Chrome Web Store (<x4/>, signiert mit dem eigenen Schlüssel des Stores: <x5/> lässt den Manifestschlüssel aus der Store-Kopie weg), die des Firefox-Add-ons (<x6/>) und dessen addons.mozilla.org-Seite; die der Edge- und Opera-Stores sind Platzhalter, die nie bedient werden, bis die Erweiterung dort gelistet ist. Der Host schreibt das Manifest jedes Browsers mit diesen IDs, und die App bietet die Store-Kopie (Zu Chrome hinzufügen, Zu Firefox hinzufügen) vor der entpackten an."
+   "text": "Der Host bedient nur BMDs eigene Erweiterung. Ihre IDs befinden sich an einem Ort, <x1/> (<x2/>): die der entpackten Kopie (<x3/>, vom öffentlichen Schlüssel des Manifests), die des Chrome Web Store (<x4/>, signiert mit dem eigenen Schlüssel des Stores: <x5/> lässt den Manifestschlüssel aus der Store-Kopie weg), die des Firefox-Add-ons (<x6/>) und dessen addons.mozilla.org-Seite; die der Edge- und Opera-Stores sind Platzhalter, die nie bedient werden, bis die Erweiterung dort gelistet ist. Der Host schreibt das Manifest jedes Browsers mit diesen IDs, und die App bietet die Store-Kopie (Zu Chrome hinzufügen, Zu Firefox hinzufügen) vor der entpackten an."
   },
   "3c019e7fa92d796d": {
    "source": "<g1>Version 0.1.0</g1> <g2>and later</g2>",
@@ -4144,7 +4144,7 @@
   },
   "3c0f62836c70296b": {
    "source": "BMD's icon in the top bar of Ubuntu's GNOME, its menu open: Open BMD, Add new download, Add batch download, Downloads in progress, Speed Limiter, Scheduler, the main queue, Options and Exit",
-   "text": "MDMs Symbol in der oberen Leiste von Ubuntus GNOME, sein Menü geöffnet: BMD öffnen, Neuen Download hinzufügen, Batch-Download hinzufügen, Aktive Downloads, Geschwindigkeitsbegrenzer, Zeitplaner, die Hauptwarteschlange, Optionen und Beenden"
+   "text": "BMDs Symbol in der oberen Leiste von Ubuntus GNOME, sein Menü geöffnet: BMD öffnen, Neuen Download hinzufügen, Batch-Download hinzufügen, Aktive Downloads, Geschwindigkeitsbegrenzer, Zeitplaner, die Hauptwarteschlange, Optionen und Beenden"
   },
   "3c1845d2fe82536b": {
    "source": "<g1>Adwaita</g1>, after GNOME's look: round corners, flat grey buttons, a rounded focus ring, boxes that take a ring when focused, GNOME's check boxes and radio buttons, GNOME's Adwaita icons (LGPL-3.0), in colour for files and categories and one colour in the toolbar, and a header bar with the title in bold and round buttons.",
@@ -4488,7 +4488,7 @@
   },
   "40ceb1486b9c86d0": {
    "source": "BMD's privacy story is simple, and it is the strongest argument for the program after the price.",
-   "text": "MDMs Datenschutz ist einfach und nach dem Preis das stärkste Argument für das Programm."
+   "text": "BMDs Datenschutz ist einfach und nach dem Preis das stärkste Argument für das Programm."
   },
   "40d45b50d2257bd9": {
    "source": "The command line runs in the app's own program, so the download engine ships once. Every command, <x1/>, Ctrl+C and exit code work as before.",
@@ -4508,7 +4508,7 @@
   },
   "40e91636f4e0b543": {
    "source": "<g1>Options → General → Test browser integration</g1> checks BMD's side in order (integration on, the installed copy, the browsers can find BMD, which browsers' extension connected) and offers <g2>Set it up</g2> when the browsers can't find BMD.",
-   "text": "<g1>Optionen → Allgemein → Browserintegration testen</g1> prüft MDMs Seite der Reihe nach (Integration an, installierte Version, Browser können BMD finden, welche Browser-Erweiterung verbunden ist) und bietet <g2>Einrichten</g2> an, wenn die Browser BMD nicht finden können."
+   "text": "<g1>Optionen → Allgemein → Browserintegration testen</g1> prüft BMDs Seite der Reihe nach (Integration an, installierte Version, Browser können BMD finden, welche Browser-Erweiterung verbunden ist) und bietet <g2>Einrichten</g2> an, wenn die Browser BMD nicht finden können."
   },
   "40f98941e310ffec": {
    "source": "A greyed text box's border",
@@ -4944,7 +4944,7 @@
   },
   "47f548f7416da232": {
    "source": "<g1>BMD's programs and downloads are much smaller</g1> (<g2>#25</g2>): on Windows, the programs went from 93 MB to 41 MB (<x3/> from 61 MB to 38 MB, the command line from 28 MB to a 0.2 MB launcher), and setup.exe from 23 MB to 16 MB. On Linux the AppImage went from 36 MB to 20 MB, the .deb from 27 MB to 17 MB.",
-   "text": "<g1>MDMs Programme und Downloads sind viel kleiner</g1> (<g2>#25</g2>): Unter Windows sind die Programme von 93 MB auf 41 MB geschrumpft (<x3/> von 61 MB auf 38 MB, die Kommandozeile von 28 MB auf einen 0,2 MB Launcher), und setup.exe von 23 MB auf 16 MB. Unter Linux ist das AppImage von 36 MB auf 20 MB geschrumpft, das .deb von 27 MB auf 17 MB."
+   "text": "<g1>BMDs Programme und Downloads sind viel kleiner</g1> (<g2>#25</g2>): Unter Windows sind die Programme von 93 MB auf 41 MB geschrumpft (<x3/> von 61 MB auf 38 MB, die Kommandozeile von 28 MB auf einen 0,2 MB Launcher), und setup.exe von 23 MB auf 16 MB. Unter Linux ist das AppImage von 36 MB auf 20 MB geschrumpft, das .deb von 27 MB auf 17 MB."
   },
   "4815da8b9e60dc32": {
    "source": "Connection settings in Options →",
@@ -5072,7 +5072,7 @@
   },
   "49cda4ce8a5a0a26": {
    "source": "BMD's own window opens each browser's store page for you.",
-   "text": "MDMs eigenes Fenster öffnet für Sie die Store-Seite jedes Browsers."
+   "text": "BMDs eigenes Fenster öffnet für Sie die Store-Seite jedes Browsers."
   },
   "49cf385ddabeea71": {
    "source": "<g1>PAC</g1><g2>proxy scripts</g2>",
@@ -5964,7 +5964,7 @@
   },
   "57a7f74d99342c40": {
    "source": "<g1>Your system's copy:</g1> on Linux and macOS, BMD finds a gallery-dl on your <x2/> and in the usual package-manager folders, including Homebrew's, as it does yt-dlp. A program you chose yourself comes first, then BMD's own copy; the system's is used when neither is there, and your package manager keeps it up to date. If yours is too old for a site, <g3>Use BMD's own copy</g3> in <g4>Helpers...</g4> downloads BMD's (Windows and Linux x86-64), used from then on.",
-   "text": "<g1>Die Kopie Ihres Systems:</g1> Unter Linux und macOS findet BMD eine gallery-dl-Installation in Ihrem <x2/> und in den üblichen Paketmanager-Ordnern, einschließlich Homebrew, genau wie bei yt-dlp. Ein von Ihnen selbst gewähltes Programm hat Vorrang, danach kommt MDMs eigene Kopie; die Systemkopie wird verwendet, wenn keines davon vorhanden ist, und Ihr Paketmanager hält sie auf dem neuesten Stand. Wenn Ihre Version für eine Website zu alt ist, lädt <g3>Eigene Kopie von BMD verwenden</g3> unter <g4>Helfer...</g4> MDMs Version herunter (Windows und Linux x86-64), die dann verwendet wird."
+   "text": "<g1>Die Kopie Ihres Systems:</g1> Unter Linux und macOS findet BMD eine gallery-dl-Installation in Ihrem <x2/> und in den üblichen Paketmanager-Ordnern, einschließlich Homebrew, genau wie bei yt-dlp. Ein von Ihnen selbst gewähltes Programm hat Vorrang, danach kommt BMDs eigene Kopie; die Systemkopie wird verwendet, wenn keines davon vorhanden ist, und Ihr Paketmanager hält sie auf dem neuesten Stand. Wenn Ihre Version für eine Website zu alt ist, lädt <g3>Eigene Kopie von BMD verwenden</g3> unter <g4>Helfer...</g4> BMDs Version herunter (Windows und Linux x86-64), die dann verwendet wird."
   },
   "57d8abd136298ad0": {
    "source": "Windows 10/11 and Linux; macOS to try",
@@ -6192,7 +6192,7 @@
   },
   "5afcba992d9bfdd2": {
    "source": "<g1>The toolbar button</g1> says whether the browser reaches BMD, and <g2>How to fix it</g2> opens the help for the reason. When a setting leaves a download to the browser (its type isn't in <g3>File types</g3>, its site is excluded, it's under the minimum size), the button names the setting and the file, and BMD's log keeps a line for each.",
-   "text": "<g1>Die Schaltfläche in der Symbolleiste</g1> zeigt an, ob der Browser BMD erreicht, und <g2>So beheben Sie es</g2> öffnet die Hilfe für den Grund. Wenn eine Einstellung einen Download dem Browser überlässt (der Dateityp ist nicht unter <g3>Dateitypen</g3>, die Website ist ausgeschlossen, die Größe liegt unter dem Minimum), benennt die Schaltfläche die Einstellung und die Datei, und MDMs Protokoll führt für jeden Fall eine Zeile."
+   "text": "<g1>Die Schaltfläche in der Symbolleiste</g1> zeigt an, ob der Browser BMD erreicht, und <g2>So beheben Sie es</g2> öffnet die Hilfe für den Grund. Wenn eine Einstellung einen Download dem Browser überlässt (der Dateityp ist nicht unter <g3>Dateitypen</g3>, die Website ist ausgeschlossen, die Größe liegt unter dem Minimum), benennt die Schaltfläche die Einstellung und die Datei, und BMDs Protokoll führt für jeden Fall eine Zeile."
   },
   "5b0a4fb4c264625e": {
    "source": "Sharing is your choice",
@@ -6216,7 +6216,7 @@
   },
   "5b1b0ba97c390c4a": {
    "source": "If your antivirus quarantined BMD, restore it and add an exception for its folder. If it flags something other than the setup or BMD's own programs, or a copy from anywhere else, don't run it, and please <g1>tell us</g1>.",
-   "text": "Wenn Ihr Antivirus BMD unter Quarantäne gestellt hat, stellen Sie es wieder her und fügen Sie eine Ausnahme für den Ordner hinzu. Wenn es etwas anderes als die Installation oder MDMs eigene Programme meldet, oder eine Kopie von einer anderen Quelle, führen Sie es nicht aus und <g1>informieren Sie uns</g1> bitte."
+   "text": "Wenn Ihr Antivirus BMD unter Quarantäne gestellt hat, stellen Sie es wieder her und fügen Sie eine Ausnahme für den Ordner hinzu. Wenn es etwas anderes als die Installation oder BMDs eigene Programme meldet, oder eine Kopie von einer anderen Quelle, führen Sie es nicht aus und <g1>informieren Sie uns</g1> bitte."
   },
   "5b23a99295c746ba": {
    "source": "Yes: HTTP and SOCKS proxies, and proxy auto-config (PAC) scripts, in Options → Proxy / Socks. See Options. To keep every download on a VPN, see Network…",
@@ -6524,7 +6524,7 @@
   },
   "5f8ff714be5717e0": {
    "source": "<g1>How it asks:</g1> gallery-dl and BMD's downloader ask sites as BMD; BMD brings 4 pictures at a time, and gallery-dl, for what's left to it, one a second at most. Wikimedia's servers refuse tools that ask much faster or without a name. gallery-dl uses no configuration file of yours.",
-   "text": "<g1>So fragt es an:</g1> gallery-dl und MDMs Downloader fragen Websites als BMD an; BMD lädt 4 Bilder gleichzeitig herunter, und gallery-dl, für den Rest, höchstens eines pro Sekunde. Die Wikimedia-Server lehnen Tools ab, die viel schneller oder ohne Namen anfragen. gallery-dl verwendet keine Ihrer Konfigurationsdateien."
+   "text": "<g1>So fragt es an:</g1> gallery-dl und BMDs Downloader fragen Websites als BMD an; BMD lädt 4 Bilder gleichzeitig herunter, und gallery-dl, für den Rest, höchstens eines pro Sekunde. Die Wikimedia-Server lehnen Tools ab, die viel schneller oder ohne Namen anfragen. gallery-dl verwendet keine Ihrer Konfigurationsdateien."
   },
   "5fa6b314450ea41d": {
    "source": "HTTPS downloads fail with \"no certificates\" (Linux)",
@@ -6560,7 +6560,7 @@
   },
   "5ff9af15f27f2575": {
    "source": ": BMD's log (<x1/>, with older ones as <x2/> and so on, 2 MB each).",
-   "text": ": MDMs Protokoll (<x1/>, mit älteren als <x2/> und so weiter, jeweils 2 MB)."
+   "text": ": BMDs Protokoll (<x1/>, mit älteren als <x2/> und so weiter, jeweils 2 MB)."
   },
   "5ffdd8bd507e6462": {
    "source": "The BMD extension for Chrome, Edge, Brave, Opera, Vivaldi and Firefox: downloads you click go to BMD with their cookies.",
@@ -6588,7 +6588,7 @@
   },
   "6048f746e0f2c3c2": {
    "source": "A key BMD doesn't know, or a value it can't read, is skipped and written to BMD's log (the <x1/> folder beside the themes folder), so a file made for a newer BMD still loads. The built-in themes are written the same way: <g2>read them on GitHub</g2>.",
-   "text": "Ein Schlüssel, den BMD nicht kennt, oder ein Wert, den es nicht lesen kann, wird übersprungen und in MDMs Log (<x1/>-Ordner neben dem Themes-Ordner) geschrieben, sodass eine für ein neueres BMD erstellte Datei weiterhin geladen wird. Die integrierten Themes werden auf dieselbe Weise geschrieben: <g2>lesen Sie sie auf GitHub</g2>."
+   "text": "Ein Schlüssel, den BMD nicht kennt, oder ein Wert, den es nicht lesen kann, wird übersprungen und in BMDs Log (<x1/>-Ordner neben dem Themes-Ordner) geschrieben, sodass eine für ein neueres BMD erstellte Datei weiterhin geladen wird. Die integrierten Themes werden auf dieselbe Weise geschrieben: <g2>lesen Sie sie auf GitHub</g2>."
   },
   "6086f958ecdc141d": {
    "source": "A greyed checked box's fill",
@@ -6704,7 +6704,7 @@
   },
   "61ce034be4f682c6": {
    "source": "gallery-dl lists the gallery's pictures: where each one comes from and the name it gets in the folder. BMD's own downloader then brings them in, 4 at a time (fewer when the site answers that it's busy, as Wikimedia's does), under your speed limits (a change applies at once), and the progress window's connections table shows each one. gallery-dl then runs as before: it finds those pictures already there and fetches only what BMD couldn't have, such as a picture from a site that wants a sign-in or headers of its own. The log says how many each saved.",
-   "text": "gallery-dl listet die Bilder der Galerie auf: woher jedes Bild stammt und welchen Namen es im Ordner erhält. MDMs eigener Downloader lädt sie dann mit 4 Bildern gleichzeitig herunter (weniger, wenn die Website antwortet, dass sie beschäftigt ist, wie die von Wikimedia), unter Einhaltung Ihrer Geschwindigkeitsbegrenzungen (eine Änderung wird sofort angewendet), und die Verbindungsübersicht des Fortschrittsfensters zeigt jedes Bild an. gallery-dl läuft dann wie zuvor: Es findet die bereits vorhandenen Bilder und holt nur das, was BMD nicht hätte herunterladen können, wie z. B. ein Bild von einer Website, die eine Anmeldung oder eigene Header erfordert. Das Protokoll gibt an, wie viele jeweils gespeichert wurden."
+   "text": "gallery-dl listet die Bilder der Galerie auf: woher jedes Bild stammt und welchen Namen es im Ordner erhält. BMDs eigener Downloader lädt sie dann mit 4 Bildern gleichzeitig herunter (weniger, wenn die Website antwortet, dass sie beschäftigt ist, wie die von Wikimedia), unter Einhaltung Ihrer Geschwindigkeitsbegrenzungen (eine Änderung wird sofort angewendet), und die Verbindungsübersicht des Fortschrittsfensters zeigt jedes Bild an. gallery-dl läuft dann wie zuvor: Es findet die bereits vorhandenen Bilder und holt nur das, was BMD nicht hätte herunterladen können, wie z. B. ein Bild von einer Website, die eine Anmeldung oder eigene Header erfordert. Das Protokoll gibt an, wie viele jeweils gespeichert wurden."
   },
   "61d179601f69a50c": {
    "source": "No more black band across menus and windows on Windows 11 Insider builds.",
@@ -6972,7 +6972,7 @@
   },
   "65b12b6e54bbaab8": {
    "source": "BMD's main window on Ubuntu 24.04's GNOME desktop: the categories and a list of downloads, each with the desktop's icon for its type",
-   "text": "MDMs Hauptfenster auf Ubuntus GNOME-Desktop 24.04: die Kategorien und eine Liste von Downloads, jeder mit dem Desktop-Symbol für seinen Typ"
+   "text": "BMDs Hauptfenster auf Ubuntus GNOME-Desktop 24.04: die Kategorien und eine Liste von Downloads, jeder mit dem Desktop-Symbol für seinen Typ"
   },
   "65b71efc22b4ce41": {
    "source": "Linux, another package manager's package (pacman, ...)",
@@ -7152,7 +7152,7 @@
   },
   "68cb9c5b22f895c0": {
    "source": "To be sure the list itself is ours, check its signature with GnuPG: import <g1>BMD's release key</g1>, then run <x2/>. It should report a <x3/> from the key <x4/>.",
-   "text": "Um sicherzustellen, dass die Liste von uns stammt, prüfen Sie ihre Signatur mit GnuPG: Importieren Sie <g1>MDMs Release-Schlüssel</g1> und führen Sie dann <x2/> aus. Es sollte eine <x3/> vom Schlüssel <x4/> melden."
+   "text": "Um sicherzustellen, dass die Liste von uns stammt, prüfen Sie ihre Signatur mit GnuPG: Importieren Sie <g1>BMDs Release-Schlüssel</g1> und führen Sie dann <x2/> aus. Es sollte eine <x3/> vom Schlüssel <x4/> melden."
   },
   "68f765150b849405": {
    "source": "<g1><g2>Crash reports</g2></g1> — what the crash report window shows when BMD closes unexpectedly or stops responding, what a report contains, and how to send it.",
@@ -7368,7 +7368,7 @@
   },
   "6c3b99a650f921d5": {
    "source": "BMD's data folder is <x1/> on Windows, <x2/> on macOS, and <x3/> on Linux. In <g4>portable mode</g4> it is the <x5/> folder next to the program.",
-   "text": "MDMs Datenordner ist <x1/> unter Windows, <x2/> unter macOS und <x3/> unter Linux. Im <g4>portablen Modus</g4> ist es der Ordner <x5/> neben dem Programm."
+   "text": "BMDs Datenordner ist <x1/> unter Windows, <x2/> unter macOS und <x3/> unter Linux. Im <g4>portablen Modus</g4> ist es der Ordner <x5/> neben dem Programm."
   },
   "6c4aca5d8bb8a7b5": {
    "source": "Bengali",
@@ -7432,7 +7432,7 @@
   },
   "6d27dcc25050d379": {
    "source": "<g1>Network adapter</g1> — <g2>Any (the system chooses)</g2> is the default. Pick an adapter, usually your VPN's, and every connection BMD opens goes out through it, or not at all. That covers downloads, FTP, torrents, video pages and image galleries, the DNS you chose, BMD's own downloads and the update check. It works as a kill switch: when the adapter disconnects, or the VPN is switched off, nothing goes out through your normal connection. Running downloads stop with \"… is not connected\" and start again when the adapter is back. The line under the list shows the adapter's address, or that it isn't connected.",
-   "text": "<g1>Netzwerkadapter</g1> – <g2>Beliebig (System wählt)</g2> ist die Standardeinstellung. Wählen Sie einen Adapter aus, normalerweise den Ihres VPNs. Jede Verbindung, die BMD öffnet, läuft dann über diesen Adapter oder gar nicht. Das gilt für Downloads, FTP, Torrents, Videoseiten und Bildergalerien, den von Ihnen gewählten DNS, MDMs eigene Downloads und die Update-Prüfung. So funktioniert der Adapter wie ein Kill Switch: Wenn er die Verbindung verliert oder das VPN ausgeschaltet wird, läuft nichts über Ihre normale Verbindung. Laufende Downloads werden mit „… ist nicht verbunden“ angehalten und starten wieder, sobald der Adapter wieder verbunden ist. Die Zeile unter der Liste zeigt die Adresse des Adapters oder an, dass er nicht verbunden ist."
+   "text": "<g1>Netzwerkadapter</g1> – <g2>Beliebig (System wählt)</g2> ist die Standardeinstellung. Wählen Sie einen Adapter aus, normalerweise den Ihres VPNs. Jede Verbindung, die BMD öffnet, läuft dann über diesen Adapter oder gar nicht. Das gilt für Downloads, FTP, Torrents, Videoseiten und Bildergalerien, den von Ihnen gewählten DNS, BMDs eigene Downloads und die Update-Prüfung. So funktioniert der Adapter wie ein Kill Switch: Wenn er die Verbindung verliert oder das VPN ausgeschaltet wird, läuft nichts über Ihre normale Verbindung. Laufende Downloads werden mit „… ist nicht verbunden“ angehalten und starten wieder, sobald der Adapter wieder verbunden ist. Die Zeile unter der Liste zeigt die Adresse des Adapters oder an, dass er nicht verbunden ist."
   },
   "6d2e652c8dceae8f": {
    "source": "Archive extraction (#37): zip, tar, gz and xz in process; 7z and RAR through an installed 7-Zip, run as its own program; in place through HatchZip when asked",
@@ -7440,7 +7440,7 @@
   },
   "6d457af2d46100a4": {
    "source": "Download a gallery's pictures (a Wikimedia Commons category, a Flickr album, ...) into a folder named after it inside <x1/>; <x2/> takes at most that many, the first the site lists. Started again, it fetches only the new ones. BMD's own downloader brings the pictures gallery-dl lists, 4 at a time. <x3/> sends the connections, BMD's and gallery-dl's, through one network adapter, as for <x4/>.",
-   "text": "Bilder einer Galerie (eine Wikimedia-Commons-Kategorie, ein Flickr-Album usw.) in einen nach ihr benannten Ordner in <x1/> herunterladen; <x2/> nimmt höchstens so viele, die ersten, die die Website auflistet. Wenn es erneut gestartet wird, werden nur die neuen heruntergeladen. MDMs eigener Downloader lädt die von gallery-dl aufgelisteten Bilder herunter, 4 auf einmal. <x3/> sendet die Verbindungen, MDMs und gallery-dls, über einen Netzwerkadapter, wie für <x4/>."
+   "text": "Bilder einer Galerie (eine Wikimedia-Commons-Kategorie, ein Flickr-Album usw.) in einen nach ihr benannten Ordner in <x1/> herunterladen; <x2/> nimmt höchstens so viele, die ersten, die die Website auflistet. Wenn es erneut gestartet wird, werden nur die neuen heruntergeladen. BMDs eigener Downloader lädt die von gallery-dl aufgelisteten Bilder herunter, 4 auf einmal. <x3/> sendet die Verbindungen, BMDs und gallery-dls, über einen Netzwerkadapter, wie für <x4/>."
   },
   "6d485e0daa042fc9": {
    "source": "The package box",
@@ -7736,7 +7736,7 @@
   },
   "70c8aee20a360f20": {
    "source": "<g1>BMD's own icons where Metro, Adwaita and Breeze had none</g1>: Metro's Hide to the notification area, Adwaita's PDF, torrent file and Hide to the notification area, and Breeze's PDF and Hide to the notification area, drawn for BMD in each one's style (the one-colour ones in the theme's text colour).",
-   "text": "<g1>MDMs eigene Symbole, wo Metro, Adwaita und Breeze keine hatten</g1>: Metros Im Infobereich ausblenden, Adwaitas PDF, Torrent-Datei und Im Infobereich ausblenden, und Breezes PDF und Im Infobereich ausblenden, für BMD im Stil des jeweiligen Themas gezeichnet (die einfarbigen in der Textfarbe des Themas)."
+   "text": "<g1>BMDs eigene Symbole, wo Metro, Adwaita und Breeze keine hatten</g1>: Metros Im Infobereich ausblenden, Adwaitas PDF, Torrent-Datei und Im Infobereich ausblenden, und Breezes PDF und Im Infobereich ausblenden, für BMD im Stil des jeweiligen Themas gezeichnet (die einfarbigen in der Textfarbe des Themas)."
   },
   "70d42911cc360e5b": {
    "source": "On Linux",
@@ -7840,7 +7840,7 @@
   },
   "728a2cec5043db89": {
    "source": "<g1>Menus open where they belong</g1>: in a Wayland session they opened in the middle of the screen (<g2>#50</g2>), as Wayland lets no program place its windows, and BMD's menus and drop-down lists are windows it places; BMD now runs through XWayland when it is there (<x3/> keeps Wayland). Under tiling compositors such as sway (<g4>#267</g4>), through XWayland, the menu bar's menus, their submenus, the right-click menus and the drop-down lists still opened in the middle of the screen, as the compositor placed them like windows. They are now menu windows no window manager places, as X11 menus are, so they open where BMD puts them, on every window manager.",
-   "text": "<g1>Menüs öffnen sich dort, wo sie hingehören</g1>: In einer Wayland-Sitzung öffneten sie sich in der Mitte des Bildschirms (<g2>#50</g2>), da Wayland keinem Programm erlaubt, seine Fenster zu platzieren, und MDMs Menüs und Dropdown-Listen sind Fenster, die es platziert; BMD läuft jetzt über XWayland, wenn es vorhanden ist (<x3/> behält Wayland). Unter Tiling-Compositoren wie Sway (<g4>#267</g4>) öffneten sich über XWayland die Menüs der Menüleiste, ihre Untermenüs, die Rechtsklick-Menüs und die Dropdown-Listen immer noch in der Mitte des Bildschirms, da der Compositor sie wie Fenster platzierte. Sie sind jetzt Menüfenster, die kein Fenstermanager platziert, wie X11-Menüs, sodass sie sich dort öffnen, wo BMD sie platziert, auf jedem Fenstermanager."
+   "text": "<g1>Menüs öffnen sich dort, wo sie hingehören</g1>: In einer Wayland-Sitzung öffneten sie sich in der Mitte des Bildschirms (<g2>#50</g2>), da Wayland keinem Programm erlaubt, seine Fenster zu platzieren, und BMDs Menüs und Dropdown-Listen sind Fenster, die es platziert; BMD läuft jetzt über XWayland, wenn es vorhanden ist (<x3/> behält Wayland). Unter Tiling-Compositoren wie Sway (<g4>#267</g4>) öffneten sich über XWayland die Menüs der Menüleiste, ihre Untermenüs, die Rechtsklick-Menüs und die Dropdown-Listen immer noch in der Mitte des Bildschirms, da der Compositor sie wie Fenster platzierte. Sie sind jetzt Menüfenster, die kein Fenstermanager platziert, wie X11-Menüs, sodass sie sich dort öffnen, wo BMD sie platziert, auf jedem Fenstermanager."
   },
   "7297ca101de5145e": {
    "source": "The list couldn't be read from GitHub when this page was built. Everyone is on GitHub meanwhile, in the project's <g1>pull requests</g1> and <g2>issues</g2>.",
@@ -8176,7 +8176,7 @@
   },
   "7805ae250634c9cd": {
    "source": "<g1>Options → Proxy / Socks → Network adapter</g1> holds every connection BMD opens to one network adapter, usually your VPN's: downloads, FTP, torrents, video pages and galleries, BMD's own downloads and the update check. It works as a kill switch: when the adapter disconnects, or the VPN is switched off, nothing goes out through your normal connection. Running downloads stop with <g2>… is not connected</g2>, and start again by themselves when the adapter is back. The line under the list shows the adapter's address, or that it isn't connected. Details in <g3>Options → Proxy / Socks</g3> and, for torrents, in <g4>Torrents and your security</g4>.",
-   "text": "<g1>Optionen → Proxy / SOCKS → Netzwerkadapter</g1> leitet jede von BMD geöffnete Verbindung über einen bestimmten Netzwerkadapter, meist den Ihres VPNs: Downloads, FTP, Torrents, Videoseiten und -galerien, MDMs eigene Downloads und die Update-Prüfung. Es funktioniert als Kill Switch: Wenn der Adapter getrennt wird oder das VPN ausgeschaltet ist, geht nichts über Ihre normale Verbindung. Laufende Downloads stoppen mit <g2>… ist nicht verbunden</g2> und starten von selbst wieder, wenn der Adapter verfügbar ist. Die Zeile unter der Liste zeigt die Adresse des Adapters oder, dass er nicht verbunden ist. Details unter <g3>Optionen → Proxy / SOCKS</g3> und, für Torrents, unter <g4>Torrents und Ihre Sicherheit</g4>."
+   "text": "<g1>Optionen → Proxy / SOCKS → Netzwerkadapter</g1> leitet jede von BMD geöffnete Verbindung über einen bestimmten Netzwerkadapter, meist den Ihres VPNs: Downloads, FTP, Torrents, Videoseiten und -galerien, BMDs eigene Downloads und die Update-Prüfung. Es funktioniert als Kill Switch: Wenn der Adapter getrennt wird oder das VPN ausgeschaltet ist, geht nichts über Ihre normale Verbindung. Laufende Downloads stoppen mit <g2>… ist nicht verbunden</g2> und starten von selbst wieder, wenn der Adapter verfügbar ist. Die Zeile unter der Liste zeigt die Adresse des Adapters oder, dass er nicht verbunden ist. Details unter <g3>Optionen → Proxy / SOCKS</g3> und, für Torrents, unter <g4>Torrents und Ihre Sicherheit</g4>."
   },
   "78061019b145e0d5": {
    "source": "BMD downloads the pictures of a gallery (a Wikimedia Commons category, a Flickr album, a DeviantArt gallery, an Imgur album and many more) with the help of…",
@@ -8340,7 +8340,7 @@
   },
   "7a5716fb5d3dd907": {
    "source": "<g1>Web pages can't use it</g1>: requests must name BMD's own address, come from its own page, and carry the token; BMD's page can't be shown inside another site.",
-   "text": "<g1>Webseiten können es nicht nutzen</g1>: Anfragen müssen MDMs eigene Adresse nennen, von dessen eigener Seite stammen und das Token enthalten; MDMs Seite kann nicht innerhalb einer anderen Website angezeigt werden."
+   "text": "<g1>Webseiten können es nicht nutzen</g1>: Anfragen müssen BMDs eigene Adresse nennen, von dessen eigener Seite stammen und das Token enthalten; BMDs Seite kann nicht innerhalb einer anderen Website angezeigt werden."
   },
   "7a5b7ab31d5f22cb": {
    "source": "Click <g1>Add Torrent</g1> on the toolbar to open a <x2/> file, or use the arrow next to it for <g3>Add magnet link...</g3>. A magnet link pasted into <g4>Add URL</g4> works too. Torrents land in the same list as your other downloads, marked <g5>Torrent</g5> in the <g6>Source</g6> column, and go into queues and the Scheduler like them.",
@@ -8948,7 +8948,7 @@
   },
   "822e8cb4f4ecd4e1": {
    "source": "It covers downloads and FTP, torrents (peers, trackers, the DHT and the listening port), video pages and image galleries, the DNS you chose, BMD's own downloads and its update check. The command line's <x1/>, <x2/> and <x3/> take <x4/>, with the adapter's name, such as <x5/> or <x6/>, or one of its addresses.",
-   "text": "Dies umfasst Downloads und FTP, Torrents (Peers, Tracker, DHT und der Listening-Port), Videoseiten und Bildergalerien, den von Ihnen gewählten DNS, MDMs eigene Downloads und die Update-Prüfung. Die Befehlszeilenoptionen <x1/>, <x2/> und <x3/> akzeptieren <x4/> mit dem Namen des Adapters, z. B. <x5/> oder <x6/>, oder eine seiner Adressen."
+   "text": "Dies umfasst Downloads und FTP, Torrents (Peers, Tracker, DHT und der Listening-Port), Videoseiten und Bildergalerien, den von Ihnen gewählten DNS, BMDs eigene Downloads und die Update-Prüfung. Die Befehlszeilenoptionen <x1/>, <x2/> und <x3/> akzeptieren <x4/> mit dem Namen des Adapters, z. B. <x5/> oder <x6/>, oder eine seiner Adressen."
   },
   "823467d84a23926f": {
    "source": "The download list and settings are in <x1/> (<x2/>); on Linux in <x3/>, on a Mac in <x4/>. A portable copy keeps them in its <x5/> folder instead. Downloaded files go to your <g6>Downloads</g6> folder, sorted into a folder per category; you can change that in <g7>Options → Save to</g7>.",
@@ -9000,7 +9000,7 @@
   },
   "8311e50feda70f25": {
    "source": "<g1>The system:</g1> BMD's version and how you installed it, your operating system and its version, the processor, the language and theme, and how many downloads and queues you have. These are counts only.",
-   "text": "<g1>Das System:</g1> MDMs Version und wie Sie es installiert haben, Ihr Betriebssystem und dessen Version, der Prozessor, die Sprache und das Thema sowie die Anzahl Ihrer Downloads und Warteschlangen. Dies sind nur Zählungen."
+   "text": "<g1>Das System:</g1> BMDs Version und wie Sie es installiert haben, Ihr Betriebssystem und dessen Version, der Prozessor, die Sprache und das Thema sowie die Anzahl Ihrer Downloads und Warteschlangen. Dies sind nur Zählungen."
   },
   "8337a28091a4683a": {
    "source": "Every run is a dot.",
@@ -9060,7 +9060,7 @@
   },
   "840e131f81e619aa": {
    "source": "yt-dlp looks the page up and picks the quality's video and sound. BMD's own downloader then brings each of them in, one after the other, the way it downloads any file:",
-   "text": "yt-dlp sucht die Seite auf und wählt Video und Ton in der gewünschten Qualität aus. MDMs eigener Downloader lädt dann jeden Teil nacheinander herunter, wie jede andere Datei auch:"
+   "text": "yt-dlp sucht die Seite auf und wählt Video und Ton in der gewünschten Qualität aus. BMDs eigener Downloader lädt dann jeden Teil nacheinander herunter, wie jede andere Datei auch:"
   },
   "842fc0e6d2b7d24d": {
    "source": "At the start time the queue starts on its own. In the morning, the finished files are under <g1>Finished</g1> in the categories.",
@@ -9392,7 +9392,7 @@
   },
   "893f3c0522f0b452": {
    "source": "This is the only part of BMD that waits for connections from outside. Downloads, BMD's DNS choice (Options → Connection → DNS), its updates and its helpers only connect out, so they never need a firewall exception; the browser extension and the automation API reach BMD on this computer only (127.0.0.1).",
-   "text": "Dies ist der einzige Teil von BMD, der auf Verbindungen von außen wartet. Downloads, MDMs DNS-Auswahl (Optionen → Verbindung → DNS), Updates und Hilfsprogramme stellen nur ausgehende Verbindungen her und benötigen daher keine Firewall-Ausnahme. Die Browser-Erweiterung und die Automatisierungs-API erreichen BMD nur auf diesem Computer (127.0.0.1)."
+   "text": "Dies ist der einzige Teil von BMD, der auf Verbindungen von außen wartet. Downloads, BMDs DNS-Auswahl (Optionen → Verbindung → DNS), Updates und Hilfsprogramme stellen nur ausgehende Verbindungen her und benötigen daher keine Firewall-Ausnahme. Die Browser-Erweiterung und die Automatisierungs-API erreichen BMD nur auf diesem Computer (127.0.0.1)."
   },
   "894f03d1d27bb035": {
    "source": "Your list comes over in one file",
@@ -9704,7 +9704,7 @@
   },
   "8df0ad2dd147a747": {
    "source": "<g1>Download in order</g1> (<g2>#39</g2>): to watch a video while it downloads, tick <g3>Download in order</g3> in <g4>Add torrent</g4>, or choose <g5>Torrent → Download in order</g5> in the list's right-click menu, even while it runs. A file's start comes first, and with <g6>First and last pieces first</g6> (on by default) its end comes early too, which most video files need before they play. Slower peers take pieces a little further on, so the start isn't waiting for them. Other torrents now download the rarest pieces first, as BitTorrent programs usually do: on BMD's test swarms they finished just as fast, and they finished where a scarce piece's only holder left. Torrents already in the list carry on, with nothing checked again. BMD also honours a peer's request to cancel a piece it no longer needs, so its upload isn't spent on data nobody wants.",
-   "text": "<g1>In Reihenfolge herunterladen</g1> (<g2>#39</g2>): Um ein Video während des Downloads anzusehen, aktivieren Sie <g3>In Reihenfolge herunterladen</g3> in <g4>Torrent hinzufügen</g4> oder wählen Sie <g5>Torrent → In Reihenfolge herunterladen</g5> im Rechtsklickmenü der Liste, auch während es läuft. Der Anfang einer Datei kommt zuerst, und mit <g6>Erste und letzte Teile zuerst</g6> (standardmäßig aktiviert) kommt auch ihr Ende früh, was die meisten Videodateien vor dem Abspielen benötigen. Langsamere Peers nehmen Teile etwas weiter vorne, sodass der Anfang nicht auf sie warten muss. Andere Torrents laden jetzt die seltensten Teile zuerst herunter, wie es BitTorrent-Programme normalerweise tun: Bei MDMs Testschwärmen wurden sie genauso schnell fertig, und sie wurden dort fertig, wo der einzige Inhaber eines knappen Teils gegangen ist. Bereits in der Liste befindliche Torrents werden fortgesetzt, ohne erneute Prüfung. BMD berücksichtigt auch die Anforderung eines Peers, ein nicht mehr benötigtes Teil abzubrechen, sodass sein Upload nicht für Daten verschwendet wird, die niemand möchte."
+   "text": "<g1>In Reihenfolge herunterladen</g1> (<g2>#39</g2>): Um ein Video während des Downloads anzusehen, aktivieren Sie <g3>In Reihenfolge herunterladen</g3> in <g4>Torrent hinzufügen</g4> oder wählen Sie <g5>Torrent → In Reihenfolge herunterladen</g5> im Rechtsklickmenü der Liste, auch während es läuft. Der Anfang einer Datei kommt zuerst, und mit <g6>Erste und letzte Teile zuerst</g6> (standardmäßig aktiviert) kommt auch ihr Ende früh, was die meisten Videodateien vor dem Abspielen benötigen. Langsamere Peers nehmen Teile etwas weiter vorne, sodass der Anfang nicht auf sie warten muss. Andere Torrents laden jetzt die seltensten Teile zuerst herunter, wie es BitTorrent-Programme normalerweise tun: Bei BMDs Testschwärmen wurden sie genauso schnell fertig, und sie wurden dort fertig, wo der einzige Inhaber eines knappen Teils gegangen ist. Bereits in der Liste befindliche Torrents werden fortgesetzt, ohne erneute Prüfung. BMD berücksichtigt auch die Anforderung eines Peers, ein nicht mehr benötigtes Teil abzubrechen, sodass sein Upload nicht für Daten verschwendet wird, die niemand möchte."
   },
   "8df1ead63d970bc2": {
    "source": "With the BMD extension, clicking a download link in your browser hands the download to BMD. BMD gets the address together with the page it came from (the…",
@@ -9780,7 +9780,7 @@
   },
   "8f1a580598253a16": {
    "source": "BMD also takes the file types the browser would show or play itself (a PDF, an MP3, also in a frame of a page), when they're listed in <g1>Options → File types</g1> and <g2>Also take files the browser would open</g2> is ticked in <g3>Options → General → Keys...</g3>. This needs a Chromium browser (Chrome, Edge, Brave, Opera, Vivaldi) version 128 or later, or Firefox. Sites in BMD's excluded sites keep opening them in the browser. Hold <g4>Alt</g4> (<g5>Option</g5> on a Mac) while clicking a link to leave it to the browser: Firefox then follows it as a plain click does, while Chromium browsers and Safari download it themselves (it is their own \"download link\").",
-   "text": "BMD übernimmt auch Dateitypen, die der Browser selbst anzeigen oder abspielen würde (eine PDF, eine MP3, auch in einem Frame einer Seite), wenn sie in <g1>Optionen → Dateitypen</g1> aufgeführt sind und <g2>Auch Dateien übernehmen, die der Browser öffnen würde</g2> unter <g3>Optionen → Allgemein → Tasten…</g3> angekreuzt ist. Dies erfordert einen Chromium-Browser (Chrome, Edge, Brave, Opera, Vivaldi) Version 128 oder neuer oder Firefox. Websites in MDMs ausgeschlossenen Seiten öffnen diese weiterhin im Browser. Halten Sie <g4>Alt</g4> (<g5>Option</g5> auf einem Mac) gedrückt, während Sie auf einen Link klicken, um ihn dem Browser zu überlassen: Firefox folgt ihm dann wie ein einfacher Klick, während Chromium-Browser und Safari ihn selbst herunterladen (es ist ihr eigener „Link herunterladen“)."
+   "text": "BMD übernimmt auch Dateitypen, die der Browser selbst anzeigen oder abspielen würde (eine PDF, eine MP3, auch in einem Frame einer Seite), wenn sie in <g1>Optionen → Dateitypen</g1> aufgeführt sind und <g2>Auch Dateien übernehmen, die der Browser öffnen würde</g2> unter <g3>Optionen → Allgemein → Tasten…</g3> angekreuzt ist. Dies erfordert einen Chromium-Browser (Chrome, Edge, Brave, Opera, Vivaldi) Version 128 oder neuer oder Firefox. Websites in BMDs ausgeschlossenen Seiten öffnen diese weiterhin im Browser. Halten Sie <g4>Alt</g4> (<g5>Option</g5> auf einem Mac) gedrückt, während Sie auf einen Link klicken, um ihn dem Browser zu überlassen: Firefox folgt ihm dann wie ein einfacher Klick, während Chromium-Browser und Safari ihn selbst herunterladen (es ist ihr eigener „Link herunterladen“)."
   },
   "8f2af72b7ed11b0a": {
    "source": "Don't open it to the internet through your router. To reach it while you're away, use a VPN to your home network, such as WireGuard or Tailscale; with Tailscale, choose its address under <g1>Listen on</g1>. The first time, Windows may ask whether BMD may use the network: allow it on private networks, or the phone can't reach BMD.",
@@ -10036,7 +10036,7 @@
   },
   "92f96ba536f4c7ca": {
    "source": "<g1>Choose the DNS</g1> (<g2>#36</g2>): <g3>Options → Connection → DNS</g3> picks who turns names into addresses for downloads, FTP, BMD's own downloads and the update check. The system's (the default), Cloudflare, Google, Quad9, AdGuard, NextDNS (with your configuration ID) or your own, asked over HTTPS (the default), TLS, or plain over TCP. <g4>Test</g4> shows how long it takes to answer. When it can't be reached, the download stops with a message naming it, unless you allow falling back to the system's DNS; your hosts file and local names stay with the system's. The command line's <x5/> takes <x6/>. Torrent trackers still use the system's DNS, and so do video pages and galleries unless a network adapter is chosen.",
-   "text": "<g1>DNS auswählen</g1> (<g2>#36</g2>): <g3>Optionen → Verbindung → DNS</g3> wählt aus, wer Namen für Downloads, FTP, MDMs eigene Downloads und die Update-Prüfung in Adressen umwandelt. Das System (Standard), Cloudflare, Google, Quad9, AdGuard, NextDNS (mit Ihrer Konfigurations-ID) oder Ihr eigener, abgefragt über HTTPS (Standard), TLS oder einfach über TCP. <g4>Test</g4> zeigt, wie lange die Antwort dauert. Wenn er nicht erreicht werden kann, stoppt der Download mit einer Meldung, die ihn benennt, es sei denn, Sie erlauben den Rückgriff auf den System-DNS; Ihre Hosts-Datei und lokalen Namen bleiben beim System. Die Befehlszeile <x5/> akzeptiert <x6/>. Torrent-Tracker verwenden weiterhin den System-DNS, ebenso Videoseiten und Galerien, es sei denn, ein Netzwerkadapter ist ausgewählt."
+   "text": "<g1>DNS auswählen</g1> (<g2>#36</g2>): <g3>Optionen → Verbindung → DNS</g3> wählt aus, wer Namen für Downloads, FTP, BMDs eigene Downloads und die Update-Prüfung in Adressen umwandelt. Das System (Standard), Cloudflare, Google, Quad9, AdGuard, NextDNS (mit Ihrer Konfigurations-ID) oder Ihr eigener, abgefragt über HTTPS (Standard), TLS oder einfach über TCP. <g4>Test</g4> zeigt, wie lange die Antwort dauert. Wenn er nicht erreicht werden kann, stoppt der Download mit einer Meldung, die ihn benennt, es sei denn, Sie erlauben den Rückgriff auf den System-DNS; Ihre Hosts-Datei und lokalen Namen bleiben beim System. Die Befehlszeile <x5/> akzeptiert <x6/>. Torrent-Tracker verwenden weiterhin den System-DNS, ebenso Videoseiten und Galerien, es sei denn, ein Netzwerkadapter ist ausgewählt."
   },
   "92fdc3c0fd7f9aff": {
    "source": "BMD: <g1>its source code</g1> and <g2>our benchmark</g2> against IDM 6.42. We haven't benchmarked the others yet; until we do, this page makes no speed claim about them.",
@@ -10724,7 +10724,7 @@
   },
   "9c37419f4e290a3d": {
    "source": "We'd rather you knew. IDM has a site grabber that follows a whole website's pages (BMD's link grabber takes the links of one page), and many years of polish and compatibility fixes. BMD is new; if something you rely on is missing, <g1>ask for it</g1>.",
-   "text": "Wir möchten, dass Sie Bescheid wissen. IDM hat einen Site-Grabber, der die Seiten einer ganzen Website verfolgt (MDMs Link-Grabber erfasst die Links einer einzelnen Seite), und viele Jahre an Feinschliff und Kompatibilitätskorrekturen. BMD ist neu; wenn etwas fehlt, das Sie benötigen, <g1>fragen Sie danach</g1>."
+   "text": "Wir möchten, dass Sie Bescheid wissen. IDM hat einen Site-Grabber, der die Seiten einer ganzen Website verfolgt (BMDs Link-Grabber erfasst die Links einer einzelnen Seite), und viele Jahre an Feinschliff und Kompatibilitätskorrekturen. BMD ist neu; wenn etwas fehlt, das Sie benötigen, <g1>fragen Sie danach</g1>."
   },
   "9c39c52d2de6713c": {
    "source": "<g1>Aero</g1>: Windows 7's look: glossy buttons that turn light blue under the pointer, quiet check boxes, a glossy green progress bar, a glassy title bar with the title on a soft glow (on Windows), and glossy icons drawn for BMD in that manner.",
@@ -11052,7 +11052,7 @@
   },
   "a0c60393d7efb351": {
    "source": "<g1>BMD's recent log:</g1> for example \"command AddUrl\" or \"window opened: add-url\".",
-   "text": "<g1>MDMs aktuelles Protokoll:</g1> zum Beispiel „Befehl AddUrl“ oder „Fenster geöffnet: add-url“."
+   "text": "<g1>BMDs aktuelles Protokoll:</g1> zum Beispiel „Befehl AddUrl“ oder „Fenster geöffnet: add-url“."
   },
   "a0c6b4c751ba9ac5": {
    "source": "Install BMD with the setup and keep Set up browser integration ticked. In Firefox, then open the add-on's page on addons.mozilla.org and click Add to Firefox. In Chrome, Edge, Brave, Opera and Vivaldi, open its page in the Chrome Web Store and click Add to Chrome (Edge shows Get, and first asks to allow extensions from other stores). Can't use a store? Open the browser's extensions page, turn on Developer mode, choose Load unpacked and pick the extension\\chromium folder in BMD's folder. The tutorial walks through it.",
@@ -11096,7 +11096,7 @@
   },
   "a1644d860aad0eb4": {
    "source": "<g1>Download complete's Open with... stayed in English</g1> in every other language (<g2>#80</g2>). The tool that collects BMD's texts for translation now also finds labels given through a window's own helpers, and checks in CI that it keeps finding them.",
-   "text": "<g1>Download abgeschlossen's Öffnen mit... blieb in jeder anderen Sprache Englisch</g1> (<g2>#80</g2>). Das Tool, das MDMs Texte zur Übersetzung sammelt, findet jetzt auch Beschriftungen, die über die eigenen Helfer eines Fensters gegeben werden, und überprüft in CI, dass es sie weiterhin findet."
+   "text": "<g1>Download abgeschlossen's Öffnen mit... blieb in jeder anderen Sprache Englisch</g1> (<g2>#80</g2>). Das Tool, das BMDs Texte zur Übersetzung sammelt, findet jetzt auch Beschriftungen, die über die eigenen Helfer eines Fensters gegeben werden, und überprüft in CI, dass es sie weiterhin findet."
   },
   "a176f3af8964e07b": {
    "source": "Free for Windows and Linux, with macOS to try. Installer, portable zip and the browser extension.",
@@ -11176,7 +11176,7 @@
   },
   "a2adb6accc9f37b5": {
    "source": "<g1>Luna, Aero and Aqua</g1>, after Windows XP, Windows 7 and Mac OS X (Leopard), each with a light and a dark side and icons drawn for BMD in its era's manner. <g2>Luna</g2>: buttons shaded from white with a dark blue edge and an orange glow under the pointer, green ticks, square text boxes, progress in green blocks and a deep blue title bar with the title in bold and square buttons (Close red). <g3>Aero</g3>: glossy buttons in two halves that turn light blue under the pointer, quiet check boxes, a glossy green progress bar and a glassy title bar, the title on a soft glow, its buttons hung from the top (Close wider and red). <g4>Aqua</g4>: gel buttons round at the ends (the default one blue), glossy check boxes, a blue focus ring, a blue gel progress bar and a grey title bar with the title centred and small round graphite buttons whose glyphs show under the pointer. Every glyph and shade is BMD's own drawing; none of Microsoft's or Apple's pictures or fonts are used.",
-   "text": "<g1>Luna, Aero und Aqua</g1>, nach Windows XP, Windows 7 und Mac OS X (Leopard), jeweils mit einer hellen und einer dunklen Seite und Symbolen, die für BMD im Stil ihrer Zeit gezeichnet wurden. <g2>Luna</g2>: Schaltflächen, die von Weiß schattiert sind, mit einem dunkelblauen Rand und einem orangefarbenen Leuchten unter dem Zeiger, grüne Häkchen, quadratische Textfelder, Fortschritt in grünen Blöcken und eine tiefblaue Titelleiste mit fettgedrucktem Titel und quadratischen Schaltflächen (Schließen rot). <g3>Aero</g3>: glänzende Schaltflächen in zwei Hälften, die unter dem Zeiger hellblau werden, unauffällige Kontrollkästchen, eine glänzende grüne Fortschrittsleiste und eine gläserne Titelleiste, der Titel auf einem sanften Leuchten, ihre Schaltflächen von oben aufgehängt (Schließen breiter und rot). <g4>Aqua</g4>: Gel-Schaltflächen mit abgerundeten Enden (die Standardschaltfläche blau), glänzende Kontrollkästchen, ein blauer Fokusring, eine blaue Gel-Fortschrittsleiste und eine graue Titelleiste mit zentriertem Titel und kleinen runden Graphit-Schaltflächen, deren Glyphen unter dem Zeiger erscheinen. Jede Glyphe und Schattierung ist MDMs eigene Zeichnung; es werden keine Bilder oder Schriftarten von Microsoft oder Apple verwendet."
+   "text": "<g1>Luna, Aero und Aqua</g1>, nach Windows XP, Windows 7 und Mac OS X (Leopard), jeweils mit einer hellen und einer dunklen Seite und Symbolen, die für BMD im Stil ihrer Zeit gezeichnet wurden. <g2>Luna</g2>: Schaltflächen, die von Weiß schattiert sind, mit einem dunkelblauen Rand und einem orangefarbenen Leuchten unter dem Zeiger, grüne Häkchen, quadratische Textfelder, Fortschritt in grünen Blöcken und eine tiefblaue Titelleiste mit fettgedrucktem Titel und quadratischen Schaltflächen (Schließen rot). <g3>Aero</g3>: glänzende Schaltflächen in zwei Hälften, die unter dem Zeiger hellblau werden, unauffällige Kontrollkästchen, eine glänzende grüne Fortschrittsleiste und eine gläserne Titelleiste, der Titel auf einem sanften Leuchten, ihre Schaltflächen von oben aufgehängt (Schließen breiter und rot). <g4>Aqua</g4>: Gel-Schaltflächen mit abgerundeten Enden (die Standardschaltfläche blau), glänzende Kontrollkästchen, ein blauer Fokusring, eine blaue Gel-Fortschrittsleiste und eine graue Titelleiste mit zentriertem Titel und kleinen runden Graphit-Schaltflächen, deren Glyphen unter dem Zeiger erscheinen. Jede Glyphe und Schattierung ist BMDs eigene Zeichnung; es werden keine Bilder oder Schriftarten von Microsoft oder Apple verwendet."
   },
   "a2be3ba81b76b6ff": {
    "source": "<g1>BMD</g1> <g2>Open source · GPL-3.0</g2>",
@@ -11300,7 +11300,7 @@
   },
   "a4bc290ca73177df": {
    "source": "<g1>Browser integration needs the installer.</g1> The browser finds BMD's helper through the registry, so a portable copy can't take downloads from the browser. Use <g2>Add URL</g2>, the clipboard or the drop target instead (see <g3>Adding downloads</g3>).",
-   "text": "<g1>Browser-Integration erfordert den Installer.</g1> Der Browser findet MDMs Helfer über die Registrierung, daher kann eine portable Kopie keine Downloads aus dem Browser übernehmen. Verwenden Sie stattdessen <g2>URL hinzufügen</g2>, die Zwischenablage oder das Drop-Ziel (siehe <g3>Downloads hinzufügen</g3>)."
+   "text": "<g1>Browser-Integration erfordert den Installer.</g1> Der Browser findet BMDs Helfer über die Registrierung, daher kann eine portable Kopie keine Downloads aus dem Browser übernehmen. Verwenden Sie stattdessen <g2>URL hinzufügen</g2>, die Zwischenablage oder das Drop-Ziel (siehe <g3>Downloads hinzufügen</g3>)."
   },
   "a4bcc08ad3a35162": {
    "source": "BMD can be driven without its window in three ways:",
@@ -11860,7 +11860,7 @@
   },
   "acd681edfe2f56b9": {
    "source": "<g1>Theme files</g1>: every colour and size BMD's controls are drawn with (corner radii, borders, font sizes, the list's row height, the icons' ink) comes from the theme, by role; the classic look is that theme, unchanged pixel for pixel. A theme file (TOML or JSON in the data folder's <x2/> folder) can change any role, choose each control's style (<x3/>) and an icon set, and a theme can be a folder that brings its own icons. An icon set can mix PNG pictures with SVG drawings, and one-colour icons (<x4/>, <x5/>, drawn in the theme's text colour) with coloured ones, and hold pictures at 32 and 48 pixels, used on a screen scaled to 150 % and more: the style themes' pictures stay sharp there.",
-   "text": "<g1>Designdateien</g1>: Jede Farbe und Größe, mit der MDMs Steuerelemente gezeichnet werden (Eckenradien, Ränder, Schriftgrößen, Zeilenhöhe der Liste, Farbe der Symbole), stammt vom Design, nach Rolle; das klassische Aussehen ist dieses Design, Pixel für Pixel unverändert. Eine Designdatei (TOML oder JSON im <x2/>-Ordner des Datenordners) kann jede Rolle ändern, den Stil jedes Steuerelements (<x3/>) und einen Symbolsatz auswählen, und ein Design kann ein Ordner sein, der eigene Symbole mitbringt. Ein Symbolsatz kann PNG-Bilder mit SVG-Zeichnungen mischen, und einfarbige Symbole (<x4/>, <x5/>, in der Textfarbe des Designs gezeichnet) mit farbigen, und Bilder in 32 und 48 Pixeln enthalten, die auf einem Bildschirm mit 150 % und mehr Skalierung verwendet werden: Die Bilder der Stil-Designs bleiben dort scharf."
+   "text": "<g1>Designdateien</g1>: Jede Farbe und Größe, mit der BMDs Steuerelemente gezeichnet werden (Eckenradien, Ränder, Schriftgrößen, Zeilenhöhe der Liste, Farbe der Symbole), stammt vom Design, nach Rolle; das klassische Aussehen ist dieses Design, Pixel für Pixel unverändert. Eine Designdatei (TOML oder JSON im <x2/>-Ordner des Datenordners) kann jede Rolle ändern, den Stil jedes Steuerelements (<x3/>) und einen Symbolsatz auswählen, und ein Design kann ein Ordner sein, der eigene Symbole mitbringt. Ein Symbolsatz kann PNG-Bilder mit SVG-Zeichnungen mischen, und einfarbige Symbole (<x4/>, <x5/>, in der Textfarbe des Designs gezeichnet) mit farbigen, und Bilder in 32 und 48 Pixeln enthalten, die auf einem Bildschirm mit 150 % und mehr Skalierung verwendet werden: Die Bilder der Stil-Designs bleiben dort scharf."
   },
   "acd70b3db02ac756": {
    "source": "5.4× faster on 1 GiB, 106× on small files, 2 connections instead of 480. Every run, the raw data and the method.",
@@ -11940,7 +11940,7 @@
   },
   "addc49732c40827c": {
    "source": "<g1>Galleries work with the gallery-dl a Linux distribution ships</g1> (<g2>#236</g2>): with Ubuntu 24.04's gallery-dl 1.26.9 chosen in Helpers, every gallery failed at once (\"unrecognized arguments: --no-input\"): BMD passed options that only newer releases know. BMD now reads the chosen gallery-dl's version and passes only what that release accepts, from 1.20 (Ubuntu 22.04) to today's; checked against every release from 1.17 to 1.32. An older one (Debian 11's 1.17) is refused when chosen, saying it is too old and which version BMD needs, and one chosen before is passed over for BMD's own copy, which Helpers says. gallery-dl 1.30.0, whose version starts with an empty line, is no longer taken for another program.",
-   "text": "<g1>Galerien funktionieren mit dem gallery-dl, das eine Linux-Distribution mitliefert</g1> (<g2>#236</g2>): Mit dem in „Helfer“ ausgewählten gallery-dl 1.26.9 von Ubuntu 24.04 schlugen alle Galerien sofort fehl („unrecognized arguments: --no-input“): BMD übergab Optionen, die nur neuere Versionen kennen. BMD liest jetzt die Version des ausgewählten gallery-dl und übergibt nur das, was diese Version akzeptiert, von 1.20 (Ubuntu 22.04) bis heute; geprüft gegen jede Version von 1.17 bis 1.32. Eine ältere Version (Debian 11s 1.17) wird bei Auswahl abgelehnt, mit der Meldung, dass sie zu alt ist und welche Version BMD benötigt, und eine zuvor ausgewählte wird zugunsten von MDMs eigener Kopie übergangen, was „Helfer“ anzeigt. gallery-dl 1.30.0, dessen Version mit einer leeren Zeile beginnt, wird nicht mehr für ein anderes Programm gehalten."
+   "text": "<g1>Galerien funktionieren mit dem gallery-dl, das eine Linux-Distribution mitliefert</g1> (<g2>#236</g2>): Mit dem in „Helfer“ ausgewählten gallery-dl 1.26.9 von Ubuntu 24.04 schlugen alle Galerien sofort fehl („unrecognized arguments: --no-input“): BMD übergab Optionen, die nur neuere Versionen kennen. BMD liest jetzt die Version des ausgewählten gallery-dl und übergibt nur das, was diese Version akzeptiert, von 1.20 (Ubuntu 22.04) bis heute; geprüft gegen jede Version von 1.17 bis 1.32. Eine ältere Version (Debian 11s 1.17) wird bei Auswahl abgelehnt, mit der Meldung, dass sie zu alt ist und welche Version BMD benötigt, und eine zuvor ausgewählte wird zugunsten von BMDs eigener Kopie übergangen, was „Helfer“ anzeigt. gallery-dl 1.30.0, dessen Version mit einer leeren Zeile beginnt, wird nicht mehr für ein anderes Programm gehalten."
   },
   "adf4f6095dcb2567": {
    "source": "Look at <g1>Resume capability</g1> in the progress window. <g2>No</g2> means the server can't send a file in parts, so BMD can't continue it later.",
@@ -12076,7 +12076,7 @@
   },
   "af88b0fce90e9ede": {
    "source": "The extension is connected, but BMD's own settings leave this download to the browser. Check, in BMD:",
-   "text": "Die Erweiterung ist verbunden, aber MDMs eigene Einstellungen überlassen diesen Download dem Browser. Prüfen Sie in BMD:"
+   "text": "Die Erweiterung ist verbunden, aber BMDs eigene Einstellungen überlassen diesen Download dem Browser. Prüfen Sie in BMD:"
   },
   "af8b3f2ddf4f0574": {
    "source": "No. BMD doesn't break copy protection (DRM), by design. Videos that are protected stay protected. See also what BMD is made for.",
@@ -12576,7 +12576,7 @@
   },
   "b62132fd981ceb11": {
    "source": "<g1>Brave Origin connects, and the AppImage's helper is always there</g1> (<g2>#253</g2>): Brave Origin keeps its settings in a folder of its own (<x3/>), which BMD didn't know, so its extension said BMD wasn't installed. BMD now sets up Brave Origin, the Beta, Dev and Nightly versions of Brave, Chrome and Edge, and Vivaldi's snapshot; on macOS, Brave reads Chrome's folder, which BMD now writes for it. From the AppImage, BMD copies the helper program the browsers start out of the AppImage under a new name and swaps it in, so a browser still running the old copy no longer keeps the new one out, and puts it back at each start if it went missing. A copy or setup that fails is written to BMD's log, and <g4>Test browser integration</g4> says when the helper program is missing, when no browser was found, or why setting it up failed.",
-   "text": "<g1>Brave Origin verbindet sich, und der Helfer des AppImage ist immer da</g1> (<g2>#253</g2>): Brave Origin speichert seine Einstellungen in einem eigenen Ordner (<x3/>), den BMD nicht kannte, sodass seine Erweiterung meldete, BMD sei nicht installiert. BMD richtet jetzt Brave Origin, die Beta-, Dev- und Nightly-Versionen von Brave, Chrome und Edge sowie Vivaldis Snapshot ein; unter macOS liest Brave den Chrome-Ordner, den BMD jetzt dafür schreibt. Vom AppImage kopiert BMD das Helferprogramm, das die Browser starten, aus dem AppImage unter einem neuen Namen und tauscht es aus, sodass ein Browser, der noch die alte Kopie ausführt, die neue nicht mehr blockiert, und legt es bei jedem Start wieder zurück, falls es fehlte. Eine fehlgeschlagene Kopie oder Einrichtung wird in MDMs Protokoll geschrieben, und <g4>Browserintegration testen</g4> meldet, wenn das Helferprogramm fehlt, wenn kein Browser gefunden wurde oder warum die Einrichtung fehlgeschlagen ist."
+   "text": "<g1>Brave Origin verbindet sich, und der Helfer des AppImage ist immer da</g1> (<g2>#253</g2>): Brave Origin speichert seine Einstellungen in einem eigenen Ordner (<x3/>), den BMD nicht kannte, sodass seine Erweiterung meldete, BMD sei nicht installiert. BMD richtet jetzt Brave Origin, die Beta-, Dev- und Nightly-Versionen von Brave, Chrome und Edge sowie Vivaldis Snapshot ein; unter macOS liest Brave den Chrome-Ordner, den BMD jetzt dafür schreibt. Vom AppImage kopiert BMD das Helferprogramm, das die Browser starten, aus dem AppImage unter einem neuen Namen und tauscht es aus, sodass ein Browser, der noch die alte Kopie ausführt, die neue nicht mehr blockiert, und legt es bei jedem Start wieder zurück, falls es fehlte. Eine fehlgeschlagene Kopie oder Einrichtung wird in BMDs Protokoll geschrieben, und <g4>Browserintegration testen</g4> meldet, wenn das Helferprogramm fehlt, wenn kein Browser gefunden wurde oder warum die Einrichtung fehlgeschlagen ist."
   },
   "b64013cae5c2317a": {
    "source": "Every link on a page. Only the ones you tick.",
@@ -12608,7 +12608,7 @@
   },
   "b6a5566cc4ea66bc": {
    "source": "BMD's torrents don't use <g1>encryption</g1> (sometimes called \"protocol encryption\"). That kind of encryption only hides the traffic from simple filters. It never hides who you are, so BMD doesn't claim to offer it. Some peers that require it won't connect.",
-   "text": "MDMs Torrents verwenden keine <g1>Verschlüsselung</g1> (manchmal „Protokollverschlüsselung“ genannt). Diese Art der Verschlüsselung verbirgt den Datenverkehr nur vor einfachen Filtern. Sie verbirgt niemals, wer Sie sind, daher behauptet BMD nicht, sie anzubieten. Einige Peers, die sie benötigen, werden keine Verbindung herstellen."
+   "text": "BMDs Torrents verwenden keine <g1>Verschlüsselung</g1> (manchmal „Protokollverschlüsselung“ genannt). Diese Art der Verschlüsselung verbirgt den Datenverkehr nur vor einfachen Filtern. Sie verbirgt niemals, wer Sie sind, daher behauptet BMD nicht, sie anzubieten. Einige Peers, die sie benötigen, werden keine Verbindung herstellen."
   },
   "b6a64bab432ffff1": {
    "source": "The same, for a Mac with an Intel processor (About This Mac shows a <g1>Processor</g1>).",
@@ -13136,7 +13136,7 @@
   },
   "be960ae0fc19e032": {
    "source": "On Linux and macOS, BMD finds yt-dlp, ffmpeg and gallery-dl on your <x1/> and in the usual package-manager folders, including Homebrew's. A program you selected yourself takes priority, followed by BMD's own installed copy. The system copy is used when neither is present, and your package manager keeps it up to date: BMD never downloads over it on its own. If your distribution's yt-dlp is old, <g2>Use BMD's own copy</g2> in Helpers downloads BMD's, which keeps itself current and is used from then on.",
-   "text": "Unter Linux und macOS findet BMD yt-dlp, ffmpeg und gallery-dl in Ihrem <x1/> und in den üblichen Paketmanager-Ordnern, einschließlich Homebrew. Ein von Ihnen selbst ausgewähltes Programm hat Vorrang, gefolgt von MDMs eigener installierter Kopie. Die Systemkopie wird verwendet, wenn keine der beiden vorhanden ist, und Ihr Paketmanager hält sie auf dem neuesten Stand: BMD lädt niemals eigenständig darüber. Wenn das yt-dlp Ihrer Distribution alt ist, lädt <g2>Eigene Kopie von BMD verwenden</g2> unter Helfer die BMD-Kopie herunter, die sich selbst aktuell hält und fortan verwendet wird."
+   "text": "Unter Linux und macOS findet BMD yt-dlp, ffmpeg und gallery-dl in Ihrem <x1/> und in den üblichen Paketmanager-Ordnern, einschließlich Homebrew. Ein von Ihnen selbst ausgewähltes Programm hat Vorrang, gefolgt von BMDs eigener installierter Kopie. Die Systemkopie wird verwendet, wenn keine der beiden vorhanden ist, und Ihr Paketmanager hält sie auf dem neuesten Stand: BMD lädt niemals eigenständig darüber. Wenn das yt-dlp Ihrer Distribution alt ist, lädt <g2>Eigene Kopie von BMD verwenden</g2> unter Helfer die BMD-Kopie herunter, die sich selbst aktuell hält und fortan verwendet wird."
   },
   "be977a71e686a263": {
    "source": "Questions and answers",
@@ -13252,7 +13252,7 @@
   },
   "c0109fa720933c3b": {
    "source": "BMD's main window on Cinnamon",
-   "text": "MDMs Hauptfenster auf Cinnamon"
+   "text": "BMDs Hauptfenster auf Cinnamon"
   },
   "c0287c9b281541b7": {
    "source": "<g1>Ghost windows while a menu is open</g1> (issue #4): faded copies of the main window titled \"egui window\" opened and closed with every redraw of an open menu, and the toolbar's hover flickered under them. On a Mac in full screen they opened a space of their own and froze BMD (issue #5). They came with 0.2.0's menu keyboard support, which asked about a submenu's window that wasn't open, and that made one.",
@@ -13504,7 +13504,7 @@
   },
   "c404ba97a1ff4905": {
    "source": "The built-in themes are <g1>Classic</g1> (BMD's own look, the default), <g2>Native</g2> (your system's accent colour and contrast), <g3>High contrast</g3>, and the style themes <g4>Metro</g4>, <g5>Adwaita</g5>, <g6>Breeze</g6>, <g7>Luna</g7>, <g8>Aero</g8>, <g9>Aqua</g9> and <g10>Emerald</g10>, each with its own control shapes and icons, and on Windows its own title bar. <g11>Getting started</g11> describes each one; the website's <g12>Themes page</g12> shows them all, light and dark.",
-   "text": "Die integrierten Designs sind <g1>Klassisch</g1> (MDMs eigenes Aussehen, die Standardeinstellung), <g2>System</g2> (Akzentfarbe und Kontrast Ihres Systems), <g3>Hoher Kontrast</g3> und die Stil-Designs <g4>Metro</g4>, <g5>Adwaita</g5>, <g6>Breeze</g6>, <g7>Luna</g7>, <g8>Aero</g8>, <g9>Aqua</g9> und <g10>Emerald</g10>, jedes mit eigenen Steuerelementformen und Symbolen und unter Windows mit eigener Titelleiste. <g11>Erste Schritte</g11> beschreibt jedes einzelne; die <g12>Design-Seite</g12> der Website zeigt alle, hell und dunkel."
+   "text": "Die integrierten Designs sind <g1>Klassisch</g1> (BMDs eigenes Aussehen, die Standardeinstellung), <g2>System</g2> (Akzentfarbe und Kontrast Ihres Systems), <g3>Hoher Kontrast</g3> und die Stil-Designs <g4>Metro</g4>, <g5>Adwaita</g5>, <g6>Breeze</g6>, <g7>Luna</g7>, <g8>Aero</g8>, <g9>Aqua</g9> und <g10>Emerald</g10>, jedes mit eigenen Steuerelementformen und Symbolen und unter Windows mit eigener Titelleiste. <g11>Erste Schritte</g11> beschreibt jedes einzelne; die <g12>Design-Seite</g12> der Website zeigt alle, hell und dunkel."
   },
   "c4102de250d826ec": {
    "source": "50 MiB, every 2nd connection cut after 2 MiB, 4 MB/s",
@@ -13576,7 +13576,7 @@
   },
   "c5001ca9d8bb3936": {
    "source": "<g1>BMD says why the browser kept a download</g1> (<g2>#208</g2>): every download left to the browser by Options is a line in BMD's log naming the setting that decided (its type isn't in <g3>File types</g3>, its site or address is excluded, it's under the minimum size, the browser is unticked, browser integration is off, or the extension may not read the site), and the extension's button shows the last one, with the file's name. A download from a private window is logged without its name or site.",
-   "text": "<g1>BMD sagt, warum der Browser einen Download behalten hat</g1> (<g2>#208</g2>): Jeder Download, der vom Browser durch die Optionen übernommen wurde, ist eine Zeile in MDMs Protokoll, die die entscheidende Einstellung nennt (sein Typ ist nicht in <g3>Dateitypen</g3>, seine Website oder Adresse ist ausgeschlossen, er ist unter der Mindestgröße, der Browser ist nicht angekreuzt, die Browserintegration ist deaktiviert oder die Erweiterung darf die Website nicht lesen), und der Erweiterungsbutton zeigt die letzte an, mit dem Dateinamen. Ein Download aus einem privaten Fenster wird ohne Namen oder Website protokolliert."
+   "text": "<g1>BMD sagt, warum der Browser einen Download behalten hat</g1> (<g2>#208</g2>): Jeder Download, der vom Browser durch die Optionen übernommen wurde, ist eine Zeile in BMDs Protokoll, die die entscheidende Einstellung nennt (sein Typ ist nicht in <g3>Dateitypen</g3>, seine Website oder Adresse ist ausgeschlossen, er ist unter der Mindestgröße, der Browser ist nicht angekreuzt, die Browserintegration ist deaktiviert oder die Erweiterung darf die Website nicht lesen), und der Erweiterungsbutton zeigt die letzte an, mit dem Dateinamen. Ein Download aus einem privaten Fenster wird ohne Namen oder Website protokolliert."
   },
   "c509d1f856e606ca": {
    "source": "YouTube serves each connection's long requests slowly, so BMD asks for the video in pieces of 10 MB at most, as yt-dlp does, and several at once.",
@@ -13680,7 +13680,7 @@
   },
   "c624b7b5362daa0c": {
    "source": "What's left: the Flatpak Firefox isn't checked yet; screen readers (Orca) don't read BMD's windows on Linux yet; and native Wayland windows can't place menus, so XWayland stays the default. macOS stays experimental: its builds are made and tested by GitHub Actions, not yet on a Mac of ours.",
-   "text": "Was noch bleibt: Der Flatpak Firefox ist noch nicht geprüft; Screenreader (Orca) lesen MDMs Fenster unter Linux noch nicht; und native Wayland-Fenster können keine Menüs platzieren, daher bleibt XWayland die Standardeinstellung. macOS bleibt experimentell: Die Builds werden von GitHub Actions erstellt und getestet, noch nicht auf einem unserer Macs."
+   "text": "Was noch bleibt: Der Flatpak Firefox ist noch nicht geprüft; Screenreader (Orca) lesen BMDs Fenster unter Linux noch nicht; und native Wayland-Fenster können keine Menüs platzieren, daher bleibt XWayland die Standardeinstellung. macOS bleibt experimentell: Die Builds werden von GitHub Actions erstellt und getestet, noch nicht auf einem unserer Macs."
   },
   "c6320d84eeae5baf": {
    "source": "A few things to know before you start.",
@@ -13928,7 +13928,7 @@
   },
   "c9adff796c012ffe": {
    "source": "A key BMD doesn't know, or a value it can't read, is skipped and written to BMD's log (the <x1/> folder beside the themes folder), so a file made for a newer BMD still loads. A file that isn't valid TOML or JSON doesn't load, and the log says why. A file named like a built-in theme (<x2/>) is passed over: give yours a name of its own.",
-   "text": "Ein Schlüssel, den BMD nicht kennt, oder ein Wert, den es nicht lesen kann, wird übersprungen und in MDMs Protokoll (der Ordner <x1/> neben dem Design-Ordner) geschrieben, sodass eine für ein neueres BMD erstellte Datei immer noch geladen wird. Eine Datei, die kein gültiges TOML oder JSON ist, wird nicht geladen, und das Protokoll gibt den Grund an. Eine Datei, die wie ein integriertes Design benannt ist (<x2/>), wird übergangen: Geben Sie Ihrer Datei einen eigenen Namen."
+   "text": "Ein Schlüssel, den BMD nicht kennt, oder ein Wert, den es nicht lesen kann, wird übersprungen und in BMDs Protokoll (der Ordner <x1/> neben dem Design-Ordner) geschrieben, sodass eine für ein neueres BMD erstellte Datei immer noch geladen wird. Eine Datei, die kein gültiges TOML oder JSON ist, wird nicht geladen, und das Protokoll gibt den Grund an. Eine Datei, die wie ein integriertes Design benannt ist (<x2/>), wird übergangen: Geben Sie Ihrer Datei einen eigenen Namen."
   },
   "c9bc77086f15e169": {
    "source": "<g1>From browser</g1> lists the browsers yt-dlp reads: Firefox, Chrome, Edge, Brave, Opera, Vivaldi, Chromium and Whale, and Safari on macOS. <g2>Profile</g2> is optional: a profile's name (<x3/>) or its folder; empty, the profile used last.",
@@ -13952,7 +13952,7 @@
   },
   "ca1b2235af58c3ba": {
    "source": "Start the video first: the list fills as the page loads things, and it's emptied when the tab goes to another page. Each file is listed under the name it will be saved with. A file the site sends through a program's address (<x1/>, <x2/>, <x3/>, a bare number) has no name of its own: it's named after the page (<x4/>; a title's site name at its end, as in <x5/>, is left out), or after the <x6/> name in its address when there is one, with the type its server says it is (MP4, not PHP). With <g7>Prefix media file names with the page title</g7> on, a file with a name of its own is named after the page, then that name (<x8/>). Click <g9>Download</g9> beside one: a stream opens BMD's <g10>Download video from a page</g10> window, which reads its qualities (yt-dlp does the work); a file goes to BMD's list like any other download. Your cookies for its server, the page as the referrer and your browser's User-Agent go with it, as they do for a link you click.",
-   "text": "Starten Sie zuerst das Video: Die Liste füllt sich, während die Seite Inhalte lädt, und wird geleert, wenn der Tab zu einer anderen Seite wechselt. Jede Datei wird unter dem Namen aufgeführt, unter dem sie gespeichert wird. Eine Datei, die die Website über die Adresse eines Programms sendet (<x1/>, <x2/>, <x3/>, eine bloße Zahl), hat keinen eigenen Namen: Sie wird nach der Seite benannt (<x4/>; der Website-Name eines Titels am Ende, wie in <x5/>, wird weggelassen), oder nach dem <x6/>-Namen in ihrer Adresse, wenn vorhanden, mit dem Typ, den ihr Server angibt (MP4, nicht PHP). Wenn <g7>Seitentitel vor die Namen von Mediendateien setzen</g7> aktiviert ist, wird eine Datei mit eigenem Namen nach der Seite benannt, dann dieser Name (<x8/>). Klicken Sie auf <g9>Herunterladen</g9> daneben: Ein Stream öffnet MDMs Fenster <g10>Video von einer Seite herunterladen</g10>, das seine Qualitäten liest (yt-dlp erledigt die Arbeit); eine Datei wird wie jeder andere Download in MDMs Liste aufgenommen. Ihre Cookies für den Server, die Seite als Referrer und der User-Agent Ihres Browsers werden mitgesendet, wie bei einem Link, den Sie anklicken."
+   "text": "Starten Sie zuerst das Video: Die Liste füllt sich, während die Seite Inhalte lädt, und wird geleert, wenn der Tab zu einer anderen Seite wechselt. Jede Datei wird unter dem Namen aufgeführt, unter dem sie gespeichert wird. Eine Datei, die die Website über die Adresse eines Programms sendet (<x1/>, <x2/>, <x3/>, eine bloße Zahl), hat keinen eigenen Namen: Sie wird nach der Seite benannt (<x4/>; der Website-Name eines Titels am Ende, wie in <x5/>, wird weggelassen), oder nach dem <x6/>-Namen in ihrer Adresse, wenn vorhanden, mit dem Typ, den ihr Server angibt (MP4, nicht PHP). Wenn <g7>Seitentitel vor die Namen von Mediendateien setzen</g7> aktiviert ist, wird eine Datei mit eigenem Namen nach der Seite benannt, dann dieser Name (<x8/>). Klicken Sie auf <g9>Herunterladen</g9> daneben: Ein Stream öffnet BMDs Fenster <g10>Video von einer Seite herunterladen</g10>, das seine Qualitäten liest (yt-dlp erledigt die Arbeit); eine Datei wird wie jeder andere Download in BMDs Liste aufgenommen. Ihre Cookies für den Server, die Seite als Referrer und der User-Agent Ihres Browsers werden mitgesendet, wie bei einem Link, den Sie anklicken."
   },
   "ca2cb1a4a09f8aba": {
    "source": "<g1>Number of retries for each file if downloading failed</g1> — how often a failed download is tried again before the queue gives up on it. Without it, BMD keeps trying.",
@@ -14299,8 +14299,8 @@
    "text": "Die Videos werden jeweils unter ihrem Titel in einem Ordner mit dem Namen der Liste innerhalb des unter <g1>Speichern unter</g1> festgelegten Ordners abgelegt."
   },
   "ceb8f4f5a72cba4a": {
-   "source": "Every signed file is built from the public source code at <g1>github.com/anefzaoui/misterdownloadmanager</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
-   "text": "Jede signierte Datei wird aus dem öffentlichen Quellcode unter <g1>github.com/anefzaoui/misterdownloadmanager</g1> von GitHub Actions auf den Servern von GitHub erstellt, niemals auf einem persönlichen Computer. Jede Datei gibt an, dass es sich um BMD handelt und welche Version es ist."
+   "source": "Every signed file is built from the public source code at <g1>github.com/DecoyINDIA/BMD</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
+   "text": "Jede signierte Datei wird aus dem öffentlichen Quellcode unter <g1>github.com/DecoyINDIA/BMD</g1> von GitHub Actions auf den Servern von GitHub erstellt, niemals auf einem persönlichen Computer. Jede Datei gibt an, dass es sich um BMD handelt und welche Version es ist."
   },
   "cee8fa5faa008467": {
    "source": "To save your own list, use <g1>Tasks → Export → To text file</g1> (one address per line) or <g2>To IDM export file</g2>.",
@@ -14668,7 +14668,7 @@
   },
   "d379c8568a8a54fa": {
    "source": "By default BMD downloads the pieces that the fewest peers have first, as BitTorrent programs usually do. That way a piece only one peer has is fetched before that peer leaves, and BMD can pass it on to others sooner. On BMD's test swarms it finished just as fast as downloading in order, and it was the only order that finished when a scarce piece's only holder left.",
-   "text": "Standardmäßig lädt BMD zuerst die Teile herunter, die die wenigsten Peers haben, wie es BitTorrent-Programme üblicherweise tun. Auf diese Weise wird ein Teil, den nur ein Peer besitzt, abgerufen, bevor dieser Peer die Verbindung trennt, und BMD kann ihn schneller an andere weitergeben. In MDMs Testschwärmen war der Download genauso schnell abgeschlossen wie beim Herunterladen in Reihenfolge, und es war die einzige Reihenfolge, die abgeschlossen wurde, als der einzige Inhaber eines knappen Teils die Verbindung trennte."
+   "text": "Standardmäßig lädt BMD zuerst die Teile herunter, die die wenigsten Peers haben, wie es BitTorrent-Programme üblicherweise tun. Auf diese Weise wird ein Teil, den nur ein Peer besitzt, abgerufen, bevor dieser Peer die Verbindung trennt, und BMD kann ihn schneller an andere weitergeben. In BMDs Testschwärmen war der Download genauso schnell abgeschlossen wie beim Herunterladen in Reihenfolge, und es war die einzige Reihenfolge, die abgeschlossen wurde, als der einzige Inhaber eines knappen Teils die Verbindung trennte."
   },
   "d37acd51968d28ea": {
    "source": "<g1>DNS and proxies</g1><g2>The system's proxy, your own, a SOCKS proxy or your network's auto-config script.</g2>",
@@ -14699,8 +14699,8 @@
    "text": "<g1>librqbit</g1><g2>-Torrent-Engine</g2>"
   },
   "d3bb5a30d659061d": {
-   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/anefzaoui/misterdownloadmanager</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
-   "text": "BMD („BMD“) ist eine kostenlose Open-Source-Software, die von Ahmed Nefzaoui und Mitwirkenden erstellt wurde. Da der gesamte Quellcode unter <g1>github.com/anefzaoui/misterdownloadmanager</g1> öffentlich ist, müssen Sie sich nicht auf diese Seite verlassen: Jede hier beschriebene Netzwerkverbindung kann im Code überprüft werden."
+   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/DecoyINDIA/BMD</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
+   "text": "BMD („BMD“) ist eine kostenlose Open-Source-Software, die von Ahmed Nefzaoui und Mitwirkenden erstellt wurde. Da der gesamte Quellcode unter <g1>github.com/DecoyINDIA/BMD</g1> öffentlich ist, müssen Sie sich nicht auf diese Seite verlassen: Jede hier beschriebene Netzwerkverbindung kann im Code überprüft werden."
   },
   "d3da8c9dc89aaa97": {
    "source": "What's new in version 0.5.1 <g1>2026-11-08</g1>",
@@ -15004,7 +15004,7 @@
   },
   "d76f1a42638aabfd": {
    "source": "Put the file in BMD's themes folder. <g1>View → Theme → Open themes folder</g1> opens it, and makes it the first time. It is in BMD's data folder:",
-   "text": "Legen Sie die Datei in MDMs Themenordner ab. <g1>Ansicht → Design → Themenordner öffnen</g1> öffnet ihn und erstellt ihn beim ersten Mal. Er befindet sich im BMD-Datenordner:"
+   "text": "Legen Sie die Datei in BMDs Themenordner ab. <g1>Ansicht → Design → Themenordner öffnen</g1> öffnet ihn und erstellt ihn beim ersten Mal. Er befindet sich im BMD-Datenordner:"
   },
   "d793ec1c1910f792": {
    "source": "2.2.1<g1>3 Nov 2026</g1>",
@@ -15680,7 +15680,7 @@
   },
   "e21b8e555dcca5c1": {
    "source": "Every colour role, size and control style, with what it sets, is listed on the website's <g1>Themes page</g1> (read from BMD's own code, so it never drifts). The built-in themes are written the same way: <g2>read them on GitHub</g2>.",
-   "text": "Jede Farbrolle, Größe und jeder Steuerelementstil, mit dem, was er festlegt, ist auf der <g1>Design-Seite</g1> der Website aufgeführt (aus MDMs eigenem Code gelesen, sodass es nie abweicht). Die integrierten Designs sind auf dieselbe Weise geschrieben: <g2>lesen Sie sie auf GitHub</g2>."
+   "text": "Jede Farbrolle, Größe und jeder Steuerelementstil, mit dem, was er festlegt, ist auf der <g1>Design-Seite</g1> der Website aufgeführt (aus BMDs eigenem Code gelesen, sodass es nie abweicht). Die integrierten Designs sind auf dieselbe Weise geschrieben: <g2>lesen Sie sie auf GitHub</g2>."
   },
   "e22ae1bbb5224f5c": {
    "source": "Download manager",
@@ -15920,7 +15920,7 @@
   },
   "e5d5915166ea2535": {
    "source": "- <g1>Chromium as a Snap</g1> (Ubuntu's Chromium) starts BMD's helper inside its sandbox, where it can't reach BMD, so BMD doesn't list it in <g2>Add BMD to your browser</g2>. Use Firefox, or Google Chrome from its own <x3/>. - <g4>Flatpak browsers</g4> (such as Zen's <x5/>) can't start BMD's helper, so BMD doesn't list them either. Install the browser from your distribution's packages (or the browser maker's own <x6/>, <x7/>, tarball or AppImage) to use browser integration.",
-   "text": "- <g1>Chromium als Snap</g1> (Ubuntus Chromium) startet MDMs Helfer innerhalb seiner Sandbox, wo er BMD nicht erreichen kann, daher listet BMD ihn nicht unter <g2>BMD zu Ihrem Browser hinzufügen</g2> auf. Verwenden Sie Firefox oder Google Chrome von seiner eigenen <x3/>. - <g4>Flatpak-Browser</g4> (wie Zens <x5/>) können MDMs Helfer nicht starten, daher listet BMD sie auch nicht auf. Installieren Sie den Browser aus den Paketen Ihrer Distribution (oder der eigenen <x6/>, <x7/>, Tarball oder AppImage des Browserherstellers), um die Browserintegration zu nutzen."
+   "text": "- <g1>Chromium als Snap</g1> (Ubuntus Chromium) startet BMDs Helfer innerhalb seiner Sandbox, wo er BMD nicht erreichen kann, daher listet BMD ihn nicht unter <g2>BMD zu Ihrem Browser hinzufügen</g2> auf. Verwenden Sie Firefox oder Google Chrome von seiner eigenen <x3/>. - <g4>Flatpak-Browser</g4> (wie Zens <x5/>) können BMDs Helfer nicht starten, daher listet BMD sie auch nicht auf. Installieren Sie den Browser aus den Paketen Ihrer Distribution (oder der eigenen <x6/>, <x7/>, Tarball oder AppImage des Browserherstellers), um die Browserintegration zu nutzen."
   },
   "e5ed5b1460c13fe3": {
    "source": "The main window in the Native theme",
@@ -16032,11 +16032,11 @@
   },
   "e7bc83955617ddd1": {
    "source": "BMD downloads videos from their web pages: YouTube, Vimeo, Dailymotion, Twitch, TikTok, X, Instagram, Facebook, Reddit, SoundCloud and well over a thousand other sites. <g1>yt-dlp</g1>, an open-source program whose community keeps it working as sites change, finds the video on the page; BMD's own downloader then brings it in, the way it downloads any file.",
-   "text": "BMD lädt Videos von Webseiten herunter: YouTube, Vimeo, Dailymotion, Twitch, TikTok, X, Instagram, Facebook, Reddit, SoundCloud und weit über tausend andere Seiten. <g1>yt-dlp</g1>, ein Open-Source-Programm, das von seiner Community bei Änderungen der Seiten aktuell gehalten wird, findet das Video auf der Seite; MDMs eigener Downloader lädt es dann herunter, wie jede andere Datei auch."
+   "text": "BMD lädt Videos von Webseiten herunter: YouTube, Vimeo, Dailymotion, Twitch, TikTok, X, Instagram, Facebook, Reddit, SoundCloud und weit über tausend andere Seiten. <g1>yt-dlp</g1>, ein Open-Source-Programm, das von seiner Community bei Änderungen der Seiten aktuell gehalten wird, findet das Video auf der Seite; BMDs eigener Downloader lädt es dann herunter, wie jede andere Datei auch."
   },
   "e7bf74269a6d246b": {
    "source": "BMD's main window on KDE Plasma",
-   "text": "MDMs Hauptfenster auf KDE Plasma"
+   "text": "BMDs Hauptfenster auf KDE Plasma"
   },
   "e7c1fe00134f85f4": {
    "source": "<g1>Download rules</g1> tab: a rule adds the torrents of new articles whose titles it matches, without asking.",
@@ -16320,7 +16320,7 @@
   },
   "ebd6b52fc29b1737": {
    "source": "The installer packs tighter, and BMD's own code no longer carries the build machine's folder paths (a bundled C library still keeps a few of its own).",
-   "text": "Der Installer packt kompakter, und MDMs eigener Code enthält keine Ordnerpfade der Build-Maschine mehr (eine gebündelte C-Bibliothek behält noch einige eigene)."
+   "text": "Der Installer packt kompakter, und BMDs eigener Code enthält keine Ordnerpfade der Build-Maschine mehr (eine gebündelte C-Bibliothek behält noch einige eigene)."
   },
   "ebe2a18d31052b9b": {
    "source": "Browsers",
@@ -17048,7 +17048,7 @@
   },
   "f6ccca3c73338ba8": {
    "source": "<g1>GitHub, after a crash.</g1> When BMD crashes or freezes, the report window may download that version's debugging symbols from BMD's GitHub release, so the report can say where in BMD's code it happened, and asks GitHub's search whether the same problem was reported already. The search carries only the report's signature, the kind of problem and the name of the function in BMD's code (such as <x2/>). The report itself goes nowhere unless you send it.",
-   "text": "<g1>GitHub, nach einem Absturz.</g1> Wenn BMD abstürzt oder einfriert, lädt das Berichtsfenster möglicherweise die Debugging-Symbole dieser Version von MDMs GitHub-Release herunter. So kann der Bericht angeben, wo im BMD-Code der Absturz passiert ist, und GitHubs Suche fragen, ob dasselbe Problem bereits gemeldet wurde. Die Suche enthält nur die Signatur des Berichts, die Art des Problems und den Namen der Funktion im BMD-Code (wie <x2/>). Der Bericht selbst wird nirgendwohin gesendet, es sei denn, Sie senden ihn."
+   "text": "<g1>GitHub, nach einem Absturz.</g1> Wenn BMD abstürzt oder einfriert, lädt das Berichtsfenster möglicherweise die Debugging-Symbole dieser Version von BMDs GitHub-Release herunter. So kann der Bericht angeben, wo im BMD-Code der Absturz passiert ist, und GitHubs Suche fragen, ob dasselbe Problem bereits gemeldet wurde. Die Suche enthält nur die Signatur des Berichts, die Art des Problems und den Namen der Funktion im BMD-Code (wie <x2/>). Der Bericht selbst wird nirgendwohin gesendet, es sei denn, Sie senden ihn."
   },
   "f6f109ae827d390b": {
    "source": "Control your downloads from your phone",
@@ -17096,7 +17096,7 @@
   },
   "f7df0727997705ff": {
    "source": "Download a video. Without <x1/> or <x2/>, the best quality, the one the Download video window starts on: with ffmpeg the best picture with the best sound joined to it (a site whose pictures and sounds come apart, such as Bilibili, needs ffmpeg for a video), else the best file with both. <x3/> (or <x4/>) takes that height, or the nearest below it the page offers (else the nearest above), and says so. <x5/> takes the most compatible quality, as the window's <g6>Most compatible (H.264 + AAC)</g6>: the best H.264 picture with AAC sound, in an MP4 that plays in every editor, TV and phone; a page without one says so (nothing is converted). <x7/> takes a quality's selector from <x8/> (<x9/> = the best single file; <x10/> = the sound alone as the site has it, not converted; <x11/>, <x12/>, <x13/> or <x14/> = the sound as an MP3 at that bitrate, <x15/> at its best variable one; <x16/> = as Opus; <x17/> = as FLAC, lossless but no better than the site's sound; conversions need ffmpeg). <x18/>: BMD's own downloader brings each stream yt-dlp finds over this many connections (8 by default, 1 to 128), a stream in pieces (HLS, DASH) this many pieces at once. <x19/> saves subtitles beside it: language codes from <x20/> (<x21/>), or <x22/> for every one the uploader gave; <x23/> takes the site's automatic captions instead; <x24/> puts them into the video (needs ffmpeg, MP4 or MKV). With ffmpeg, the video's chapters go into the file too, as Download video's <g25>Embed chapters</g25> does. <x26/> sends the downloads' connections, and yt-dlp's (and ffmpeg's), through one network adapter, as for <x27/>; when it isn't connected, nothing starts. When no format of the page matches, the error lists the ones it offers, as <x28/> does.",
-   "text": "Ein Video herunterladen. Ohne <x1/> oder <x2/> wird die beste Qualität heruntergeladen, die auch im Fenster „Video herunterladen“ voreingestellt ist: Mit ffmpeg das beste Bild mit dem besten Ton zusammengefügt (eine Seite, deren Bilder und Töne getrennt sind, wie Bilibili, benötigt ffmpeg für ein Video), ansonsten die beste Datei mit beidem. <x3/> (oder <x4/>) wählt diese Höhe oder die nächstniedrigere, die die Seite anbietet (ansonsten die nächsthöhere), und gibt dies an. <x5/> wählt die am kompatibelsten Qualität, wie die <g6>Am kompatibelsten (H.264 + AAC)</g6> im Fenster: das beste H.264-Bild mit AAC-Ton, in einer MP4-Datei, die in jedem Editor, Fernseher und Telefon abgespielt wird; eine Seite ohne diese Qualität gibt dies an (nichts wird konvertiert). <x7/> wählt den Qualitätsselektor von <x8/> (<x9/> = die beste einzelne Datei; <x10/> = nur der Ton, wie die Seite ihn anbietet, nicht konvertiert; <x11/>, <x12/>, <x13/> oder <x14/> = der Ton als MP3 mit dieser Bitrate, <x15/> mit der besten variablen Bitrate; <x16/> = als Opus; <x17/> = als FLAC, verlustfrei, aber nicht besser als der Ton der Seite; Konvertierungen benötigen ffmpeg). <x18/>: MDMs eigener Downloader lädt jeden Stream, den yt-dlp findet, über diese Anzahl von Verbindungen herunter (standardmäßig 8, 1 bis 128), einen Stream in Teilen (HLS, DASH) diese Anzahl von Teilen gleichzeitig. <x19/> speichert Untertitel daneben: Sprachcodes von <x20/> (<x21/>), oder <x22/> für alle, die der Uploader bereitgestellt hat; <x23/> wählt stattdessen die automatischen Untertitel der Seite; <x24/> bettet sie in das Video ein (benötigt ffmpeg, MP4 oder MKV). Mit ffmpeg werden die Kapitel des Videos ebenfalls in die Datei geschrieben, wie es die Option <g25>Kapitel einbetten</g25> im Fenster „Video herunterladen“ tut. <x26/> leitet die Verbindungen der Downloads und die von yt-dlp (und ffmpeg) über einen Netzwerkadapter, wie bei <x27/>; wenn dieser nicht verbunden ist, startet nichts. Wenn kein Format der Seite übereinstimmt, listet der Fehler die angebotenen Formate auf, wie es <x28/> tut."
+   "text": "Ein Video herunterladen. Ohne <x1/> oder <x2/> wird die beste Qualität heruntergeladen, die auch im Fenster „Video herunterladen“ voreingestellt ist: Mit ffmpeg das beste Bild mit dem besten Ton zusammengefügt (eine Seite, deren Bilder und Töne getrennt sind, wie Bilibili, benötigt ffmpeg für ein Video), ansonsten die beste Datei mit beidem. <x3/> (oder <x4/>) wählt diese Höhe oder die nächstniedrigere, die die Seite anbietet (ansonsten die nächsthöhere), und gibt dies an. <x5/> wählt die am kompatibelsten Qualität, wie die <g6>Am kompatibelsten (H.264 + AAC)</g6> im Fenster: das beste H.264-Bild mit AAC-Ton, in einer MP4-Datei, die in jedem Editor, Fernseher und Telefon abgespielt wird; eine Seite ohne diese Qualität gibt dies an (nichts wird konvertiert). <x7/> wählt den Qualitätsselektor von <x8/> (<x9/> = die beste einzelne Datei; <x10/> = nur der Ton, wie die Seite ihn anbietet, nicht konvertiert; <x11/>, <x12/>, <x13/> oder <x14/> = der Ton als MP3 mit dieser Bitrate, <x15/> mit der besten variablen Bitrate; <x16/> = als Opus; <x17/> = als FLAC, verlustfrei, aber nicht besser als der Ton der Seite; Konvertierungen benötigen ffmpeg). <x18/>: BMDs eigener Downloader lädt jeden Stream, den yt-dlp findet, über diese Anzahl von Verbindungen herunter (standardmäßig 8, 1 bis 128), einen Stream in Teilen (HLS, DASH) diese Anzahl von Teilen gleichzeitig. <x19/> speichert Untertitel daneben: Sprachcodes von <x20/> (<x21/>), oder <x22/> für alle, die der Uploader bereitgestellt hat; <x23/> wählt stattdessen die automatischen Untertitel der Seite; <x24/> bettet sie in das Video ein (benötigt ffmpeg, MP4 oder MKV). Mit ffmpeg werden die Kapitel des Videos ebenfalls in die Datei geschrieben, wie es die Option <g25>Kapitel einbetten</g25> im Fenster „Video herunterladen“ tut. <x26/> leitet die Verbindungen der Downloads und die von yt-dlp (und ffmpeg) über einen Netzwerkadapter, wie bei <x27/>; wenn dieser nicht verbunden ist, startet nichts. Wenn kein Format der Seite übereinstimmt, listet der Fehler die angebotenen Formate auf, wie es <x28/> tut."
   },
   "f7e4f412acae6b3f": {
    "source": "<g1>6</g1> of 10",
@@ -17612,7 +17612,7 @@
   },
   "ff13a620dcd52567": {
    "source": "<g1>Classic</g1>: BMD's own look, the default.",
-   "text": "<g1>Klassisch</g1>: MDMs eigenes Aussehen, die Standardeinstellung."
+   "text": "<g1>Klassisch</g1>: BMDs eigenes Aussehen, die Standardeinstellung."
   },
   "ff26f3ab22a86c09": {
    "source": "installs or updates gallery-dl, verified in the same way.",

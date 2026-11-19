@@ -115,7 +115,7 @@ def main():
         data, dest = os.path.join(work, "data"), os.path.join(work, "downloads", "smoke.bin")
         os.makedirs(data)
         os.makedirs(os.path.dirname(dest))
-        env = dict(os.environ, MDM_DATA_DIR=data, MDM_DOWNLOADS=os.path.dirname(dest))
+        env = dict(os.environ, BMD_DATA_DIR=data, BMD_DOWNLOADS=os.path.dirname(dest))
         out = subprocess.run(
             [os.path.join(folder, "bmd" + exe), "--cli", "--json", "get", url,
              "-o", dest, "--checksum", "sha256:" + hashlib.sha256(body).hexdigest()],

@@ -36,12 +36,6 @@ use sha2::{Digest, Sha256};
 
 /// yt-dlp's release signing key, from its repository (`public.key`).
 const YTDLP_KEY: &str = include_str!("../keys/yt-dlp.asc");
-/// BMD's release signing key (Ed25519, fingerprint ED4D65B61F3809DA1AF22D954EFF92B31405DDFB),
-/// the key of the repository the app updates from (`help::LATEST`): release.yml signs each
-/// release's SHA256SUMS.txt with it (the MDM_RELEASE_KEY secret), and the app updates itself
-/// only from a list it signed. Replaced when this fork moved its releases to its own repository:
-/// the key before it (5826D399…) is upstream's, which never signs this fork's releases.
-const BMD_KEY: &str = include_str!("../keys/bmd-release.asc");
 /// Where releases come from: GitHub's API, else its pages (`github`, #1337).
 const RELEASES: &str = "https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest";
 /// yt-dlp's repository on GitHub.
@@ -161,23 +155,6 @@ fn ytdlp_asset_for(os: &str, arch: &str) -> Option<&'static str> {
 /// subkeys.
 pub fn signed_by_ytdlp(sums: &[u8], sig: &[u8]) -> bool {
     signed_by(YTDLP_KEY, sums, sig)
-}
-
-/// Whether `sums` (a release's SHA256SUMS.txt) carries a valid signature `sig` by Mister
-/// Download Manager's release key.
-pub fn signed_by_bmd(sums: &[u8], sig: &[u8]) -> bool {
-    if signed_by(BMD_KEY, sums, sig) {
-        return true;
-    }
-    // Update now's end-to-end tests (feature `test-update`, never in a release): a fake
-    // release on a lab server, signed with a test key of their own.
-    #[cfg(feature = "test-update")]
-    if let Some(key) =
-        std::env::var_os("BMD_TEST_UPDATE_KEY").and_then(|p| std::fs::read_to_string(p).ok())
-    {
-        return signed_by(&key, sums, sig);
-    }
-    false
 }
 
 /// Whether `data` carries a valid detached signature `sig` (binary OpenPGP) by the armored
@@ -490,16 +467,14 @@ mod tests {
     }
 
     #[test]
-    fn bmd_releases_are_checked_against_mdms_own_key() {
-        let sums = include_bytes!("../tests/fixtures/mdm-SHA256SUMS.txt");
-        let sig = include_bytes!("../tests/fixtures/mdm-SHA256SUMS.txt.sig");
-        assert!(signed_by_bmd(sums, sig));
-        let mut forged = sums.to_vec();
-        forged[0] = if forged[0] == b'0' { b'1' } else { b'0' };
-        assert!(!signed_by_bmd(&forged, sig));
+    fn a_list_signed_by_another_key_is_not_yt_dlps() {
+        let sums = include_bytes!("../tests/fixtures/ed25519-signed.txt");
+        let sig = include_bytes!("../tests/fixtures/ed25519-signed.txt.sig");
+        let key = include_str!("../tests/fixtures/ed25519-test-key.asc");
+        assert!(signed_by(key, sums, sig));
         // Each key signs for itself only.
         assert!(!signed_by_ytdlp(sums, sig));
-        assert!(!signed_by_bmd(SUMS, SIG));
+        assert!(!signed_by(key, SUMS, SIG));
     }
 
     #[test]

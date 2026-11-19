@@ -131,9 +131,9 @@ winget upgrade AhmedNefzaoui.BMD</code></pre>
 
       <h3 id="check-your-download">Check your download</h3>
       <ol>
-        <li>From the release, download <a href="{{FILE_SUMS}}">SHA256SUMS.txt</a>, the SHA-256 checksum of every file, and its signature, <a href="{{FILE_SUMS_SIG}}">SHA256SUMS.txt.sig</a>.</li>
+        <li>From the release, download <a href="{{FILE_SUMS}}">SHA256SUMS.txt</a>, the SHA-256 checksum of every file.</li>
         <li>Get your file's checksum: on Windows with <code>certutil -hashfile file SHA256</code>, on macOS and Linux with <code>shasum -a 256 file</code>. It must match the file's line in SHA256SUMS.txt.</li>
-        <li>To be sure the list itself is ours, check its signature with GnuPG: import <a href="{{RELEASE_KEY}}">BMD's release key</a>, then run <code>gpg --verify SHA256SUMS.txt.sig SHA256SUMS.txt</code>. It should report a <b translate="no">Good signature</b> from the key <code>5826 D399 249D E856 EA08 7D80 2E29 3C28 E8A6 9D74</code>.</li>
+        <li>To be sure the file was built by us, check its build provenance with the GitHub CLI: <code>gh attestation verify file --repo DecoyINDIA/BMD</code>. It should say the file was built by this repository's release workflow.</li>
       </ol>
       <p>Every file is built from the public source by GitHub Actions; the build logs are on <a href="{{REPO}}/actions">GitHub</a>.</p>
 
@@ -142,7 +142,7 @@ winget upgrade AhmedNefzaoui.BMD</code></pre>
       <p>A few antivirus programs, mostly machine-learning engines, flag new installers they have rarely seen. On VirusTotal, a handful of small engines flagging the setup while the big ones stay clean is usually a false positive. If the checksum matches, it is the file we published; if something still looks wrong, <a href="{{REPO}}/issues">tell us on GitHub</a>. More in <a href="/help/troubleshooting.html#antivirus">Troubleshooting</a>.</p>
 
       <h2>Older versions and source code</h2>
-      <p>Every release, with its notes and files, is on <a href="{{REPO}}/releases">GitHub Releases</a>. The source code is at <a href="{{REPO}}">github.com/anefzaoui/misterdownloadmanager</a> under the GNU GPL, version 3.</p>
+      <p>Every release, with its notes and files, is on <a href="{{REPO}}/releases">GitHub Releases</a>. The source code is at <a href="{{REPO}}">github.com/DecoyINDIA/BMD</a> under the GNU GPL, version 3.</p>
 
       <div class="cta-band"><p>Something not working? We'd like to know.</p><a class="btn btn-line" href="{{REPO}}/issues">Report a problem</a></div>
     </div>

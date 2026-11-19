@@ -1,6 +1,6 @@
 # The progress window of a video and of a torrent, for the docs (progress-video.png,
 # progress-torrent.png: docs/images/*.webp through `tools/shots/make.py docs`), at 1x and off the screens, as docs-shots.ps1 takes the others. Each
-# runs in a BMD instance of its own (MDM_DATA_DIR, BMD_OFFSCREEN) whose list
+# runs in a BMD instance of its own (BMD_DATA_DIR, BMD_OFFSCREEN) whose list
 # holds that one download; the automation API starts it and /show progress opens its window,
 # so nothing is clicked or typed. The video comes from the labserver through yt-dlp (copied
 # from your own BMD's tools folder: Tasks → Download video from a page installs it); the
@@ -97,7 +97,7 @@ function Scenario([string]$name, [hashtable]$item, [int]$wait, [scriptblock]$pre
   }
   if ($prepare) { & $prepare $dir }
   [IO.File]::WriteAllText("$dir\data\downloads.json", ($list | ConvertTo-Json -Depth 8))
-  $env:MDM_DATA_DIR = "$dir\data"
+  $env:BMD_DATA_DIR = "$dir\data"
   $env:BMD_OFFSCREEN = "1"
   if ($At) { $env:BMD_OFFSCREEN_AT = $At }
   $app = Start-Process -PassThru $exe
@@ -134,7 +134,7 @@ function Scenario([string]$name, [hashtable]$item, [int]$wait, [scriptblock]$pre
     }
   } finally {
     Stop-Process -Id $app.Id -ErrorAction SilentlyContinue
-    Remove-Item Env:MDM_DATA_DIR, Env:BMD_OFFSCREEN, Env:BMD_OFFSCREEN_AT, Env:BMD_LAB_PEERS -ErrorAction SilentlyContinue
+    Remove-Item Env:BMD_DATA_DIR, Env:BMD_OFFSCREEN, Env:BMD_OFFSCREEN_AT, Env:BMD_LAB_PEERS -ErrorAction SilentlyContinue
   }
 }
 

@@ -74,7 +74,7 @@ BMD splits a file into parts and downloads them over several connections at once
 - Some servers allow only a few connections. BMD notices this and stops asking that server for more. What it has learned shows in **Options → Connection** under **Exceptions**, marked **(auto)**.
 - You can set a number for a server yourself: **Options → Connection → New**, then type the server's name and the number of connections.
 
-Each connection writes straight into the file's place on disk, in a part file named `<name>.mdm.part` next to the final file. When every part is done, BMD checks the size and renames it. There is no temporary folder and no joining step at the end.
+Each connection writes straight into the file's place on disk, in a part file named `<name>.bmd.part` next to the final file. When every part is done, BMD checks the size and renames it. There is no temporary folder and no joining step at the end.
 
 ## Resuming
 

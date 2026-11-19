@@ -493,9 +493,9 @@ const SUBTITLES: [&str; 10] = [
 /// saved as `<stem>.%(ext)s`: an unfinished run's (`<ext>.part`, `<ext>.ytdl`,
 /// `<ext>.part-Frag<N>[.part]`, each also for one stream of a merged choice as `f<id>.<ext>…`,
 /// that stream once whole, `f<id>.<ext>`, and a merge's `temp.<ext>`; BMD's engine's part file
-/// and resume state for such a stream, `f<id>.<ext>.mdm.part` and `.mdm.json`, #769); with
+/// and resume state for such a stream, `f<id>.<ext>.bmd.part` and `.bmd.json`, #769); with
 /// `outputs`, also the finished file (`<ext>`) and its subtitles (`<language>.<srt|vtt…>`).
-/// Nothing else: another download's files (BMD's own `.mdm.part`), a file merely named alike.
+/// Nothing else: another download's files (BMD's own `.bmd.part`), a file merely named alike.
 fn yt_dlp_leftover(rest: &str, outputs: bool) -> bool {
     let media = |s: &str| MEDIA.contains(&s);
     let word = |s: &str| {
@@ -529,8 +529,8 @@ fn yt_dlp_leftover(rest: &str, outputs: bool) -> bool {
     let working = match parts.as_slice() {
         ["temp", ext] => media(ext),
         [f, ext] if format(f) => media(ext),
-        // The engine's own names (crates/engine naming.rs, state.rs), kept from before the rebrand.
-        [f, ext, "mdm", "part" | "json"] if format(f) => media(ext),
+        // The engine's own names (crates/engine naming.rs, state.rs).
+        [f, ext, "bmd", "part" | "json"] if format(f) => media(ext),
         [f, tail @ ..] if format(f) => unfinished(tail),
         p => unfinished(p),
     };
@@ -638,7 +638,7 @@ enum Attempt {
         rerouted: bool,
     },
     /// Every stream came, and joining them failed: no other server or look-up mends that. With
-    /// the streams' format ids (`MDMQ`'s `1280+aud-English`).
+    /// the streams' format ids (`BMDQ`'s `1280+aud-English`).
     MergeFailed(String, Vec<String>),
 }
 
@@ -863,7 +863,7 @@ fn supervise(
 /// stay what they are.
 pub const MAX_WHILE_RUNNING: f64 = 0.999;
 
-/// yt-dlp's progress lines (`MDMP <downloaded> <total> <estimate> <speed> <format id>`) made
+/// yt-dlp's progress lines (`BMDP <downloaded> <total> <estimate> <speed> <format id>`) made
 /// into one steady figure. Each stream of a merged download (video, then audio) reports from 0
 /// with its own total, and a fragmented stream's total (HLS, DASH) is an estimate that moves with
 /// every fragment: the streams are added up, and the fraction done goes back only when a stream's
@@ -876,15 +876,15 @@ pub const MAX_WHILE_RUNNING: f64 = 0.999;
 /// and that stream's, so the bar reaches the end. Which streams there are, yt-dlp says before it
 /// downloads ([`Meter::quality`]), and each line names the one it is for ([`Meter::named`]).
 ///
-/// A line named otherwise (no `MDMQ`, an id it didn't name, `NA`) is read as before: back near 0
-/// is the next stream, never counted as one of `MDMQ`'s, and the window's size holds the total.
+/// A line named otherwise (no `BMDQ`, an id it didn't name, `NA`) is read as before: back near 0
+/// is the next stream, never counted as one of `BMDQ`'s, and the window's size holds the total.
 /// Subtitle files come before the video with lines of their own, `NA` (#68): what they brought
 /// leaves the bar when the first stream's line comes.
 struct Meter {
     expected: Option<u64>,
-    /// `MDMQ`'s format id and resolution (`137+140 1920x1080`), once yt-dlp has said.
+    /// `BMDQ`'s format id and resolution (`137+140 1920x1080`), once yt-dlp has said.
     quality: Option<String>,
-    /// The stream the lines are for now (its format id), how many of `MDMQ`'s streams have
+    /// The stream the lines are for now (its format id), how many of `BMDQ`'s streams have
     /// started, and whether a line was for all of them at once (`137+140`).
     current: Option<String>,
     started: usize,
@@ -915,21 +915,21 @@ impl Meter {
         }
     }
 
-    /// yt-dlp's `MDMQ <format id> <resolution>` ([`QUALITY`]): a merged choice's id names each
+    /// yt-dlp's `BMDQ <format id> <resolution>` ([`QUALITY`]): a merged choice's id names each
     /// stream (`137+140`).
     fn quality(&mut self, rest: &str) {
         let rest = rest.trim();
         self.quality = (!rest.is_empty()).then(|| rest.to_owned());
     }
 
-    /// How many streams `MDMQ` named.
+    /// How many streams `BMDQ` named.
     fn streams(&self) -> Option<usize> {
         self.quality.as_ref().map(|q| q.split('+').count())
     }
 
-    /// Whether a line's format `id` is one of the streams `MDMQ` named (`137` of `137+140`;
+    /// Whether a line's format `id` is one of the streams `BMDQ` named (`137` of `137+140`;
     /// false), or all of them at once (`137+140`, as ffmpeg downloads and merges them; true).
-    /// None for any other: none named, `NA`, an id `MDMQ` didn't name, no `MDMQ`.
+    /// None for any other: none named, `NA`, an id `BMDQ` didn't name, no `BMDQ`.
     fn named<'a>(&self, id: Option<&'a str>) -> Option<(&'a str, bool)> {
         let (q, id) = (self.quality.as_deref()?, id.filter(|id| *id != "NA")?);
         // The id, then the resolution after the last one (one word, or two: `audio only`).
@@ -1064,9 +1064,9 @@ impl Meter {
 /// How one yt-dlp run on the looked-up page ended.
 struct Ran {
     status: std::io::Result<std::process::ExitStatus>,
-    /// Where it said it saved the file (`MDMF`).
+    /// Where it said it saved the file (`BMDF`).
     saved: Option<PathBuf>,
-    /// The quality it chose (`MDMQ`).
+    /// The quality it chose (`BMDQ`).
     quality: Option<String>,
     warnings: Vec<String>,
     /// What it said when it failed.
@@ -1124,24 +1124,24 @@ fn run(
             }
             let text = String::from_utf8_lossy(&buf);
             let line = text.trim_end_matches(['\r', '\n']);
-            if let Some(rest) = line.strip_prefix("MDMF ") {
+            if let Some(rest) = line.strip_prefix("BMDF ") {
                 saved = Some(PathBuf::from(rest.trim()));
                 // Merged and moved: done joining.
                 *merged.lock().unwrap() = None;
                 progress.lock().unwrap().merging = None;
-            } else if let Some(rest) = line.strip_prefix("MDMQ ") {
+            } else if let Some(rest) = line.strip_prefix("BMDQ ") {
                 if let Some(m) = meter.as_deref_mut() {
                     m.quality(rest);
                 }
                 quality = Some(rest.trim().to_owned());
-            } else if let Some(rest) = line.strip_prefix("MDMP ")
+            } else if let Some(rest) = line.strip_prefix("BMDP ")
                 && let Some(m) = meter.as_deref_mut()
             {
                 m.line(rest, &mut progress.lock().unwrap());
-            } else if let Some(rest) = line.strip_prefix("MDMM ")
+            } else if let Some(rest) = line.strip_prefix("BMDM ")
                 && quality.as_deref().is_some_and(several_streams)
             {
-                // Several streams: ffmpeg joins them now (#736). Told by this run's `MDMQ`, not
+                // Several streams: ffmpeg joins them now (#736). Told by this run's `BMDQ`, not
                 // by the meter: when BMD's engine downloaded the streams (#769) there is none,
                 // and that is how most videos come down.
                 *merged.lock().unwrap() = Some(merge_file(Path::new(rest.trim())));
@@ -1228,7 +1228,7 @@ fn watch_merge(
     }
 }
 
-/// Whether `MDMQ`'s quality (`137+140 1920x1080`) is a choice of several streams, which
+/// Whether `BMDQ`'s quality (`137+140 1920x1080`) is a choice of several streams, which
 /// yt-dlp's ffmpeg merges.
 fn several_streams(quality: &str) -> bool {
     quality
@@ -1636,13 +1636,13 @@ fn choose(exe: &Path, args: &[String], file: &Path) -> Result<serde_json::Value,
     let out = proc::output(cmd, "yt-dlp", Duration::from_secs(90)).map_err(|e| e.to_string())?;
     String::from_utf8_lossy(&out)
         .lines()
-        .find_map(|l| l.strip_prefix("MDMJ "))
+        .find_map(|l| l.strip_prefix("BMDJ "))
         .and_then(|j| serde_json::from_str(j).ok())
         .ok_or_else(|| "yt-dlp gave no choice of formats".to_owned())
 }
 
-/// yt-dlp's choice as a line of JSON: `MDMJ {…}` (`filename` and the chosen formats in it).
-const CHOICE: &str = "MDMJ %()j";
+/// yt-dlp's choice as a line of JSON: `BMDJ {…}` (`filename` and the chosen formats in it).
+const CHOICE: &str = "BMDJ %()j";
 
 /// BMD's engine for a video's streams (#769): the engine itself, the arguments yt-dlp chooses
 /// the formats with (`choose`), and the download's engine part under way.
@@ -1867,17 +1867,17 @@ pub fn limit_args(rate: Option<u64>) -> Vec<String> {
         .unwrap_or_default()
 }
 
-/// Our progress line: `MDMP <downloaded> <total> <estimate> <speed> <format id>` (`NA` when
+/// Our progress line: `BMDP <downloaded> <total> <estimate> <speed> <format id>` (`NA` when
 /// unknown; the format id is the stream's, `NA` for a subtitle file).
-const PROGRESS: &str = "download:MDMP %(progress.downloaded_bytes)s %(progress.total_bytes)s %(progress.total_bytes_estimate)s %(progress.speed)s %(info.format_id)s";
-/// The final file: `MDMF <path>`.
-const FINAL: &str = "after_move:MDMF %(filepath)s";
-/// Every stream is in, the file they make is next (`MDMM <path>`): printed before yt-dlp's
+const PROGRESS: &str = "download:BMDP %(progress.downloaded_bytes)s %(progress.total_bytes)s %(progress.total_bytes_estimate)s %(progress.speed)s %(info.format_id)s";
+/// The final file: `BMDF <path>`.
+const FINAL: &str = "after_move:BMDF %(filepath)s";
+/// Every stream is in, the file they make is next (`BMDM <path>`): printed before yt-dlp's
 /// post-processing, its merge first (#736).
-const MERGE: &str = "post_process:MDMM %(filepath)s";
-/// The quality yt-dlp chose, before it downloads: `MDMQ <format id> <resolution>` (the log names
+const MERGE: &str = "post_process:BMDM %(filepath)s";
+/// The quality yt-dlp chose, before it downloads: `BMDQ <format id> <resolution>` (the log names
 /// it when it isn't the one asked for, #94).
-const QUALITY: &str = "video:MDMQ %(format_id)s %(resolution)s";
+const QUALITY: &str = "video:BMDQ %(format_id)s %(resolution)s";
 
 impl VideoJob {
     /// Download `url` in format `selector` to `dir/<stem>.<ext>`; when yt-dlp downloads it by
@@ -2191,9 +2191,9 @@ mod tests {
             "Clip.fdash-1.m4a.part",
             "Clip.fhttp-480p.mp4",
             "clip.temp.mp4",
-            "Clip.f137.mp4.mdm.part",
-            "Clip.f137.mp4.mdm.json",
-            "Clip.f251.webm.mdm.part",
+            "Clip.f137.mp4.bmd.part",
+            "Clip.f137.mp4.bmd.json",
+            "Clip.f251.webm.bmd.part",
         ];
         let finished = [
             "Clip.mp4",
@@ -2208,11 +2208,11 @@ mod tests {
             "Clip.f1.jpg",
             "Clip.fhls-video.mp4",
             "Clip.v2.mp4.part",
-            "Clip.pdf.mdm.part",
-            "Clip.v2.zip.mdm.part",
-            "Clip.mp4.mdm.part",
+            "Clip.pdf.bmd.part",
+            "Clip.v2.zip.bmd.part",
+            "Clip.mp4.bmd.part",
             "Clip.f137.mp4.bmd.zip",
-            "Clip.f1.jpg.mdm.part",
+            "Clip.f1.jpg.bmd.part",
             "Clip.zip",
             "Clip.notes.txt",
             "Clip.final cut.mp4",
@@ -2264,7 +2264,7 @@ mod tests {
         assert_eq!(merge_step(None, 0.4), 0.4);
         assert_eq!(merge_step(Some(0.4), 0.0), 0.4);
         assert_eq!(merge_step(Some(0.4), 0.45), 0.45);
-        // A merge is a choice of several streams, as `MDMQ` names them.
+        // A merge is a choice of several streams, as `BMDQ` names them.
         assert!(several_streams("401+140 3840x2160"));
         assert!(!several_streams("18 640x360"));
         assert!(!several_streams("140 audio only"));
@@ -2465,10 +2465,10 @@ mod tests {
             merging: None,
             merge_failed: None,
         };
-        // `MDMQ …` as yt-dlp prints it before it downloads; every other line is an `MDMP` one's.
+        // `BMDQ …` as yt-dlp prints it before it downloads; every other line is an `BMDP` one's.
         lines
             .iter()
-            .filter_map(|l| match l.strip_prefix("MDMQ ") {
+            .filter_map(|l| match l.strip_prefix("BMDQ ") {
                 Some(q) => {
                     m.quality(q);
                     None
@@ -2551,7 +2551,7 @@ mod tests {
     fn expected_size_holds_the_bar_back() {
         let v = run(Some(1000), &["400 400 NA 0"]);
         assert_eq!(v[0], (400, Some(1000)));
-        let v = run(Some(1000), &["MDMQ 137+140 1920x1080", "400 400 NA 0 137"]);
+        let v = run(Some(1000), &["BMDQ 137+140 1920x1080", "400 400 NA 0 137"]);
         assert_eq!(v[0], (400, Some(1000)));
     }
 
@@ -2606,7 +2606,7 @@ mod tests {
             .collect()
     }
 
-    /// The figures as before yt-dlp named its streams: the same lines without `MDMQ` and without
+    /// The figures as before yt-dlp named its streams: the same lines without `BMDQ` and without
     /// their format ids.
     fn as_before(expected: Option<u64>, streams: &[Vec<String>]) -> Vec<(u64, Option<u64>)> {
         let bare: Vec<Vec<String>> = streams
@@ -2626,7 +2626,7 @@ mod tests {
     #[test]
     fn an_estimate_above_the_size_still_ends_at_the_end() {
         let stream = [hls_stream("hls-6400", 10, 100)];
-        let v = run(Some(2000), &lines(Some("MDMQ hls-6400 1280x720"), &stream));
+        let v = run(Some(2000), &lines(Some("BMDQ hls-6400 1280x720"), &stream));
         assert_forward(&fractions(&v));
         assert_ends(&v);
         let f = fractions(&as_before(Some(2000), &stream));
@@ -2643,7 +2643,7 @@ mod tests {
         ];
         let v = run(
             Some(4000),
-            &lines(Some("MDMQ hls-7040+hls-aud-English 1280x720"), &streams),
+            &lines(Some("BMDQ hls-7040+hls-aud-English 1280x720"), &streams),
         );
         let f = fractions(&v);
         assert_forward(&f);
@@ -2658,7 +2658,7 @@ mod tests {
     /// own total its end.
     #[test]
     fn a_line_for_every_stream_at_once_is_the_whole_download() {
-        let q = "MDMQ 7040+aud-English 1280x720";
+        let q = "BMDQ 7040+aud-English 1280x720";
         let all = [hls_stream("7040+aud-English", 20, 100)];
         let v = run(Some(4000), &lines(Some(q), &all));
         assert_forward(&fractions(&v));
@@ -2667,10 +2667,10 @@ mod tests {
         assert_ends(&v);
     }
 
-    /// Lines whose format id `MDMQ` didn't name, or `NA` on every line (a yt-dlp that names no
+    /// Lines whose format id `BMDQ` didn't name, or `NA` on every line (a yt-dlp that names no
     /// stream): read exactly as before, never left out (the bar never stands still at 0).
     #[test]
-    fn lines_not_named_by_mdmq_are_read_as_before() {
+    fn lines_not_named_by_bmdq_are_read_as_before() {
         for (expected, ids) in [
             (Some(4000), ["999", "998"]),
             (Some(4000), ["NA", "NA"]),
@@ -2679,7 +2679,7 @@ mod tests {
             (None, ["999", "998"]),
         ] {
             let streams = [hls_stream(ids[0], 16, 100), hls_stream(ids[1], 4, 100)];
-            let v = run(expected, &lines(Some("MDMQ 137+140 1920x1080"), &streams));
+            let v = run(expected, &lines(Some("BMDQ 137+140 1920x1080"), &streams));
             assert_eq!(v, as_before(expected, &streams), "{expected:?} {ids:?}");
             assert_eq!(v[v.len() - 1].0, 2000);
             if expected != Some(4000) {
@@ -2701,7 +2701,7 @@ mod tests {
             hls_stream("137", 16, 100),
             hls_stream("140", 4, 100),
         ];
-        let v = run(Some(4000), &lines(Some("MDMQ 137+140 1920x1080"), &streams));
+        let v = run(Some(4000), &lines(Some("BMDQ 137+140 1920x1080"), &streams));
         let subs = streams[0].len() + streams[1].len();
         assert!(fractions(&v[..subs]).iter().all(|x| *x < 0.02), "{v:?}");
         assert_eq!(v[subs - 1].0, 60);
@@ -2725,7 +2725,7 @@ mod tests {
             ["300 NA 1600 5 137".to_owned(), "0 NA NA 0 137".to_owned()],
         );
         let streams = [video, hls_stream("140", 4, 100)];
-        let v = run(Some(4000), &lines(Some("MDMQ 137+140 1920x1080"), &streams));
+        let v = run(Some(4000), &lines(Some("BMDQ 137+140 1920x1080"), &streams));
         assert_eq!([v[8].0, v[9].0, v[10].0, v[11].0], [800, 800, 800, 900]);
         let f = fractions(&v);
         assert_forward(&f);
@@ -2741,7 +2741,7 @@ mod tests {
     #[test]
     fn noisy_estimates_never_pull_the_bar_back() {
         let mut l = vec![
-            "MDMQ hls-1 1280x720".to_owned(),
+            "BMDQ hls-1 1280x720".to_owned(),
             "0 NA NA 0 hls-1".to_owned(),
         ];
         for (got, estimate) in [
@@ -2769,16 +2769,16 @@ mod tests {
     #[test]
     fn an_estimate_below_the_size_is_as_before() {
         for (expected, streams, quality) in [
-            (1000, vec![hls_stream("22", 15, 100)], "MDMQ 22 1280x720"),
+            (1000, vec![hls_stream("22", 15, 100)], "BMDQ 22 1280x720"),
             (
                 1200,
                 vec![hls_stream("137", 16, 100), hls_stream("140", 4, 100)],
-                "MDMQ 137+140 1920x1080",
+                "BMDQ 137+140 1920x1080",
             ),
             (
                 1800,
                 vec![hls_stream("137", 16, 100), hls_stream("140", 4, 100)],
-                "MDMQ 137+140 1920x1080",
+                "BMDQ 137+140 1920x1080",
             ),
         ] {
             let with = run(Some(expected), &lines(Some(quality), &streams));
@@ -2787,7 +2787,7 @@ mod tests {
         }
     }
 
-    /// The streams `MDMQ` names, and which format ids are theirs: the resolution after the last
+    /// The streams `BMDQ` names, and which format ids are theirs: the resolution after the last
     /// one (two words for a sound) is not part of its id; the merged id is all of them at once;
     /// nothing is named before yt-dlp has said, nor `NA`.
     #[test]
@@ -3090,7 +3090,7 @@ mod tests {
     #[test]
     fn a_first_estimate_as_big_as_what_came_is_no_end() {
         let lines = [
-            "MDMQ 1080p+aud192k-Track_1 1920x1080",
+            "BMDQ 1080p+aud192k-Track_1 1920x1080",
             "1024 NA 1024 491.2 1080p",
             "3072 NA 20480.0 491.2 1080p",
             "7168 NA 61440.0 491.2 1080p",

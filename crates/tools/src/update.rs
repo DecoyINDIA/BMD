@@ -1,12 +1,13 @@
 //! BMD updating itself: how this copy was installed, the release file that
-//! replaces it, and that file fetched and checked against the release's SHA256SUMS.txt, whose
-//! signature by BMD's release key ([`crate::signed_by_bmd`]) is checked first. Putting the file
-//! in place is the app's (`crates/app/src/update.rs`): it has to close itself to do it.
+//! replaces it, and that file fetched and checked against the release's SHA256SUMS.txt, read over
+//! HTTPS from BMD's own GitHub releases (releases aren't signed: the list is trusted as GitHub
+//! serves it). Putting the file in place is the app's (`crates/app/src/update.rs`): it has to
+//! close itself to do it.
 
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
 
-use crate::{Error, signed_by_bmd, sum_for};
+use crate::{Error, sum_for};
 
 /// How this copy of BMD was installed: what an update replaces, and how.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -248,8 +249,7 @@ impl Progress {
 }
 
 /// Fetch release file `name` from `assets` (name, download address) into `dir` with BMD's own
-/// engine (`net`), after checking the release's SHA256SUMS.txt is signed by BMD's key, and check
-/// the file against it. Returns the file.
+/// engine (`net`), and check the file against the release's SHA256SUMS.txt. Returns the file.
 pub async fn fetch(
     assets: &[(String, String)],
     name: &str,
@@ -265,13 +265,8 @@ pub async fn fetch(
             .ok_or_else(|| Error::Missing(file.to_owned()))
     };
     let client = crate::client(net, &url("SHA256SUMS.txt")?)?;
-    let sums = crate::signed_list(
-        &client,
-        &url("SHA256SUMS.txt")?,
-        &url("SHA256SUMS.txt.sig")?,
-        signed_by_bmd,
-    )
-    .await?;
+    let sums = String::from_utf8_lossy(&crate::get_bytes(&client, &url("SHA256SUMS.txt")?).await?)
+        .into_owned();
     let expected =
         sum_for(&sums, name).ok_or_else(|| Error::Missing(format!("checksum for {name}")))?;
     std::fs::create_dir_all(dir)?;
@@ -415,21 +410,20 @@ Connection: close
     }
 
     #[tokio::test]
-    async fn a_release_file_is_taken_only_from_a_list_signed_by_bmd() {
-        let zip = "MisterDownloadManager-9.9.9-x64.zip";
-        let setup = "MisterDownloadManager-9.9.9-setup.exe";
+    async fn a_release_file_is_taken_only_as_its_checksum_list_says() {
+        let zip = "BMD-9.9.9-x64.zip";
+        let setup = "BMD-9.9.9-setup.exe";
         let assets = |base: &str| -> Vec<(String, String)> {
-            ["SHA256SUMS.txt", "SHA256SUMS.txt.sig", zip, setup]
+            ["SHA256SUMS.txt", zip, setup]
                 .iter()
                 .map(|n| (n.to_string(), format!("{base}/{n}")))
                 .collect()
         };
         let base = serve(vec![
-            ("SHA256SUMS.txt", "mdm-SHA256SUMS.txt"),
-            ("SHA256SUMS.txt.sig", "mdm-SHA256SUMS.txt.sig"),
+            ("SHA256SUMS.txt", "release-SHA256SUMS.txt"),
             (zip, zip),
-            // Not what the signed list says it is.
-            (setup, "mdm-SHA256SUMS.txt"),
+            // Not what the list says it is.
+            (setup, "release-SHA256SUMS.txt"),
         ]);
         let dir = tempfile::tempdir().unwrap();
         // Through BMD's own engine, as the app fetches it.
@@ -444,10 +438,10 @@ Connection: close
         let out = dir.path().join("out");
         unzip(&file, &out).unwrap();
         assert_eq!(
-            std::fs::read(single_folder(&out).join("misterdownloadmanager.exe")).unwrap(),
+            std::fs::read(single_folder(&out).join("bmd.exe")).unwrap(),
             b"new program"
         );
-        // A file that isn't the one the signed list names is refused, and not kept.
+        // A file that isn't the one the list names is refused, and not kept.
         let err = fetch(
             &assets(&base),
             setup,
@@ -466,14 +460,10 @@ Connection: close
             .filter(|n| n.starts_with(setup))
             .collect();
         assert!(left.is_empty(), "{left:?}");
-        // A list signed by another key (yt-dlp's real one) is refused.
-        let base = serve(vec![
-            ("SHA256SUMS.txt", "SHA2-256SUMS"),
-            ("SHA256SUMS.txt.sig", "SHA2-256SUMS.sig"),
-            (zip, zip),
-        ]);
+        // A list that doesn't name the file: refused.
+        let base = serve(vec![("SHA256SUMS.txt", "SHA2-256SUMS"), (zip, zip)]);
         let err = fetch(&assets(&base), zip, dir.path(), &net, &Progress::default()).await;
-        assert!(matches!(err, Err(Error::BadSignature)), "{err:?}");
+        assert!(matches!(err, Err(Error::Missing(_))), "{err:?}");
     }
 
     #[test]

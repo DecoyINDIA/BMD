@@ -118,9 +118,9 @@ A minimal Linux system (often with the AppImage, the tar.gz or a build from sour
 
 ## Where your data is
 
-- Installed or the plain zip: `%APPDATA%\misterdownloadmanager`. The list and settings are in `downloads.json`.
+- Installed or the plain zip: `%APPDATA%\bmd`. The list and settings are in `downloads.json`.
 - Portable: the `data` folder next to `bmd.exe`.
-- Linux: `~/.local/share/misterdownloadmanager`; a Mac: `~/Library/Application Support/misterdownloadmanager`.
+- Linux: `~/.local/share/bmd`; a Mac: `~/Library/Application Support/bmd`.
 - Passwords (Sites Logins, the proxy, debrid accounts) are in the system's keychain, not in `downloads.json`; see [Options → Sites Logins](options.md#sites-logins).
 
 To back up your list, quit BMD (**Tasks → Exit**) and copy `downloads.json`.
@@ -140,7 +140,7 @@ When there is one, **Update now** downloads it, checks it, puts it in place and 
 | Linux, the .deb or .rpm | Opens the checked package in your system's package installer, which asks for your password. |
 | Linux, another package manager's package (pacman, ...) | Nothing: the window says so, and your system's updates bring the new version. |
 
-BMD installs an update only when the release's list of checksums is signed by the configured release key and the file matches it; anything else is refused, and **Download** opens the [Releases](https://github.com/DecoyINDIA/BMD/releases) page instead. Updating this way starts with version 0.2.1: earlier versions open the Releases page.
+BMD installs an update only when the file matches its line in the release's list of checksums (SHA256SUMS.txt, read from BMD's GitHub releases over HTTPS); anything else is refused, and **Download** opens the [Releases](https://github.com/DecoyINDIA/BMD/releases) page instead. Updating this way starts with version 0.2.1: earlier versions open the Releases page.
 
 BMD asks GitHub's API for the newest version (of BMD, and of yt-dlp and ffmpeg). GitHub answers 60 such questions an hour for each internet address, so on a network many people share (a mobile or home internet provider that puts many customers behind one address, a campus, an office) others can use them up. BMD then reads GitHub's ordinary release pages instead, with the same checks of what it downloads. If GitHub refuses those too, the window says **api.github.com refused the request (403 Forbidden): too many requests from your network for now**: try again in an hour, or from another network.
 

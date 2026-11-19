@@ -1223,8 +1223,8 @@
    "text": "Vai trò của nhóm"
   },
   "1171655e77148bd2": {
-   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/anefzaoui/misterdownloadmanager</g2> under the GNU GPL, version 3.",
-   "text": "Mọi bản phát hành, cùng với ghi chú và tệp của nó, đều có trên <g1>GitHub Releases</g1>. Mã nguồn có tại <g2>github.com/anefzaoui/misterdownloadmanager</g2> theo GNU GPL, phiên bản 3."
+   "source": "Every release, with its notes and files, is on <g1>GitHub Releases</g1>. The source code is at <g2>github.com/DecoyINDIA/BMD</g2> under the GNU GPL, version 3.",
+   "text": "Mọi bản phát hành, cùng với ghi chú và tệp của nó, đều có trên <g1>GitHub Releases</g1>. Mã nguồn có tại <g2>github.com/DecoyINDIA/BMD</g2> theo GNU GPL, phiên bản 3."
   },
   "1173fd2e0a9c235b": {
    "source": "The app has no accounts, telemetry or tracking",
@@ -14299,8 +14299,8 @@
    "text": "Video được lưu trong thư mục có tên theo danh sách, bên trong <g1>Lưu vào</g1>. Mỗi video được lưu với tên tiêu đề riêng."
   },
   "ceb8f4f5a72cba4a": {
-   "source": "Every signed file is built from the public source code at <g1>github.com/anefzaoui/misterdownloadmanager</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
-   "text": "Mọi tệp đã ký đều được xây dựng từ mã nguồn công khai tại <g1>github.com/anefzaoui/misterdownloadmanager</g1> bởi GitHub Actions, trên máy chủ của GitHub, không bao giờ trên máy tính cá nhân. Mỗi tệp đều ghi rõ là BMD và phiên bản nào."
+   "source": "Every signed file is built from the public source code at <g1>github.com/DecoyINDIA/BMD</g1> by GitHub Actions, on GitHub's servers, never on a personal computer. Each one says it is BMD and which version it is.",
+   "text": "Mọi tệp đã ký đều được xây dựng từ mã nguồn công khai tại <g1>github.com/DecoyINDIA/BMD</g1> bởi GitHub Actions, trên máy chủ của GitHub, không bao giờ trên máy tính cá nhân. Mỗi tệp đều ghi rõ là BMD và phiên bản nào."
   },
   "cee8fa5faa008467": {
    "source": "To save your own list, use <g1>Tasks → Export → To text file</g1> (one address per line) or <g2>To IDM export file</g2>.",
@@ -14699,8 +14699,8 @@
    "text": "<g1>librqbit</g1><g2>công cụ tải torrent</g2>"
   },
   "d3bb5a30d659061d": {
-   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/anefzaoui/misterdownloadmanager</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
-   "text": "BMD (\"BMD\") là phần mềm miễn phí, mã nguồn mở do Ahmed Nefzaoui và những người đóng góp tạo ra. Vì toàn bộ mã nguồn của nó được công khai tại <g1>github.com/anefzaoui/misterdownloadmanager</g1>, bạn không cần phải tin lời trang này: mọi kết nối mạng được mô tả ở đây đều có thể được kiểm tra trong mã nguồn."
+   "source": "BMD (\"BMD\") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at <g1>github.com/DecoyINDIA/BMD</g1>, you don't have to take this page's word for it: every network connection described here can be checked in the code.",
+   "text": "BMD (\"BMD\") là phần mềm miễn phí, mã nguồn mở do Ahmed Nefzaoui và những người đóng góp tạo ra. Vì toàn bộ mã nguồn của nó được công khai tại <g1>github.com/DecoyINDIA/BMD</g1>, bạn không cần phải tin lời trang này: mọi kết nối mạng được mô tả ở đây đều có thể được kiểm tra trong mã nguồn."
   },
   "d3da8c9dc89aaa97": {
    "source": "What's new in version 0.5.1 <g1>2026-11-08</g1>",
