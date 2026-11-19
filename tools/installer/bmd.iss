@@ -79,7 +79,7 @@ ChangesAssociations=yes
 ; fallback for anything else holding the files (a browser running the host).
 CloseApplications=yes
 VersionInfoVersion={#AppVersion}
-VersionInfoCompany=Ahmed Nefzaoui
+VersionInfoCompany=DecoyINDIA
 VersionInfoDescription={#AppName} setup
 VersionInfoProductName={#AppName}
 #ifdef Sign

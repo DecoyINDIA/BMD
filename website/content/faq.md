@@ -33,7 +33,7 @@ No. BMD has no accounts, no analytics and no telemetry. It connects to the serve
 
 ### Who makes BMD? {#who-makes-it}
 
-BMD is made by Ahmed Nefzaoui, an independent developer, and is open to contributions from anyone on [GitHub]({{REPO}}). Bug reports, translations and code are all welcome.
+BMD is maintained by DecoyINDIA and welcomes contributions on [GitHub]({{REPO}}). Bug reports, translations and code are all welcome.
 
 ## Installing
 
