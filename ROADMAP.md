@@ -1573,6 +1573,8 @@ These ship in the next version.
   page (which Windows files are signed, who reviews and approves, privacy), linked from every
   page's footer, the download page and the README; the privacy policy says what the crash
   report window asks GitHub
+- ✅ A magnet link or .torrent file opened with MDM brings no command-line options with it;
+  Refresh download address opens web pages only
 
 ## Being worked on
 

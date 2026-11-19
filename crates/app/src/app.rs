@@ -7874,7 +7874,7 @@ impl App {
                         .items
                         .iter()
                         .find(|i| i.id == id)
-                        .and_then(|i| i.web_page().map(str::to_owned));
+                        .and_then(Item::page_to_open);
                     if let Some(item) = self
                         .item(id)
                         .filter(|i| i.live.is_none() && i.status != Status::Complete)
