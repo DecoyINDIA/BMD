@@ -894,6 +894,355 @@ dependencies = [
 ]
 
 [[package]]
+name = "bmd-app"
+version = "1.0.0"
+dependencies = [
+ "arboard",
+ "base64 0.23.1",
+ "bmd-cli",
+ "bmd-cnl",
+ "bmd-crash",
+ "bmd-debrid",
+ "bmd-engine",
+ "bmd-extract",
+ "bmd-geo",
+ "bmd-ipc",
+ "bmd-labserver",
+ "bmd-remote",
+ "bmd-tools",
+ "bmd-torrent",
+ "brotli 9.1.1",
+ "brotli-decompressor 6.3.1",
+ "chrono",
+ "craft-atomic",
+ "craft-i18n",
+ "dirs 7.0.0",
+ "eframe",
+ "egui",
+ "egui-wgpu",
+ "egui-winit",
+ "egui_extras",
+ "egui_system_font_provider",
+ "image",
+ "libc",
+ "objc2 0.6.5",
+ "objc2-app-kit 0.3.2",
+ "objc2-foundation 0.3.2",
+ "open",
+ "percent-encoding",
+ "qrcodegen",
+ "raw-window-handle",
+ "regex",
+ "reqwest 0.13.5",
+ "rfd",
+ "roxmltree 0.21.2",
+ "security-framework",
+ "serde",
+ "serde_json",
+ "skrifa",
+ "tempfile",
+ "tokio",
+ "toml 1.2.1+spec-1.1.0",
+ "tracing",
+ "tracing-subscriber",
+ "tray-icon",
+ "unicode-bidi",
+ "unicode-segmentation",
+ "url",
+ "wayland-client",
+ "wgpu",
+ "windows",
+ "windows-sys 0.61.2",
+ "winit",
+ "winresource",
+ "x11rb 0.14.0",
+ "zbus",
+]
+
+[[package]]
+name = "bmd-cli"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "bmd-engine",
+ "bmd-ipc",
+ "bmd-tools",
+ "bmd-torrent",
+ "clap",
+ "ctrlc",
+ "reqwest 0.13.5",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tokio-util",
+ "url",
+]
+
+[[package]]
+name = "bmd-cnl"
+version = "1.0.0"
+dependencies = [
+ "aes",
+ "axum",
+ "base64 0.23.1",
+ "reqwest 0.13.5",
+ "tokio",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "bmd-crash"
+version = "1.0.0"
+dependencies = [
+ "bmd-engine",
+ "breakpad-symbols",
+ "chrono",
+ "crash-handler",
+ "libc",
+ "minidump",
+ "minidump-processor",
+ "minidump-unwind",
+ "minidumper",
+ "reqwest 0.13.5",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+ "windows-sys 0.61.2",
+ "zip",
+]
+
+[[package]]
+name = "bmd-debrid"
+version = "1.0.0"
+dependencies = [
+ "bmd-engine",
+ "bmd-labserver",
+ "bytes",
+ "chrono",
+ "futures",
+ "reqwest 0.13.5",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+]
+
+[[package]]
+name = "bmd-engine"
+version = "1.0.0"
+dependencies = [
+ "base64 0.23.1",
+ "bmd-labserver",
+ "bytes",
+ "cap",
+ "core-foundation 0.10.1",
+ "core-foundation-sys",
+ "craft-atomic",
+ "crc32fast",
+ "futures",
+ "hex",
+ "hickory-resolver",
+ "http",
+ "httpdate",
+ "hyper-util",
+ "md-5",
+ "network-interface",
+ "percent-encoding",
+ "proptest",
+ "reqwest 0.13.5",
+ "rquickjs",
+ "rustix 1.1.6",
+ "rustls",
+ "rustls-native-certs",
+ "rustls-platform-verifier",
+ "serde",
+ "serde_json",
+ "sha1",
+ "sha2",
+ "socket2",
+ "suppaftp",
+ "sysinfo",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio",
+ "tokio-rustls",
+ "tokio-util",
+ "tower-layer",
+ "tower-service",
+ "unicode-segmentation",
+ "url",
+ "webpki-root-certs",
+ "windows-sys 0.61.2",
+ "wreq",
+ "wreq-util",
+]
+
+[[package]]
+name = "bmd-extract"
+version = "1.0.0"
+dependencies = [
+ "bmd-engine",
+ "flate2",
+ "lzma-rust2",
+ "tar",
+ "tempfile",
+ "tracing",
+ "zip",
+]
+
+[[package]]
+name = "bmd-geo"
+version = "1.0.0"
+dependencies = [
+ "lzma-rust2",
+ "png 0.18.1",
+ "resvg 0.50.0",
+]
+
+[[package]]
+name = "bmd-ipc"
+version = "1.0.0"
+dependencies = [
+ "craft-atomic",
+ "dirs 7.0.0",
+ "schemars 1.2.3",
+ "serde",
+ "serde_json",
+ "tempfile",
+]
+
+[[package]]
+name = "bmd-labserver"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "aws-lc-rs",
+ "axum",
+ "bytes",
+ "clap",
+ "futures",
+ "hex",
+ "http-range-header",
+ "httpdate",
+ "hyper-util",
+ "percent-encoding",
+ "rcgen",
+ "reqwest 0.13.5",
+ "rustls",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "sha2",
+ "tempfile",
+ "time",
+ "tokio",
+ "tokio-rustls",
+ "url",
+]
+
+[[package]]
+name = "bmd-mcp"
+version = "1.0.0"
+dependencies = [
+ "bmd-ipc",
+ "rmcp",
+ "schemars 1.2.3",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "url",
+]
+
+[[package]]
+name = "bmd-nmhost"
+version = "1.0.0"
+dependencies = [
+ "bmd-ipc",
+ "chrono",
+ "serde",
+ "serde_json",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "bmd-remote"
+version = "1.0.0"
+dependencies = [
+ "aws-lc-rs",
+ "axum",
+ "bmd-engine",
+ "bmd-ipc",
+ "hex",
+ "rcgen",
+ "reqwest 0.13.5",
+ "rustls",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "tokio",
+ "tokio-rustls",
+ "tracing",
+]
+
+[[package]]
+name = "bmd-tools"
+version = "1.0.0"
+dependencies = [
+ "aws-lc-rs",
+ "base64 0.23.1",
+ "bmd-engine",
+ "bmd-ipc",
+ "bmd-labserver",
+ "bytes",
+ "craft-atomic",
+ "futures",
+ "hex",
+ "percent-encoding",
+ "reqwest 0.13.5",
+ "rustix 1.1.6",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "url",
+ "win32job",
+ "zip",
+]
+
+[[package]]
+name = "bmd-torrent"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "bmd-engine",
+ "flate2",
+ "librqbit",
+ "librqbit-dualstack-sockets",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "url",
+]
+
+[[package]]
 name = "borsh"
 version = "1.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4567,355 +4916,6 @@ checksum = "69b6441f590336821bb897fb28fc622898ccceb1d6cea3fde5ea86b090c4de98"
 dependencies = [
  "cfg-if",
  "digest",
-]
-
-[[package]]
-name = "bmd-app"
-version = "0.5.2"
-dependencies = [
- "arboard",
- "base64 0.23.1",
- "brotli 9.1.1",
- "brotli-decompressor 6.3.1",
- "chrono",
- "craft-atomic",
- "craft-i18n",
- "dirs 7.0.0",
- "eframe",
- "egui",
- "egui-wgpu",
- "egui-winit",
- "egui_extras",
- "egui_system_font_provider",
- "image",
- "libc",
- "bmd-cli",
- "bmd-cnl",
- "bmd-crash",
- "bmd-debrid",
- "bmd-engine",
- "bmd-extract",
- "bmd-geo",
- "bmd-ipc",
- "bmd-labserver",
- "bmd-remote",
- "bmd-tools",
- "bmd-torrent",
- "objc2 0.6.5",
- "objc2-app-kit 0.3.2",
- "objc2-foundation 0.3.2",
- "open",
- "percent-encoding",
- "qrcodegen",
- "raw-window-handle",
- "regex",
- "reqwest 0.13.5",
- "rfd",
- "roxmltree 0.21.2",
- "security-framework",
- "serde",
- "serde_json",
- "skrifa",
- "tempfile",
- "tokio",
- "toml 1.2.1+spec-1.1.0",
- "tracing",
- "tracing-subscriber",
- "tray-icon",
- "unicode-bidi",
- "unicode-segmentation",
- "url",
- "wayland-client",
- "wgpu",
- "windows",
- "windows-sys 0.61.2",
- "winit",
- "winresource",
- "x11rb 0.14.0",
- "zbus",
-]
-
-[[package]]
-name = "bmd-cli"
-version = "0.5.2"
-dependencies = [
- "anyhow",
- "clap",
- "ctrlc",
- "bmd-engine",
- "bmd-ipc",
- "bmd-tools",
- "bmd-torrent",
- "reqwest 0.13.5",
- "serde_json",
- "tempfile",
- "tokio",
- "tokio-util",
- "url",
-]
-
-[[package]]
-name = "bmd-cnl"
-version = "0.5.2"
-dependencies = [
- "aes",
- "axum",
- "base64 0.23.1",
- "reqwest 0.13.5",
- "tokio",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "bmd-crash"
-version = "0.5.2"
-dependencies = [
- "breakpad-symbols",
- "chrono",
- "crash-handler",
- "libc",
- "bmd-engine",
- "minidump",
- "minidump-processor",
- "minidump-unwind",
- "minidumper",
- "reqwest 0.13.5",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "url",
- "windows-sys 0.61.2",
- "zip",
-]
-
-[[package]]
-name = "bmd-debrid"
-version = "0.5.2"
-dependencies = [
- "bytes",
- "chrono",
- "futures",
- "bmd-engine",
- "bmd-labserver",
- "reqwest 0.13.5",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tokio-util",
- "tracing",
- "tracing-subscriber",
- "url",
-]
-
-[[package]]
-name = "bmd-engine"
-version = "0.5.2"
-dependencies = [
- "base64 0.23.1",
- "bytes",
- "cap",
- "core-foundation 0.10.1",
- "core-foundation-sys",
- "craft-atomic",
- "crc32fast",
- "futures",
- "hex",
- "hickory-resolver",
- "http",
- "httpdate",
- "hyper-util",
- "md-5",
- "bmd-labserver",
- "network-interface",
- "percent-encoding",
- "proptest",
- "reqwest 0.13.5",
- "rquickjs",
- "rustix 1.1.6",
- "rustls",
- "rustls-native-certs",
- "rustls-platform-verifier",
- "serde",
- "serde_json",
- "sha1",
- "sha2",
- "socket2",
- "suppaftp",
- "sysinfo",
- "tempfile",
- "thiserror 2.0.21",
- "tokio",
- "tokio-rustls",
- "tokio-util",
- "tower-layer",
- "tower-service",
- "unicode-segmentation",
- "url",
- "webpki-root-certs",
- "windows-sys 0.61.2",
- "wreq",
- "wreq-util",
-]
-
-[[package]]
-name = "bmd-extract"
-version = "0.5.2"
-dependencies = [
- "flate2",
- "lzma-rust2",
- "bmd-engine",
- "tar",
- "tempfile",
- "tracing",
- "zip",
-]
-
-[[package]]
-name = "bmd-geo"
-version = "0.5.2"
-dependencies = [
- "lzma-rust2",
- "png 0.18.1",
- "resvg 0.50.0",
-]
-
-[[package]]
-name = "bmd-ipc"
-version = "0.5.2"
-dependencies = [
- "craft-atomic",
- "dirs 7.0.0",
- "schemars 1.2.3",
- "serde",
- "serde_json",
- "tempfile",
-]
-
-[[package]]
-name = "bmd-labserver"
-version = "0.5.2"
-dependencies = [
- "anyhow",
- "aws-lc-rs",
- "axum",
- "bytes",
- "clap",
- "futures",
- "hex",
- "http-range-header",
- "httpdate",
- "hyper-util",
- "percent-encoding",
- "rcgen",
- "reqwest 0.13.5",
- "rustls",
- "serde",
- "serde_json",
- "serde_urlencoded",
- "sha2",
- "tempfile",
- "time",
- "tokio",
- "tokio-rustls",
- "url",
-]
-
-[[package]]
-name = "bmd-mcp"
-version = "0.5.2"
-dependencies = [
- "bmd-ipc",
- "rmcp",
- "schemars 1.2.3",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "url",
-]
-
-[[package]]
-name = "bmd-nmhost"
-version = "0.5.2"
-dependencies = [
- "chrono",
- "bmd-ipc",
- "serde",
- "serde_json",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "bmd-remote"
-version = "0.5.2"
-dependencies = [
- "aws-lc-rs",
- "axum",
- "hex",
- "bmd-engine",
- "bmd-ipc",
- "rcgen",
- "reqwest 0.13.5",
- "rustls",
- "serde",
- "serde_json",
- "sha2",
- "tempfile",
- "tokio",
- "tokio-rustls",
- "tracing",
-]
-
-[[package]]
-name = "bmd-tools"
-version = "0.5.2"
-dependencies = [
- "aws-lc-rs",
- "base64 0.23.1",
- "bytes",
- "craft-atomic",
- "futures",
- "hex",
- "bmd-engine",
- "bmd-ipc",
- "bmd-labserver",
- "percent-encoding",
- "reqwest 0.13.5",
- "rustix 1.1.6",
- "serde",
- "serde_json",
- "sha2",
- "tempfile",
- "thiserror 2.0.21",
- "tokio",
- "tokio-util",
- "tracing",
- "url",
- "win32job",
- "zip",
-]
-
-[[package]]
-name = "bmd-torrent"
-version = "0.5.2"
-dependencies = [
- "anyhow",
- "flate2",
- "librqbit",
- "librqbit-dualstack-sockets",
- "bmd-engine",
- "serde_json",
- "tempfile",
- "thiserror 2.0.21",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "url",
 ]
 
 [[package]]

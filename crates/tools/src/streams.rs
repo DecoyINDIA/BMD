@@ -23,10 +23,10 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
-use futures::future::BoxFuture;
 use bmd_engine::browserlike::{self, Connection};
 use bmd_engine::download::{ConnView, SegmentView, State as DlState};
 use bmd_engine::{Destination, Download, Request, ServiceFault, Unlocked, Unlocker};
+use futures::future::BoxFuture;
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
 use serde_json::Value;
 use tokio_util::sync::CancellationToken;

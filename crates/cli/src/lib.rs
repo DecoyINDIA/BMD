@@ -9,9 +9,9 @@ use std::process::ExitCode;
 use std::time::{Duration, Instant};
 
 use anyhow::Context;
-use clap::{Parser, Subcommand};
 use bmd_engine::download::{ConnStatus, MAX_CONNECTIONS_UNLOCKED, State};
 use bmd_engine::{Destination, Download, Options, Proxy, Request};
+use clap::{Parser, Subcommand};
 use reqwest::header::{COOKIE, HeaderMap, HeaderName, HeaderValue, REFERER, USER_AGENT};
 use serde_json::json;
 
@@ -2717,8 +2717,7 @@ mod tests {
         assert!(matches!(cli.cmd, Cmd::Pair));
         assert!(!cli.json);
 
-        let cli_json =
-            Cli::try_parse_from(["bmd-cli", "--json", "pair"]).unwrap();
+        let cli_json = Cli::try_parse_from(["bmd-cli", "--json", "pair"]).unwrap();
         assert!(matches!(cli_json.cmd, Cmd::Pair));
         assert!(cli_json.json);
     }

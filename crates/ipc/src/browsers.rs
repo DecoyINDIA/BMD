@@ -1433,10 +1433,7 @@ mod tests {
         // The AppImage's copy of the helper, whose AppImage was deleted.
         #[cfg(unix)]
         {
-            let copy = d
-                .path()
-                .join("browser-host")
-                .join("bmd-nmhost");
+            let copy = d.path().join("browser-host").join("bmd-nmhost");
             program(&copy);
             let image = d.path().join("BMD.AppImage");
             program(&image);

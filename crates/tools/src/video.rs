@@ -529,7 +529,8 @@ fn yt_dlp_leftover(rest: &str, outputs: bool) -> bool {
     let working = match parts.as_slice() {
         ["temp", ext] => media(ext),
         [f, ext] if format(f) => media(ext),
-        [f, ext, "bmd", "part" | "json"] if format(f) => media(ext),
+        // The engine's own names (crates/engine naming.rs, state.rs), kept from before the rebrand.
+        [f, ext, "mdm", "part" | "json"] if format(f) => media(ext),
         [f, tail @ ..] if format(f) => unfinished(tail),
         p => unfinished(p),
     };

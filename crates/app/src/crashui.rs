@@ -12,12 +12,12 @@ use std::sync::mpsc::{Receiver, channel};
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
-use egui::{Pos2, Rect, Ui};
 use bmd_crash::MonitorArgs;
 use bmd_crash::github::{self, Found};
 use bmd_crash::monitor::{self, Event};
 use bmd_crash::protocol::{Kind, Notes};
 use bmd_crash::report::{self, Made};
+use egui::{Pos2, Rect, Ui};
 
 use crate::winui::{self, ButtonKind, r};
 

@@ -11,10 +11,7 @@ fn main() {
     let args: Vec<OsString> = std::env::args_os().skip(1).collect();
     let json = args.iter().any(|a| a == "--json");
     let Some(program) = program() else {
-        fail(
-            json,
-            "the app's program (bmd) isn't next to bmd-cli",
-        )
+        fail(json, "the app's program (bmd) isn't next to bmd-cli")
     };
     let e = run(&program, args);
     fail(json, &format!("can't start {} ({e})", program.display()))

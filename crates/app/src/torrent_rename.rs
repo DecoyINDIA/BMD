@@ -13,8 +13,8 @@
 use std::path::{Path, PathBuf};
 use std::sync::Once;
 
-use egui::{Painter, Pos2, Ui};
 use bmd_torrent::Meta;
+use egui::{Painter, Pos2, Ui};
 
 use crate::winui::{self, r, text};
 

@@ -6,10 +6,10 @@
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex};
 
-use egui::{Pos2, Ui, pos2};
 use bmd_tools::declared::Declared;
 use bmd_tools::resolve::{Choice, Looked, SubChoice, Video};
 use bmd_tools::video::{ALL_UPLOADERS, Subs};
+use egui::{Pos2, Ui, pos2};
 
 use crate::dialogs::{Outcome, window};
 use crate::model::Category;

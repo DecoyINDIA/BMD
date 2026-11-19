@@ -4631,9 +4631,9 @@ mod startup_tests {
         let desktop = startup_entry(Path::new("/opt/bmd/bmd"), false);
         assert!(desktop.contains("Exec=\"/opt/bmd/bmd\" /startup\n"));
         let plist = startup_entry(Path::new("/opt/bmd/bmd"), true);
-        assert!(plist.contains(
-            "<array><string>/opt/bmd/bmd</string><string>/startup</string></array>"
-        ));
+        assert!(
+            plist.contains("<array><string>/opt/bmd/bmd</string><string>/startup</string></array>")
+        );
     }
 
     /// An entry of a version before 0.5.0 for this program is written again; another copy's is not.

@@ -1,6 +1,6 @@
 # Roadmap
 
-What's done for version 0.5.2, what's being built, and what's planned. Each item links to its
+What's done for version 1.0.0, what's being built, and what's planned. Each item links to its
 issue, where the details and the discussion are. Released changes are in
 [CHANGELOG.md](CHANGELOG.md). Bug reports are welcome in
 [Issues](https://github.com/anefzaoui/misterdownloadmanager/issues), ideas in
@@ -560,10 +560,13 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
   ([#311](https://github.com/anefzaoui/misterdownloadmanager/issues/311))
 - ✅ The Download video button on YouTube in Chrome, Edge, Brave, Opera and Vivaldi
 
-## Done since 0.5.2
+## Version 1.0.0
 
-These ship in the next version.
+Everything below ships together, in version 1.0.0, the first release as BMD.
 
+- ✅ Windows: Options → Launch on startup and the installer's Start when Windows starts keep one
+  startup entry again (they had used two names since the rename to BMD)
+- ✅ Adding a video again with overwrite removes the part files of BMD's own downloader too
 - ✅ Updates are checked against BMD's own release key, the key of the repository the app updates
   from (rather than upstream's), and a release can't be published unsigned or signed by another key
 - ✅ A Docker image of the headless server is published with each release, at
