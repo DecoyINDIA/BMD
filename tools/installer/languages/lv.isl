@@ -1,4 +1,4 @@
-﻿; iDM's installer in Latvian: tools/installer/languages.py
+﻿; BMD's installer in Latvian: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Atinstalē %1.
 
 [CustomMessages]
 TaskBrowser=Iestatīt pārlūkprogrammas &integrāciju (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Atvērt .&torrent failus un magnētsaites ar iDM
-TaskStartup=Sākt iDM, kad startējas &Windows
+TaskTorrents=Atvērt .&torrent failus un magnētsaites ar BMD
+TaskStartup=Sākt BMD, kad startējas &Windows
 TaskGroupOther=Cits:
-Launch=Startēt iDM
+Launch=Startēt BMD
 KeepData=Vai dzēst arī lejupielāžu sarakstu un iestatījumus?%n%nJūsu lejupielādētie faili netiek skarti.

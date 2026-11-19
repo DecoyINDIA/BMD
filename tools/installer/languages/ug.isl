@@ -1,4 +1,4 @@
-﻿; iDM's installer in Uyghur: tools/installer/languages.py
+﻿; BMD's installer in Uyghur: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -292,8 +292,8 @@ ShutdownBlockReasonUninstallingApp=%1 چىقىرىۋاتىدۇ.
 
 [CustomMessages]
 TaskBrowser=كۆ&رسەتكۈچ بىر گەۋدىلەشتۈرۈش (Chrome, Edge, Brave, Firefox) تەڭشەش
-TaskTorrents=iDM ئارقىلىق .&torrent ھۆججەتلىرى ۋە ماگنىت ئۇلىنىشلىرىنى ئېچىڭ
-TaskStartup=Windows ئى&جرا بولغاندا iDM نى قوزغىتىڭ
+TaskTorrents=BMD ئارقىلىق .&torrent ھۆججەتلىرى ۋە ماگنىت ئۇلىنىشلىرىنى ئېچىڭ
+TaskStartup=Windows ئى&جرا بولغاندا BMD نى قوزغىتىڭ
 TaskGroupOther=باشقىلار:
-Launch=iDM نى قوزغىتىش
+Launch=BMD نى قوزغىتىش
 KeepData=چۈشۈرۈش تىزىملىكىڭىز ۋە تەڭشەكلىرىڭىزنىمۇ ئۆچۈرەمسىز؟%n%nچۈشۈرۈلگەن ھۆججەتلىرىڭىزگە ھېچقانداق تەسىر يەتمەيدۇ.

@@ -2,8 +2,8 @@
 //! its own for, takes the player written in the page's HTML; a page whose script builds its
 //! player has none there but the ones it hides (a film site's welcome video, in a help box). The
 //! page says which video it is about itself, for search engines and link previews: its JSON-LD
-//! `VideoObject`, its `og:video`, its `twitter:player` ([`mdm_engine::DeclaredVideos`]). When
-//! yt-dlp read a page generically (or found nothing there), iDM reads that declaration and, when
+//! `VideoObject`, its `og:video`, its `twitter:player` ([`bmd_engine::DeclaredVideos`]). When
+//! yt-dlp read a page generically (or found nothing there), BMD reads that declaration and, when
 //! it names one video clearly, looks that one up instead, with the page as its Referer, and
 //! names it as the page names it; that video's error is told rather than another video offered.
 //! A site yt-dlp has a reader for is never read here.
@@ -18,7 +18,7 @@ use crate::resolve::{self, Looked};
 /// How long reading the page for its declared video may take.
 const PAGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(30);
 
-/// The video a page declares, as iDM looks it up and downloads it: what a download's item keeps
+/// The video a page declares, as BMD looks it up and downloads it: what a download's item keeps
 /// as its address (with the page as its Referer), so it is the one looked up again when the
 /// download starts.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -70,11 +70,11 @@ pub fn read_generically(first: &Result<(Looked, LookedUp), ProcError>) -> bool {
 }
 
 /// The video `videos` (what the page at `page` declares) names clearly ([`DeclaredVideos::main`]),
-/// as iDM may follow it: an http(s) address, not the page itself, and on this computer or its
-/// network only when the page is too (a page on the web can't send iDM to a local address).
+/// as BMD may follow it: an http(s) address, not the page itself, and on this computer or its
+/// network only when the page is too (a page on the web can't send BMD to a local address).
 ///
-/// [`DeclaredVideos::main`]: mdm_engine::DeclaredVideos::main
-pub fn chosen(videos: &mdm_engine::DeclaredVideos, page: &Url) -> Option<Declared> {
+/// [`DeclaredVideos::main`]: bmd_engine::DeclaredVideos::main
+pub fn chosen(videos: &bmd_engine::DeclaredVideos, page: &Url) -> Option<Declared> {
     let v = videos.main()?;
     let address = lookable(&v.address);
     let mut plain = page.clone();
@@ -101,7 +101,7 @@ pub fn chosen(videos: &mdm_engine::DeclaredVideos, page: &Url) -> Option<Declare
 
 /// Look the page `page` up as [`resolve::look_up_kept`] does, with the browser's context
 /// `browser`; when yt-dlp read it generically ([`read_generically`]), the page itself is read
-/// (`reader`: Options' proxy, DNS and network adapter, as iDM's own requests) and the video it
+/// (`reader`: Options' proxy, DNS and network adapter, as BMD's own requests) and the video it
 /// declares ([`chosen`]) is looked up in its place ([`settle`]). The page declaring nothing
 /// clearly, its own look-up stands. A known video site's address (`pages::is_video_page`) is
 /// never read.
@@ -176,7 +176,7 @@ fn read(url: &Url, browser: &FromBrowser, reader: &crate::streams::Engine) -> Op
     {
         opts.speak_as(agent.to_owned());
     }
-    let read = mdm_engine::page_videos(url.clone(), headers, &opts);
+    let read = bmd_engine::page_videos(url.clone(), headers, &opts);
     // On the caller's thread (never a runtime's own), within `PAGE_TIMEOUT`.
     let (at, videos) = reader
         .handle
@@ -395,9 +395,9 @@ mod tests {
         }
     }
 
-    fn declares(address: &str, name: Option<&str>) -> mdm_engine::DeclaredVideos {
-        mdm_engine::DeclaredVideos {
-            json_ld: vec![mdm_engine::DeclaredVideo {
+    fn declares(address: &str, name: Option<&str>) -> bmd_engine::DeclaredVideos {
+        bmd_engine::DeclaredVideos {
+            json_ld: vec![bmd_engine::DeclaredVideo {
                 address: url(address),
                 name: name.map(str::to_owned),
                 main: false,

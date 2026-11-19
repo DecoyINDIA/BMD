@@ -623,20 +623,20 @@ const SIDECAR: usize = 9;
 const DUPLICATE: usize = 6;
 /// Shortest name worth making when a deep folder leaves little room.
 const MIN_NAME: usize = 20;
-/// The most a video's files add to its stem (#1102), iDM's engine's and yt-dlp's alike: a
+/// The most a video's files add to its stem (#1102), BMD's engine's and yt-dlp's alike: a
 /// stream's pieces, `<stem>.f<id>.<ext>.mdm.pieces/000123.mdm.part` (2 + a format id of up to
 /// 32 + 1 + an extension of up to 5 + 11 + 1 + 15), longer than yt-dlp's own
 /// `<stem>.f<id>.<ext>.part`, `.ytdl` and `.part-Frag<N>.part`, its merge's `<stem>.temp.<ext>`,
 /// the subtitles' `<stem>.<lang>.srt` and the engine's `<stem>.f<id>.<ext>.mdm.part`. A longer
 /// format id (rare) ends in yt-dlp's error, which then names the path that was too long
-/// (`mdm_tools::video::too_long`).
+/// (`bmd_tools::video::too_long`).
 pub const HELPER_FILES: usize = 67;
 /// A path's most on Windows with long paths on: the `\\?\` form's 32,767 UTF-16 units, with
 /// room for its prefix.
 const LONG_PATH: usize = 32_000;
 
 /// Whether Windows lets programs use paths past `MAX_PATH` (`LongPathsEnabled`), as yt-dlp and
-/// ffmpeg do then. iDM's own file calls get past it either way (Rust's standard library makes a
+/// ffmpeg do then. BMD's own file calls get past it either way (Rust's standard library makes a
 /// long path a `\\?\` one), but keep within it while it is off so that every program the files
 /// are opened with can. The app reads it as it starts (win32.rs); off until then, and on every
 /// other system, where it means nothing.
@@ -751,7 +751,7 @@ fn fit_name_in(dir: &Path, name: &str, limits: Limits) -> Option<String> {
     (room >= MIN_NAME).then(|| clamp_to(name, room.min(MAX_NAME), limits))
 }
 
-/// A video's `name` (`<stem>.<ext>`), its stem shortened so that every file iDM's engine and
+/// A video's `name` (`<stem>.<ext>`), its stem shortened so that every file BMD's engine and
 /// yt-dlp write for it ([`HELPER_FILES`]) and a duplicate's number stay within the path limits
 /// (#1102), extension kept. None when `dir` alone leaves too little room.
 pub fn fit_stem(dir: &Path, name: &str) -> Option<String> {
@@ -1336,7 +1336,7 @@ mod tests {
         assert_eq!(stems.pick("Video 7.mp4"), d.join("Video 7 (2).mp4"));
         // 16 times the names in one folder cost about as much as in 16 folders (a square: 16
         // times as much), on any machine.
-        mdm_labserver::growth::assert_linear(500, |n| (Stems::new(d, []), n), pick_all);
+        bmd_labserver::growth::assert_linear(500, |n| (Stems::new(d, []), n), pick_all);
     }
 
     #[test]
@@ -1419,10 +1419,10 @@ mod tests {
 
     #[test]
     fn one_destination_one_download() {
-        let p = std::env::temp_dir().join("mdm-reserve-test.bin");
+        let p = std::env::temp_dir().join("bmd-reserve-test.bin");
         let a = reserve(&p).expect("free");
         assert!(reserve(&p).is_none(), "second download refused");
-        let other = unique_path(&std::env::temp_dir(), "mdm-reserve-test.bin");
+        let other = unique_path(&std::env::temp_dir(), "bmd-reserve-test.bin");
         assert_ne!(other, p, "unique_path skips reserved names");
         drop(a);
         assert!(reserve(&p).is_some(), "released when dropped");
@@ -2009,11 +2009,11 @@ mod tests {
         bytes: true,
     };
 
-    /// #1102's post, as iDM named its video: 221 characters, a 250-character temporary file and
+    /// #1102's post, as BMD named its video: 221 characters, a 250-character temporary file and
     /// a 269-character path in `D:\Downloads\Video`.
     const POST: &str = "Kira on X_ _This is f_cking insane. Nvidia CEO Jensen Huang on what he expects from an engineer he pays $500,000 a year_ _If that $500,000 engineer did not consume at least $250,000 worth of tokens_ He'd be deeply alarmed";
 
-    /// Every file iDM's engine and yt-dlp write for a video stem, after the stem (a format id of
+    /// Every file BMD's engine and yt-dlp write for a video stem, after the stem (a format id of
     /// 32 characters, as long as [`HELPER_FILES`] allows; X's sound, #1102's; YouTube's).
     fn helper_suffixes() -> Vec<String> {
         let id32 = "x".repeat(32);
@@ -2081,7 +2081,7 @@ mod tests {
             "{stem}: within the room, less a word's few letters"
         );
         // The same title through the playlist's way.
-        let nowhere = Path::new("/nonexistent/mdm-1102");
+        let nowhere = Path::new("/nonexistent/bmd-1102");
         assert_eq!(
             Stems::new(nowhere, []).pick(&name),
             nowhere.join(fit_stem(nowhere, &name).unwrap())
@@ -2202,7 +2202,7 @@ mod tests {
     }
 
     /// #1102: a name the user typed is kept as typed (numbered only when taken), however long;
-    /// one iDM gave is fitted.
+    /// one BMD gave is fitted.
     #[test]
     fn a_typed_video_name_is_kept() {
         let d = tempfile::tempdir().unwrap();

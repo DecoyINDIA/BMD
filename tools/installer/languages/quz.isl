@@ -1,4 +1,4 @@
-﻿; iDM's installer in Quechua: tools/installer/languages.py
+﻿; BMD's installer in Quechua: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=%1 hurquchkan.
 
 [CustomMessages]
 TaskBrowser=Wamp'aq &mask'ay (Chrome, Edge, Brave, Firefox) t'ikrayta churay
-TaskTorrents=.&torrent willkakunatawan magnet t'inkikunata iDMwan kichay
-TaskStartup=&Windows qallariptin iDMta qallariy
+TaskTorrents=.&torrent willkakunatawan magnet t'inkikunata BMDwan kichay
+TaskStartup=&Windows qallariptin BMDta qallariy
 TaskGroupOther=Huk:
-Launch=iDMta qallariy
+Launch=BMDta qallariy
 KeepData=Chaymanta urayk'uchisqa willk'ana listaykita chaymanta churaykunata pichayta munankichu?%n%nUrayk'uchisqa willk'anakunaqa manam imatapas llamk'achisqachu.

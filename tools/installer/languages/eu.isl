@@ -1,4 +1,4 @@
-﻿; iDM's installer in Basque: tools/installer/languages.py
+﻿; BMD's installer in Basque: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=%1 desinstalatzen.
 
 [CustomMessages]
 TaskBrowser=Arakatzailearen integrazioa konfiguratu (&B) (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Ireki .&torrent fitxategiak eta magnet estekak iDM aplikazioarekin
-TaskStartup=Abiarazi iDM &Windows abiaraztean
+TaskTorrents=Ireki .&torrent fitxategiak eta magnet estekak BMD aplikazioarekin
+TaskStartup=Abiarazi BMD &Windows abiaraztean
 TaskGroupOther=Bestelakoak:
-Launch=Abiarazi iDM
+Launch=Abiarazi BMD
 KeepData=Zure deskarga-zerrenda eta ezarpenak ere ezabatu?%n%nDeskargatutako fitxategiak ez dira ukitzen, edonola ere.

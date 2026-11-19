@@ -1,11 +1,11 @@
-// iDM — site behaviour: light/dark, the download for your system, the
+// BMD — site behaviour: light/dark, the download for your system, the
 // split button's menu, the "What do you download?" chips and the rotating hello.
 (function () {
   "use strict";
   var root = document.documentElement;
-  // Words for people in the page's language: a translated page carries its own (MDM_I18N,
+  // Words for people in the page's language: a translated page carries its own (BMD_I18N,
   // tools/website/sitei18n.py); English otherwise. Every such string goes through t().
-  var I18N = window.MDM_I18N || {};
+  var I18N = window.BMD_I18N || {};
   function t(s) { return I18N[s] || s; }
   // Visitors who asked for less motion get every moving part at rest: the race at its finish,
   // the tour still, the hello on its first word.
@@ -40,12 +40,12 @@
   (function () {
     var links = document.querySelectorAll(".lang-pick a[hreflang]");
     if (!links.length) return;
-    function remember(code) { try { localStorage.setItem("mdm-lang", code); } catch (e) { /* asked again */ } }
+    function remember(code) { try { localStorage.setItem("bmd-lang", code); } catch (e) { /* asked again */ } }
     for (var i = 0; i < links.length; i++) {
       links[i].addEventListener("click", function () { remember(this.getAttribute("hreflang")); });
     }
     var chosen = null;
-    try { chosen = localStorage.getItem("mdm-lang"); } catch (e) { /* none */ }
+    try { chosen = localStorage.getItem("bmd-lang"); } catch (e) { /* none */ }
     if (chosen || (root.getAttribute("lang") || "en").toLowerCase() !== "en") return;
     var wanted = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""];
     var match = null;
@@ -120,7 +120,7 @@
     button.addEventListener("click", function () {
       var next = current() === "dark" ? "light" : "dark";
       root.setAttribute("data-theme", next);
-      try { localStorage.setItem("mdm-theme", next); } catch (e) { /* not remembered */ }
+      try { localStorage.setItem("bmd-theme", next); } catch (e) { /* not remembered */ }
     });
   });
 
@@ -144,16 +144,16 @@
   // events (request sent, receiving at what rate, delivered) appear as they are reached.
   var RACES = [
     { label: "faster", note: t("1 GiB over a fast link. IDM spends 3 s before its first request reaches the server."),
-      mdm: [14, 438, 556], idm: [3076, 1831, 545], e2e: [1009, 5456], ratio: 5.41, bytes: 1073741824 },
-    { label: "faster", note: t("A 256 KiB file. iDM is done in 30 ms; IDM is still starting."),
-      mdm: [14, 7, 8], idm: [3090, 25, 32], e2e: [30, 3141], ratio: 105.9, bytes: 262144 },
-    { label: "faster", note: t("A server that allows two connections. iDM learns it and keeps to two; IDM opened 480."),
-      mdm: [14, 12546, 9], idm: [3069, 12733, 48], e2e: [12568, 15864], ratio: 1.26, bytes: 52428800 }
+      bmd: [14, 438, 556], idm: [3076, 1831, 545], e2e: [1009, 5456], ratio: 5.41, bytes: 1073741824 },
+    { label: "faster", note: t("A 256 KiB file. BMD is done in 30 ms; IDM is still starting."),
+      bmd: [14, 7, 8], idm: [3090, 25, 32], e2e: [30, 3141], ratio: 105.9, bytes: 262144 },
+    { label: "faster", note: t("A server that allows two connections. BMD learns it and keeps to two; IDM opened 480."),
+      bmd: [14, 12546, 9], idm: [3069, 12733, 48], e2e: [12568, 15864], ratio: 1.26, bytes: 52428800 }
   ];
   // mdmRace(box, races): sets up one race box; the benchmark page calls it with every scenario
   // from bench/results.json and fills in the tabs itself (data-race-src).
   window.mdmRace = function (box, RACES) {
-    var lanes = { mdm: box.querySelector('[data-lane="mdm"]'), idm: box.querySelector('[data-lane="idm"]') };
+    var lanes = { bmd: box.querySelector('[data-lane="bmd"]'), idm: box.querySelector('[data-lane="idm"]') };
     var tabList = box.querySelector(".race-tabs");
     if (!tabList.children.length) {
       RACES.forEach(function (r, k) {
@@ -171,7 +171,7 @@
     // The phases' medians don't add up exactly to the end-to-end medians: scale them so the
     // finish times are the report's.
     RACES.forEach(function (r) {
-      ["mdm", "idm"].forEach(function (k, n) {
+      ["bmd", "idm"].forEach(function (k, n) {
         var f = r.e2e[n] / total(r[k]);
         r[k] = r[k].map(function (v) { return v * f; });
       });
@@ -214,7 +214,7 @@
       current = k;
       var r = RACES[k];
       for (var i = 0; i < tabs.length; i++) tabs[i].setAttribute("aria-selected", i === k ? "true" : "false");
-      var end = Math.max(total(r.mdm), total(r.idm)), first = Math.min(total(r.mdm), total(r.idm));
+      var end = Math.max(total(r.bmd), total(r.idm)), first = Math.min(total(r.bmd), total(r.idm));
       // The report's ratio of medians (docs/bench/run5/REPORT.md).
       var ratio = r.ratio;
       noteEl.textContent = r.note;
@@ -222,7 +222,7 @@
       var t0 = reduce ? performance.now() - end : performance.now();
       (function tick(now) {
         var ms = now - t0;
-        paint(lanes.mdm, r.mdm, ms, end, r.bytes);
+        paint(lanes.bmd, r.bmd, ms, end, r.bytes);
         paint(lanes.idm, r.idm, ms, end, r.bytes);
         // No ratio until the first delivery; then it grows while the other is still on its way.
         box.classList.toggle("pending", ms < first);

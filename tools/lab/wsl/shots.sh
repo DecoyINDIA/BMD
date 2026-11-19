@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Screenshots of MDM's windows on the lab's virtual screen: ONE MDM per language and mode, each
-# window opened by MDM's own command line (`/show <window>`, as tools/lab/docs-shots.ps1 does
+# Screenshots of BMD's windows on the lab's virtual screen: ONE BMD per language and mode, each
+# window opened by BMD's own command line (`/show <window>`, as tools/lab/docs-shots.ps1 does
 # on Windows), captured once it has painted, closed, then the next. Nothing shows on Windows
 # (env.sh), nothing is clicked: the pointer only moves at the screen's edge.
 #
@@ -8,24 +8,24 @@
 #            [--theme <id>] [--out <dir>] [--finished-only] [--keep-list]
 #   e.g. shots.sh main --langs en,de,ar,ja,hi
 #        shots.sh pr-199 --modes dark --theme adwaita --windows main,options-general=options:general
-#   From Windows: wsl -d mdm-lab -- bash ~/lab/tools/shots.sh main --langs en,de
+#   From Windows: wsl -d bmd-lab -- bash ~/lab/tools/shots.sh main --langs en,de
 # (Lists take commas or spaces; commas pass through wsl.exe, which re-parses its command line.)
 #
 # <label>: a build in ~/lab/bin (build.sh). Shots go to ~/lab/shots/<label>/<lang>-<mode>/<name>.png
-# (from Windows: \\wsl$\mdm-lab\home\lab\lab\shots\...), with timing.txt beside them. A window
-# name is the file's; `=<show>` is MDM's `/show` argument when it differs (default list: the
+# (from Windows: \\wsl$\bmd-lab\home\lab\lab\shots\...), with timing.txt beside them. A window
+# name is the file's; `=<show>` is BMD's `/show` argument when it differs (default list: the
 # README's 21 windows). `main` is the main window; a `menu:...` show is captured with the main
-# window, grown by MDM_GROW pixels (default 300) for menus past its edge.
+# window, grown by BMD_GROW pixels (default 300) for menus past its edge.
 #
 # Each run has its own data folder (MDM_DATA_DIR) and download folder under ~/lab/run/<label>,
 # and its own lab server (port 8197): the list looks used (the README's files), downloaded once
 # for the first language and given to the others. --finished-only: no download still running (shots
 # that must not change between runs: progress and the main window's speeds otherwise do);
 # --keep-list: the list of the label's last run again (the same names and dates: two runs
-# compared pixel by pixel, e.g. two renderers). MDM_SET: more settings, a JSON object; MDM_* in
-# the environment (MDM_RENDERER, ...) reach MDM.
-# MDM_OFFSCREEN passes through when set (Xvfb is off the user's screen already, so it's off by
-# default: the shots show MDM as a person sees it).
+# compared pixel by pixel, e.g. two renderers). BMD_SET: more settings, a JSON object; BMD_* in
+# the environment (MDM_RENDERER, ...) reach BMD.
+# BMD_OFFSCREEN passes through when set (Xvfb is off the user's screen already, so it's off by
+# default: the shots show BMD as a person sees it).
 set -uo pipefail
 . "$HOME/lab/tools/env.sh"
 label=${1:?usage: shots.sh <label> [--langs ...] [--modes ...] [--windows ...] [--theme ...] [--out ...]}
@@ -50,13 +50,13 @@ while [ $# -gt 0 ]; do
   shift
 done
 bin=$HOME/lab/bin/$label
-app=$bin/misterdownloadmanager
+app=$bin/bmd
 [ -x "$app" ] || { echo "no build $label in ~/lab/bin (build.sh)"; exit 1; }
 out=${out:-$HOME/lab/shots/$label}
 work=$HOME/lab/run/$label
 port=8197
 base=http://127.0.0.1:$port
-grow=${MDM_GROW:-300}
+grow=${BMD_GROW:-300}
 mkdir -p "$out"
 # One run at a time on the screen (windows raised and closed by another run would land in its
 # shots): a second one waits.
@@ -84,14 +84,14 @@ mkdir -p "$work/Downloads"
 "$bin/labserver" --bind "127.0.0.1:$port" >"$work/labserver.log" 2>&1 9>&- &
 srv_pid=$!
 
-# --- Windows of our MDM (the process id wmctrl reads from _NET_WM_PID), newest last.
+# --- Windows of our BMD (the process id wmctrl reads from _NET_WM_PID), newest last.
 mine() { wmctrl -lp 2>/dev/null | awk -v p="$PID" '$3 == p {print $1}'; }
 # Capture `win` into `png` once it has painted (capture.py: two captures in a row the same, not
-# one colour; at most MDM_SHOT_WAIT seconds, default 2), raised and focused first as a newly
-# opened window is (an off-screen run, MDM_OFFSCREEN, leaves a dialog behind its window).
+# one colour; at most BMD_SHOT_WAIT seconds, default 2), raised and focused first as a newly
+# opened window is (an off-screen run, BMD_OFFSCREEN, leaves a dialog behind its window).
 shoot() { # shoot <win> <png> [grow px]
   wmctrl -i -a "$1" 2>/dev/null; sleep 0.1
-  python3 "$HOME/lab/tools/capture.py" "$1" "$2" "${3:-0}" "${MDM_SHOT_WAIT:-2}"
+  python3 "$HOME/lab/tools/capture.py" "$1" "$2" "${3:-0}" "${BMD_SHOT_WAIT:-2}"
 }
 close_new() { # every window not in $1 (the ones before) closed as a person would (title bar ✕)
   local w
@@ -112,7 +112,7 @@ s = dict(language=lang, language_asked=True, helpers_asked=True, extension_never
          update_check=False, torrent_incoming=False, torrent_upnp=False, torrent_dht=False,
          torrent_lsd=False, torrent_stop_idle=True,
          category_dirs=[[c, dl if c == "General" else os.path.join(dl, c)] for c in cats])
-s.update(json.loads(os.environ.get("MDM_SET") or "{}"))
+s.update(json.loads(os.environ.get("BMD_SET") or "{}"))
 d = {"next_id": 1, "items": [], "version": 2}
 if os.path.exists(items):
     d.update(json.load(open(items)))
@@ -163,7 +163,7 @@ for lang in $langs; do
       sleep 0.1
     done
     MAIN=$(mine | head -1)
-    [ -z "$MAIN" ] && { echo "$lang-$mode: MDM showed no window (see $DATA/stdout.log)"; continue; }
+    [ -z "$MAIN" ] && { echo "$lang-$mode: BMD showed no window (see $DATA/stdout.log)"; continue; }
     [ -f "$work/items.json" ] || seed
     started=$(since "$combo_start")
     for entry in $windows; do

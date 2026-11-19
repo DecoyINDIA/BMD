@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "બ્રાઉઝર પરથી iDM પર ડાઉનલોડ્સ આપે છે."
+    "message": "બ્રાઉઝર પરથી BMD પર ડાઉનલોડ્સ આપે છે."
   },
   "menu": {
-    "message": "iDM વડે ડાઉનલોડ કરો"
+    "message": "BMD વડે ડાઉનલોડ કરો"
   },
   "video_download": {
     "message": "વીડિયો ડાઉનલોડ કરો"
@@ -30,19 +30,19 @@
     "message": "બટન સેટિંગ્સ..."
   },
   "video_sent": {
-    "message": "iDM પર મોકલવામાં આવ્યું"
+    "message": "BMD પર મોકલવામાં આવ્યું"
   },
   "menu_selected": {
-    "message": "iDM સાથે પસંદ કરેલી લિંક્સ ડાઉનલોડ કરો"
+    "message": "BMD સાથે પસંદ કરેલી લિંક્સ ડાઉનલોડ કરો"
   },
   "menu_all": {
-    "message": "iDM સાથે બધી લિંક્સ ડાઉનલોડ કરો"
+    "message": "BMD સાથે બધી લિંક્સ ડાઉનલોડ કરો"
   },
   "status_connected": {
-    "message": "iDM સાથે કનેક્ટેડ"
+    "message": "BMD સાથે કનેક્ટેડ"
   },
   "status_connected_version": {
-    "message": "iDM $version$ સાથે કનેક્ટેડ",
+    "message": "BMD $version$ સાથે કનેક્ટેડ",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "થોભાવેલ: ડાઉનલોડ્સ બ્રાઉઝર સાથે રહે છે"
   },
   "status_not_installed": {
-    "message": "iDM ઇન્સ્ટોલ કરેલ નથી, અથવા તેનું બ્રાઉઝર ઇન્ટિગ્રેશન સેટ અપ કરેલું નથી"
+    "message": "BMD ઇન્સ્ટોલ કરેલ નથી, અથવા તેનું બ્રાઉઝર ઇન્ટિગ્રેશન સેટ અપ કરેલું નથી"
   },
   "status_forbidden": {
-    "message": "iDM એક્સટેન્શનની આ કૉપિ સ્વીકારતું નથી"
+    "message": "BMD એક્સટેન્શનની આ કૉપિ સ્વીકારતું નથી"
   },
   "status_not_running": {
-    "message": "iDM સમયસર શરૂ થયું નથી"
+    "message": "BMD સમયસર શરૂ થયું નથી"
   },
   "status_host_failed": {
-    "message": "iDM સાથેનું કનેક્શન નિષ્ફળ થયું"
+    "message": "BMD સાથેનું કનેક્શન નિષ્ફળ થયું"
   },
   "status_too_large": {
     "message": "આ ડાઉનલોડની વિગતો સોંપવા માટે ખૂબ મોટી હતી"
   },
   "status_update_app": {
-    "message": "આ એક્સ્ટેંશન જે કંઈ આપે છે તેનો ઉપયોગ કરવા માટે iDM અપડેટ કરો"
+    "message": "આ એક્સ્ટેંશન જે કંઈ આપે છે તેનો ઉપયોગ કરવા માટે BMD અપડેટ કરો"
   },
   "popup_take": {
     "message": "આ બ્રાઉઝરમાંથી ડાઉનલોડ્સ લો"
@@ -78,10 +78,10 @@
     "message": "આ બ્રાઉઝરના પ્રોક્સી અથવા VPN એક્સ્ટેંશન દ્વારા ડાઉનલોડ્સ મોકલો"
   },
   "popup_proxy_title": {
-    "message": "iDM પછી આ બ્રાઉઝર જેવા જ પ્રોક્સી દ્વારા ડાઉનલોડ કરે છે. બ્રાઉઝર તમને એક વાર તેને મંજૂરી આપવા માટે પૂછે છે; આ બંધ કરવાથી તે મંજૂરી પાછી ખેંચાઈ જાય છે."
+    "message": "BMD પછી આ બ્રાઉઝર જેવા જ પ્રોક્સી દ્વારા ડાઉનલોડ કરે છે. બ્રાઉઝર તમને એક વાર તેને મંજૂરી આપવા માટે પૂછે છે; આ બંધ કરવાથી તે મંજૂરી પાછી ખેંચાઈ જાય છે."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM પછી આ બ્રાઉઝર જેવા જ પ્રોક્સી દ્વારા ડાઉનલોડ કરે છે. જ્યારે આ બંધ હોય, ત્યારે એક્સ્ટેંશન બ્રાઉઝરના પ્રોક્સીને વાંચતું નથી."
+    "message": "BMD પછી આ બ્રાઉઝર જેવા જ પ્રોક્સી દ્વારા ડાઉનલોડ કરે છે. જ્યારે આ બંધ હોય, ત્યારે એક્સ્ટેંશન બ્રાઉઝરના પ્રોક્સીને વાંચતું નથી."
   },
   "popup_exclude_site": {
     "message": "હવેથી $site$ માંથી ડાઉનલોડ્સ ક્યારેય ન લો",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "iDM ખોલો"
+    "message": "BMD ખોલો"
   },
   "popup_options": {
     "message": "વિકલ્પો..."
@@ -114,7 +114,7 @@
     "message": "મદદ"
   },
   "popup_support": {
-    "message": "iDM ને સપોર્ટ કરો"
+    "message": "BMD ને સપોર્ટ કરો"
   },
   "popup_fix": {
     "message": "તેને કેવી રીતે ઠીક કરવું"
@@ -150,7 +150,7 @@
     "message": "વિકલ્પો → સામાન્યમાં અદ્યતન બ્રાઉઝર એકીકરણનો ઉપયોગ કરો બંધ છે."
   },
   "declined_torrents": {
-    "message": "તે એક ટોરેન્ટ છે, અને ટોરેન્ટ સેટિંગ્સમાં iDM સાથે મેગ્નેટ લિંક્સ અને .torrent ફાઇલો ખોલો બંધ છે."
+    "message": "તે એક ટોરેન્ટ છે, અને ટોરેન્ટ સેટિંગ્સમાં BMD સાથે મેગ્નેટ લિંક્સ અને .torrent ફાઇલો ખોલો બંધ છે."
   },
   "declined_site_access": {
     "message": "એક્સ્ટેંશનને આ સાઇટ વાંચવાની મંજૂરી નથી (બ્રાઉઝરની સાઇટ ઍક્સેસ)."
@@ -195,16 +195,16 @@
     "message": "અહીં ડાઉનલોડ કરવા માટે કોઈ વીડિયો નથી"
   },
   "video_playlist": {
-    "message": "વીડિયોની સૂચિ: તેમને iDMમાં પસંદ કરો"
+    "message": "વીડિયોની સૂચિ: તેમને BMDમાં પસંદ કરો"
   },
   "video_no_ytdlp": {
-    "message": "આ વીડિયો માટે iDMને yt-dlp ની જરૂર છે"
+    "message": "આ વીડિયો માટે BMDને yt-dlp ની જરૂર છે"
   },
   "video_too_long": {
     "message": "શોધવામાં ખૂબ સમય લાગ્યો"
   },
   "video_busy": {
-    "message": "iDM અન્ય વીડિયોમાં વ્યસ્ત છે"
+    "message": "BMD અન્ય વીડિયોમાં વ્યસ્ત છે"
   },
   "video_queued": {
     "message": "કતારમાં ઉમેર્યું"
@@ -228,7 +228,7 @@
     "message": "આ કમ્પ્યુટર"
   },
   "popup_send_remote": {
-    "message": "બીજું iDM (એક સર્વર)"
+    "message": "બીજું BMD (એક સર્વર)"
   },
   "popup_remote_code": {
     "message": "જોડી બનાવવાનો કોડ"
@@ -240,7 +240,7 @@
     "message": "જોડી બનાવો"
   },
   "popup_remote_help": {
-    "message": "તેનું સરનામું એકવાર ખોલો અને તેનું પ્રમાણપત્ર સ્વીકારો, પછી તેના Options, Remote, Pair a device (અથવા misterdownloadmanager-cli pair) માંથી કોડ દાખલ કરો."
+    "message": "તેનું સરનામું એકવાર ખોલો અને તેનું પ્રમાણપત્ર સ્વીકારો, પછી તેના Options, Remote, Pair a device (અથવા bmd-cli pair) માંથી કોડ દાખલ કરો."
   },
   "status_remote": {
     "message": "ડાઉનલોડ્સ $address$ પર જાય છે",
@@ -297,19 +297,19 @@
     "message": "શ્રેષ્ઠ ગુણવત્તા ડાઉનલોડ કરો"
   },
   "video_sending": {
-    "message": "iDM પર મોકલી રહ્યું છે..."
+    "message": "BMD પર મોકલી રહ્યું છે..."
   },
   "video_added": {
-    "message": "iDM માં ઉમેર્યું"
+    "message": "BMD માં ઉમેર્યું"
   },
   "video_show": {
     "message": "બતાવો"
   },
   "video_no_answer": {
-    "message": "iDM એ જવાબ આપ્યો નથી"
+    "message": "BMD એ જવાબ આપ્યો નથી"
   },
-  "video_get_mdm": {
-    "message": "iDM મેળવો"
+  "video_get_bmd": {
+    "message": "BMD મેળવો"
   },
   "video_retry": {
     "message": "ફરી પ્રયાસ કરો"
@@ -324,7 +324,7 @@
     "message": "બધી ગુણવત્તા અને સબટાઈટલ..."
   },
   "video_failed": {
-    "message": "iDM ઇન્સ્ટોલ કરેલ નથી અથવા શરૂ થયું નથી"
+    "message": "BMD ઇન્સ્ટોલ કરેલ નથી અથવા શરૂ થયું નથી"
   },
   "video_download_best": {
     "message": "શ્રેષ્ઠ ડાઉનલોડ કરો"

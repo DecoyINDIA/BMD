@@ -1,61 +1,61 @@
-"""Builds every app icon size from art/Mister Download Manager.png (made with ChatGPT).
+"""Resize the square PNG export of art/BMD Black Marlin Icon.svg.
 
-- 48 px and up: the full artwork (globe, hat, moustache, arrow and pixel trail).
-- 16-32 px: a tighter crop on the globe, hat and moustache; the fine trail and thin arrow
-  tail turn to noise at small sizes.
-- The source's solid areas are ~1 % transparent (alpha 252-253); they are made opaque so
-  the taskbar never shows through.
-
-Writes crates/app/assets/icons/app/mdm-<size>.png, MDM.ico (all sizes) and the
-browser extension's icons. Run from the repository root: python -I tools/icon/build_icon.py
+Writes the desktop, extension, website and documentation icons.
+Run from the repository root: python -I tools/icon/build_icon.py
 """
 
+import base64
+import re
 from pathlib import Path
 
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
-SRC = ROOT / "art" / "Mister Download Manager.png"
+SRC = ROOT / "art" / "Black Marlin Downloader.png"
 APP = ROOT / "crates" / "app" / "assets" / "icons" / "app"
 EXT = ROOT / "extension" / "icons"
+WEB = ROOT / "website"
 SIZES = [16, 20, 24, 32, 48, 64, 128, 256]
-# The globe + hat + moustache, in source pixels (left, top, right, bottom).
-TIGHT = (330, 60, 1160, 1110)
+FAVICON_SIZES = [16, 32, 48, 64]
 
 
-def opaque(im: Image.Image) -> Image.Image:
-    r, g, b, a = im.split()
-    return Image.merge("RGBA", (r, g, b, a.point(lambda v: 255 if v >= 240 else v)))
-
-
-def square(im: Image.Image, box, pad: float) -> Image.Image:
-    c = im.crop(box)
-    w, h = c.size
-    s = int(max(w, h) * (1 + 2 * pad))
-    out = Image.new("RGBA", (s, s), (0, 0, 0, 0))
-    out.paste(c, ((s - w) // 2, (s - h) // 2), c)
-    return out
+def save_ico(path: Path, sizes: list[int], icons: dict[int, Image.Image]) -> None:
+    icons[sizes[-1]].save(
+        path,
+        sizes=[(s, s) for s in sizes],
+        append_images=[icons[s] for s in sizes[:-1]],
+    )
 
 
 def main() -> None:
-    src = opaque(Image.open(SRC).convert("RGBA"))
-    bbox = src.split()[3].point(lambda v: 255 if v > 16 else 0).getbbox()
-    full = square(src, bbox, 0.02)
-    tight = square(src, TIGHT, 0.0)
-    icons = {}
+    src = Image.open(SRC).convert("RGBA")
+    icons = {s: src.resize((s, s), Image.LANCZOS) for s in SIZES}
     for size in SIZES:
-        base = tight if size <= 32 else full
-        icons[size] = base.resize((size, size), Image.LANCZOS)
-        icons[size].save(APP / f"mdm-{size}.png")
-    big = icons[256]
-    big.save(
-        APP / "mdm.ico",
-        sizes=[(s, s) for s in SIZES],
-        append_images=[icons[s] for s in SIZES if s != 256],
-    )
+        icons[size].save(APP / f"bmd-{size}.png")
+    save_ico(APP / "bmd.ico", SIZES, icons)
     for size in (16, 32, 48, 128):
         icons[size].save(EXT / f"icon-{size}.png")
-    print("wrote", ", ".join(str(s) for s in SIZES), "+ mdm.ico + extension icons")
+
+    video = EXT.parent / "video.js"
+    logo = base64.b64encode((EXT / "icon-48.png").read_bytes())
+    source, replaced = re.subn(
+        rb'(?<=const LOGO = "data:image/png;base64,)[^"]+',
+        logo,
+        video.read_bytes(),
+    )
+    if replaced != 1:
+        raise ValueError("Expected one embedded icon in extension/video.js")
+    video.write_bytes(source)
+
+    save_ico(WEB / "favicon.ico", FAVICON_SIZES, icons)
+    assets = WEB / "assets"
+    icons[32].save(assets / "favicon-32.png")
+    icons[64].save(assets / "logo-64.png")
+    icons[256].save(assets / "logo-256.webp", lossless=True)
+    src.resize((180, 180), Image.LANCZOS).save(assets / "apple-touch-icon.png")
+    src.resize((640, 640), Image.LANCZOS).save(assets / "logo-640.png")
+    src.resize((320, 320), Image.LANCZOS).save(ROOT / "docs" / "images" / "logo.png")
+    print("Wrote desktop, extension, website and documentation icons")
 
 
 if __name__ == "__main__":

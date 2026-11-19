@@ -1,5 +1,5 @@
 //! 7z and RAR through 7-Zip, run as its own program (#37): UnRAR's licence forbids using its
-//! code in a GPL program, so iDM never links it, and 7z's decoder isn't built in either (it cost
+//! code in a GPL program, so BMD never links it, and 7z's decoder isn't built in either (it cost
 //! about 1 MB). 7-Zip writes into the staging folder; what it wrote is
 //! then checked as our own entries are ([`safe::check_tree`]) before anything is moved into
 //! place.
@@ -43,8 +43,8 @@ pub fn extract(
     w: &mut Writer,
     password: Option<&str>,
 ) -> Result<(), Error> {
-    // Full paths: 7-Zip runs in the staging folder, iDM's own and writable, never in the folder
-    // iDM was started in (its install folder from the Start menu, #834).
+    // Full paths: 7-Zip runs in the staging folder, BMD's own and writable, never in the folder
+    // BMD was started in (its install folder from the Start menu, #834).
     let full = |p: &Path| std::path::absolute(p).unwrap_or_else(|_| p.to_owned());
     let (root, archive) = (full(w.root()), full(archive));
     let mut cmd = Command::new(tool);

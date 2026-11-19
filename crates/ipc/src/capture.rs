@@ -1,4 +1,4 @@
-//! What the browser extension may hand to iDM: Options → General ("Use
+//! What the browser extension may hand to BMD: Options → General ("Use
 //! advanced browser integration", the browsers to capture from) and Options → File types (the
 //! types to take, the sites and addresses to leave alone). One implementation for the app and
 //! the native messaging host: the host reads the app's saved settings at every hand-off (so a
@@ -8,7 +8,7 @@
 use serde::Deserialize;
 
 /// Options → File types defaults: IDM 6.42's; TORRENT (a .torrent the browser hands over opens
-/// Add torrent, #39; only while Torrent settings open torrents with iDM, else the browser keeps it
+/// Add torrent, #39; only while Torrent settings open torrents with BMD, else the browser keeps it
 /// for the user's own torrent client, #1058: `CaptureRules::takes_torrents`); and today's
 /// installers, packages and archives (macOS DMG and PKG, Linux DEB, RPM and AppImage, Windows MSIX, APPX and CAB, Java's JAR, XZ, Zstandard and their tarballs)
 /// and open audio and video formats (WEBM, FLAC, OPUS; #208); and what people fetch by the
@@ -17,7 +17,7 @@ use serde::Deserialize;
 /// everyday browsing (pages, scripts, plain text, web images) or installs itself (XPI, CRX).
 pub const DEFAULT_AUTO_TYPES: &str = "00* 3DM 3DS 3GP 3MF 7Z AAB AAC ABC ACE AFDESIGN AFPHOTO AI AIF AIFF APE APK APKM APKS APPIMAGE APPX APPXBUNDLE ARJ ARROW ARW ASF AU AVI AVRO AZW AZW3 BAK BAM BIN BLEND BZ BZ2 C4D CAB CAF CBR CBZ CCD CHD CKPT CPIO CR2 CR3 CRAM CSO DAE DAT DCM DDS DEB DFF DIVX DJVU DMG DNG DOC DOCX DSF DWG DXF EPS EPUB EXE EXR F3D F4V FASTA FASTQ FB2 FBX FEATHER FIG FITS FLAC FLATPAK FQ GCODE GCZ GEM GGML GGUF GLB GLTF GPKG GRIB GRIB2 GZ GZIP H5 HDF5 HDR IGES IGS IMG INDD IPA ISO ISZ JAR JOBLIB JSONL KERAS KRA LAS LAZ LLAMAFILE LWO LZ LZ4 LZH LZMA M2T M2TS M2V M4A M4B M4V MA MAT MAX MB MBTILES MDF MDS MID MIDI MKA MKV MLMODEL MOBI MOV MP3 MP4 MPA MPE MPEG MPG MSI MSIX MSIXBUNDLE MSP MSU MTS MXF NC NDJSON NEF NEMO NII NPY NPZ NRG NSP NSZ NUPKG OBJ ODP ODS ODT OGG OGM OGV ONNX OPUS ORC ORF OTF OVA OVF PAK PARQUET PB PBF PDF PICKLE PK3 PK4 PKG PKL PLJ PLY POTX PPS PPSX PPT PPTX PSB PSD PT PTH QCOW QCOW2 QT R0* R1* R2* R3* R4* R5* R6* R7* R8* R9* RA RAF RAR RDS RM RMVB RPM RTF RUN RVZ RW2 SAFETENSORS SEA SF2 SFZ SHP SIT SITX SKETCH SKP SLDASM SLDPRT SNAP SQLITE SQLITE3 STEP STL STP TAR TBZ TBZ2 TFLITE TGA TGZ TIF TIFF TLZ TORRENT TTA TTC TTF TXZ TZST UNITYPACKAGE USD USDA USDC USDZ VDB VDI VHD VHDX VMDK VOB VPK VSIX WAV WBFS WEBM WHL WIM WMA WMV WRL WTV WUA WV X3D XAPK XCF XCI XLS XLSB XLSM XLSX XZ Z Z0* ZIP ZIPX ZPR ZST ZTL";
 
-/// The lists earlier versions started with: IDM 6.42's (iDM 0.2.x), with TORRENT (#39), then
+/// The lists earlier versions started with: IDM 6.42's (BMD 0.2.x), with TORRENT (#39), then
 /// with today's packages and open formats (#208). A saved list equal to one of them was never edited, and becomes today's (`upgraded_types`).
 const EARLIER_AUTO_TYPES: [&str; 3] = [
     "3GP 7Z AAC ACE AIF APK ARJ ASF AVI BIN BZ2 EXE GZ GZIP IMG ISO LZH M4A M4V MKV MOV MP3 MP4 MPA MPE MPEG MPG MSI MSU OGG OGV PDF PLJ PPS PPT QT R0* R1* RA RAR RM RMVB SEA SIT SITX TAR TIF TIFF WAV WMA WMV Z ZIP",
@@ -66,7 +66,7 @@ pub struct CaptureRules {
     /// Options → File types: files smaller than this (KB) stay with the browser (a receipt, an
     /// icon); 0 takes any size. Only when the browser knows the size.
     pub capture_min_kb: u64,
-    /// Torrent settings → "Open magnet links and .torrent files with iDM"
+    /// Torrent settings → "Open magnet links and .torrent files with BMD"
     /// as the app settled it (`Settings::torrent_associations`, saved under this name). Off, a
     /// .torrent the browser downloads stays with the browser too, which opens it in the user's
     /// own torrent client (#1058), though TORRENT is in File types. None (not decided yet: an
@@ -134,7 +134,7 @@ impl Declined {
         Declined::ALL.into_iter().find(|d| d.code() == code)
     }
 
-    /// Why, for iDM's log (English, as the rest of it), naming the setting that decides.
+    /// Why, for BMD's log (English, as the rest of it), naming the setting that decides.
     pub fn reason(self) -> &'static str {
         match self {
             Declined::IntegrationOff => {
@@ -154,7 +154,7 @@ impl Declined {
                 "it is smaller than Options > File types > Don't take files smaller than"
             }
             Declined::Torrents => {
-                "it is a .torrent and Tasks > Torrent settings > Open magnet links and .torrent files with iDM is off"
+                "it is a .torrent and Tasks > Torrent settings > Open magnet links and .torrent files with BMD is off"
             }
         }
     }
@@ -869,7 +869,7 @@ mod tests {
     }
 
     #[test]
-    fn a_torrent_goes_to_mdm_only_while_torrent_settings_open_torrents_with_it() {
+    fn a_torrent_goes_to_bmd_only_while_torrent_settings_open_torrents_with_it() {
         // #1058: a tracker's `download.php?id=…` serving a .torrent (its name from
         // Content-Disposition), and a plain .torrent link.
         let off = CaptureRules {
@@ -1071,8 +1071,8 @@ mod tests {
         }
         .upgraded();
         for name in [
-            "iDM.dmg",
-            "mdm_0.3.0_amd64.deb",
+            "BMD.dmg",
+            "bmd_0.3.0_amd64.deb",
             "a.AppImage",
             "clip.webm",
             "x.tar.zst",

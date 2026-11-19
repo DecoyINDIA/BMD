@@ -1,4 +1,4 @@
-// iDM's download button over videos (a content script, in every page and
+// BMD's download button over videos (a content script, in every page and
 // frame). Our own design: a pill of dark frosted glass at the video's edge that appears while
 // the pointer moves over the video (or it has the keyboard's focus) and fades when the pointer
 // rests or leaves. As it appears the app looks the video up (an embedded player's own address,
@@ -22,7 +22,7 @@
   const prev = globalThis.__mdmVideoButton;
   if (prev && typeof prev === "object" && prev.alive()) return;
   if (prev && typeof prev.teardown === "function") prev.teardown();
-  for (const old of document.querySelectorAll("mdm-video-button")) old.remove();
+  for (const old of document.querySelectorAll("bmd-video-button")) old.remove();
   const ext = globalThis.browser ?? globalThis.chrome;
 
   // A video worth a button: big enough to be content, not a short muted looping clip (an
@@ -37,7 +37,7 @@
   const INSET = 8;
   const DRAG_PX = 4;
   // Our app icon (extension/icons/icon-48.png, as data: no extension file is exposed to pages).
-  const LOGO = "data:image/png;base64,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";
+  const LOGO = "data:image/png;base64,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";
 
   const t = (key, ...subs) =>
     ext.i18n.getMessage(key, subs) || (FALLBACK[key] || key).replace(/\$(\d)/g, (_, n) => subs[n - 1] ?? "");
@@ -46,7 +46,7 @@
     video_more: "More options",
     video_hide_here: "Hide on this video",
     video_settings: "Button settings...",
-    video_sent: "Sent to iDM",
+    video_sent: "Sent to BMD",
     video_off: "Off on this site",
     video_drm: "Protected video",
     video_cant_save: "can't be saved",
@@ -56,11 +56,11 @@
     video_drag_dots: "Drag the dots to move it along the edge",
     video_tip: "Download $1",
     video_tip_best: "Download the best quality",
-    video_sending: "Sending to iDM...",
-    video_added: "Added to iDM",
+    video_sending: "Sending to BMD...",
+    video_added: "Added to BMD",
     video_show: "Show",
-    video_no_answer: "iDM didn't answer",
-    video_get_mdm: "Get iDM",
+    video_no_answer: "BMD didn't answer",
+    video_get_bmd: "Get BMD",
     video_retry: "Retry",
     video_turn_on: "Turn on",
     video_best: "best",
@@ -70,10 +70,10 @@
     video_all_qualities: "All qualities and subtitles...",
     video_looking: "Looking up the qualities…",
     video_no_choices: "No video to download here",
-    video_playlist: "A list of videos: choose them in iDM",
-    video_no_ytdlp: "iDM needs yt-dlp for this video",
+    video_playlist: "A list of videos: choose them in BMD",
+    video_no_ytdlp: "BMD needs yt-dlp for this video",
     video_too_long: "Looking up took too long",
-    video_busy: "iDM is busy with other videos",
+    video_busy: "BMD is busy with other videos",
     video_queued: "Added to the queue",
     video_failed_lookup: "Could not look it up",
     video_tab_video: "Video",
@@ -258,7 +258,7 @@
       took = now() - asked;
       if (!alive() || !r || r.gone) return null;
       if (r.late) return { state: "late" };
-      // Another iDM chosen meanwhile: the window, as for a click.
+      // Another BMD chosen meanwhile: the window, as for a click.
       s = r.fallback ? { state: "use-window" } : r.lookup;
     }
   }
@@ -266,7 +266,7 @@
   // The background's answer to a lookup or to a choice, as a lookup's state: null when there is
   // nothing to show (the extension gone); "late" past the minute, "unnamed" for a video it can't
   // tell, "feed" for a video in a feed no post names (#689), and "use-window" for no lookups here
-  // (another iDM, an older one) or an answer that isn't one.
+  // (another BMD, an older one) or an answer that isn't one.
   function replyState(r) {
     if (r && r.gone) return null;
     if (r && r.late) return { state: "late" };
@@ -277,7 +277,7 @@
 
   // Whether what the tab played is worth asking for (#1092), after a look-up's state `s`: the page
   // found nothing (a feed no post names, a failure, no qualities), not a list, nor a look-up that
-  // didn't happen (busy, off, too late, another iDM) or that YouTube's player answers for.
+  // didn't happen (busy, off, too late, another BMD) or that YouTube's player answers for.
   function playedWanted(s) {
     const state = s && typeof s === "object" ? s.state : "";
     return state === "feed" || state === "failed" || (state === "ready" && !(Array.isArray(s.choices) && s.choices.length));
@@ -285,7 +285,7 @@
 
   // The app's word on what the look-up lacked, to show with its qualities (#852: YouTube without
   // a JavaScript runtime lists only some): its text, its link's words and the help page it
-  // opens, on iDM's own site only. Null when there is none (an app older than it) or it isn't one.
+  // opens, on BMD's own site only. Null when there is none (an app older than it) or it isn't one.
   function noticeOf(s) {
     const n = s && typeof s === "object" ? s.notice : null;
     if (!n || typeof n !== "object" || typeof n.text !== "string" || !n.text.trim()) return null;
@@ -876,7 +876,7 @@
       focusedPlayer.contains(video) && focusedPlayer.matches(":focus-visible"));
 
   // ---- the button: a closed shadow tree the page's styles and scripts can't reach ----------
-  const root = document.createElement("mdm-video-button");
+  const root = document.createElement("bmd-video-button");
   // Each with !important: a page's own rules can't hide or move it.
   for (const [k, v] of Object.entries({
     all: "initial", position: "fixed", "z-index": "2147483647", left: "0", top: "0", display: "none",
@@ -884,8 +884,8 @@
   })) root.style.setProperty(k, v, "important");
   const shadow = root.attachShadow({ mode: "closed" });
   // It sits on the video like the player's own controls: dark frosted glass that reads over any
-  // frame (bright ones too), iDM's one blue for the action, and its own colour for each thing that
-  // stops it (green done, amber the user's step, red iDM's problem, grey can't by design). Start
+  // frame (bright ones too), BMD's one blue for the action, and its own colour for each thing that
+  // stops it (green done, amber the user's step, red BMD's problem, grey can't by design). Start
   // and end, never left and right: a right-to-left language mirrors it whole.
   const CSS = `
 :host { all: initial; }
@@ -897,7 +897,7 @@
   --sh: 0 1px 2px rgba(17, 19, 24, .18), 0 6px 14px rgba(17, 19, 24, .18);
   --font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, "Noto Sans", sans-serif;
 }
-/* Windows (the system) in dark mode, not the page: iDM's navy board; the green stays. */
+/* Windows (the system) in dark mode, not the page: BMD's navy board; the green stays. */
 @media (prefers-color-scheme: dark) {
   .pill, .menu, .tip, .guide {
     --accent: #7fe07f; --ok: #7fe07f; --warn: #ffd36b; --err: #ff99a4;
@@ -1000,7 +1000,7 @@ button:focus-visible { outline: none; }
 .line.v { width: 0; border-inline-start: 1.5px dashed rgba(255, 255, 255, .75); }
 .snap { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%;
   border: 2px solid #fff; background: var(--go); }
-/* The list: paper white (iDM's navy board in dark mode), one line per quality. */
+/* The list: paper white (BMD's navy board in dark mode), one line per quality. */
 .menu {
   position: absolute; width: 318px; max-width: calc(100vw - 16px); padding: 4px; border-radius: 6px;
   background: var(--bg); color: var(--tx); border: 1px solid var(--bd); box-shadow: var(--sh);
@@ -1133,7 +1133,7 @@ button:focus-visible { outline: none; }
   // By what the button sends for it (its address and its own file): one look-up each, kept for
   // the page's life (the app keeps its own ten minutes, and shares one between two askings). A
   // video that plays a plain file needs none: the browser says its picture's size, and it goes
-  // to iDM as a file.
+  // to BMD as a file.
   const looks = new Map();
   // Shown this long over the same video first: previews the pointer only crosses aren't looked up.
   const LOOK_DELAY_MS = 600;
@@ -1142,10 +1142,10 @@ button:focus-visible { outline: none; }
   // pass over the button doesn't count.
   const REST_MS = 200;
   // A private window's video is looked up only when the user asks: the click, or the menu's arrow
-  // (#1053). Neither the button showing nor the pointer resting on it sends its page to iDM.
+  // (#1053). Neither the button showing nor the pointer resting on it sends its page to BMD.
   const PRIVATE = Boolean(ext.extension?.inIncognitoContext);
-  // An answer that isn't a look-up's (no iDM, an older one, too many at once) is asked again after
-  // this; meanwhile a click goes to iDM's window, as it did before.
+  // An answer that isn't a look-up's (no BMD, an older one, too many at once) is asked again after
+  // this; meanwhile a click goes to BMD's window, as it did before.
   const LOOK_RETRY_MS = 15000;
   let lookTimer = 0;
   // A stream's manifest the page plays as its file (Safari's way, Chrome's own HLS): looked up.
@@ -1342,7 +1342,7 @@ button:focus-visible { outline: none; }
   );
 
   // ---- what it shows ------------------------------------------------------------------------
-  // `status`: what happened after a click (sending, sent, the user's step, iDM's problem, off),
+  // `status`: what happened after a click (sending, sent, the user's step, BMD's problem, off),
   // shown instead of the quality until it ends: {state, text, sub, acts: [[name, words]], …}.
   let status = null;
   let statusTimer = 0;
@@ -1853,9 +1853,9 @@ button:focus-visible { outline: none; }
     return Promise.race([promise, late]).finally(() => clearTimeout(timer));
   };
 
-  // The click: the best quality its look-up found, started by iDM at once (while the look-up
+  // The click: the best quality its look-up found, started by BMD at once (while the look-up
   // runs, as soon as it ends); the video's own plain file as a file. `row`: a quality of its menu
-  // instead. `toWindow`: "All qualities and subtitles…", iDM's Download video window, which is
+  // instead. `toWindow`: "All qualities and subtitles…", BMD's Download video window, which is
   // also where a click goes when nothing was found (no look-ups here, yt-dlp missing, a list, an
   // error: the window says so and offers what to do).
   async function download(row, toWindow = false) {
@@ -1904,7 +1904,7 @@ button:focus-visible { outline: none; }
     return { ...j, asked: { ...j.asked, ...(l.file ? { src: l.played } : {}), played: l.played } };
   }
 
-  // A quality the look-up offered: iDM downloads it (its own choice of it, with what it looked the
+  // A quality the look-up offered: BMD downloads it (its own choice of it, with what it looked the
   // video up with) without its window. Only the token and the quality's number go.
   async function pick(j, l, i) {
     if (!l.token || l.picked || !(i >= 0 && i < Math.min(l.choices.length, 100))) return useWindow(playedJob(j, l));
@@ -1935,7 +1935,7 @@ button:focus-visible { outline: none; }
   }
 
   // The click as it always was: the app's Download video window for this video, once per click;
-  // or (`direct`) the video's own plain file, downloaded by iDM as a file at once.
+  // or (`direct`) the video's own plain file, downloaded by BMD as a file at once.
   async function useWindow(j, { direct = false, words = "" } = {}) {
     if (!firstWindow(j)) return;
     // Where the video is now, for the background to ask the page's player there.
@@ -1949,11 +1949,11 @@ button:focus-visible { outline: none; }
     }
     if (r.why === "options") return offStatus();
     if (r.why === "unnamed" || r.why === "feed") return showFlash({ kind: "warn", text: t(r.why === "unnamed" ? "video_unnamed" : "video_open_post") }, null);
-    // iDM isn't there or didn't start: red, with the way to get it and another try.
-    setStatus({ state: "err", text: t("video_no_answer"), acts: [["get", t("video_get_mdm")], ["retry", t("video_retry")]], again: { row: j.row, toWindow: j.toWindow } }, 9000);
+    // BMD isn't there or didn't start: red, with the way to get it and another try.
+    setStatus({ state: "err", text: t("video_no_answer"), acts: [["get", t("video_get_bmd")], ["retry", t("video_retry")]], again: { row: j.row, toWindow: j.toWindow } }, 9000);
   }
 
-  // A status's buttons: "Show", "Open post", "Get iDM", "Retry", "Turn on". Only the user's own.
+  // A status's buttons: "Show", "Open post", "Get BMD", "Retry", "Turn on". Only the user's own.
   let lastShow = "";
   acts.addEventListener("click", async (e) => {
     if (!e.isTrusted) return;
@@ -1967,7 +1967,7 @@ button:focus-visible { outline: none; }
       send({ type: "open-post", url: s.post });
       endStatus(true);
     } else if (name === "get") {
-      send({ type: "get-mdm" });
+      send({ type: "get-bmd" });
     } else if (name === "retry") {
       endStatus(true);
       download(s.again && s.again.row, Boolean(s.again && s.again.toWindow));
@@ -1982,7 +1982,7 @@ button:focus-visible { outline: none; }
 
   // ---- the menu -------------------------------------------------------------------------------
   // The video's qualities as its look-up found them: "Download best" first, then one numbered
-  // line per quality (video, then sound); iDM's whole window; hiding and settings. Filled as it
+  // line per quality (video, then sound); BMD's whole window; hiding and settings. Filled as it
   // opens and again when the look-up ends.
   function fillMenu() {
     const c = video ? describeNow(video) : null;

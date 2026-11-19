@@ -1,14 +1,14 @@
 //! HLS playlists from a server: a master playlist read for the browser's quality menu
-//! (`mdm_tools::manifest`), with the media playlist its first format names, and a media playlist
-//! whose pieces MDM's engine downloads (`mdm_tools::pieces::hls`).
+//! (`bmd_tools::manifest`), with the media playlist its first format names, and a media playlist
+//! whose pieces BMD's engine downloads (`bmd_tools::pieces::hls`).
 //!
 //! The input is the master playlist, a NUL byte, then the media playlist (without one, the same
 //! text is both).
 #![no_main]
 
 use libfuzzer_sys::fuzz_target;
-use mdm_tools::manifest::Master;
-use mdm_tools::pieces;
+use bmd_tools::manifest::Master;
+use bmd_tools::pieces;
 use url::Url;
 
 fuzz_target!(|data: &[u8]| {

@@ -1,6 +1,6 @@
 //! #1422: a site whose bot check refuses whatever claims to be a browser without connecting like
 //! one (SourceForge's), and lets programs that say what they are through. When the browser's
-//! User-Agent is refused, and the browser-like connection too (#668), iDM asks once more under
+//! User-Agent is refused, and the browser-like connection too (#668), BMD asks once more under
 //! its own name (`Options::own_agent`), with the same cookies, Referer and range; the site is
 //! then remembered for the session, and a resume goes on under it. The lab server's
 //! `refuse_browsers` fault stands in for the check: it refuses every request whose User-Agent
@@ -8,11 +8,11 @@
 
 use std::time::{Duration, Instant};
 
-use mdm_engine::agent::OWN_USER_AGENT;
-use mdm_engine::browserlike::AVAILABLE;
-use mdm_engine::download::State;
-use mdm_engine::{Destination, Download, Error, Options, Request};
-use mdm_labserver::{Config, Faults, LabServer, LogEntry, content};
+use bmd_engine::agent::OWN_USER_AGENT;
+use bmd_engine::browserlike::AVAILABLE;
+use bmd_engine::download::State;
+use bmd_engine::{Destination, Download, Error, Options, Request};
+use bmd_labserver::{Config, Faults, LabServer, LogEntry, content};
 use reqwest::header::{COOKIE, HeaderMap, REFERER, USER_AGENT};
 
 const SETTLE: Duration = Duration::from_secs(20);
@@ -29,7 +29,7 @@ async fn server(faults: &str) -> LabServer {
     .unwrap()
 }
 
-/// A download the browser handed over, as the app starts it: the browser's User-Agent, and iDM's
+/// A download the browser handed over, as the app starts it: the browser's User-Agent, and BMD's
 /// own name for the last try.
 fn opts() -> Options {
     Options {
@@ -67,7 +67,7 @@ async fn settled_log(s: &LabServer) -> Vec<LogEntry> {
 }
 
 /// A download to its end, with its event log's lines.
-async fn to_the_end(dl: Download) -> (Result<mdm_engine::Outcome, Error>, Vec<String>) {
+async fn to_the_end(dl: Download) -> (Result<bmd_engine::Outcome, Error>, Vec<String>) {
     let deadline = Instant::now() + Duration::from_secs(60);
     let events = loop {
         let snap = dl.snapshot();
@@ -80,7 +80,7 @@ async fn to_the_end(dl: Download) -> (Result<mdm_engine::Outcome, Error>, Vec<St
     (dl.wait().await, events)
 }
 
-/// The refusals the ladder meets before iDM's own name: iDM's connection with the browser's
+/// The refusals the ladder meets before BMD's own name: BMD's connection with the browser's
 /// User-Agent, then the browser-like connection (when this build has it).
 fn refusals_first() -> usize {
     1 + usize::from(AVAILABLE)
@@ -97,7 +97,7 @@ fn start(s: &LabServer, path: &str, dir: &std::path::Path, opts: Options) -> Dow
     )
 }
 
-/// Refused → the browser-like connection → iDM's own name → the file, with the browser's cookie
+/// Refused → the browser-like connection → BMD's own name → the file, with the browser's cookie
 /// and Referer on every request, on every connection.
 #[tokio::test]
 async fn refused_as_a_browser_it_gets_through_under_its_own_name() {
@@ -110,7 +110,7 @@ async fn refused_as_a_browser_it_gets_through_under_its_own_name() {
         opts(),
     ))
     .await;
-    let out = out.expect("iDM's own name gets through");
+    let out = out.expect("BMD's own name gets through");
     same_content(&out.path, 1422, 3 << 20);
     let log = settled_log(&s).await;
     let first = refusals_first();
@@ -129,7 +129,7 @@ async fn refused_as_a_browser_it_gets_through_under_its_own_name() {
             Some("http://127.0.0.1/files/"),
             "{e:?}"
         );
-        assert!(e.sec_fetch_mode.is_none(), "iDM's own connection: {e:?}");
+        assert!(e.sec_fetch_mode.is_none(), "BMD's own connection: {e:?}");
         assert!(e.status == 200 || e.status == 206, "{e:?}");
     }
     assert_eq!(
@@ -140,7 +140,7 @@ async fn refused_as_a_browser_it_gets_through_under_its_own_name() {
     assert!(
         events
             .iter()
-            .any(|e| e.contains("asking once more as iDM itself")),
+            .any(|e| e.contains("asking once more as BMD itself")),
         "{events:?}"
     );
 }
@@ -161,12 +161,12 @@ async fn refused_under_every_name_it_tells_the_bot_check() {
     assert_eq!(own.user_agent.as_deref(), Some(OWN_USER_AGENT), "{log:?}");
     assert_eq!(own.outcome, "fault:browser_only", "{log:?}");
     assert!(
-        events.iter().any(|e| e.contains("asked as iDM")),
+        events.iter().any(|e| e.contains("asked as BMD")),
         "{events:?}"
     );
 }
 
-/// Once its site let iDM through under its own name, the next download there asks so at once:
+/// Once its site let BMD through under its own name, the next download there asks so at once:
 /// no refusal again.
 #[tokio::test]
 async fn the_site_is_remembered_for_the_next_download() {
@@ -191,7 +191,7 @@ async fn the_site_is_remembered_for_the_next_download() {
     );
     // A look there too.
     s.clear_log();
-    let info = mdm_engine::probe(
+    let info = bmd_engine::probe(
         s.url("/gen/1M/c.zip?seed=4").parse().unwrap(),
         handed_over(),
         &opts(),
@@ -205,7 +205,7 @@ async fn the_site_is_remembered_for_the_next_download() {
 }
 
 /// A stopped download goes on under the name that got through, from its state: even once the
-/// session's memory of the site is gone (a restart of iDM).
+/// session's memory of the site is gone (a restart of BMD).
 #[tokio::test]
 async fn a_resume_goes_on_under_its_own_name() {
     let s = server(&format!("{SITE}&rate=1M&stall_at=1M")).await;
@@ -233,12 +233,12 @@ async fn a_resume_goes_on_under_its_own_name() {
     assert!(matches!(dl.wait().await, Err(Error::Cancelled)));
     s.set_faults(Faults::parse(&format!("{SITE}&rate=4M")).unwrap());
     tokio::time::timeout(SETTLE, s.settled()).await.unwrap();
-    let state = mdm_engine::state::state_path(&file);
-    let saved = mdm_engine::state::ResumeState::load(&state).unwrap();
+    let state = bmd_engine::state::state_path(&file);
+    let saved = bmd_engine::state::ResumeState::load(&state).unwrap();
     assert!(saved.asked_as_own, "the state says how it got through");
     assert!(!saved.browser_like);
     // As after a restart: the session's memory is gone, the state still knows.
-    mdm_engine::agent::forget_own(&url);
+    bmd_engine::agent::forget_own(&url);
     s.clear_log();
     let (out, events) = to_the_end(Download::resume(state, handed_over(), opts()).unwrap()).await;
     same_content(&out.expect("the resume goes on").path, 7, 3 << 20);
@@ -252,13 +252,13 @@ async fn a_resume_goes_on_under_its_own_name() {
     assert!(events.iter().any(|e| e.contains("own name")), "{events:?}");
 }
 
-/// A look that got through under iDM's own name hands its answer to the download, which goes on
+/// A look that got through under BMD's own name hands its answer to the download, which goes on
 /// under it: no request refused again.
 #[tokio::test]
 async fn a_look_and_its_download_go_on_under_its_own_name() {
     let s = server(SITE).await;
     let url: url::Url = s.url("/gen/1M/kept.zip?seed=5").parse().unwrap();
-    let (info, kept) = mdm_engine::probe_kept(url.clone(), handed_over(), &opts())
+    let (info, kept) = bmd_engine::probe_kept(url.clone(), handed_over(), &opts())
         .await
         .expect("the look gets through");
     assert_eq!(info.size, Some(1 << 20));
@@ -289,7 +289,7 @@ async fn a_look_and_its_download_go_on_under_its_own_name() {
 }
 
 /// A User-Agent the caller put in the request (the command line's `--user-agent`) is its
-/// choice: never replaced by iDM's own name. Nor is one a download has without `own_agent`
+/// choice: never replaced by BMD's own name. Nor is one a download has without `own_agent`
 /// (the user's in Options).
 #[tokio::test]
 async fn a_user_agent_chosen_is_never_replaced() {

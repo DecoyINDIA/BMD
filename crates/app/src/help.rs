@@ -12,14 +12,14 @@ use crate::dialogs::{Outcome, window};
 use crate::winui::{self, ButtonKind, r};
 
 /// The repository: problem reports, releases, source, licences.
-pub const REPO: &str = "https://github.com/DecoyINDIA/iDM";
-const LATEST: &str = "https://api.github.com/repos/DecoyINDIA/iDM/releases/latest";
+pub const REPO: &str = "https://github.com/DecoyINDIA/BMD";
+const LATEST: &str = "https://api.github.com/repos/DecoyINDIA/BMD/releases/latest";
 /// The repository on GitHub (`owner/name`): its release pages when GitHub's API refuses for its
 /// rate limit (#1337).
-const REPO_PATH: &str = "DecoyINDIA/iDM";
+const REPO_PATH: &str = "DecoyINDIA/BMD";
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
-pub const COMMIT: &str = env!("MDM_COMMIT");
-/// While iDM runs, the automatic check comes again this often (it also checks at every start).
+pub const COMMIT: &str = env!("BMD_COMMIT");
+/// While BMD runs, the automatic check comes again this often (it also checks at every start).
 pub const CHECK_EVERY: i64 = 24 * 3600;
 /// The check at start waits this long (the window, the list and the downloads first).
 pub const CHECK_AFTER_START: std::time::Duration = std::time::Duration::from_secs(5);
@@ -76,7 +76,7 @@ fn contributors_page(lang: &str) -> String {
 
 /// Open a page of the user guide on the website, in the interface language when the site has
 /// it (`doc` as page_url takes it: `"video.md"`, `"README.md#tutorials"`, `""` the home page).
-/// Never in an off-screen test run (MDM_OFFSCREEN), whose clicks come from scripts, not from a
+/// Never in an off-screen test run (BMD_OFFSCREEN), whose clicks come from scripts, not from a
 /// person at the browser.
 pub fn open_page(doc: &str) {
     if !crate::offscreen() {
@@ -84,8 +84,8 @@ pub fn open_page(doc: &str) {
     }
 }
 
-/// Help → Support iDM and About's link: the project on GitHub. Asked for only: iDM
-/// never brings it up by itself, and never in an off-screen test run (MDM_OFFSCREEN), whose
+/// Help → Support BMD and About's link: the project on GitHub. Asked for only: BMD
+/// never brings it up by itself, and never in an off-screen test run (BMD_OFFSCREEN), whose
 /// clicks come from scripts, not from a person at the browser.
 pub fn support() {
     if !crate::offscreen() {
@@ -94,7 +94,7 @@ pub fn support() {
 }
 
 /// A new GitHub issue on the Bug report form (.github/ISSUE_TEMPLATE/bug.yml), filled with
-/// what iDM knows: its version, the system and its version, how it was installed, the
+/// what BMD knows: its version, the system and its version, how it was installed, the
 /// language. The parameters are the form's field ids (all text fields: GitHub's page drops a
 /// dropdown's value from the address).
 pub fn report_problem() {
@@ -113,7 +113,7 @@ pub fn report_problem() {
         });
 }
 
-/// The Bug report form's fields iDM fills in: (field id, value).
+/// The Bug report form's fields BMD fills in: (field id, value).
 fn report_fields() -> Vec<(&'static str, String)> {
     #[cfg(windows)]
     let os_version = crate::win32::windows_version();
@@ -138,9 +138,9 @@ fn report_fields() -> Vec<(&'static str, String)> {
     };
     // The processor of a Windows or Linux build other than x64's (Windows on ARM, 32-bit, Linux
     // on ARM): a bug may be its build's alone. The Mac's is in "os" already.
-    let build = match mdm_tools::update::Arch::THIS {
-        Some(mdm_tools::update::Arch::Arm64) if !cfg!(target_os = "macos") => ", ARM64",
-        Some(mdm_tools::update::Arch::X86) => ", 32-bit",
+    let build = match bmd_tools::update::Arch::THIS {
+        Some(bmd_tools::update::Arch::Arm64) if !cfg!(target_os = "macos") => ", ARM64",
+        Some(bmd_tools::update::Arch::X86) => ", 32-bit",
         _ => "",
     };
     let mut fields = vec![
@@ -151,7 +151,7 @@ fn report_fields() -> Vec<(&'static str, String)> {
     ];
     fields.push((
         "install",
-        mdm_tools::update::Install::detect().label().to_owned(),
+        bmd_tools::update::Install::detect().label().to_owned(),
     ));
     fields
 }
@@ -199,7 +199,7 @@ pub fn check(rt: &tokio::runtime::Handle, ctx: &egui::Context) -> Slot {
 fn settled(joined: Result<Result<Found, String>, tokio::task::JoinError>) -> Result<Found, String> {
     joined.unwrap_or_else(|e| {
         tracing::warn!("the update check stopped: {e}");
-        Err(crate::i18n::t("iDM hit an internal error").to_owned())
+        Err(crate::i18n::t("BMD hit an internal error").to_owned())
     })
 }
 
@@ -213,36 +213,36 @@ struct Sources {
 }
 
 async fn latest() -> Result<Found, String> {
-    // MDM_UPDATE_FEED: another address for the latest release (tests of Update now, as
-    // MDM_DATA_DIR is for a separate list); MDM_UPDATE_WEB and MDM_UPDATE_RAW: other addresses
+    // BMD_UPDATE_FEED: another address for the latest release (tests of Update now, as
+    // MDM_DATA_DIR is for a separate list); BMD_UPDATE_WEB and BMD_UPDATE_RAW: other addresses
     // for GitHub's pages and files (tests of the way around the API's rate limit: the lab
     // server's fake GitHub, `/gh/web` and `/gh/raw`).
     let var = |name: &str, default: &str| std::env::var(name).unwrap_or_else(|_| default.into());
     let sources = Sources {
-        feed: var("MDM_UPDATE_FEED", LATEST),
-        web: var("MDM_UPDATE_WEB", mdm_tools::github::WEB),
-        raw: var("MDM_UPDATE_RAW", mdm_tools::github::RAW),
+        feed: var("BMD_UPDATE_FEED", LATEST),
+        web: var("BMD_UPDATE_WEB", bmd_tools::github::WEB),
+        raw: var("BMD_UPDATE_RAW", bmd_tools::github::RAW),
     };
     let net = crate::settings::own_net();
     // The chosen DNS and network adapter, as downloads have them (#36, #35).
     let builder = |url: &str| {
-        mdm_engine::net::client_builder(&net.dns, &net.route, url)
+        bmd_engine::net::client_builder(&net.dns, &net.route, url)
             .map(|b| {
-                b.user_agent(concat!("MisterDownloadManager/", env!("CARGO_PKG_VERSION")))
+                b.user_agent(concat!("BMD/", env!("CARGO_PKG_VERSION")))
                     .timeout(Duration::from_secs(20))
             })
             .map_err(|e| e.to_string())
     };
     let client = builder(&sources.feed)?.build().map_err(|e| e.to_string())?;
     // GitHub's pages are read without following their redirects: where `releases/latest` sends
-    // iDM is the answer (mdm_tools::github::latest_tag).
+    // BMD is the answer (bmd_tools::github::latest_tag).
     let pages = |url: &str| {
         builder(url)?
             .redirect(reqwest::redirect::Policy::none())
             .build()
             .map_err(|e| e.to_string())
     };
-    let install = mdm_tools::update::Install::detect();
+    let install = bmd_tools::update::Install::detect();
     fetch(&client, &pages, &sources, VERSION, install).await
 }
 
@@ -256,10 +256,10 @@ async fn fetch(
     pages: &(dyn Fn(&str) -> Result<reqwest::Client, String> + Sync),
     sources: &Sources,
     current: &str,
-    install: mdm_tools::update::Install,
+    install: bmd_tools::update::Install,
 ) -> Result<Found, String> {
-    use mdm_tools::github::Api;
-    let body = match mdm_tools::github::api_get(client, &sources.feed).await {
+    use bmd_tools::github::Api;
+    let body = match bmd_tools::github::api_get(client, &sources.feed).await {
         Ok(Api::Answer(body)) => body,
         Ok(Api::RateLimited(refusal)) => {
             return match from_pages(pages, sources, current, install).await {
@@ -273,10 +273,10 @@ async fn fetch(
             };
         }
         // No release published yet: nothing newer than this.
-        Err(mdm_tools::Error::Http(e)) if e.status() == Some(reqwest::StatusCode::NOT_FOUND) => {
+        Err(bmd_tools::Error::Http(e)) if e.status() == Some(reqwest::StatusCode::NOT_FOUND) => {
             return Ok(Found::Latest);
         }
-        Err(mdm_tools::Error::Http(e)) => return Err(e.to_string()),
+        Err(bmd_tools::Error::Http(e)) => return Err(e.to_string()),
         Err(e) => return Err(e.to_string()),
     };
     parse_release(&String::from_utf8_lossy(&body), current)
@@ -291,9 +291,9 @@ async fn from_pages(
     pages: &(dyn Fn(&str) -> Result<reqwest::Client, String> + Sync),
     sources: &Sources,
     current: &str,
-    install: mdm_tools::update::Install,
+    install: bmd_tools::update::Install,
 ) -> Result<Found, String> {
-    use mdm_tools::github;
+    use bmd_tools::github;
     let client = pages(&github::latest_page(&sources.web, REPO_PATH))?;
     let tag = github::latest_tag(&client, &sources.web, REPO_PATH)
         .await
@@ -367,7 +367,7 @@ fn changelog_section(text: &str, version: &str) -> Option<(String, String)> {
 /// The version a release's tag names (`v0.5.2` → `0.5.2`), or why there is none.
 fn version_of(tag: &str) -> Result<&str, String> {
     let version = tag.trim().trim_start_matches(['v', 'V']);
-    // A number iDM can't read ("next", "1.x") would compare as 0 and pass for older: no answer
+    // A number BMD can't read ("next", "1.x") would compare as 0 and pass for older: no answer
     // is better than a wrong one.
     let numeric = version
         .split_once('-')
@@ -435,7 +435,7 @@ pub struct Updates {
     result: Option<Result<Found, String>>,
     /// Update now: the release file on its way (crate::update).
     job: Option<crate::update::Job>,
-    /// What Update now came to, when it didn't close iDM.
+    /// What Update now came to, when it didn't close BMD.
     status: Option<UpdateStatus>,
     /// Update now pressed by a test (`/show update-now`, feature `test-update`).
     press: bool,
@@ -477,7 +477,7 @@ impl Updates {
     }
 
     /// `weekly`: the automatic check (its switch is here, under the answer). `Done(true)`:
-    /// the update is going in place, iDM closes for it (and starts again).
+    /// the update is going in place, BMD closes for it (and starts again).
     pub fn show(
         &mut self,
         ctx: &egui::Context,
@@ -488,8 +488,8 @@ impl Updates {
             self.result = Some(r);
             self.slot = None;
         }
-        let install = mdm_tools::update::Install::detect();
-        // The release file arrived (checked) and is in place (on the job's thread): iDM closes
+        let install = bmd_tools::update::Install::detect();
+        // The release file arrived (checked) and is in place (on the job's thread): BMD closes
         // once the new copy (or the installer) has started.
         if let Some(res) = self.job.as_ref().and_then(crate::update::Job::result) {
             self.job = None;
@@ -532,7 +532,7 @@ impl Updates {
                     }
                     Some(Ok(Found::Latest)) => {
                         let line = crate::i18n::fmt(
-                            crate::i18n::t("You have the latest version of iDM ({version})."),
+                            crate::i18n::t("You have the latest version of BMD ({version})."),
                             &[("version", VERSION)],
                         );
                         winui::paragraph(&p, o.x + 11.0, o.y + 24.0, &line, ink, right, 13.0);
@@ -550,7 +550,7 @@ impl Updates {
                     }
                     Some(Ok(Found::Newer(rel))) => {
                         let line = crate::i18n::fmt(
-                            crate::i18n::t("iDM {version} is available (released {date})."),
+                            crate::i18n::t("BMD {version} is available (released {date})."),
                             &[("version", &rel.version), ("date", &rel.date)],
                         );
                         winui::fit(
@@ -564,9 +564,9 @@ impl Updates {
                             "update-line",
                         );
                         // A package of another package manager (pacman, …): that one updates it.
-                        let have = if install == mdm_tools::update::Install::System {
+                        let have = if install == bmd_tools::update::Install::System {
                             crate::i18n::fmt(
-                                // i18n: Check for updates, under the new version's line, when iDM was installed by the Linux system's package manager (pacman, ...), which iDM can't update itself
+                                // i18n: Check for updates, under the new version's line, when BMD was installed by the Linux system's package manager (pacman, ...), which BMD can't update itself
                                 crate::i18n::t(
                                     "You have version {version}, from your system's package manager: update it there.",
                                 ),
@@ -622,7 +622,7 @@ impl Updates {
                         .filter(|_| !matches!(self.status, Some(UpdateStatus::Failed(_))))
                 });
                 // Another package manager's copy: no Update now nor Download, the notes only.
-                let managed = install == mdm_tools::update::Install::System;
+                let managed = install == bmd_tools::update::Install::System;
                 let close_label = if self.job.is_some() {
                     // i18n: button: stop downloading the update
                     crate::i18n::mark("Cancel")
@@ -720,7 +720,7 @@ impl Updates {
                         ui,
                         o + vec2(11.0, bottom + 4.0),
                         weekly,
-                        // i18n: check box in the update window: look for a new version every time iDM starts
+                        // i18n: check box in the update window: look for a new version every time BMD starts
                         "Check for updates at every start",
                         true,
                         Some(o.x + status_right),
@@ -871,7 +871,7 @@ impl About {
         window(
             ctx,
             "about",
-            "About iDM",
+            "About BMD",
             [420.0, 236.0 + extra],
             false,
             winui::BG(),
@@ -879,11 +879,11 @@ impl About {
                 let p = ui.painter().clone();
                 let ink = winui::TEXT();
                 egui::Image::from_bytes(
-                    "bytes://mdm-48.png",
-                    include_bytes!("../assets/icons/app/mdm-48.png"),
+                    "bytes://bmd-48.png",
+                    include_bytes!("../assets/icons/app/bmd-48.png"),
                 )
                 .paint_at(ui, winui::r(o, 16.0, 16.0, 48.0, 48.0));
-                winui::text(&p, o.x + 80.0, o.y + 28.0, crate::i18n::t("iDM"), ink);
+                winui::text(&p, o.x + 80.0, o.y + 28.0, crate::i18n::t("BMD"), ink);
                 let version = crate::i18n::fmt(
                     crate::i18n::t("Version {version} ({commit})"),
                     &[("version", VERSION), ("commit", COMMIT)],
@@ -943,9 +943,9 @@ impl About {
                 ) {
                     crate::launch::open(format!("{REPO}/blob/main/ATTRIBUTION.md"));
                 }
-                // Its own row under them: the project's GitHub page (Help → Support iDM).
+                // Its own row under them: the project's GitHub page (Help → Support BMD).
                 y += 22.0;
-                if winui::link(ui, &p, o.x + 80.0, y, "Support iDM on GitHub", "support") {
+                if winui::link(ui, &p, o.x + 80.0, y, "Support BMD on GitHub", "support") {
                     support();
                 }
                 // The last row ends above OK (at 204 when it fits as planned).
@@ -1112,7 +1112,7 @@ impl TellFriend {
     fn message() -> String {
         crate::i18n::fmt(
             crate::i18n::t(
-                "I download with iDM: fast, free, and it looks like the download manager you already know. {link}",
+                "I download with BMD: fast, free, and it looks like the download manager you already know. {link}",
             ),
             &[("link", REPO)],
         )
@@ -1231,7 +1231,7 @@ impl TellFriend {
                             .collect::<String>()
                             .replace('+', "%20")
                     };
-                    let subject = crate::i18n::t("iDM");
+                    let subject = crate::i18n::t("BMD");
                     let opened = open::that_detached(format!(
                         "mailto:?subject={}&body={}",
                         enc(subject),
@@ -1408,7 +1408,7 @@ mod tests {
 
     #[test]
     fn the_check_reads_the_feed_and_fails_softly() {
-        use mdm_tools::update::Install;
+        use bmd_tools::update::Install;
         let rt = tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
@@ -1461,7 +1461,7 @@ mod tests {
     /// check says GitHub refused too many requests from this network.
     #[test]
     fn a_rate_limited_check_reads_the_release_pages() {
-        use mdm_tools::update::{Arch, Install};
+        use bmd_tools::update::{Arch, Install};
         let files = tempfile::tempdir().unwrap();
         let repo = files.path().join("gh").join(REPO_PATH);
         let release = repo.join("v9.9.9");
@@ -1484,7 +1484,7 @@ mod tests {
             .build()
             .unwrap();
         rt.block_on(async {
-            let lab = mdm_labserver::LabServer::start(mdm_labserver::Config {
+            let lab = bmd_labserver::LabServer::start(bmd_labserver::Config {
                 files: Some(files.path().to_owned()),
                 ..Default::default()
             })
@@ -1597,7 +1597,7 @@ mod tests {
                 .iter()
                 .any(|s| form.contains(s.as_str()))
         };
-        for install in mdm_tools::update::Install::ALL {
+        for install in bmd_tools::update::Install::ALL {
             assert!(named(install.label()), "{}", install.label());
         }
         for option in [
@@ -1703,10 +1703,10 @@ mod tests {
     /// extension window's tutorial and help sections, and every website help address written in
     /// a crate or in the browser extension.
     fn linked_docs() -> Vec<String> {
-        let mut docs = vec![mdm_ipc::extension::GUIDE_DOC.to_owned()];
+        let mut docs = vec![bmd_ipc::extension::GUIDE_DOC.to_owned()];
         // The sections Options' Test browser integration opens (extension::checks' reasons).
         for why in ["options", "not-installed"] {
-            docs.push(mdm_ipc::extension::help_doc(why));
+            docs.push(bmd_ipc::extension::help_doc(why));
         }
         let calls = regex::Regex::new(r#"(?:open_page|HelpPage)\(\s*"([^"]+)""#).unwrap();
         let site =
@@ -1784,14 +1784,14 @@ mod tests {
         }
     }
 
-    /// The same pages on a built website: `python tools/website/build.py` (MDM_SITE_PREVIEW=1
-    /// is enough, English), then `MDM_SITE_DIR=target/site cargo test -p mdm-app --
+    /// The same pages on a built website: `python tools/website/build.py` (BMD_SITE_PREVIEW=1
+    /// is enough, English), then `BMD_SITE_DIR=target/site cargo test -p bmd-app --
     /// --ignored linked_help_pages_are_on_the_built_site`: each page is a file there, with its
     /// section's id.
     #[test]
-    #[ignore = "needs the website built, in MDM_SITE_DIR"]
+    #[ignore = "needs the website built, in BMD_SITE_DIR"]
     fn linked_help_pages_are_on_the_built_site() {
-        let out = std::path::PathBuf::from(std::env::var("MDM_SITE_DIR").expect("MDM_SITE_DIR"));
+        let out = std::path::PathBuf::from(std::env::var("BMD_SITE_DIR").expect("BMD_SITE_DIR"));
         for doc in linked_docs() {
             let url = page_url(&doc, "en");
             let path = url.strip_prefix(SITE).unwrap();

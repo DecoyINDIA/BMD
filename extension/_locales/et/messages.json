@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Annab allalaadimised brauserist rakendusele iDM."
+    "message": "Annab allalaadimised brauserist rakendusele BMD."
   },
   "menu": {
-    "message": "Laadi alla rakendusega iDM"
+    "message": "Laadi alla rakendusega BMD"
   },
   "video_download": {
     "message": "Laadi video alla"
@@ -30,19 +30,19 @@
     "message": "Nupu sätted..."
   },
   "video_sent": {
-    "message": "Saadetud rakendusse iDM"
+    "message": "Saadetud rakendusse BMD"
   },
   "menu_selected": {
-    "message": "Laadi valitud lingid alla rakendusega iDM"
+    "message": "Laadi valitud lingid alla rakendusega BMD"
   },
   "menu_all": {
-    "message": "Laadi kõik lingid alla rakendusega iDM"
+    "message": "Laadi kõik lingid alla rakendusega BMD"
   },
   "status_connected": {
-    "message": "Ühendatud rakendusega iDM"
+    "message": "Ühendatud rakendusega BMD"
   },
   "status_connected_version": {
-    "message": "Ühendatud rakendusega iDM $version$",
+    "message": "Ühendatud rakendusega BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Peatatud: allalaadimised jäävad brauserisse"
   },
   "status_not_installed": {
-    "message": "iDM pole installitud või selle brauseri integreerimine pole seadistatud"
+    "message": "BMD pole installitud või selle brauseri integreerimine pole seadistatud"
   },
   "status_forbidden": {
-    "message": "iDM ei aktsepteeri seda laienduse koopiat"
+    "message": "BMD ei aktsepteeri seda laienduse koopiat"
   },
   "status_not_running": {
-    "message": "iDM ei käivitunud õigel ajal"
+    "message": "BMD ei käivitunud õigel ajal"
   },
   "status_host_failed": {
-    "message": "Ühenduse loomine rakendusega iDM nurjus"
+    "message": "Ühenduse loomine rakendusega BMD nurjus"
   },
   "status_too_large": {
     "message": "Selle allalaadimise üksikasjad olid edastamiseks liiga suured"
   },
   "status_update_app": {
-    "message": "Värskendage rakendust iDM, et kasutada kõiki laienduse võimalusi"
+    "message": "Värskendage rakendust BMD, et kasutada kõiki laienduse võimalusi"
   },
   "popup_take": {
     "message": "Suuna allalaadimised sellest brauserist rakendusse"
@@ -78,10 +78,10 @@
     "message": "Suuna allalaadimised selle brauseri puhverserveri või VPN-laienduse kaudu"
   },
   "popup_proxy_title": {
-    "message": "iDM laadib seejärel alla sama puhverserveri kaudu, mida see brauser kasutab. Brauser küsib teilt selleks ühe korra luba; selle väljalülitamisel luba tühistatakse."
+    "message": "BMD laadib seejärel alla sama puhverserveri kaudu, mida see brauser kasutab. Brauser küsib teilt selleks ühe korra luba; selle väljalülitamisel luba tühistatakse."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM laadib seejärel alla sama puhverserveri kaudu, mida see brauser kasutab. Kui see on välja lülitatud, ei loe laiendus brauseri puhverserverit."
+    "message": "BMD laadib seejärel alla sama puhverserveri kaudu, mida see brauser kasutab. Kui see on välja lülitatud, ei loe laiendus brauseri puhverserverit."
   },
   "popup_exclude_site": {
     "message": "Ära võta enam allalaadimisi saidilt $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Ava iDM"
+    "message": "Ava BMD"
   },
   "popup_options": {
     "message": "Suvandid..."
@@ -114,7 +114,7 @@
     "message": "Abi"
   },
   "popup_support": {
-    "message": "Toeta iDM-i"
+    "message": "Toeta BMD-i"
   },
   "popup_fix": {
     "message": "Kuidas seda parandada"
@@ -150,7 +150,7 @@
     "message": "Valik „Kasuta täiustatud brauseri integreerimist” on valikutes Suvandid → Üldine välja lülitatud."
   },
   "declined_torrents": {
-    "message": "See on torrent ja „Ava magnetlingid ja .torrent-failid programmiga iDM” on torrenti sätetes välja lülitatud."
+    "message": "See on torrent ja „Ava magnetlingid ja .torrent-failid programmiga BMD” on torrenti sätetes välja lülitatud."
   },
   "declined_site_access": {
     "message": "Laiendil pole lubatud seda saiti lugeda (brauseri saidi juurdepääs)."
@@ -195,16 +195,16 @@
     "message": "Siin pole allalaaditavat videot"
   },
   "video_playlist": {
-    "message": "Videode loend: valige need rakenduses iDM"
+    "message": "Videode loend: valige need rakenduses BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM vajab selle video jaoks programmi yt-dlp"
+    "message": "BMD vajab selle video jaoks programmi yt-dlp"
   },
   "video_too_long": {
     "message": "Otsimine võttis liiga kaua aega"
   },
   "video_busy": {
-    "message": "iDM on teiste videotega hõivatud"
+    "message": "BMD on teiste videotega hõivatud"
   },
   "video_queued": {
     "message": "Lisatud järjekorda"
@@ -228,7 +228,7 @@
     "message": "See arvuti"
   },
   "popup_send_remote": {
-    "message": "Muu iDM (server)"
+    "message": "Muu BMD (server)"
   },
   "popup_remote_code": {
     "message": "Sidumiskood"
@@ -240,7 +240,7 @@
     "message": "Seo"
   },
   "popup_remote_help": {
-    "message": "Avage selle aadress üks kord ja aktsepteerige selle sertifikaat, seejärel sisestage kood selle valikutest Options, Remote, Pair a device (või misterdownloadmanager-cli pair)."
+    "message": "Avage selle aadress üks kord ja aktsepteerige selle sertifikaat, seejärel sisestage kood selle valikutest Options, Remote, Pair a device (või bmd-cli pair)."
   },
   "status_remote": {
     "message": "Allalaadimised lähevad asukohta $address$",
@@ -297,19 +297,19 @@
     "message": "Laadi alla parim kvaliteet"
   },
   "video_sending": {
-    "message": "Saadan iDM-i..."
+    "message": "Saadan BMD-i..."
   },
   "video_added": {
-    "message": "iDM-i lisatud"
+    "message": "BMD-i lisatud"
   },
   "video_show": {
     "message": "Näita"
   },
   "video_no_answer": {
-    "message": "iDM ei vastanud"
+    "message": "BMD ei vastanud"
   },
-  "video_get_mdm": {
-    "message": "Hangi iDM"
+  "video_get_bmd": {
+    "message": "Hangi BMD"
   },
   "video_retry": {
     "message": "Proovi uuesti"
@@ -324,7 +324,7 @@
     "message": "Kõik kvaliteedid ja subtiitrid..."
   },
   "video_failed": {
-    "message": "iDM pole installitud või ei käivitunud"
+    "message": "BMD pole installitud või ei käivitunud"
   },
   "video_download_best": {
     "message": "Laadi parim alla"

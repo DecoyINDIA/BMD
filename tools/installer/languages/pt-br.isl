@@ -1,10 +1,10 @@
-﻿; iDM's installer in Portuguese (Brazil): tools/installer/languages.py
+﻿; BMD's installer in Portuguese (Brazil): tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [CustomMessages]
 TaskBrowser=Configurar integração com o &navegador (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Abrir arquivos .&torrent e links magnet com iDM
-TaskStartup=Iniciar iDM quando o &Windows iniciar
+TaskTorrents=Abrir arquivos .&torrent e links magnet com BMD
+TaskStartup=Iniciar BMD quando o &Windows iniciar
 TaskGroupOther=Outros:
-Launch=Iniciar iDM
+Launch=Iniciar BMD
 KeepData=Excluir também sua lista de downloads e configurações?%n%nSeus arquivos baixados não serão alterados de nenhuma forma.

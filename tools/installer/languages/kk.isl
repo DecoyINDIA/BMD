@@ -1,4 +1,4 @@
-﻿; iDM's installer in Kazakh: tools/installer/languages.py
+﻿; BMD's installer in Kazakh: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=%1 жойылуда.
 
 [CustomMessages]
 TaskBrowser=Шолушы интеграциясын орнату (&Chrome, Edge, Brave, Firefox)
-TaskTorrents=.&torrent файлдарын және магниттік сілтемелерді iDM арқылы ашу
-TaskStartup=&Windows іске қосылғанда iDM іске қосу
+TaskTorrents=.&torrent файлдарын және магниттік сілтемелерді BMD арқылы ашу
+TaskStartup=&Windows іске қосылғанда BMD іске қосу
 TaskGroupOther=Басқа:
-Launch=iDM іске қосу
+Launch=BMD іске қосу
 KeepData=Жүктеп алу тізіміңіз бен параметрлеріңізді де жою керек пе?%n%nЖүктеп алынған файлдарыңызға ешқандай жағдайда қол тигізілмейді.

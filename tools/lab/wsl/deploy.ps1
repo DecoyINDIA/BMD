@@ -1,19 +1,19 @@
 <#
-A build from mdm-lab (WSL2) into a VirtualBox lab machine's ~/lab/bin/<label>/, so a check on a
+A build from bmd-lab (WSL2) into a VirtualBox lab machine's ~/lab/bin/<label>/, so a check on a
 real desktop (GNOME or KDE portals, the tray, real browsers) never waits for the VM to build.
 
-  tools/lab/wsl/deploy.ps1 <label> [<vm>] [-DryRun]     e.g. deploy.ps1 main mdm-ubuntu
+  tools/lab/wsl/deploy.ps1 <label> [<vm>] [-DryRun]     e.g. deploy.ps1 main bmd-ubuntu
 
-The programs are read straight from the distribution's disk (\\wsl$\mdm-lab\home\lab\lab\bin\<label>)
+The programs are read straight from the distribution's disk (\\wsl$\bmd-lab\home\lab\lab\bin\<label>)
 and copied with VBoxManage guestcontrol into a folder beside the target, then renamed into place
 (a running program or script is never overwritten half-way). The VM must be running; nothing else
-of it changes. Its account: MDM_VM_USER / MDM_VM_PASSWORD, never printed. -DryRun: what it would copy, and
+of it changes. Its account: BMD_VM_USER / BMD_VM_PASSWORD, never printed. -DryRun: what it would copy, and
 where, without calling VBoxManage (its guestcontrol copyto has no dry run of its own).
 #>
 param(
     [Parameter(Position = 0, Mandatory)] [string] $Label,
-    [Parameter(Position = 1)] [string] $Vm = 'mdm-ubuntu',
-    [string] $Distro = 'mdm-lab',
+    [Parameter(Position = 1)] [string] $Vm = 'bmd-ubuntu',
+    [string] $Distro = 'bmd-lab',
     [switch] $DryRun
 )
 $ErrorActionPreference = 'Stop'
@@ -28,7 +28,7 @@ $auth = $account.Auth
 try {
 
 $src = "\\wsl$\$Distro\home\lab\lab\bin\$Label"
-if (-not (Test-Path "$src\misterdownloadmanager")) { throw "no build $Label in $Distro (tools/lab/wsl/build.sh)" }
+if (-not (Test-Path "$src\bmd")) { throw "no build $Label in $Distro (tools/lab/wsl/build.sh)" }
 
 function Invoke-Guest([string] $Command) {
     & $vbox guestcontrol $Vm run --exe /bin/bash @auth --wait-stdout --wait-stderr -- -c $Command

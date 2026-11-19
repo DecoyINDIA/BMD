@@ -1,4 +1,4 @@
-﻿; iDM's installer in Albanian: tools/installer/languages.py
+﻿; BMD's installer in Albanian: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Po çinstalohet %1.
 
 [CustomMessages]
 TaskBrowser=Konfiguro integrimin e &shfletuesit (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Hapni skedarët .&torrent dhe lidhjet magnet me iDM
-TaskStartup=Nisni iDM kur niset &Windows
+TaskTorrents=Hapni skedarët .&torrent dhe lidhjet magnet me BMD
+TaskStartup=Nisni BMD kur niset &Windows
 TaskGroupOther=Të tjera:
-Launch=Nisni iDM
+Launch=Nisni BMD
 KeepData=Të fshihet edhe lista e shkarkimeve dhe cilësimet?%n%nSkedarët tuaj të shkarkuar nuk preken në asnjë mënyrë.

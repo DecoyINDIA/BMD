@@ -1,19 +1,19 @@
 #!/bin/bash
-# One MDM window ready for a screenshot: MDM restarted with the language and mode set in its
+# One BMD window ready for a screenshot: BMD restarted with the language and mode set in its
 # settings, the window opened with `/show <name>` and raised; prints its frame on the screen as
 # "X Y W H" for the host to crop VirtualBox's screenshot to (vm.ps1 shot; capturing an OpenGL
 # window from inside the guest gives an empty image).
 #   shots.sh <label> <main|fileinfo|show name> <lang> <light|dark>   e.g. shots.sh base extension de dark
 . ~/lab/env.sh
 label=$1; show=$2; lang=$3; mode=$4
-app=$HOME/lab/bin/$label/misterdownloadmanager
-data=$HOME/.local/share/misterdownloadmanager
+app=$HOME/lab/bin/$label/bmd
+data=$HOME/.local/share/bmd
 pkill -x misterdownloadm; sleep 2
-# MDM_STATE: a saved list and settings put back first, so builds compared see the same list.
-[ -n "${MDM_STATE:-}" ] && cp "$MDM_STATE" "$data/downloads.json"
-# MDM_SEEN: the browsers whose extension reached MDM, "Name<TAB>version" lines with "\n"
+# BMD_STATE: a saved list and settings put back first, so builds compared see the same list.
+[ -n "${BMD_STATE:-}" ] && cp "$BMD_STATE" "$data/downloads.json"
+# BMD_SEEN: the browsers whose extension reached BMD, "Name<TAB>version" lines with "\n"
 # between (printf's %b turns them into real tabs and newlines).
-[ -n "${MDM_SEEN:-}" ] && printf '%b\n' "$MDM_SEEN" > "$data/extension-seen"
+[ -n "${BMD_SEEN:-}" ] && printf '%b\n' "$BMD_SEEN" > "$data/extension-seen"
 python3 - "$data/downloads.json" "$lang" "$mode" <<'PY'
 import json, sys
 p, lang, mode = sys.argv[1:4]

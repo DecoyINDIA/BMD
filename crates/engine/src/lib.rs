@@ -1,4 +1,4 @@
-//! iDM download engine. See notes/ENGINE.md.
+//! BMD download engine. See notes/ENGINE.md.
 
 pub mod agent;
 pub mod browserlike;

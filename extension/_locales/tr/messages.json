@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "İndirmeleri tarayıcıdan iDM uygulamasına aktarır."
+    "message": "İndirmeleri tarayıcıdan BMD uygulamasına aktarır."
   },
   "menu": {
-    "message": "iDM ile İndir"
+    "message": "BMD ile İndir"
   },
   "video_download": {
     "message": "Videoyu indir"
@@ -30,19 +30,19 @@
     "message": "Düğme ayarları..."
   },
   "video_sent": {
-    "message": "iDM uygulamasına gönderildi"
+    "message": "BMD uygulamasına gönderildi"
   },
   "menu_selected": {
-    "message": "Seçili bağlantıları iDM ile indir"
+    "message": "Seçili bağlantıları BMD ile indir"
   },
   "menu_all": {
-    "message": "Tüm bağlantıları iDM ile indir"
+    "message": "Tüm bağlantıları BMD ile indir"
   },
   "status_connected": {
-    "message": "iDM uygulamasına bağlandı"
+    "message": "BMD uygulamasına bağlandı"
   },
   "status_connected_version": {
-    "message": "iDM $version$ uygulamasına bağlandı",
+    "message": "BMD $version$ uygulamasına bağlandı",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Duraklatıldı: indirmeler tarayıcıda kalır"
   },
   "status_not_installed": {
-    "message": "iDM yüklü değil veya tarayıcı entegrasyonu ayarlanmadı"
+    "message": "BMD yüklü değil veya tarayıcı entegrasyonu ayarlanmadı"
   },
   "status_forbidden": {
-    "message": "iDM uzantının bu kopyasını kabul etmiyor"
+    "message": "BMD uzantının bu kopyasını kabul etmiyor"
   },
   "status_not_running": {
-    "message": "iDM zamanında başlatılamadı"
+    "message": "BMD zamanında başlatılamadı"
   },
   "status_host_failed": {
-    "message": "iDM ile bağlantı kurulamadı"
+    "message": "BMD ile bağlantı kurulamadı"
   },
   "status_too_large": {
     "message": "Bu indirmenin ayrıntıları aktarılamayacak kadar büyüktü"
   },
   "status_update_app": {
-    "message": "Bu uzantının sunduğu tüm özellikleri kullanmak için iDM uygulamasını güncelle"
+    "message": "Bu uzantının sunduğu tüm özellikleri kullanmak için BMD uygulamasını güncelle"
   },
   "popup_take": {
     "message": "İndirmeleri bu tarayıcıdan al"
@@ -78,10 +78,10 @@
     "message": "İndirmeleri bu tarayıcının proxy veya VPN uzantısı üzerinden gönder"
   },
   "popup_proxy_title": {
-    "message": "iDM daha sonra bu tarayıcıyla aynı proxy üzerinden indirme yapar. Tarayıcı bir kez izin vermenizi ister; bu seçeneği kapatmak verilen izni geri alır."
+    "message": "BMD daha sonra bu tarayıcıyla aynı proxy üzerinden indirme yapar. Tarayıcı bir kez izin vermenizi ister; bu seçeneği kapatmak verilen izni geri alır."
   },
   "popup_proxy_title_chromium": {
-    "message": "Bu özellik açıkken iDM, bu tarayıcıyla aynı proxy üzerinden indirme yapar. Kapalıyken uzantı, tarayıcının proxy ayarlarını okumaz."
+    "message": "Bu özellik açıkken BMD, bu tarayıcıyla aynı proxy üzerinden indirme yapar. Kapalıyken uzantı, tarayıcının proxy ayarlarını okumaz."
   },
   "popup_exclude_site": {
     "message": "$site$ sitesindeki indirmeleri artık alma",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "iDM uygulamasını aç"
+    "message": "BMD uygulamasını aç"
   },
   "popup_options": {
     "message": "Seçenekler..."
@@ -114,7 +114,7 @@
     "message": "Yardım"
   },
   "popup_support": {
-    "message": "iDM'yi Destekleyin"
+    "message": "BMD'yi Destekleyin"
   },
   "popup_fix": {
     "message": "Nasıl düzeltilir"
@@ -150,7 +150,7 @@
     "message": "Gelişmiş tarayıcı entegrasyonunu kullan seçeneği, Seçenekler → Genel bölümünde kapalı."
   },
   "declined_torrents": {
-    "message": "Bu bir torrent ve Torrent ayarlarında iDM ile mıknatıs bağlantılarını ve .torrent dosyalarını aç seçeneği kapalı."
+    "message": "Bu bir torrent ve Torrent ayarlarında BMD ile mıknatıs bağlantılarını ve .torrent dosyalarını aç seçeneği kapalı."
   },
   "declined_site_access": {
     "message": "Uzantının bu siteyi okumasına izin verilmiyor (tarayıcının site erişimi)."
@@ -195,16 +195,16 @@
     "message": "Burada indirilecek video yok"
   },
   "video_playlist": {
-    "message": "Bir video listesi: videoları iDM uygulamasında seçin"
+    "message": "Bir video listesi: videoları BMD uygulamasında seçin"
   },
   "video_no_ytdlp": {
-    "message": "iDM uygulamasının bu video için yt-dlp'ye ihtiyacı var"
+    "message": "BMD uygulamasının bu video için yt-dlp'ye ihtiyacı var"
   },
   "video_too_long": {
     "message": "Arama çok uzun sürdü"
   },
   "video_busy": {
-    "message": "iDM diğer videolarla meşgul"
+    "message": "BMD diğer videolarla meşgul"
   },
   "video_queued": {
     "message": "Sıraya eklendi"
@@ -228,7 +228,7 @@
     "message": "Bu bilgisayar"
   },
   "popup_send_remote": {
-    "message": "Başka bir iDM (bir sunucu)"
+    "message": "Başka bir BMD (bir sunucu)"
   },
   "popup_remote_code": {
     "message": "Eşleme kodu"
@@ -240,7 +240,7 @@
     "message": "Eşle"
   },
   "popup_remote_help": {
-    "message": "Adresini bir kez açın ve sertifikasını kabul edin, sonra Seçenekler, Uzak, Bir cihazı eşle'den (veya misterdownloadmanager-cli pair) bir kod girin."
+    "message": "Adresini bir kez açın ve sertifikasını kabul edin, sonra Seçenekler, Uzak, Bir cihazı eşle'den (veya bmd-cli pair) bir kod girin."
   },
   "status_remote": {
     "message": "İndirmeler $address$ adresine gidiyor",
@@ -297,19 +297,19 @@
     "message": "En iyi kaliteyi indir"
   },
   "video_sending": {
-    "message": "iDM'ye gönderiliyor..."
+    "message": "BMD'ye gönderiliyor..."
   },
   "video_added": {
-    "message": "iDM'ye eklendi"
+    "message": "BMD'ye eklendi"
   },
   "video_show": {
     "message": "Göster"
   },
   "video_no_answer": {
-    "message": "iDM yanıt vermedi"
+    "message": "BMD yanıt vermedi"
   },
-  "video_get_mdm": {
-    "message": "iDM'yi yükle"
+  "video_get_bmd": {
+    "message": "BMD'yi yükle"
   },
   "video_retry": {
     "message": "Tekrar dene"
@@ -324,7 +324,7 @@
     "message": "Tüm kaliteler ve altyazılar..."
   },
   "video_failed": {
-    "message": "iDM yüklü değil veya başlatılamadı"
+    "message": "BMD yüklü değil veya başlatılamadı"
   },
   "video_download_best": {
     "message": "En iyi kaliteyi indir"

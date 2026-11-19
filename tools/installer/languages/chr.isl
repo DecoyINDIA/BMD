@@ -1,4 +1,4 @@
-﻿; iDM's installer in Cherokee: tools/installer/languages.py
+﻿; BMD's installer in Cherokee: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=ᎤᏕᎳᎰᏒᎢ %1.
 
 [CustomMessages]
 TaskBrowser=ᎤᏓᎷᎪᏗ &ᏗᏟᎶᏍᏗ (Chrome, Edge, Brave, Firefox) ᏕᎪᏢᎾ
-TaskTorrents=iDM &ᎠᏍᏚᎢᏍᏗ .torrent Ꮧ फाइल ᎢᏯᏓᏛᏁᎯ ᎠᎴ magnet links
-TaskStartup=&Windows ᎤᎴᏅᎲᎯ iDM ᎤᎴᏅᏗ
+TaskTorrents=BMD &ᎠᏍᏚᎢᏍᏗ .torrent Ꮧ फाइल ᎢᏯᏓᏛᏁᎯ ᎠᎴ magnet links
+TaskStartup=&Windows ᎤᎴᏅᎲᎯ BMD ᎤᎴᏅᏗ
 TaskGroupOther=ᎤᏟᏍᏗ:
-Launch=iDM ᎤᎴᏅᏗ
+Launch=BMD ᎤᎴᏅᏗ
 KeepData=ᎠᎴᏬ ᏕᏣᏓᎴᏔᏅᏍᎪᎢ ᏗᏟᎶᏍᏗ ᏗᏓᎴᏔᏅᏍᏗ ᎠᎴ ᏗᏟᎶᏍᏗ?%n%nᏗᏟᎶᏍᏗ ᏗᏓᎴᏔᏅᏍᏗ ᎥᏝ ᏱᏗᏓᎴᏔᏅᏍᎦ.

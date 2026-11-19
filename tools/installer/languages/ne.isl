@@ -1,4 +1,4 @@
-﻿; iDM's installer in Nepali: tools/installer/languages.py
+﻿; BMD's installer in Nepali: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=%1 अनइन्स्टल गर्द�
 
 [CustomMessages]
 TaskBrowser=ब्राउजर एकीकरण (Chrome, Edge, Brave, Firefox) &सेट अप गर्नुहोस्
-TaskTorrents=iDM मार्फत .&torrent फाइलहरू र म्याग्नेट लिङ्कहरू खोल्नुहोस्
-TaskStartup=&Windows सुरु हुँदा iDM सुरु गर्नुहोस्
+TaskTorrents=BMD मार्फत .&torrent फाइलहरू र म्याग्नेट लिङ्कहरू खोल्नुहोस्
+TaskStartup=&Windows सुरु हुँदा BMD सुरु गर्नुहोस्
 TaskGroupOther=अन्य:
-Launch=iDM सुरु गर्नुहोस्
+Launch=BMD सुरु गर्नुहोस्
 KeepData=तपाईंको डाउनलोड सूची र सेटिङहरू पनि मेटाउने?%n%nतपाईंको डाउनलोड गरिएका फाइलहरू कुनै पनि तरिकाले छोइँदैनन्।

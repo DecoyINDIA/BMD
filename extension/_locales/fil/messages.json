@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Ibinibigay ang mga download mula sa browser sa iDM."
+    "message": "Ibinibigay ang mga download mula sa browser sa BMD."
   },
   "menu": {
-    "message": "I-download gamit ang iDM"
+    "message": "I-download gamit ang BMD"
   },
   "video_download": {
     "message": "I-download ang video"
@@ -30,19 +30,19 @@
     "message": "Mga setting ng button..."
   },
   "video_sent": {
-    "message": "Ipinadala sa iDM"
+    "message": "Ipinadala sa BMD"
   },
   "menu_selected": {
-    "message": "I-download ang mga napiling link gamit ang iDM"
+    "message": "I-download ang mga napiling link gamit ang BMD"
   },
   "menu_all": {
-    "message": "I-download ang lahat ng link gamit ang iDM"
+    "message": "I-download ang lahat ng link gamit ang BMD"
   },
   "status_connected": {
-    "message": "Nakakonekta sa iDM"
+    "message": "Nakakonekta sa BMD"
   },
   "status_connected_version": {
-    "message": "Nakakonekta sa iDM $version$",
+    "message": "Nakakonekta sa BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Naka-pause: mananatili ang mga download sa browser"
   },
   "status_not_installed": {
-    "message": "Hindi naka-install ang iDM, o hindi naka-set up ang integrasyon nito sa browser"
+    "message": "Hindi naka-install ang BMD, o hindi naka-set up ang integrasyon nito sa browser"
   },
   "status_forbidden": {
-    "message": "Hindi tinatanggap ng iDM ang kopyang ito ng extension"
+    "message": "Hindi tinatanggap ng BMD ang kopyang ito ng extension"
   },
   "status_not_running": {
-    "message": "Hindi nagsimula sa oras ang iDM"
+    "message": "Hindi nagsimula sa oras ang BMD"
   },
   "status_host_failed": {
-    "message": "Nabigo ang koneksyon sa iDM"
+    "message": "Nabigo ang koneksyon sa BMD"
   },
   "status_too_large": {
     "message": "Masyadong malaki ang mga detalye ng download na ito para maibigay"
   },
   "status_update_app": {
-    "message": "I-update ang iDM para magamit ang lahat ng iniaalok ng extension na ito"
+    "message": "I-update ang BMD para magamit ang lahat ng iniaalok ng extension na ito"
   },
   "popup_take": {
     "message": "Kumuha ng mga download mula sa browser na ito"
@@ -78,10 +78,10 @@
     "message": "Ipadala ang mga download sa pamamagitan ng proxy o VPN extension ng browser na ito"
   },
   "popup_proxy_title": {
-    "message": "Pagkatapos ay magda-download ang iDM sa pamamagitan ng parehong proxy gaya ng browser na ito. Isang beses kang tatanungin ng browser na payagan ito; ang pag-off nito ay babawiin iyon."
+    "message": "Pagkatapos ay magda-download ang BMD sa pamamagitan ng parehong proxy gaya ng browser na ito. Isang beses kang tatanungin ng browser na payagan ito; ang pag-off nito ay babawiin iyon."
   },
   "popup_proxy_title_chromium": {
-    "message": "Pagkatapos ay magda-download ang iDM sa pamamagitan ng parehong proxy gaya ng browser na ito. Habang naka-off ito, hindi binabasa ng extension ang proxy ng browser."
+    "message": "Pagkatapos ay magda-download ang BMD sa pamamagitan ng parehong proxy gaya ng browser na ito. Habang naka-off ito, hindi binabasa ng extension ang proxy ng browser."
   },
   "popup_exclude_site": {
     "message": "Huwag kailanman kumuha ng mga download mula sa $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Buksan ang iDM"
+    "message": "Buksan ang BMD"
   },
   "popup_options": {
     "message": "Mga Opsyon..."
@@ -114,7 +114,7 @@
     "message": "Tulong"
   },
   "popup_support": {
-    "message": "Suportahan ang iDM"
+    "message": "Suportahan ang BMD"
   },
   "popup_fix": {
     "message": "Paano ito ayusin"
@@ -150,7 +150,7 @@
     "message": "Naka-off ang Gumamit ng advanced na integrasyon ng browser sa Mga Opsyon → Pangkalahatan."
   },
   "declined_torrents": {
-    "message": "Ito ay isang torrent, at naka-off ang Buksan ang mga magnet link at .torrent file gamit ang iDM sa mga setting ng Torrent."
+    "message": "Ito ay isang torrent, at naka-off ang Buksan ang mga magnet link at .torrent file gamit ang BMD sa mga setting ng Torrent."
   },
   "declined_site_access": {
     "message": "Hindi pinapayagan ang extension na basahin ang site na ito (pag-access ng site ng browser)."
@@ -195,16 +195,16 @@
     "message": "Walang video na ida-download dito"
   },
   "video_playlist": {
-    "message": "Listahan ng mga video: piliin ang mga ito sa iDM"
+    "message": "Listahan ng mga video: piliin ang mga ito sa BMD"
   },
   "video_no_ytdlp": {
-    "message": "Kailangan ng iDM ng yt-dlp para sa video na ito"
+    "message": "Kailangan ng BMD ng yt-dlp para sa video na ito"
   },
   "video_too_long": {
     "message": "Masyadong natagalan ang paghahanap"
   },
   "video_busy": {
-    "message": "Abala ang iDM sa ibang mga video"
+    "message": "Abala ang BMD sa ibang mga video"
   },
   "video_queued": {
     "message": "Naidagdag sa queue"
@@ -228,7 +228,7 @@
     "message": "Ang computer na ito"
   },
   "popup_send_remote": {
-    "message": "Isa pang iDM (isang server)"
+    "message": "Isa pang BMD (isang server)"
   },
   "popup_remote_code": {
     "message": "Code ng pagpapares"
@@ -240,7 +240,7 @@
     "message": "Ipares"
   },
   "popup_remote_help": {
-    "message": "Buksan ang address nito nang isang beses at tanggapin ang certificate nito, pagkatapos ay maglagay ng code mula sa Options, Remote, Ipares ang device nito (o misterdownloadmanager-cli pair)."
+    "message": "Buksan ang address nito nang isang beses at tanggapin ang certificate nito, pagkatapos ay maglagay ng code mula sa Options, Remote, Ipares ang device nito (o bmd-cli pair)."
   },
   "status_remote": {
     "message": "Napupunta ang mga download sa $address$",
@@ -297,19 +297,19 @@
     "message": "I-download ang pinakamahusay na kalidad"
   },
   "video_sending": {
-    "message": "Ipinapadala sa iDM..."
+    "message": "Ipinapadala sa BMD..."
   },
   "video_added": {
-    "message": "Idinagdag sa iDM"
+    "message": "Idinagdag sa BMD"
   },
   "video_show": {
     "message": "Ipakita"
   },
   "video_no_answer": {
-    "message": "Hindi sumagot ang iDM"
+    "message": "Hindi sumagot ang BMD"
   },
-  "video_get_mdm": {
-    "message": "Kunin ang iDM"
+  "video_get_bmd": {
+    "message": "Kunin ang BMD"
   },
   "video_retry": {
     "message": "Subukang muli"
@@ -324,7 +324,7 @@
     "message": "Lahat ng kalidad at subtitle..."
   },
   "video_failed": {
-    "message": "Hindi naka-install ang iDM o hindi nagsimula"
+    "message": "Hindi naka-install ang BMD o hindi nagsimula"
   },
   "video_download_best": {
     "message": "I-download ang pinakamahusay"

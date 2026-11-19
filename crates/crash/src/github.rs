@@ -3,13 +3,13 @@
 
 use serde::Deserialize;
 
-pub const REPO: &str = "DecoyINDIA/iDM";
+pub const REPO: &str = "DecoyINDIA/BMD";
 
 /// GitHub turns away very long addresses: the form's address is kept under this, the report cut
 /// to fit (the full one goes in as the attached file).
 pub const URL_BUDGET: usize = 7000;
 
-/// The form's fields iDM fills, besides the report: (field id, value).
+/// The form's fields BMD fills, besides the report: (field id, value).
 pub type Fields = Vec<(&'static str, String)>;
 
 fn enc(s: &str) -> String {
@@ -73,7 +73,7 @@ pub async fn find(http: &reqwest::Client, signature: &str) -> Option<Found> {
     let r = http
         .get(url)
         .header("Accept", "application/vnd.github+json")
-        .header("User-Agent", "MisterDownloadManager crash reporter")
+        .header("User-Agent", "BMD crash reporter")
         .send()
         .await
         .ok()?

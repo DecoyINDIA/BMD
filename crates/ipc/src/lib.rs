@@ -1,4 +1,4 @@
-//! iDM's command channel (shared by the app, its command line and the browser host).
+//! BMD's command channel (shared by the app, its command line and the browser host).
 //! Single-instance command channel. The running app listens on a localhost port and writes
 //! `{port, token}` to `%APPDATA%\misterdownloadmanager\ipc.json`; a second launch (IDM-style command line)
 //! or the browser's native messaging host sends one JSON line per command, carrying the token.
@@ -27,7 +27,7 @@ pub struct Command {
     pub dir: Option<String>,
     pub name: Option<String>,
     /// The checksum the finished file must have, as the command line takes it (`sha256:…`, a
-    /// bare hex value, …): `mdm_engine::verify::Hash` reads it.
+    /// bare hex value, …): `bmd_engine::verify::Hash` reads it.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub checksum: Option<String>,
     /// `/a`: add to the main queue, don't start.
@@ -106,14 +106,14 @@ pub struct Command {
     /// The remote control: an uploaded .torrent file's bytes (never read from a request line).
     #[serde(skip)]
     pub torrent_file: Option<Vec<u8>>,
-    /// The remote control (#157, `misterdownloadmanager-cli pair`): show a new pairing code;
+    /// The remote control (#157, `bmd-cli pair`): show a new pairing code;
     /// answered with it, the page's addresses and a QR code to scan ([`api::PairAnswer`]).
     pub pair: bool,
     /// `/exit` (beyond IDM): the running app saves and quits (the installer, before an upgrade
     /// or an uninstall). Starts nothing when no app runs.
     pub exit: bool,
     /// `/startup` (beyond IDM): started with the session (Options → General → Launch on
-    /// startup, or the installer's "Start when Windows starts", #226): iDM starts in the
+    /// startup, or the installer's "Start when Windows starts", #226): BMD starts in the
     /// notification area, its window hidden. Changes nothing in a running app.
     pub startup: bool,
     /// `/show <window>` (beyond IDM): the running app opens one of its windows by name, for
@@ -338,7 +338,7 @@ pub fn set_data_dir(dir: PathBuf) {
 }
 
 /// `dir` as a full path (#834): the helpers run in a folder of their own, and are given paths in
-/// the data folder (their programs, ffmpeg's place, the files iDM writes for them).
+/// the data folder (their programs, ffmpeg's place, the files BMD writes for them).
 fn full(dir: PathBuf) -> PathBuf {
     std::path::absolute(&dir).unwrap_or(dir)
 }
@@ -489,7 +489,7 @@ impl std::fmt::Display for SendError {
     }
 }
 
-/// Send `cmd` to a running iDM.
+/// Send `cmd` to a running BMD.
 pub fn send(cmd: &Command) -> Result<(), SendError> {
     let ack = exchange(cmd, ANSWER_WAIT)?;
     if ack.trim() == "ok" {
@@ -545,7 +545,7 @@ pub fn serve(tx: Sender<Incoming>, wake: impl Fn() + Send + Sync + 'static) -> s
         private_write(&path, &json)?;
     }
     std::thread::Builder::new()
-        .name("mdm-ipc".into())
+        .name("bmd-ipc".into())
         .spawn(move || accept_loop(listener, token, tx, wake))?;
     Ok(())
 }
@@ -575,7 +575,7 @@ fn accept_loop(
         }
         let (token, wake, tx, slot) = (token.clone(), wake.clone(), tx.clone(), in_flight.clone());
         let spawned = std::thread::Builder::new()
-            .name("mdm-ipc-conn".into())
+            .name("bmd-ipc-conn".into())
             .spawn(move || {
                 handle(&conn, &token, &tx, &*wake);
                 slot.fetch_sub(1, Ordering::SeqCst);
@@ -757,7 +757,7 @@ pub fn random_token() -> String {
 }
 
 /// The argument every startup entry passes (the Run key, the XDG autostart entry, the
-/// LaunchAgent, the installer's): iDM starts in the notification area ([`Command::startup`]).
+/// LaunchAgent, the installer's): BMD starts in the notification area ([`Command::startup`]).
 pub const STARTUP: &str = "/startup";
 
 /// A bare magnet link or a .torrent file's path: what an association passes (`"%1"`, `%U`).
@@ -767,9 +767,9 @@ fn association_target(a: &str) -> bool {
         || a.to_ascii_lowercase().ends_with(".torrent")
 }
 
-/// The arguments (without the program's name) iDM may read, as it was started. Started for a
+/// The arguments (without the program's name) BMD may read, as it was started. Started for a
 /// magnet link or a .torrent file (the first argument is one, as the associations pass it:
-/// Windows' `"iDM.exe" "%1"`, Linux's `%U`), only magnet links and .torrent files are kept: a
+/// Windows' `"BMD.exe" "%1"`, Linux's `%U`), only magnet links and .torrent files are kept: a
 /// `"` in a link that a launcher passes on unescaped ends Windows' quoting of `%1`, and what
 /// follows it in the link would otherwise be read as switches of its own (`/p`, `/f`, `/n`,
 /// `/d`, `--headless`, `--data`…). Any other command line is kept as it is.
@@ -842,7 +842,7 @@ mod tests {
         assert_eq!(c.show.as_deref(), Some("options:connection"));
     }
 
-    /// A magnet link with a `"` passed on unescaped to `"iDM.exe" "%1"`: Windows splits it, and
+    /// A magnet link with a `"` passed on unescaped to `"BMD.exe" "%1"`: Windows splits it, and
     /// what follows the quote must not become switches (a file written where the link says, a
     /// server started on its data folder).
     #[test]

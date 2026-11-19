@@ -2,25 +2,25 @@
 //! a hidden welcome video in its HTML (`/gen/1M/welcome.mp4`) and declares another as its own
 //! (`/gen/2M/film.mp4`, "The Film") in its JSON-LD, its `og:video` or its `twitter:player`.
 //!
-//! The page's reading (iDM's engine, as the look-up reads it) runs with `cargo test`. The look-up
+//! The page's reading (BMD's engine, as the look-up reads it) runs with `cargo test`. The look-up
 //! and the download through the real yt-dlp are ignored: they need yt-dlp's program.
 //!
-//!   MDM_TEST_YTDLP=…\yt-dlp.exe cargo test -p mdm-tools --test declared -- --ignored --nocapture
+//!   BMD_TEST_YTDLP=…\yt-dlp.exe cargo test -p bmd-tools --test declared -- --ignored --nocapture
 
 use std::time::{Duration, Instant};
 
-use mdm_labserver::{Config, LabServer};
-use mdm_tools::declared::{self, Declared};
-use mdm_tools::proc::FromBrowser;
-use mdm_tools::resolve::Looked;
-use mdm_tools::video::{State, Subs, VideoJob};
+use bmd_labserver::{Config, LabServer};
+use bmd_tools::declared::{self, Declared};
+use bmd_tools::proc::FromBrowser;
+use bmd_tools::resolve::Looked;
+use bmd_tools::video::{State, Subs, VideoJob};
 
-/// What iDM's engine reads `page` declaring, as [`declared::look_up`] reads it.
+/// What BMD's engine reads `page` declaring, as [`declared::look_up`] reads it.
 fn read(rt: &tokio::runtime::Runtime, page: &str) -> Option<Declared> {
     let url = reqwest::Url::parse(page).unwrap();
-    let opts = mdm_engine::Options::default();
+    let opts = bmd_engine::Options::default();
     let (at, videos) = rt
-        .block_on(mdm_engine::page_videos(url, Default::default(), &opts))
+        .block_on(bmd_engine::page_videos(url, Default::default(), &opts))
         .unwrap();
     declared::chosen(&videos, &at)
 }
@@ -50,7 +50,7 @@ fn look_up(
     rt: &tokio::runtime::Runtime,
     page: &str,
 ) -> (Looked, Option<Declared>) {
-    let reader = mdm_tools::streams::Engine {
+    let reader = bmd_tools::streams::Engine {
         handle: rt.handle().clone(),
         opts: Default::default(),
     };
@@ -73,7 +73,7 @@ fn video(looked: &Looked) -> (String, Vec<String>) {
 #[test]
 #[ignore]
 fn the_declared_video_is_looked_up_and_downloaded() {
-    let exe = std::path::PathBuf::from(std::env::var("MDM_TEST_YTDLP").expect("MDM_TEST_YTDLP"));
+    let exe = std::path::PathBuf::from(std::env::var("BMD_TEST_YTDLP").expect("BMD_TEST_YTDLP"));
     let rt = tokio::runtime::Runtime::new().unwrap();
     let lab = rt.block_on(LabServer::start(Config::default())).unwrap();
     // The film is served only with the page as its Referer, as an embed-only video is.
@@ -85,7 +85,7 @@ fn the_declared_video_is_looked_up_and_downloaded() {
     let page = lab.url(&format!("/declared?film={}", urlencode(&film)));
 
     // Before: yt-dlp alone takes the hidden welcome video.
-    let alone = mdm_tools::resolve::look_up(&exe, &page, &FromBrowser::default()).unwrap();
+    let alone = bmd_tools::resolve::look_up(&exe, &page, &FromBrowser::default()).unwrap();
     println!("yt-dlp alone: {:?}", video(&alone));
 
     let at = lab.log().len();
@@ -114,7 +114,7 @@ fn the_declared_video_is_looked_up_and_downloaded() {
 
     // The download, as the app starts it: the declared address, the page as its Referer.
     let dir = tempfile::tempdir().unwrap();
-    let engine = mdm_tools::streams::Engine {
+    let engine = bmd_tools::streams::Engine {
         handle: rt.handle().clone(),
         opts: Default::default(),
     };

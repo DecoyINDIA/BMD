@@ -1,5 +1,5 @@
 """The installer in every interface language (D-019): writes tools/installer/languages.iss, which
-mdm.iss includes, from i18n/languages.tsv.
+bmd.iss includes, from i18n/languages.tsv.
 
     python tools/installer/languages.py            # translate what is missing, write the files
     python tools/installer/languages.py --dry-run  # only count
@@ -8,7 +8,7 @@ mdm.iss includes, from i18n/languages.tsv.
 - Any other gets tools/installer/languages/<code>.isl: Inno's Default.isl messages translated by
   the same model, rules and checks as the app's catalogs (tools/i18n/translate.py), its
   LanguageID from Windows' tag, RightToLeft for right-to-left scripts.
-- mdm.iss's own messages ([CustomMessages] `en.*`) are translated for every language.
+- bmd.iss's own messages ([CustomMessages] `en.*`) are translated for every language.
 Rows already translated are kept; a re-run only sends what is new. Inno's `%1`, `%n` and `[name]`
 go to the model as `{1}`, a line break and `{name}`, and come back.
 """
@@ -52,7 +52,7 @@ def to_model(s):
 def from_model(s):
     s = re.sub(r"\{(name|name_ver|kb|mb|gb)\}", lambda m: "[" + m.group(1).replace("_", "/") + "]", s)
     # .isl files aren't preprocessed: the name goes in as text.
-    s = re.sub(r"\{(\d)\}", r"%\1", s).replace("{AppName}", "iDM")
+    s = re.sub(r"\{(\d)\}", r"%\1", s).replace("{AppName}", "BMD")
     return s.replace("\r", "").replace("\n", "%n")
 
 
@@ -96,7 +96,7 @@ def main():
     inno = inno_dir()
     default = read_messages(inno / "Default.isl")
     english = inno_name("en") + "."
-    custom = {k[len(english):]: v for k, v in read_messages(HERE / "mdm.iss", "CustomMessages").items()
+    custom = {k[len(english):]: v for k, v in read_messages(HERE / "bmd.iss", "CustomMessages").items()
               if k.startswith(english)}
     langs = T.languages()
     OUT.mkdir(exist_ok=True)
@@ -194,7 +194,7 @@ def main():
             entries.append(f'Name: "{name}"; MessagesFile: "compiler:Languages\\{lang["inno"]}.isl,languages\\{code}.isl"')
         else:
             entries.append(f'Name: "{name}"; MessagesFile: "languages\\{code}.isl"')
-        lines = [f"; iDM's installer in {lang['english']}: tools/installer/languages.py",
+        lines = [f"; BMD's installer in {lang['english']}: tools/installer/languages.py",
                  "; (machine-translated; a native speaker may correct any line)."]
         if lang["inno"] == "-":
             lines += ["", "[LangOptions]", f"LanguageName={lang['native']}",

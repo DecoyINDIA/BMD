@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "ブラウザーから iDM にダウンロードを渡します。"
+    "message": "ブラウザーから BMD にダウンロードを渡します。"
   },
   "menu": {
-    "message": "iDM でダウンロード"
+    "message": "BMD でダウンロード"
   },
   "video_download": {
     "message": "動画をダウンロード"
@@ -30,19 +30,19 @@
     "message": "ボタンの設定..."
   },
   "video_sent": {
-    "message": "iDM に送信済み"
+    "message": "BMD に送信済み"
   },
   "menu_selected": {
-    "message": "iDM で選択したリンクをダウンロード"
+    "message": "BMD で選択したリンクをダウンロード"
   },
   "menu_all": {
-    "message": "iDM で全リンクをダウンロード"
+    "message": "BMD で全リンクをダウンロード"
   },
   "status_connected": {
-    "message": "iDM に接続済み"
+    "message": "BMD に接続済み"
   },
   "status_connected_version": {
-    "message": "iDM $version$ に接続済み",
+    "message": "BMD $version$ に接続済み",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "一時停止: ダウンロードはブラウザーに残ります"
   },
   "status_not_installed": {
-    "message": "iDM がインストールされていないか、ブラウザー統合が設定されていません"
+    "message": "BMD がインストールされていないか、ブラウザー統合が設定されていません"
   },
   "status_forbidden": {
-    "message": "iDM はこの拡張機能のコピーを受け入れません"
+    "message": "BMD はこの拡張機能のコピーを受け入れません"
   },
   "status_not_running": {
-    "message": "iDM が時間内に起動しませんでした"
+    "message": "BMD が時間内に起動しませんでした"
   },
   "status_host_failed": {
-    "message": "iDM への接続に失敗しました"
+    "message": "BMD への接続に失敗しました"
   },
   "status_too_large": {
     "message": "このダウンロードの詳細は大きすぎて引き渡せませんでした"
   },
   "status_update_app": {
-    "message": "この拡張機能のすべての機能を使用するには、iDM を更新してください"
+    "message": "この拡張機能のすべての機能を使用するには、BMD を更新してください"
   },
   "popup_take": {
     "message": "このブラウザーからのダウンロードを取得する"
@@ -78,10 +78,10 @@
     "message": "このブラウザーのプロキシまたは VPN 拡張機能経由でダウンロードを送信する"
   },
   "popup_proxy_title": {
-    "message": "iDM は、このブラウザーと同じプロキシ経由でダウンロードします。ブラウザーは一度だけ許可を求めます。これをオフにすると、その許可は取り消されます。"
+    "message": "BMD は、このブラウザーと同じプロキシ経由でダウンロードします。ブラウザーは一度だけ許可を求めます。これをオフにすると、その許可は取り消されます。"
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM は、このブラウザーと同じプロキシ経由でダウンロードします。これがオフの場合、拡張機能はブラウザーのプロキシを読み取りません。"
+    "message": "BMD は、このブラウザーと同じプロキシ経由でダウンロードします。これがオフの場合、拡張機能はブラウザーのプロキシを読み取りません。"
   },
   "popup_exclude_site": {
     "message": "$site$ からのダウンロードは今後取得しない",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "iDM を開く"
+    "message": "BMD を開く"
   },
   "popup_options": {
     "message": "オプション..."
@@ -114,7 +114,7 @@
     "message": "ヘルプ"
   },
   "popup_support": {
-    "message": "iDM をサポート"
+    "message": "BMD をサポート"
   },
   "popup_fix": {
     "message": "修正方法"
@@ -150,7 +150,7 @@
     "message": "オプション → 全般で「高度なブラウザー統合を使用する」がオフになっています。"
   },
   "declined_torrents": {
-    "message": "これはトレントであり、トレント設定で「マグネット リンクと .torrent ファイルを iDM で開く」がオフになっています。"
+    "message": "これはトレントであり、トレント設定で「マグネット リンクと .torrent ファイルを BMD で開く」がオフになっています。"
   },
   "declined_site_access": {
     "message": "このサイトの読み取りは拡張機能に許可されていません (ブラウザーのサイト アクセス)。"
@@ -195,16 +195,16 @@
     "message": "ここにはダウンロードできる動画がありません"
   },
   "video_playlist": {
-    "message": "動画の一覧: iDM で選択してください"
+    "message": "動画の一覧: BMD で選択してください"
   },
   "video_no_ytdlp": {
-    "message": "この動画には iDM に yt-dlp が必要です"
+    "message": "この動画には BMD に yt-dlp が必要です"
   },
   "video_too_long": {
     "message": "検索に時間がかかりすぎました"
   },
   "video_busy": {
-    "message": "iDM は他の動画の処理中です"
+    "message": "BMD は他の動画の処理中です"
   },
   "video_queued": {
     "message": "キューに追加しました"
@@ -228,7 +228,7 @@
     "message": "このコンピューター"
   },
   "popup_send_remote": {
-    "message": "別の iDM (サーバー)"
+    "message": "別の BMD (サーバー)"
   },
   "popup_remote_code": {
     "message": "ペアリング コード"
@@ -240,7 +240,7 @@
     "message": "ペアリング"
   },
   "popup_remote_help": {
-    "message": "一度アドレスを開いて証明書を承認し、そのオプション、リモート、デバイスのペアリング (または misterdownloadmanager-cli pair) からコードを入力してください。"
+    "message": "一度アドレスを開いて証明書を承認し、そのオプション、リモート、デバイスのペアリング (または bmd-cli pair) からコードを入力してください。"
   },
   "status_remote": {
     "message": "ダウンロードは $address$ に送信されます",
@@ -297,19 +297,19 @@
     "message": "最高品質をダウンロード"
   },
   "video_sending": {
-    "message": "iDM に送信しています..."
+    "message": "BMD に送信しています..."
   },
   "video_added": {
-    "message": "iDM に追加済み"
+    "message": "BMD に追加済み"
   },
   "video_show": {
     "message": "表示"
   },
   "video_no_answer": {
-    "message": "iDM が応答しません"
+    "message": "BMD が応答しません"
   },
-  "video_get_mdm": {
-    "message": "iDM を入手"
+  "video_get_bmd": {
+    "message": "BMD を入手"
   },
   "video_retry": {
     "message": "再試行"
@@ -324,7 +324,7 @@
     "message": "すべての画質と字幕..."
   },
   "video_failed": {
-    "message": "iDM がインストールされていないか、起動していません"
+    "message": "BMD がインストールされていないか、起動していません"
   },
   "video_download_best": {
     "message": "最高画質をダウンロード"

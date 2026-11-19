@@ -3,8 +3,8 @@ name: Batch downloads
 title: Batch download numbered files and lists of links
 headline: A whole numbered series from one address.
 line: One address with an asterisk fetches a numbered series; a text file of links adds them all.
-lede: Files named photo001.jpg to photo150.jpg don't need 150 clicks. Write the address once with an asterisk where the number changes, and iDM queues every file. A list of links in a text file goes in just as easily.
-description: Batch downloads in iDM: a numbered series of files from one address with an asterisk, or every link in a text file at once.
+lede: Files named photo001.jpg to photo150.jpg don't need 150 clicks. Write the address once with an asterisk where the number changes, and BMD queues every file. A list of links in a text file goes in just as easily.
+description: Batch downloads in BMD: a numbered series of files from one address with an asterisk, or every link in a text file at once.
 group: downloading
 order: 80
 since: 0.1.0
@@ -30,7 +30,7 @@ command lists every one of them in Link grabber, ticked and ready to start.
 
 ## Straight into a queue
 
-The files go to a queue, not all at once. iDM asks which one, and that question can be turned
+The files go to a queue, not all at once. BMD asks which one, and that question can be turned
 off in **Options → Downloads**. From there the queue runs as many files at a time as you set,
 and the Scheduler can start it at night. See [Queues and the Scheduler](queues-and-scheduler.md).
 
@@ -44,7 +44,7 @@ what its downloads need. You can also drop a `.txt` or `.ef2` list on the downlo
 The other way works too: **Tasks → Export → To text file** writes one address per line, and
 **To IDM export file** writes an `.ef2` list.
 
-When an address is already in the list, iDM asks what to do, or follows the answer you chose in
+When an address is already in the list, BMD asks what to do, or follows the answer you chose in
 **Options → Downloads → If a duplicate download link is added**.
 
 ## Imports with more to see

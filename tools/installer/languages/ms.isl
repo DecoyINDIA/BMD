@@ -1,4 +1,4 @@
-﻿; iDM's installer in Malay: tools/installer/languages.py
+﻿; BMD's installer in Malay: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Menyahpasang %1.
 
 [CustomMessages]
 TaskBrowser=Sediakan integrasi &pelayar (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Buka fail .&torrent dan pautan magnet dengan iDM
-TaskStartup=Mula iDM apabila &Windows bermula
+TaskTorrents=Buka fail .&torrent dan pautan magnet dengan BMD
+TaskStartup=Mula BMD apabila &Windows bermula
 TaskGroupOther=Lain-lain:
-Launch=Mula iDM
+Launch=Mula BMD
 KeepData=Padam juga senarai muat turun dan tetapan anda?%n%nFail yang dimuat turun tidak akan disentuh walau apa pun.

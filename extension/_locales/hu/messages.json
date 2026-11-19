@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Átadja a letöltéseket a böngészőből a(z) iDM alkalmazásnak."
+    "message": "Átadja a letöltéseket a böngészőből a(z) BMD alkalmazásnak."
   },
   "menu": {
-    "message": "Letöltés a(z) iDM alkalmazással"
+    "message": "Letöltés a(z) BMD alkalmazással"
   },
   "video_download": {
     "message": "Videó letöltése"
@@ -30,19 +30,19 @@
     "message": "Gombbeállítások..."
   },
   "video_sent": {
-    "message": "Elküldve a következőnek: iDM"
+    "message": "Elküldve a következőnek: BMD"
   },
   "menu_selected": {
-    "message": "Kijelölt hivatkozások letöltése az iDM alkalmazással"
+    "message": "Kijelölt hivatkozások letöltése az BMD alkalmazással"
   },
   "menu_all": {
-    "message": "Összes hivatkozás letöltése az iDM alkalmazással"
+    "message": "Összes hivatkozás letöltése az BMD alkalmazással"
   },
   "status_connected": {
-    "message": "Csatlakoztatva az iDM alkalmazáshoz"
+    "message": "Csatlakoztatva az BMD alkalmazáshoz"
   },
   "status_connected_version": {
-    "message": "Csatlakoztatva az iDM $version$ alkalmazáshoz",
+    "message": "Csatlakoztatva az BMD $version$ alkalmazáshoz",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Szüneteltetve: a letöltések a böngészőben maradnak"
   },
   "status_not_installed": {
-    "message": "Az iDM nincs telepítve, vagy a böngészőintegrációja nincs beállítva"
+    "message": "Az BMD nincs telepítve, vagy a böngészőintegrációja nincs beállítva"
   },
   "status_forbidden": {
-    "message": "Az iDM nem fogadja el a bővítmény ezen másolatát"
+    "message": "Az BMD nem fogadja el a bővítmény ezen másolatát"
   },
   "status_not_running": {
-    "message": "Az iDM nem indult el időben"
+    "message": "Az BMD nem indult el időben"
   },
   "status_host_failed": {
-    "message": "Nem sikerült csatlakozni az iDM alkalmazáshoz"
+    "message": "Nem sikerült csatlakozni az BMD alkalmazáshoz"
   },
   "status_too_large": {
     "message": "A letöltés részletei túl nagyok voltak az átadáshoz"
   },
   "status_update_app": {
-    "message": "Frissítse a(z) iDM alkalmazást, hogy használhassa a bővítmény összes funkcióját"
+    "message": "Frissítse a(z) BMD alkalmazást, hogy használhassa a bővítmény összes funkcióját"
   },
   "popup_take": {
     "message": "Letöltések átvétele ebből a böngészőből"
@@ -78,10 +78,10 @@
     "message": "Letöltések küldése a böngésző proxy- vagy VPN-bővítményén keresztül"
   },
   "popup_proxy_title": {
-    "message": "Az iDM ezután ugyanazon a proxyn keresztül tölt le, mint ez a böngésző. A böngésző egyszer engedélyt kér erre; ennek kikapcsolásával visszavonhatja az engedélyt."
+    "message": "Az BMD ezután ugyanazon a proxyn keresztül tölt le, mint ez a böngésző. A böngésző egyszer engedélyt kér erre; ennek kikapcsolásával visszavonhatja az engedélyt."
   },
   "popup_proxy_title_chromium": {
-    "message": "Ekkor a(z) iDM ugyanazon a proxyn keresztül tölt le, mint ez a böngésző. Ha ez ki van kapcsolva, a bővítmény nem olvassa be a böngésző proxyját."
+    "message": "Ekkor a(z) BMD ugyanazon a proxyn keresztül tölt le, mint ez a böngésző. Ha ez ki van kapcsolva, a bővítmény nem olvassa be a böngésző proxyját."
   },
   "popup_exclude_site": {
     "message": "Soha ne töltsön le fájlokat a(z) $site$ webhelyről",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Megnyitás: iDM"
+    "message": "Megnyitás: BMD"
   },
   "popup_options": {
     "message": "Beállítások..."
@@ -114,7 +114,7 @@
     "message": "Súgó"
   },
   "popup_support": {
-    "message": "iDM támogatása"
+    "message": "BMD támogatása"
   },
   "popup_fix": {
     "message": "Hogyan javítható"
@@ -150,7 +150,7 @@
     "message": "A Speciális böngészőintegráció használata ki van kapcsolva a Beállítások → Általános menüpontban."
   },
   "declined_torrents": {
-    "message": "Ez egy torrent, és a „Mágneshivatkozások és .torrent fájlok megnyitása a(z) iDM alkalmazással” beállítás ki van kapcsolva a Torrent-beállításokban."
+    "message": "Ez egy torrent, és a „Mágneshivatkozások és .torrent fájlok megnyitása a(z) BMD alkalmazással” beállítás ki van kapcsolva a Torrent-beállításokban."
   },
   "declined_site_access": {
     "message": "A bővítmény nem olvashatja ezt a webhelyet (a böngésző webhely-hozzáférése)."
@@ -195,16 +195,16 @@
     "message": "Itt nincs letölthető videó"
   },
   "video_playlist": {
-    "message": "Videók listája: válassza ki őket a iDM alkalmazásban"
+    "message": "Videók listája: válassza ki őket a BMD alkalmazásban"
   },
   "video_no_ytdlp": {
-    "message": "A iDM alkalmazásnak szüksége van a yt-dlp eszközre ehhez a videóhoz"
+    "message": "A BMD alkalmazásnak szüksége van a yt-dlp eszközre ehhez a videóhoz"
   },
   "video_too_long": {
     "message": "A keresés túl sokáig tartott"
   },
   "video_busy": {
-    "message": "A iDM alkalmazás más videókkal van elfoglalva"
+    "message": "A BMD alkalmazás más videókkal van elfoglalva"
   },
   "video_queued": {
     "message": "Hozzáadva a sorhoz"
@@ -228,7 +228,7 @@
     "message": "Ez a számítógép"
   },
   "popup_send_remote": {
-    "message": "Másik iDM (kiszolgáló)"
+    "message": "Másik BMD (kiszolgáló)"
   },
   "popup_remote_code": {
     "message": "Párosítási kód"
@@ -240,7 +240,7 @@
     "message": "Párosítás"
   },
   "popup_remote_help": {
-    "message": "Nyissa meg egyszer a címét, és fogadja el a tanúsítványát, majd adja meg a kódot a Beállítások, Távoli, Eszköz párosítása (vagy misterdownloadmanager-cli pair) menüpontból."
+    "message": "Nyissa meg egyszer a címét, és fogadja el a tanúsítványát, majd adja meg a kódot a Beállítások, Távoli, Eszköz párosítása (vagy bmd-cli pair) menüpontból."
   },
   "status_remote": {
     "message": "A letöltések ide mennek: $address$",
@@ -297,19 +297,19 @@
     "message": "A legjobb minőség letöltése"
   },
   "video_sending": {
-    "message": "Küldés az iDM-nek..."
+    "message": "Küldés az BMD-nek..."
   },
   "video_added": {
-    "message": "Hozzáadva az iDM-hez"
+    "message": "Hozzáadva az BMD-hez"
   },
   "video_show": {
     "message": "Megjelenítés"
   },
   "video_no_answer": {
-    "message": "Az iDM nem válaszolt"
+    "message": "Az BMD nem válaszolt"
   },
-  "video_get_mdm": {
-    "message": "iDM beszerzése"
+  "video_get_bmd": {
+    "message": "BMD beszerzése"
   },
   "video_retry": {
     "message": "Újra"
@@ -324,7 +324,7 @@
     "message": "Minden minőség és felirat..."
   },
   "video_failed": {
-    "message": "Az iDM nincs telepítve, vagy nem indult el"
+    "message": "Az BMD nincs telepítve, vagy nem indult el"
   },
   "video_download_best": {
     "message": "Legjobb letöltése"

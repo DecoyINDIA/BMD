@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Przekazuje pobieranie z przeglądarki do iDM."
+    "message": "Przekazuje pobieranie z przeglądarki do BMD."
   },
   "menu": {
-    "message": "Pobierz za pomocą iDM"
+    "message": "Pobierz za pomocą BMD"
   },
   "video_download": {
     "message": "Pobierz wideo"
@@ -30,19 +30,19 @@
     "message": "Ustawienia przycisku..."
   },
   "video_sent": {
-    "message": "Wysłano do iDM"
+    "message": "Wysłano do BMD"
   },
   "menu_selected": {
-    "message": "Pobierz wybrane łącza za pomocą iDM"
+    "message": "Pobierz wybrane łącza za pomocą BMD"
   },
   "menu_all": {
-    "message": "Pobierz wszystkie łącza za pomocą iDM"
+    "message": "Pobierz wszystkie łącza za pomocą BMD"
   },
   "status_connected": {
-    "message": "Połączono z iDM"
+    "message": "Połączono z BMD"
   },
   "status_connected_version": {
-    "message": "Połączono z iDM $version$",
+    "message": "Połączono z BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Wstrzymano: pobieranie pozostaje w przeglądarce"
   },
   "status_not_installed": {
-    "message": "iDM nie jest zainstalowany lub jego integracja z przeglądarką nie jest skonfigurowana"
+    "message": "BMD nie jest zainstalowany lub jego integracja z przeglądarką nie jest skonfigurowana"
   },
   "status_forbidden": {
-    "message": "iDM nie akceptuje tej kopii rozszerzenia"
+    "message": "BMD nie akceptuje tej kopii rozszerzenia"
   },
   "status_not_running": {
-    "message": "iDM nie uruchomił się na czas"
+    "message": "BMD nie uruchomił się na czas"
   },
   "status_host_failed": {
-    "message": "Połączenie z iDM nie powiodło się"
+    "message": "Połączenie z BMD nie powiodło się"
   },
   "status_too_large": {
     "message": "Szczegóły tego pobierania były zbyt duże, aby je przekazać"
   },
   "status_update_app": {
-    "message": "Zaktualizuj iDM, aby korzystać ze wszystkich funkcji oferowanych przez to rozszerzenie"
+    "message": "Zaktualizuj BMD, aby korzystać ze wszystkich funkcji oferowanych przez to rozszerzenie"
   },
   "popup_take": {
     "message": "Pobieraj pliki z tej przeglądarki"
@@ -78,10 +78,10 @@
     "message": "Wysyłaj pobieranie przez serwer proxy lub rozszerzenie VPN tej przeglądarki"
   },
   "popup_proxy_title": {
-    "message": "Wtedy iDM pobiera pliki przez ten sam serwer proxy, co przeglądarka. Przeglądarka raz poprosi o zezwolenie; wyłączenie tej opcji cofa to zezwolenie."
+    "message": "Wtedy BMD pobiera pliki przez ten sam serwer proxy, co przeglądarka. Przeglądarka raz poprosi o zezwolenie; wyłączenie tej opcji cofa to zezwolenie."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM pobiera wtedy pliki przez ten sam serwer proxy co przeglądarka. Gdy ta opcja jest wyłączona, rozszerzenie nie odczytuje serwera proxy przeglądarki."
+    "message": "BMD pobiera wtedy pliki przez ten sam serwer proxy co przeglądarka. Gdy ta opcja jest wyłączona, rozszerzenie nie odczytuje serwera proxy przeglądarki."
   },
   "popup_exclude_site": {
     "message": "Nigdy nie pobieraj plików z $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Otwórz iDM"
+    "message": "Otwórz BMD"
   },
   "popup_options": {
     "message": "Opcje..."
@@ -114,7 +114,7 @@
     "message": "Pomoc"
   },
   "popup_support": {
-    "message": "Wesprzyj iDM"
+    "message": "Wesprzyj BMD"
   },
   "popup_fix": {
     "message": "Jak to naprawić"
@@ -150,7 +150,7 @@
     "message": "Opcja „Użyj zaawansowanej integracji z przeglądarką” jest wyłączona w Opcjach → Ogólne."
   },
   "declined_torrents": {
-    "message": "To jest torrent, a opcja Otwieraj linki magnet i pliki .torrent za pomocą iDM jest wyłączona w ustawieniach torrentów."
+    "message": "To jest torrent, a opcja Otwieraj linki magnet i pliki .torrent za pomocą BMD jest wyłączona w ustawieniach torrentów."
   },
   "declined_site_access": {
     "message": "Rozszerzenie nie ma uprawnień do odczytu tej witryny (dostęp rozszerzenia do witryny w przeglądarce)."
@@ -195,16 +195,16 @@
     "message": "Brak wideo do pobrania w tym miejscu"
   },
   "video_playlist": {
-    "message": "Lista wideo: wybierz je w iDM"
+    "message": "Lista wideo: wybierz je w BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM potrzebuje yt-dlp dla tego wideo"
+    "message": "BMD potrzebuje yt-dlp dla tego wideo"
   },
   "video_too_long": {
     "message": "Wyszukiwanie trwało zbyt długo"
   },
   "video_busy": {
-    "message": "iDM jest zajęty innymi wideo"
+    "message": "BMD jest zajęty innymi wideo"
   },
   "video_queued": {
     "message": "Dodano do kolejki"
@@ -228,7 +228,7 @@
     "message": "Ten komputer"
   },
   "popup_send_remote": {
-    "message": "Inny iDM (serwer)"
+    "message": "Inny BMD (serwer)"
   },
   "popup_remote_code": {
     "message": "Kod parowania"
@@ -240,7 +240,7 @@
     "message": "Paruj"
   },
   "popup_remote_help": {
-    "message": "Otwórz jego adres raz i zaakceptuj certyfikat, a następnie wprowadź kod z jego Opcji, Zdalne, Paruj urządzenie (lub misterdownloadmanager-cli pair)."
+    "message": "Otwórz jego adres raz i zaakceptuj certyfikat, a następnie wprowadź kod z jego Opcji, Zdalne, Paruj urządzenie (lub bmd-cli pair)."
   },
   "status_remote": {
     "message": "Pobieranie do $address$",
@@ -297,19 +297,19 @@
     "message": "Pobierz najlepszą jakość"
   },
   "video_sending": {
-    "message": "Wysyłanie do iDM..."
+    "message": "Wysyłanie do BMD..."
   },
   "video_added": {
-    "message": "Dodano do iDM"
+    "message": "Dodano do BMD"
   },
   "video_show": {
     "message": "Pokaż"
   },
   "video_no_answer": {
-    "message": "iDM nie odpowiada"
+    "message": "BMD nie odpowiada"
   },
-  "video_get_mdm": {
-    "message": "Pobierz iDM"
+  "video_get_bmd": {
+    "message": "Pobierz BMD"
   },
   "video_retry": {
     "message": "Ponów"
@@ -324,7 +324,7 @@
     "message": "Wszystkie jakości i napisy..."
   },
   "video_failed": {
-    "message": "iDM nie jest zainstalowany lub nie uruchomił się"
+    "message": "BMD nie jest zainstalowany lub nie uruchomił się"
   },
   "video_download_best": {
     "message": "Pobierz najlepszą jakość"

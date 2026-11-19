@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Siirtää lataukset selaimesta iDMiin."
+    "message": "Siirtää lataukset selaimesta BMDiin."
   },
   "menu": {
-    "message": "Lataa iDMilla"
+    "message": "Lataa BMDilla"
   },
   "video_download": {
     "message": "Lataa video"
@@ -30,19 +30,19 @@
     "message": "Painikkeen asetukset..."
   },
   "video_sent": {
-    "message": "Lähetetty iDM:lle"
+    "message": "Lähetetty BMD:lle"
   },
   "menu_selected": {
-    "message": "Lataa valitut linkit sovelluksella iDM"
+    "message": "Lataa valitut linkit sovelluksella BMD"
   },
   "menu_all": {
-    "message": "Lataa kaikki linkit sovelluksella iDM"
+    "message": "Lataa kaikki linkit sovelluksella BMD"
   },
   "status_connected": {
-    "message": "Yhdistetty sovellukseen iDM"
+    "message": "Yhdistetty sovellukseen BMD"
   },
   "status_connected_version": {
-    "message": "Yhdistetty sovellukseen iDM $version$",
+    "message": "Yhdistetty sovellukseen BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Ei käytössä: lataukset jäävät selaimeen"
   },
   "status_not_installed": {
-    "message": "iDM ei ole asennettu, tai sen selainintegrointia ei ole määritetty"
+    "message": "BMD ei ole asennettu, tai sen selainintegrointia ei ole määritetty"
   },
   "status_forbidden": {
-    "message": "iDM ei hyväksy tätä laajennuksen kopiota"
+    "message": "BMD ei hyväksy tätä laajennuksen kopiota"
   },
   "status_not_running": {
-    "message": "iDM ei käynnistynyt ajoissa"
+    "message": "BMD ei käynnistynyt ajoissa"
   },
   "status_host_failed": {
-    "message": "Yhteyden muodostaminen sovellukseen iDM epäonnistui"
+    "message": "Yhteyden muodostaminen sovellukseen BMD epäonnistui"
   },
   "status_too_large": {
     "message": "Tämän latauksen tiedot olivat liian suuria siirrettäviksi"
   },
   "status_update_app": {
-    "message": "Päivitä iDM, jotta voit käyttää kaikkia tämän laajennuksen tarjoamia ominaisuuksia"
+    "message": "Päivitä BMD, jotta voit käyttää kaikkia tämän laajennuksen tarjoamia ominaisuuksia"
   },
   "popup_take": {
     "message": "Latausten siirtäminen tästä selaimesta"
@@ -78,10 +78,10 @@
     "message": "Lähetä lataukset tämän selaimen välityspalvelimen tai VPN-laajennuksen kautta"
   },
   "popup_proxy_title": {
-    "message": "Tällöin iDM lataa saman välityspalvelimen kautta kuin tämä selain. Selain pyytää kerran lupaa; tämän poistaminen käytöstä peruuttaa luvan."
+    "message": "Tällöin BMD lataa saman välityspalvelimen kautta kuin tämä selain. Selain pyytää kerran lupaa; tämän poistaminen käytöstä peruuttaa luvan."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM lataa tiedostot sitten tämän selaimen käyttämän välityspalvelimen kautta. Kun tämä asetus on pois päältä, laajennus ei lue selaimen välityspalvelimen asetuksia."
+    "message": "BMD lataa tiedostot sitten tämän selaimen käyttämän välityspalvelimen kautta. Kun tämä asetus on pois päältä, laajennus ei lue selaimen välityspalvelimen asetuksia."
   },
   "popup_exclude_site": {
     "message": "Älä koskaan ota latauksia sivustolta $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Avaa iDM"
+    "message": "Avaa BMD"
   },
   "popup_options": {
     "message": "Asetukset..."
@@ -114,7 +114,7 @@
     "message": "Ohje"
   },
   "popup_support": {
-    "message": "Tue iDM:ää"
+    "message": "Tue BMD:ää"
   },
   "popup_fix": {
     "message": "Miten korjata"
@@ -150,7 +150,7 @@
     "message": "Käytä laajennettua selainintegraatiota on pois päältä kohdassa Asetukset → Yleiset."
   },
   "declined_torrents": {
-    "message": "Se on torrent, ja Avaa magnet-linkit ja .torrent-tiedostot sovelluksella iDM on pois päältä Torrent-asetuksissa."
+    "message": "Se on torrent, ja Avaa magnet-linkit ja .torrent-tiedostot sovelluksella BMD on pois päältä Torrent-asetuksissa."
   },
   "declined_site_access": {
     "message": "Laajennuksella ei ole lupaa lukea tätä sivustoa (selaimen sivustokäyttö)."
@@ -195,16 +195,16 @@
     "message": "Täällä ei ole ladattavaa videota"
   },
   "video_playlist": {
-    "message": "Videoluettelo: valitse videot sovelluksessa iDM"
+    "message": "Videoluettelo: valitse videot sovelluksessa BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM tarvitsee yt-dlp:n tätä videota varten"
+    "message": "BMD tarvitsee yt-dlp:n tätä videota varten"
   },
   "video_too_long": {
     "message": "Haku kesti liian kauan"
   },
   "video_busy": {
-    "message": "iDM on varattu muiden videoiden takia"
+    "message": "BMD on varattu muiden videoiden takia"
   },
   "video_queued": {
     "message": "Lisätty jonoon"
@@ -228,7 +228,7 @@
     "message": "Tämä tietokone"
   },
   "popup_send_remote": {
-    "message": "Toinen iDM (palvelin)"
+    "message": "Toinen BMD (palvelin)"
   },
   "popup_remote_code": {
     "message": "Pariliitoskoodi"
@@ -240,7 +240,7 @@
     "message": "Laita pariksi"
   },
   "popup_remote_help": {
-    "message": "Avaa sen osoite kerran ja hyväksy sen varmenne, anna sitten koodi sen Asetukset, Etä, Laita laite pariksi -kohdasta (tai misterdownloadmanager-cli pair)."
+    "message": "Avaa sen osoite kerran ja hyväksy sen varmenne, anna sitten koodi sen Asetukset, Etä, Laita laite pariksi -kohdasta (tai bmd-cli pair)."
   },
   "status_remote": {
     "message": "Lataukset menevät osoitteeseen $address$",
@@ -297,19 +297,19 @@
     "message": "Lataa paras laatu"
   },
   "video_sending": {
-    "message": "Lähetetään iDM:ään..."
+    "message": "Lähetetään BMD:ään..."
   },
   "video_added": {
-    "message": "Lisätty iDM:ään"
+    "message": "Lisätty BMD:ään"
   },
   "video_show": {
     "message": "Näytä"
   },
   "video_no_answer": {
-    "message": "iDM ei vastannut"
+    "message": "BMD ei vastannut"
   },
-  "video_get_mdm": {
-    "message": "Hanki iDM"
+  "video_get_bmd": {
+    "message": "Hanki BMD"
   },
   "video_retry": {
     "message": "Yritä uudelleen"
@@ -324,7 +324,7 @@
     "message": "Kaikki laadut ja tekstitykset..."
   },
   "video_failed": {
-    "message": "iDM ei ole asennettu tai sitä ei käynnistetty"
+    "message": "BMD ei ole asennettu tai sitä ei käynnistetty"
   },
   "video_download_best": {
     "message": "Lataa paras"

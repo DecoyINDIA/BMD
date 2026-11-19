@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Předává stahování z prohlížeče do iDM."
+    "message": "Předává stahování z prohlížeče do BMD."
   },
   "menu": {
-    "message": "Stáhnout pomocí iDM"
+    "message": "Stáhnout pomocí BMD"
   },
   "video_download": {
     "message": "Stáhnout video"
@@ -30,19 +30,19 @@
     "message": "Nastavení tlačítka..."
   },
   "video_sent": {
-    "message": "Odesláno do iDM"
+    "message": "Odesláno do BMD"
   },
   "menu_selected": {
-    "message": "Stáhnout vybrané odkazy pomocí iDM"
+    "message": "Stáhnout vybrané odkazy pomocí BMD"
   },
   "menu_all": {
-    "message": "Stáhnout všechny odkazy pomocí iDM"
+    "message": "Stáhnout všechny odkazy pomocí BMD"
   },
   "status_connected": {
-    "message": "Připojeno k iDM"
+    "message": "Připojeno k BMD"
   },
   "status_connected_version": {
-    "message": "Připojeno k iDM $version$",
+    "message": "Připojeno k BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Pozastaveno: stahování zůstává v prohlížeči"
   },
   "status_not_installed": {
-    "message": "Aplikace iDM není nainstalovaná nebo není nastavená její integrace s prohlížečem"
+    "message": "Aplikace BMD není nainstalovaná nebo není nastavená její integrace s prohlížečem"
   },
   "status_forbidden": {
-    "message": "Aplikace iDM tuto kopii rozšíření nepřijímá"
+    "message": "Aplikace BMD tuto kopii rozšíření nepřijímá"
   },
   "status_not_running": {
-    "message": "iDM se nespustil včas"
+    "message": "BMD se nespustil včas"
   },
   "status_host_failed": {
-    "message": "Připojení k iDM selhalo"
+    "message": "Připojení k BMD selhalo"
   },
   "status_too_large": {
     "message": "Podrobnosti tohoto stahování byly příliš velké na předání"
   },
   "status_update_app": {
-    "message": "Aktualizujte iDM, abyste mohli používat vše, co toto rozšíření nabízí"
+    "message": "Aktualizujte BMD, abyste mohli používat vše, co toto rozšíření nabízí"
   },
   "popup_take": {
     "message": "Přebírat stahování z tohoto prohlížeče"
@@ -78,10 +78,10 @@
     "message": "Předávat stahování přes proxy server nebo rozšíření VPN tohoto prohlížeče"
   },
   "popup_proxy_title": {
-    "message": "Aplikace iDM pak stahuje přes stejný proxy server jako tento prohlížeč. Prohlížeč vás jednou požádá o povolení; vypnutím této možnosti toto povolení zrušíte."
+    "message": "Aplikace BMD pak stahuje přes stejný proxy server jako tento prohlížeč. Prohlížeč vás jednou požádá o povolení; vypnutím této možnosti toto povolení zrušíte."
   },
   "popup_proxy_title_chromium": {
-    "message": "Aplikace iDM pak stahuje přes stejný proxy server jako tento prohlížeč. Pokud je tato možnost vypnutá, rozšíření proxy server prohlížeče nenačítá."
+    "message": "Aplikace BMD pak stahuje přes stejný proxy server jako tento prohlížeč. Pokud je tato možnost vypnutá, rozšíření proxy server prohlížeče nenačítá."
   },
   "popup_exclude_site": {
     "message": "Nikdy nepřebírat stahování z webu $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Otevřít iDM"
+    "message": "Otevřít BMD"
   },
   "popup_options": {
     "message": "Možnosti..."
@@ -114,7 +114,7 @@
     "message": "Nápověda"
   },
   "popup_support": {
-    "message": "Podpořte iDM"
+    "message": "Podpořte BMD"
   },
   "popup_fix": {
     "message": "Jak to opravit"
@@ -150,7 +150,7 @@
     "message": "Použít pokročilou integraci prohlížeče je vypnuto v Možnosti → Obecné."
   },
   "declined_torrents": {
-    "message": "Je to torrent a v nastavení torrentů je vypnutá možnost Otevřít magnetické odkazy a soubory .torrent pomocí iDM."
+    "message": "Je to torrent a v nastavení torrentů je vypnutá možnost Otevřít magnetické odkazy a soubory .torrent pomocí BMD."
   },
   "declined_site_access": {
     "message": "Rozšíření nemá povoleno číst tento web (přístup prohlížeče k webu)."
@@ -195,16 +195,16 @@
     "message": "Tady není žádné video ke stažení"
   },
   "video_playlist": {
-    "message": "Seznam videí: vyberte je v iDM"
+    "message": "Seznam videí: vyberte je v BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM potřebuje pro toto video yt-dlp"
+    "message": "BMD potřebuje pro toto video yt-dlp"
   },
   "video_too_long": {
     "message": "Vyhledávání trvalo příliš dlouho"
   },
   "video_busy": {
-    "message": "iDM je zaneprázdněn jinými videi"
+    "message": "BMD je zaneprázdněn jinými videi"
   },
   "video_queued": {
     "message": "Přidáno do fronty"
@@ -228,7 +228,7 @@
     "message": "Tento počítač"
   },
   "popup_send_remote": {
-    "message": "Jiný iDM (server)"
+    "message": "Jiný BMD (server)"
   },
   "popup_remote_code": {
     "message": "Párovací kód"
@@ -240,7 +240,7 @@
     "message": "Spárovat"
   },
   "popup_remote_help": {
-    "message": "Otevřete jeho adresu jednou a přijměte jeho certifikát, poté zadejte kód z jeho Možnosti, Vzdálené, Spárovat zařízení (nebo misterdownloadmanager-cli pair)."
+    "message": "Otevřete jeho adresu jednou a přijměte jeho certifikát, poté zadejte kód z jeho Možnosti, Vzdálené, Spárovat zařízení (nebo bmd-cli pair)."
   },
   "status_remote": {
     "message": "Stahování jde na $address$",
@@ -297,19 +297,19 @@
     "message": "Stáhnout nejlepší kvalitu"
   },
   "video_sending": {
-    "message": "Odesílání do iDM..."
+    "message": "Odesílání do BMD..."
   },
   "video_added": {
-    "message": "Přidáno do iDM"
+    "message": "Přidáno do BMD"
   },
   "video_show": {
     "message": "Zobrazit"
   },
   "video_no_answer": {
-    "message": "iDM neodpověděl"
+    "message": "BMD neodpověděl"
   },
-  "video_get_mdm": {
-    "message": "Získat iDM"
+  "video_get_bmd": {
+    "message": "Získat BMD"
   },
   "video_retry": {
     "message": "Zkusit znovu"
@@ -324,7 +324,7 @@
     "message": "Všechny kvality a titulky..."
   },
   "video_failed": {
-    "message": "Aplikace iDM není nainstalovaná nebo se nespustila"
+    "message": "Aplikace BMD není nainstalovaná nebo se nespustila"
   },
   "video_download_best": {
     "message": "Stáhnout nejlepší"

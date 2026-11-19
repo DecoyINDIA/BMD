@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "Sender nedlastinger fra nettleseren til iDM."
+    "message": "Sender nedlastinger fra nettleseren til BMD."
   },
   "menu": {
-    "message": "Last ned med iDM"
+    "message": "Last ned med BMD"
   },
   "video_download": {
     "message": "Last ned video"
@@ -30,19 +30,19 @@
     "message": "Knappeinnstillinger ..."
   },
   "video_sent": {
-    "message": "Sendt til iDM"
+    "message": "Sendt til BMD"
   },
   "menu_selected": {
-    "message": "Last ned valgte koblinger med iDM"
+    "message": "Last ned valgte koblinger med BMD"
   },
   "menu_all": {
-    "message": "Last ned alle koblinger med iDM"
+    "message": "Last ned alle koblinger med BMD"
   },
   "status_connected": {
-    "message": "Tilkoblet iDM"
+    "message": "Tilkoblet BMD"
   },
   "status_connected_version": {
-    "message": "Tilkoblet iDM $version$",
+    "message": "Tilkoblet BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "Pauset: nedlastingene blir i nettleseren"
   },
   "status_not_installed": {
-    "message": "iDM er ikke installert, eller nettleserintegrasjonen er ikke konfigurert"
+    "message": "BMD er ikke installert, eller nettleserintegrasjonen er ikke konfigurert"
   },
   "status_forbidden": {
-    "message": "iDM godtar ikke denne kopien av utvidelsen"
+    "message": "BMD godtar ikke denne kopien av utvidelsen"
   },
   "status_not_running": {
-    "message": "iDM startet ikke i tide"
+    "message": "BMD startet ikke i tide"
   },
   "status_host_failed": {
-    "message": "Tilkoblingen til iDM mislyktes"
+    "message": "Tilkoblingen til BMD mislyktes"
   },
   "status_too_large": {
     "message": "Detaljene for denne nedlastingen var for store til å overføre"
   },
   "status_update_app": {
-    "message": "Oppdater iDM for å bruke alt denne utvidelsen tilbyr"
+    "message": "Oppdater BMD for å bruke alt denne utvidelsen tilbyr"
   },
   "popup_take": {
     "message": "Ta nedlastinger fra denne nettleseren"
@@ -78,10 +78,10 @@
     "message": "Send nedlastinger via denne nettleserens proxy- eller VPN-utvidelse"
   },
   "popup_proxy_title": {
-    "message": "iDM laster da ned via samme proxy som denne nettleseren. Nettleseren spør deg én gang om å tillate det; hvis du slår dette av, trekkes tillatelsen tilbake."
+    "message": "BMD laster da ned via samme proxy som denne nettleseren. Nettleseren spør deg én gang om å tillate det; hvis du slår dette av, trekkes tillatelsen tilbake."
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM laster da ned via samme proxy som denne nettleseren. Når dette er slått av, leser ikke utvidelsen nettleserens proxy."
+    "message": "BMD laster da ned via samme proxy som denne nettleseren. Når dette er slått av, leser ikke utvidelsen nettleserens proxy."
   },
   "popup_exclude_site": {
     "message": "Aldri ta nedlastinger fra $site$",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "Åpne iDM"
+    "message": "Åpne BMD"
   },
   "popup_options": {
     "message": "Alternativer..."
@@ -114,7 +114,7 @@
     "message": "Hjelp"
   },
   "popup_support": {
-    "message": "Støtt iDM"
+    "message": "Støtt BMD"
   },
   "popup_fix": {
     "message": "Hvordan fikse det"
@@ -150,7 +150,7 @@
     "message": "Bruk avansert nettleserintegrasjon er deaktivert i Alternativer → Generelt."
   },
   "declined_torrents": {
-    "message": "Det er en torrent, og «Åpne magnetkoblinger og .torrent-filer med iDM» er slått av i torrentinnstillingene."
+    "message": "Det er en torrent, og «Åpne magnetkoblinger og .torrent-filer med BMD» er slått av i torrentinnstillingene."
   },
   "declined_site_access": {
     "message": "Utvidelsen har ikke tillatelse til å lese dette nettstedet (nettleserens nettstedstilgang)."
@@ -195,16 +195,16 @@
     "message": "Ingen video å laste ned her"
   },
   "video_playlist": {
-    "message": "En liste med videoer: velg dem i iDM"
+    "message": "En liste med videoer: velg dem i BMD"
   },
   "video_no_ytdlp": {
-    "message": "iDM trenger yt-dlp for denne videoen"
+    "message": "BMD trenger yt-dlp for denne videoen"
   },
   "video_too_long": {
     "message": "Oppslaget tok for lang tid"
   },
   "video_busy": {
-    "message": "iDM er opptatt med andre videoer"
+    "message": "BMD er opptatt med andre videoer"
   },
   "video_queued": {
     "message": "Lagt til i køen"
@@ -228,7 +228,7 @@
     "message": "Denne datamaskinen"
   },
   "popup_send_remote": {
-    "message": "En annen iDM (en server)"
+    "message": "En annen BMD (en server)"
   },
   "popup_remote_code": {
     "message": "Paringskode"
@@ -240,7 +240,7 @@
     "message": "Par"
   },
   "popup_remote_help": {
-    "message": "Åpne adressen én gang og godta sertifikatet, og skriv deretter inn en kode fra Alternativer, Ekstern, Par en enhet (eller misterdownloadmanager-cli pair)."
+    "message": "Åpne adressen én gang og godta sertifikatet, og skriv deretter inn en kode fra Alternativer, Ekstern, Par en enhet (eller bmd-cli pair)."
   },
   "status_remote": {
     "message": "Nedlastinger går til $address$",
@@ -297,19 +297,19 @@
     "message": "Last ned den beste kvaliteten"
   },
   "video_sending": {
-    "message": "Sender til iDM..."
+    "message": "Sender til BMD..."
   },
   "video_added": {
-    "message": "Lagt til i iDM"
+    "message": "Lagt til i BMD"
   },
   "video_show": {
     "message": "Vis"
   },
   "video_no_answer": {
-    "message": "iDM svarte ikke"
+    "message": "BMD svarte ikke"
   },
-  "video_get_mdm": {
-    "message": "Skaff iDM"
+  "video_get_bmd": {
+    "message": "Skaff BMD"
   },
   "video_retry": {
     "message": "Prøv på nytt"
@@ -324,7 +324,7 @@
     "message": "Alle kvaliteter og undertekster..."
   },
   "video_failed": {
-    "message": "iDM er ikke installert eller startet ikke"
+    "message": "BMD er ikke installert eller startet ikke"
   },
   "video_download_best": {
     "message": "Last ned beste kvalitet"

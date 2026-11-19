@@ -12,7 +12,7 @@ sitemap.xml.
 
 The repository's stars, forks and open issues are read from GitHub's API while building (with
 GITHUB_TOKEN when set), so visitors' browsers never call GitHub; offline, the numbers are left
-out. Every page carries the Statcounter visit counter; MDM_SITE_NO_STATS=1 leaves it out of a
+out. Every page carries the Statcounter visit counter; BMD_SITE_NO_STATS=1 leaves it out of a
 local build so previews aren't counted.
 
 Needs: pip install markdown
@@ -43,7 +43,7 @@ WEB = ROOT / "website"
 CONTENT = WEB / "content"
 OUT = ROOT / "target" / "site"
 SITE = "https://misterdownloadmanager.com"
-REPO = "https://github.com/DecoyINDIA/iDM"
+REPO = "https://github.com/DecoyINDIA/BMD"
 # The Firefox add-on's listing (crates/ipc/src/extension.rs FIREFOX_PAGE): {{AMO}} in pages, and
 # <!--@amo--> for its Add to Firefox button.
 AMO = "https://addons.mozilla.org/firefox/addon/mister-download-manager/"
@@ -52,7 +52,7 @@ AMO = "https://addons.mozilla.org/firefox/addon/mister-download-manager/"
 CWS = "https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp"
 # The creator's GitHub Sponsors page: linked from the website with upstream attribution.
 SPONSORS = "https://github.com/sponsors/anefzaoui"
-NAME = "iDM"
+NAME = "BMD"
 # The next release, as the site announces it. What is in the source but not in a download yet
 # says "Coming with version <this>" (coming_banner(): the feature pages, the Themes page, the
 # features' tiles), shown for a feature whose `since` is this version or later. At that release
@@ -64,7 +64,7 @@ CARGO_VERSION = re.search(r'(?m)^version\s*=\s*"([^"]+)"', (ROOT / "Cargo.toml")
 def github(path: str):
     """GET api.github.com/<path> as JSON, or None (offline, rate-limited)."""
     req = urllib.request.Request(f"https://api.github.com/{path}", headers={
-        "Accept": "application/vnd.github+json", "User-Agent": "misterdownloadmanager-site"})
+        "Accept": "application/vnd.github+json", "User-Agent": "bmd-site"})
     if os.environ.get("GITHUB_TOKEN"):
         req.add_header("Authorization", f"Bearer {os.environ['GITHUB_TOKEN']}")
     try:
@@ -104,22 +104,22 @@ def published_version() -> str:
 def setup_size() -> str:
     """The x64 Windows installer's size as the label shows it ("12.4 MB"), or "" offline."""
     for a in LATEST.get("assets", []):
-        if a.get("name") == f"iDM-{VERSION}-setup.exe":
+        if a.get("name") == f"{ASSET_PREFIX}-setup.exe":
             return f"{a['size'] / 1_000_000:.1f} MB"
     return ""
 
 
 def published(tail: str) -> bool:
-    """Whether the latest published release has iDM-<version>-<tail> (the
+    """Whether the latest published release has the requested asset (the
     Windows on ARM, 32-bit Windows and Linux on ARM files come with the release after 0.5.1)."""
-    name = f"iDM-{VERSION}-{tail}"
+    name = f"{ASSET_PREFIX}-{tail}"
     return any(a.get("name") == name for a in LATEST.get("assets", []))
 
 
 def mac_file(arch: str) -> str:
     """The .dmg for a Mac with `arch` (arm64, x86_64): one per processor (#25), or the one
     universal .dmg of a release from before."""
-    universal = f"iDM-{VERSION}-macos-universal-experimental.dmg"
+    universal = f"{ASSET_PREFIX}-macos-universal-experimental.dmg"
     if any(a.get("name") == universal for a in LATEST.get("assets", [])):
         return f"{RELEASE}-macos-universal-experimental.dmg"
     return f"{RELEASE}-macos-{arch}-experimental.dmg"
@@ -129,16 +129,22 @@ def linux_file(ext: str) -> str:
     """The Linux file ending in `ext` (.AppImage, .deb, .rpm, .tar.gz): named without
     "-experimental" from the release after 0.2.4 (tools/installer/build-linux.sh), with it in a
     release from before."""
-    old = f"iDM-{VERSION}-linux-x86_64-experimental{ext}"
+    old = f"{ASSET_PREFIX}-linux-x86_64-experimental{ext}"
     if any(a.get("name") == old for a in LATEST.get("assets", [])):
         return f"{RELEASE}-linux-x86_64-experimental{ext}"
     return f"{RELEASE}-linux-x86_64{ext}"
 
 
 VERSION = published_version()
+ASSET_PREFIX = f"BMD-{VERSION}"
+# Releases published before the rebrand retain their original asset filenames.
+if not published("setup.exe") and any(
+    a.get("name") == f"iDM-{VERSION}-setup.exe" for a in LATEST.get("assets", [])
+):
+    ASSET_PREFIX = f"iDM-{VERSION}"
 SETUP_SIZE = setup_size()
 TODAY = datetime.date.today().isoformat()
-RELEASE = f"{REPO}/releases/download/v{VERSION}/iDM-{VERSION}"
+RELEASE = f"{REPO}/releases/download/v{VERSION}/{ASSET_PREFIX}"
 FILES = {
     "setup": f"{RELEASE}-setup.exe",
     "portable": f"{RELEASE}-portable.zip",
@@ -174,7 +180,7 @@ DOCS_MD: list[tuple[str, str, str, str]] = []
 FAQ_MD: list[tuple[str, str, str]] = []
 
 # The visit counter (privacy.md says what it records). Statcounter's own code, as given.
-STATCOUNTER = """<!-- Default Statcounter code for iDM
+STATCOUNTER = """<!-- Default Statcounter code for BMD
 https://misterdownloadmanager.com/ -->
 <script type="text/javascript">
 var sc_project=13364153;
@@ -194,7 +200,7 @@ referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>
 
 
 def stats_code() -> str:
-    return "" if os.environ.get("MDM_SITE_NO_STATS") == "1" else STATCOUNTER
+    return "" if os.environ.get("BMD_SITE_NO_STATS") == "1" else STATCOUNTER
 
 
 def short_num(n: int) -> str:
@@ -220,7 +226,7 @@ def repo_stats() -> dict[str, str]:
 
 STATS: dict[str, str] = {}
 
-# The people who made iDM possible (tools/contributors.py), read once per build: everyone, and the
+# The people who made BMD possible (tools/contributors.py), read once per build: everyone, and the
 # releases for each one's own. None when GitHub can't be read: the home page then leaves its
 # section out, /contributors.html says so, and the News page thanks nobody (with a warning).
 CREW: list[dict] | None = None
@@ -383,7 +389,7 @@ def gh_pill(cls: str = "gh-pill") -> str:
     """The GitHub link with its star count (when known): header, hero, open-source card."""
     stars = STATS.get("stars")
     count = f'<span class="gh-count">{stars}</span>' if stars else ""
-    return (f'<a class="{cls}" href="{REPO}" aria-label="iDM on GitHub'
+    return (f'<a class="{cls}" href="{REPO}" aria-label="BMD on GitHub'
             f'{f", {stars} stars" if stars else ""}">'
             f'<svg aria-hidden="true"><use href="#i-github"/></svg><span class="gh-label">GitHub</span>{count}</a>')
 
@@ -460,7 +466,7 @@ def header(section: str = "") -> str:
         <button class="icon-btn theme" type="button" aria-label="Switch between light and dark" title="Light / dark">
           <svg class="for-light-i" aria-hidden="true"><use href="#i-moon"/></svg><svg class="for-dark-i" aria-hidden="true"><use href="#i-sun"/></svg>
         </button>
-        <a class="icon-btn top-gh" href="{REPO}" aria-label="iDM on GitHub" title="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
+        <a class="icon-btn top-gh" href="{REPO}" aria-label="BMD on GitHub" title="GitHub"><svg aria-hidden="true"><use href="#i-github"/></svg></a>
         <a class="icon-btn top-sponsor" href="{SPONSORS}" aria-label="Sponsor the upstream author on GitHub" title="Sponsor"><svg aria-hidden="true"><use href="#i-heart"/></svg></a>
         <a class="btn btn-go top-dl" href="/download.html">Download</a>
         <details class="menu">
@@ -588,7 +594,7 @@ THEME_SCRIPT = """<link rel="preload" href="/vendor/archivo/archivo-latin.woff2"
       d.classList.remove('js-off');
       var q = /[?&]theme=(light|dark)/.exec(location.search);
       try {
-        var t = q ? q[1] : localStorage.getItem('mdm-theme');
+        var t = q ? q[1] : localStorage.getItem('bmd-theme');
         if (t === 'light' || t === 'dark') d.setAttribute('data-theme', t);
       } catch (e) { if (q) d.setAttribute('data-theme', q[1]); }
     })();
@@ -716,7 +722,7 @@ SOFTWARE_LD = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": NAME,
-    "alternateName": "iDM",
+    "alternateName": "BMD",
     "applicationCategory": "UtilitiesApplication",
     "applicationSubCategory": "Download manager",
     "operatingSystem": "Windows 10, Windows 11, Linux, macOS (experimental)",
@@ -1166,7 +1172,7 @@ def build_contributors() -> None:
 
 TRENDSHIFT = "https://trendshift.io/repositories/337427"
 SOURCEFORGE = "https://sourceforge.net/projects/mister-download-manager.mirror/files/"
-RELEASE_KEY = f"{REPO}/blob/main/crates/tools/keys/mdm-release.asc"
+RELEASE_KEY = f"{REPO}/blob/main/crates/tools/keys/bmd-release.asc"
 # The figures the home page and /press.html show, as each source showed them on FIGURES_CHECKED,
 # rounded down. Read them again where they come from before changing them (and the date): the
 # Chrome Web Store listing (users, rating); the add-ons API, addons.mozilla.org/api/v5/addons/addon/
@@ -1182,7 +1188,7 @@ FIGURES = [
     ("Trendshift", TRENDSHIFT, "#1 in Rust",
      'repository of the day on <time datetime="2026-11-09" translate="no">2026-11-09</time>'),
 ]
-# Where iDM comes from, for /press.html's "Available on": (name, link, what it is). The official
+# Where BMD comes from, for /press.html's "Available on": (name, link, what it is). The official
 # places first; the community's packages are made by volunteers, each checked to install the
 # release's own files (their checksums match SHA256SUMS.txt) when it was added.
 OFFICIAL = [
@@ -1286,16 +1292,16 @@ def channel_group(name: str, rows: list[tuple[str, str, str]], fine: str = "") -
 
 def build_press() -> None:
     """/press.html: the stores' figures, what independent writers and video makers published about
-    iDM (website/content/press.tsv), the fair criticism with our answer, and where iDM comes from."""
+    BMD (website/content/press.tsv), the fair criticism with our answer, and where BMD comes from."""
     path = "/press.html"
     trail = [("Home", "/"), ("Press and mentions", path)]
     rows = content_tsv("press.tsv")
     articles = [r for r in rows if r[0] == "article"]
     videos = [r for r in rows if r[0] == "video"]
     locker = "https://lockergnome.com/mister-download-manager-one-second-localhost-benchmark/"
-    lede = ("What others wrote and filmed about iDM, in their own languages, and the "
-            "places to get it. Independent pieces only: pages that re-host iDM's files are left out.")
-    fine = (f'{checked_on("Every link checked on")}. Wrote about iDM, or found a mistake here? '
+    lede = ("What others wrote and filmed about BMD, in their own languages, and the "
+            "places to get it. Independent pieces only: pages that re-host BMD's files are left out.")
+    fine = (f'{checked_on("Every link checked on")}. Wrote about BMD, or found a mistake here? '
             f'<a href="{REPO}/issues/new?template=website.yml&amp;page={urllib.parse.quote(SITE + path)}">Tell us on GitHub</a>.')
     body = f"""{page_head("Press and mentions", lede, trail, fine)}
     <div class="wrap press-page">
@@ -1313,8 +1319,8 @@ def build_press() -> None:
       </section>
       <section class="page-body prose press-critique" aria-labelledby="criticism">
         <h2 id="criticism">The fair criticism</h2>
-        <p class="press-cite"><a href="{locker}"><cite lang="en" translate="no">iDM's one-second gigabyte came from a server on the same PC</cite></a> <span>Chris Pirillo, <span translate="no">Lockergnome</span>, <time datetime="2026-11-12" translate="no">2026-11-12</time></span></p>
-        <p>He is right about the setup. Our "1 GiB in 1 second" comes from a loopback test: both programs downloaded from a test server on the same PC. It compares the two programs under the same load; it doesn't measure an internet connection, and iDM won't make yours faster than it is. We now say so wherever the figure appears.</p>
+        <p class="press-cite"><a href="{locker}"><cite lang="en" translate="no">Mister Download Manager's one-second gigabyte came from a server on the same PC</cite></a> <span>Chris Pirillo, <span translate="no">Lockergnome</span>, <time datetime="2026-11-12" translate="no">2026-11-12</time></span></p>
+        <p>He is right about the setup. Our "1 GiB in 1 second" comes from a loopback test: both programs downloaded from a test server on the same PC. It compares the two programs under the same load; it doesn't measure an internet connection, and BMD won't make yours faster than it is. We now say so wherever the figure appears.</p>
         <p><a href="/benchmark.html">The benchmark report</a> has every run, the method and the raw data, so anyone can check it or run it again.</p>
       </section>
       <section class="sheet sheet-labelled press-sheet" id="available-on" aria-labelledby="available-title">
@@ -1322,7 +1328,7 @@ def build_press() -> None:
         {channel_group("Official", OFFICIAL)}
         {channel_group("Community packages", COMMUNITY, "Made and kept up by volunteers, not by us. Each one installed the release's own files when we looked; check what yours installs against SHA256SUMS.txt.")}
       </section>
-      <p class="crew-join"><a class="btn btn-line" href="/download.html#get-it-safely">How to get iDM safely</a></p>
+      <p class="crew-join"><a class="btn btn-line" href="/download.html#get-it-safely">How to get BMD safely</a></p>
     </div>"""
     write(path, f"Press and mentions — {NAME}",
           f"Articles, reviews and videos about {NAME} in many languages, its figures in the browser stores "
@@ -1352,7 +1358,7 @@ def build_languages() -> None:
       <h2>Every language</h2>
       <ul class="lang-grid" translate="no">{"".join(items)}</ul>
       <h2>Help translate</h2>
-      <p>Most translations were made by machine and are waiting for a native speaker. If iDM speaks your language a little oddly, you can fix it in a few minutes, no programming needed:</p>
+      <p>Most translations were made by machine and are waiting for a native speaker. If BMD speaks your language a little oddly, you can fix it in a few minutes, no programming needed:</p>
       <ol>
         <li>Click your language above: it opens its file on GitHub, one text per row.</li>
         <li>Correct the translation in the third column and delete the row's <code>#, machine</code> line.</li>
@@ -1380,7 +1386,7 @@ def build_repo_pages() -> None:
     trail = [("Home", "/"), ("Contributing", path)]
     lede = ("Bug reports, ideas, translation fixes and pull requests are all welcome. "
             f'Everything happens in the open on <a href="{REPO}">GitHub</a>.')
-    body = f"""{page_head("Contribute to iDM", lede, trail)}
+    body = f"""{page_head("Contribute to BMD", lede, trail)}
     <div class="wrap narrow prose page-body">
       <div class="contrib-ways">
         <a href="{REPO}/issues/new?template=bug.yml"><b>Report a bug</b><span>Something broken or odd? Tell us what you saw.</span></a>
@@ -1392,7 +1398,7 @@ def build_repo_pages() -> None:
       {page_tools("CONTRIBUTING.md", path, "Contributing")}
     </div>"""
     write(path, f"Contribute — {NAME}",
-          "How to help iDM: report bugs, fix translations, build it from source and send pull requests. The checks CI runs and the project's rules.",
+          "How to help BMD: report bugs, fix translations, build it from source and send pull requests. The checks CI runs and the project's rules.",
           body, jsonld=[crumbs_ld(trail)], priority="0.5")
 
 
@@ -1466,7 +1472,7 @@ PROCESSORS = {
 
 def processor_out(file_key: str) -> bool:
     """Whether the latest published release has the file FILES[file_key] links to."""
-    return published(FILES[file_key].rsplit(f"iDM-{VERSION}-", 1)[1])
+    return published(FILES[file_key].rsplit(f"BMD-{VERSION}-", 1)[1])
 
 
 def processor_rows(system: str) -> str:
@@ -1517,7 +1523,7 @@ def fill(text: str) -> str:
         text = text.replace("<!--@features-->", manifest(feature_list()))
     text = coming_marks(text.replace("<!--@coming-->", coming_banner()))
     text = text.replace("<!--@crew-->", crew_pile()).replace("<!--@signed-->", signed_sheet())
-    text = text.replace("<!--@fields-->", waybill_fields()).replace("<!--@barcode-->", barcode.svg(f"iDM {VERSION}"))
+    text = text.replace("<!--@fields-->", waybill_fields()).replace("<!--@barcode-->", barcode.svg(f"BMD {VERSION}"))
     return (text.replace("{{VERSION}}", VERSION).replace("{{REPO}}", REPO).replace("{{SITE}}", SITE)
             .replace("{{SPONSORS}}", SPONSORS).replace("{{RELEASE_KEY}}", RELEASE_KEY).replace("{{SOURCEFORGE}}", SOURCEFORGE).replace("{{SOFTWARE_LD}}", json.dumps(SOFTWARE_LD, ensure_ascii=False, separators=(",", ":"))))
 
@@ -1675,7 +1681,7 @@ def feature_label(m: dict) -> str:
         rows.append(f'<div class="wide"><dt>Full guide</dt><dd><a href="{help_href(m["help"])}">Step by step in the help</a></dd></div>')
     return (f'<aside class="waybill feature-label" aria-label="At a glance"><div class="wb-band">'
             f'<img src="/assets/logo-64.png" width="32" height="32" alt=""><span class="wb-from"><b>{esc(m["name"])}</b>'
-            f'<small>iDM</small></span></div><dl class="fields">{"".join(rows)}</dl></aside>')
+            f'<small>BMD</small></span></div><dl class="fields">{"".join(rows)}</dl></aside>')
 
 
 def build_features() -> None:
@@ -1786,7 +1792,7 @@ def build_themes() -> None:
                         and (ROOT / "crates" / "app" / "assets" / "themes" / f"{t['id']}.toml").is_file())
     trail = [("Home", "/"), ("Themes", "/themes.html")]
     themes_dir = f"{REPO}/tree/main/crates/app/assets/themes"
-    body = f"""{page_head("The same window, your way", "View → Theme changes how iDM looks at once and keeps everything where it was. Pick one of the built-in looks, each with a light and a dark side, or make your own in a text file.", trail)}
+    body = f"""{page_head("The same window, your way", "View → Theme changes how BMD looks at once and keeps everything where it was. Pick one of the built-in looks, each with a light and a dark side, or make your own in a text file.", trail)}
     <div class="wrap themes">
       {coming_banner()}
       <div class="themes-bar">
@@ -1801,20 +1807,20 @@ def build_themes() -> None:
     </div>
     <div class="wrap narrow page-body prose make-own" id="make-your-own">
       <h2>Make your own theme</h2>
-      <p>A theme is one small text file, in <a href="https://toml.io/">TOML</a> (or JSON). It names only what it changes; everything else comes from the theme it builds on. You don't need to build iDM or know how to program.</p>
+      <p>A theme is one small text file, in <a href="https://toml.io/">TOML</a> (or JSON). It names only what it changes; everything else comes from the theme it builds on. You don't need to build BMD or know how to program.</p>
       <ol class="make-steps">
         <li id="make-it"><h3>Make it</h3>
           <p>Start with a few colours, then add more as you go:</p>
           <pre><code translate="no">{esc(THEME_SAMPLE)}</code></pre>
           <ul>
             <li><code>inherits</code> is the theme yours starts from: <code>classic</code> (the default), {builtin}, or another theme file in the same folder.</li>
-            <li><code>[seeds]</code> are a handful of colours (<code>background</code>, <code>surface</code>, <code>header</code>, <code>text</code>, <code>accent</code>, <code>selection</code>, <code>error</code>, <code>warning</code>, <code>success</code>) that iDM spreads over every control. <code>[seeds.light]</code> and <code>[seeds.dark]</code> give each side its own.</li>
+            <li><code>[seeds]</code> are a handful of colours (<code>background</code>, <code>surface</code>, <code>header</code>, <code>text</code>, <code>accent</code>, <code>selection</code>, <code>error</code>, <code>warning</code>, <code>success</code>) that BMD spreads over every control. <code>[seeds.light]</code> and <code>[seeds.dark]</code> give each side its own.</li>
             <li><code>[colors]</code> sets single colour roles on both sides, <code>[light]</code> and <code>[dark]</code> on one side only: <code>#rrggbb</code>, or <code>#rrggbbaa</code> with transparency.</li>
             <li><code>[sizes]</code> are corner radii, border widths, font sizes and row heights, in pixels. <code>[controls]</code> chooses the shape of text boxes, check boxes, buttons, progress bars, scroll bars, the focus mark and the title bar.</li>
             <li><code>icons</code> is <code>color</code>, <code>mono</code> or <code>accent</code>. A theme in a folder of its own (<code>my-theme/theme.toml</code>) can bring its icons in <code>icons/16</code> and <code>icons/24</code>, each named for what it shows (<code>tb-add-url.svg</code>, <code>cat-music.png</code>); <code>-symbolic</code> ones take the theme's text colour.</li>
             <li><code>contrast = "high"</code> strengthens every edge and text colour on top.</li>
           </ul>
-          <p>A key iDM doesn't know, or a value it can't read, is skipped and written to iDM's log (the <code>logs</code> folder beside the themes folder), so a file made for a newer iDM still loads. The built-in themes are written the same way: <a href="{themes_dir}">read them on GitHub</a>.</p>
+          <p>A key BMD doesn't know, or a value it can't read, is skipped and written to BMD's log (the <code>logs</code> folder beside the themes folder), so a file made for a newer BMD still loads. The built-in themes are written the same way: <a href="{themes_dir}">read them on GitHub</a>.</p>
           <details class="keys-ref"><summary>Every colour role ({len(keys["colors"])})</summary>{keys_table(keys["colors"], "What it colours")}</details>
           <details class="keys-ref"><summary>Every size ({len(keys["sizes"])})</summary>{keys_table(keys["sizes"], "What it sets")}</details>
           <details class="keys-ref"><summary>Every control style ({len(keys["controls"])})</summary>{keys_table(keys["controls"], "Its styles")}</details>
@@ -1825,25 +1831,25 @@ def build_themes() -> None:
             <pre id="theme-prompt"><code translate="no">{esc(prompt)}</code></pre>
           </div>
         </li>
-        <li id="try-it"><h3>Try it, without building iDM</h3>
-          <p>Put the file in iDM's themes folder. <b>View → Theme → Open themes folder</b> opens it, and makes it the first time. It is in iDM's data folder:</p>
+        <li id="try-it"><h3>Try it, without building BMD</h3>
+          <p>Put the file in BMD's themes folder. <b>View → Theme → Open themes folder</b> opens it, and makes it the first time. It is in BMD's data folder:</p>
           <dl class="fields os-paths">
-            <div><dt>Windows</dt><dd><code translate="no">%APPDATA%\\misterdownloadmanager\\themes</code></dd></div>
-            <div><dt>Linux</dt><dd><code translate="no">~/.local/share/misterdownloadmanager/themes</code></dd></div>
+            <div><dt>Windows</dt><dd><code translate="no">%APPDATA%\\bmd\\themes</code></dd></div>
+            <div><dt>Linux</dt><dd><code translate="no">~/.local/share/bmd/themes</code></dd></div>
             <div><dt>macOS</dt><dd><code translate="no">~/Library/Application Support/misterdownloadmanager/themes</code></dd></div>
             <div><dt>Portable copy</dt><dd><code translate="no">data\\themes</code> beside the program</dd></div>
           </dl>
           <p>Within two seconds it shows in <b>View → Theme</b>, under the built-in themes, by the <code>name</code> it gives itself. Pick it and the whole window changes at once. After you edit the file, pick it again in <b>View → Theme</b> to see the change. <b>View → Dark Mode support</b> and <b>Always dark</b> switch between its light and dark side.</p>
-          <p><b>View → Theme → Add a theme file…</b> does it for you: pick the file anywhere, and iDM copies it into the themes folder and uses it at once.</p>
+          <p><b>View → Theme → Add a theme file…</b> does it for you: pick the file anywhere, and BMD copies it into the themes folder and uses it at once.</p>
           <h4 id="schemes">Already have a Base16 or pywal scheme?</h4>
-          <p>It's a theme already. A <a href="https://github.com/tinted-theming/schemes">Base16 or Base24 scheme</a> (<code>.yaml</code>) or pywal's <code>colors.json</code>, added the same way, changes iDM's colours and nothing else: the scheme's backgrounds behind the list and the windows, its text kept readable (4.5:1 or more), its blue on the focus, the selection and the progress bar. Once <code>wal</code> has run, <b>View → Theme</b> lists <b>pywal</b>, read from <code>~/.cache/wal/colors.json</code> (<code translate="no">%USERPROFILE%\\.cache\\wal\\colors.json</code> on Windows), and iDM follows each new wallpaper's colours within two seconds. <a href="{REPO}/blob/main/docs/themes.md#base16-and-pywal-colour-schemes">The guide</a> shows which colour goes where.</p>
+          <p>It's a theme already. A <a href="https://github.com/tinted-theming/schemes">Base16 or Base24 scheme</a> (<code>.yaml</code>) or pywal's <code>colors.json</code>, added the same way, changes BMD's colours and nothing else: the scheme's backgrounds behind the list and the windows, its text kept readable (4.5:1 or more), its blue on the focus, the selection and the progress bar. Once <code>wal</code> has run, <b>View → Theme</b> lists <b>pywal</b>, read from <code>~/.cache/wal/colors.json</code> (<code translate="no">%USERPROFILE%\\.cache\\wal\\colors.json</code> on Windows), and BMD follows each new wallpaper's colours within two seconds. <a href="{REPO}/blob/main/docs/themes.md#base16-and-pywal-colour-schemes">The guide</a> shows which colour goes where.</p>
         </li>
         <li id="share-it"><h3>Share it</h3>
           <p>Made something others would like? Open a <a href="{REPO}/pulls">pull request on GitHub</a> that adds it to <a href="{themes_dir}"><code>crates/app/assets/themes</code></a>, with:</p>
           <ul>
             <li>the <code>.toml</code> file, and its folder of icons if it has one;</li>
             <li>screenshots of the main window in its light and its dark side;</li>
-            <li>a <code>SOURCES.txt</code> beside any icons, saying who drew them and under which licence. Icons must be your own or under a licence that lets iDM share them (GPL-3.0), never copied from another program.</li>
+            <li>a <code>SOURCES.txt</code> beside any icons, saying who drew them and under which licence. Icons must be your own or under a licence that lets BMD share them (GPL-3.0), never copied from another program.</li>
           </ul>
           <p>Not sure yet? <a href="{REPO}/discussions">Show it in the discussions</a> first. The <a href="/contributing.html">contributing guide</a> explains how pull requests work here.</p>
         </li>
@@ -1869,7 +1875,7 @@ def copy_feature_images() -> None:
 # ---- For AI assistants and search: llms.txt, llms-full.txt (llmstxt.org) ----------------------
 
 def build_llms() -> None:
-    """llms.txt: website/llms.txt (what iDM is, the main pages) and, made here, every help page
+    """llms.txt: website/llms.txt (what BMD is, the main pages) and, made here, every help page
     (as Markdown) and question. llms-full.txt: all of it in one file. Built from the same
     sources as the pages, so it never drifts from them."""
     head_md = (WEB / "llms.txt").read_text("utf-8").strip()
@@ -1918,7 +1924,7 @@ def copy_static() -> None:
     (OUT / "CNAME").write_text("misterdownloadmanager.com\n", "utf-8")
     (OUT / ".nojekyll").write_text("", "utf-8")
     (OUT / "site.webmanifest").write_text(json.dumps({
-        "name": NAME, "short_name": "iDM", "start_url": "/", "display": "browser",
+        "name": NAME, "short_name": "BMD", "start_url": "/", "display": "browser",
         "background_color": "#ffffff", "theme_color": "#0f7b0f",
         "icons": [{"src": "/assets/logo-640.png", "sizes": "640x640", "type": "image/png"},
                   {"src": "/assets/apple-touch-icon.png", "sizes": "180x180", "type": "image/png"}],
@@ -1970,10 +1976,10 @@ def main() -> None:
     copy_feature_images()
     build_llms()
     # The same pages in every language with a catalog (i18n/site/<lang>.json), under /<lang>/.
-    # MDM_SITE_ENGLISH_ONLY=1 (translate_site.py's own build): English pages only.
-    only = ["none"] if os.environ.get("MDM_SITE_ENGLISH_ONLY") == "1" else None
-    # MDM_SITE_PREVIEW=1: the English pages with their language picker, nothing translated (fast).
-    available = sitei18n.localize(OUT, SITE, only, translated=os.environ.get("MDM_SITE_PREVIEW") != "1")
+    # BMD_SITE_ENGLISH_ONLY=1 (translate_site.py's own build): English pages only.
+    only = ["none"] if os.environ.get("BMD_SITE_ENGLISH_ONLY") == "1" else None
+    # BMD_SITE_PREVIEW=1: the English pages with their language picker, nothing translated (fast).
+    available = sitei18n.localize(OUT, SITE, only, translated=os.environ.get("BMD_SITE_PREVIEW") != "1")
     finish(available)
     langs = len({c for v in available.values() for c in v})
     print(f"{len(PAGES)} pages in {langs} language(s) -> {OUT}")

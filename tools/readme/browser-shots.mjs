@@ -2,10 +2,10 @@
 // tabs and address bar): the Blender Foundation's Big Buck Bunny (CC BY 3.0, ATTRIBUTION.md) on
 // YouTube, and the same film as a plain video file. Nothing shows on the screen: the window
 // opens far off the screens without taking the focus (and keeps painting there), Windows draws
-// it into the picture (PrintWindow), and a separate iDM runs off the screen
-// for the button to ask (MDM_DATA_DIR, MDM_OFFSCREEN). Windows only.
+// it into the picture (PrintWindow), and a separate BMD runs off the screen
+// for the button to ask (MDM_DATA_DIR, BMD_OFFSCREEN). Windows only.
 //
-//   cargo build --release -p mdm-app -p mdm-nmhost; tools\extension\pack.ps1
+//   cargo build --release -p bmd-app -p bmd-nmhost; tools\extension\pack.ps1
 //   node tools/readme/browser-shots.mjs        -> target/browser-shots/video-button-*.png
 //   python tools/shots/make.py docs --png target/browser-shots/video-button-youtube.png ...
 //                                              -> docs/images/video-button-*.webp
@@ -78,10 +78,10 @@ async function main() {
   // No translation offers or other bubbles over the page.
   fs.writeFileSync(path.join(profile, "Default", "Preferences"), JSON.stringify({ translate: { enabled: false }, browser: { has_seen_welcome_page: true } }));
   process.env.MDM_DATA_DIR = data;
-  process.env.MDM_OFFSCREEN = "1";
+  process.env.BMD_OFFSCREEN = "1";
 
-  const app = spawn(exe("misterdownloadmanager"), [], { env: process.env, stdio: "ignore" });
-  const nmhost = exe("misterdownloadmanager-nmhost");
+  const app = spawn(exe("bmd"), [], { env: process.env, stdio: "ignore" });
+  const nmhost = exe("bmd-nmhost");
   let browser = null;
   cleanup = () => {
     cleanup = () => {};
@@ -91,10 +91,10 @@ async function main() {
     killTree(app);
   };
   try {
-    await until("iDM", 20000, () => fs.existsSync(path.join(data, "ipc.json")));
+    await until("BMD", 20000, () => fs.existsSync(path.join(data, "ipc.json")));
     const key = "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\com.misterdownloadmanager.host";
     if (spawnSync("reg", ["query", key], { stdio: "ignore" }).status === 0) {
-      throw new Error("iDM's host is already registered (an installed copy): not touching it");
+      throw new Error("BMD's host is already registered (an installed copy): not touching it");
     }
     spawnSync(nmhost, ["--register"]);
     browser = spawn(
@@ -223,14 +223,14 @@ async function one(cdp, browser, shot) {
   const move = (dx) => cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: v.x + dx, y: v.y }, sessionId);
   await until(`${shot.name}: the button`, 15000, async () => {
     await move(Math.random() * 4);
-    return evaluate("document.querySelector('mdm-video-button')?.style.display === 'block'");
+    return evaluate("document.querySelector('bmd-video-button')?.style.display === 'block'");
   });
   await sleep(600); // faded in
   console.error(`${shot.name}: button shown, capturing`);
   // Keep the pointer moving while the window is drawn, so nothing fades.
   const keep = setInterval(() => move(Math.random() * 4).catch(() => {}), 400);
   // Where the button is (page coordinates), and the page's size and scale.
-  const at = await evaluate(`(() => { const r = document.querySelector('mdm-video-button').getBoundingClientRect();
+  const at = await evaluate(`(() => { const r = document.querySelector('bmd-video-button').getBoundingClientRect();
     return { l: r.left, t: r.top, r: r.right, b: r.bottom, w: innerWidth, h: innerHeight, dpr: devicePixelRatio }; })()`);
   const whole = path.join(work, `${shot.name}-window.png`);
   try {

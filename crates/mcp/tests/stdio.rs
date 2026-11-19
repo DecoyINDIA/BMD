@@ -1,5 +1,5 @@
 //! The MCP server end to end: the real program over stdio, as an assistant starts it, against a
-//! stand-in for the app that listens and answers as the app's channel does (mdm_ipc).
+//! stand-in for the app that listens and answers as the app's channel does (bmd_ipc).
 
 use std::io::{BufRead, BufReader, Write};
 use std::net::TcpListener;
@@ -63,7 +63,7 @@ struct Mcp {
 
 impl Mcp {
     fn start(data: &std::path::Path) -> Self {
-        let mut child = Command::new(env!("CARGO_BIN_EXE_misterdownloadmanager-mcp"))
+        let mut child = Command::new(env!("CARGO_BIN_EXE_bmd-mcp"))
             .env("MDM_DATA_DIR", data)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -85,7 +85,7 @@ impl Mcp {
                 "clientInfo": { "name": "test", "version": "1" },
             }),
         );
-        assert_eq!(init["serverInfo"]["name"], "misterdownloadmanager");
+        assert_eq!(init["serverInfo"]["name"], "bmd");
         assert!(init["instructions"].as_str().unwrap().contains("api on"));
         mcp.send(json!({ "jsonrpc": "2.0", "method": "notifications/initialized" }));
         mcp
@@ -212,7 +212,7 @@ fn an_assistant_lists_adds_and_acts_through_the_app() {
     let (text, err) = mcp.call("stop_queue", json!({ "queue": "Night" }));
     assert!(!err && text.contains(r#"queue "Night""#), "{text}");
 
-    // What reached the app: the fields its channel reads (mdm_ipc::Command), with the token.
+    // What reached the app: the fields its channel reads (bmd_ipc::Command), with the token.
     let seen = seen.lock().unwrap();
     let add = seen
         .iter()

@@ -1,11 +1,11 @@
-// The toolbar button's popup: whether the browser reaches iDM (and, when it
+// The toolbar button's popup: whether the browser reaches BMD (and, when it
 // doesn't, a link to the help page's section for why), pausing capture, leaving the current
 // site to the browser, opening the app or its Options, and the media the tab loaded (#38), each
 // to download. background.js does the work.
 const ext = globalThis.browser ?? globalThis.chrome;
-const HELP = "https://github.com/DecoyINDIA/iDM/blob/main/docs/browser-help.md";
-// The project on GitHub (the app's Help → Support iDM): a plain link, in a new tab.
-const PROJECT_URL = "https://github.com/DecoyINDIA/iDM";
+const HELP = "https://github.com/DecoyINDIA/BMD/blob/main/docs/browser-help.md";
+// The project on GitHub (the app's Help → Support BMD): a plain link, in a new tab.
+const PROJECT_URL = "https://github.com/DecoyINDIA/BMD";
 const t = (key, ...subs) => ext.i18n.getMessage(key, subs) || key;
 const $ = (id) => document.getElementById(id);
 const ask = (m) => ext.runtime.sendMessage(m).catch(() => ({ ok: false }));
@@ -53,7 +53,7 @@ async function show() {
   $("take").disabled = !s.connected;
   $("open").disabled = $("options").disabled = !s.connected;
   $("version").textContent = s.version ? `v${s.version}` : "";
-  // Send downloads to: this computer, or another iDM (#157).
+  // Send downloads to: this computer, or another BMD (#157).
   $("to-here").checked = !s.remote && $("remote-form").hidden;
   $("to-remote").checked = Boolean(s.remote) || !$("remote-form").hidden;
   $("open").disabled = $("open").disabled || Boolean(s.remote);
@@ -105,7 +105,7 @@ async function showExcluded(site, connected) {
   };
 }
 
-// The last download left to the browser by iDM's Options, and which one (#208); a later one
+// The last download left to the browser by BMD's Options, and which one (#208); a later one
 // taken clears it (background.js noteLeft). A reason this version can't name says no more.
 function showDeclined(d) {
   const box = $("declined");
@@ -312,7 +312,7 @@ $("options").addEventListener("click", async () => {
   window.close();
 });
 
-// Send downloads to (#157): another iDM is paired here with its address and a code it shows.
+// Send downloads to (#157): another BMD is paired here with its address and a code it shows.
 $("to-remote").addEventListener("change", () => {
   $("remote-form").hidden = false;
   $("remote-url").focus();

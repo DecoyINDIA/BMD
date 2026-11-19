@@ -1,4 +1,4 @@
-﻿; iDM's installer in Tatar: tools/installer/languages.py
+﻿; BMD's installer in Tatar: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=%1 бетерелә.
 
 [CustomMessages]
 TaskBrowser=Браузер интеграциясен көйләү (&B) (Chrome, Edge, Brave, Firefox)
-TaskTorrents=iDM белән .&torrent файлларын һәм магнит сылтамаларын ачу
-TaskStartup=&Windows эшләтеп җибәрелгәндә iDMны эшләтеп җибәрү
+TaskTorrents=BMD белән .&torrent файлларын һәм магнит сылтамаларын ачу
+TaskStartup=&Windows эшләтеп җибәрелгәндә BMDны эшләтеп җибәрү
 TaskGroupOther=Башкалар:
-Launch=iDMны эшләтеп җибәрү
+Launch=BMDны эшләтеп җибәрү
 KeepData=Йөкләү исемлеген һәм көйләүләрне дә бетерергәме?%n%nЙөкләнгән файлларыгызга берни дә булмаячак.

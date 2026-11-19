@@ -17,14 +17,14 @@ Everything below ships together, in version 0.5.0.
 - ✅ Menus on compositors that animate windows (Hyprland): no border and no slide-in, and going from
   title to title moves one window, so nothing fades; the reporter confirmed it
   ([#277](https://github.com/anefzaoui/misterdownloadmanager/issues/277))
-- ✅ A very slow first window on Windows: MDM draws with Direct3D 12 by default and keeps it through
+- ✅ A very slow first window on Windows: BMD draws with Direct3D 12 by default and keeps it through
   a slow start ([#57](https://github.com/anefzaoui/misterdownloadmanager/issues/57))
 - ✅ A crash on Linux as Download File Info opens
   ([#48](https://github.com/anefzaoui/misterdownloadmanager/issues/48))
 - ✅ Linux on GNOME Wayland: right-click menus open where you click, and windows fit their buttons
   ([#29](https://github.com/anefzaoui/misterdownloadmanager/issues/29))
 - ✅ Windows 11 Insider builds: no black band across the top of menus, the drop target, the
-  progress window and the windows whose title bar MDM draws (the style themes); the reporter
+  progress window and the windows whose title bar BMD draws (the style themes); the reporter
   confirmed it ([#208](https://github.com/anefzaoui/misterdownloadmanager/issues/208))
 - ✅ The progress window's Download status tab: as much room above its first row as below its
   last; where the server is says "this computer" or "the local network", each with its icon
@@ -33,12 +33,12 @@ Everything below ships together, in version 0.5.0.
   [#262](https://github.com/anefzaoui/misterdownloadmanager/issues/262))
 - ✅ Windows: **View → Text → Smooth** draws the text anti-aliased at its own size, not as
   thick, hard-edged whole-pixel letters that read badly on a 1440p screen; **Classic**, the
-  default, keeps the hinted look MDM had. **Interface size** gains 110 %, 115 % and 120 % between 100 % and
+  default, keeps the hinted look BMD had. **Interface size** gains 110 %, 115 % and 120 % between 100 % and
   125 %
 - ✅ Windows: sharp, evenly spaced text at every interface size: letters no longer run together
   or drift apart ([#323](https://github.com/anefzaoui/misterdownloadmanager/issues/323),
   [#334](https://github.com/anefzaoui/misterdownloadmanager/issues/334))
-- ✅ Linux: Update now asks the package manager which package MDM is; a copy installed by
+- ✅ Linux: Update now asks the package manager which package BMD is; a copy installed by
   another package manager (pacman) is left to the system's updates, with a plain message
 - ✅ Linux: the .deb and .rpm install the browsers' host files for everyone and remove them on
   uninstall, so nothing is left in the home folders for Chrome, Chromium, Edge, Brave, Vivaldi and
@@ -62,7 +62,7 @@ Everything below ships together, in version 0.5.0.
   others), in the packages' descriptions too; the macOS ones keep it
 - ✅ Linux packages checked in clean Ubuntu 24.04, Debian 12 and Fedora 45 systems: install, the
   command line, the window, the desktop entry and icon, browser integration and uninstall; the
-  .deb and .rpm now bring the keyboard library MDM's window needs under X11 and the CA
+  .deb and .rpm now bring the keyboard library BMD's window needs under X11 and the CA
   certificates downloads need, and require the glibc their programs were built for (part of
   [#164](https://github.com/anefzaoui/misterdownloadmanager/issues/164))
 - ✅ Options → Proxy's Get System and the Scheduler's "when done" drop-down fit in the last
@@ -72,11 +72,11 @@ Everything below ships together, in version 0.5.0.
   and a few more: a title too long for one line beside Get System takes two
   ([#192](https://github.com/anefzaoui/misterdownloadmanager/issues/192))
 - ✅ Linux: galleries work with the gallery-dl the distribution ships (Ubuntu 24.04's 1.26.9
-  failed at once): MDM passes only the options that release accepts, from 1.20 on, and an older
-  one gives way to MDM's own copy, saying why; the lab's test streams are real ones, which ffmpeg
+  failed at once): BMD passes only the options that release accepts, from 1.20 on, and an older
+  one gives way to BMD's own copy, saying why; the lab's test streams are real ones, which ffmpeg
   6.1 and 8 download to the end
   ([#236](https://github.com/anefzaoui/misterdownloadmanager/issues/236))
-- ✅ Run MDM on a server without a window (Docker, Unraid, any Linux machine), and send it
+- ✅ Run BMD on a server without a window (Docker, Unraid, any Linux machine), and send it
   downloads from the phone or the browser extension
   ([#157](https://github.com/anefzaoui/misterdownloadmanager/issues/157))
 - ✅ Better translations in every language: each language has a style guide and the terms its
@@ -88,14 +88,14 @@ Everything below ships together, in version 0.5.0.
   reliably, even while a browser still runs the old one, and put back at each start if it went
   missing; Test browser integration says when it is missing, or why setting it up failed
   ([#253](https://github.com/anefzaoui/misterdownloadmanager/issues/253))
-- ✅ The extension's popup shows **Open Mister Download Manager** whole: it was cut to "Open Mister
+- ✅ The extension's popup shows **Open BMD** whole: it was cut to "Open Mister
   Do…" on Linux and in longer languages; Options moves below it when both don't fit on one line
   (part of [#164](https://github.com/anefzaoui/misterdownloadmanager/issues/164))
 - ✅ The crash report window's status line (such as "The symbols couldn't be fetched: …") stays
   inside the window: cut with "…" at its margin and shown whole under the pointer; its title is
-  in MDM's language, and its title bar in MDM's light or dark (part of
+  in BMD's language, and its title bar in BMD's light or dark (part of
   [#164](https://github.com/anefzaoui/misterdownloadmanager/issues/164))
-- ✅ Control MDM from a phone or another computer on the local network: **Options → Remote**, off
+- ✅ Control BMD from a phone or another computer on the local network: **Options → Remote**, off
   by default; a paired device adds links, magnets and torrents, sees the list and pauses, starts
   and removes downloads ([#141](https://github.com/anefzaoui/misterdownloadmanager/issues/141))
 - ✅ Linux: moving the pointer from an open submenu back onto its menu, or to another item, closes
@@ -117,18 +117,18 @@ Everything below ships together, in version 0.5.0.
   link that asks to "confirm you're not a bot" works when you're signed in there; and the button
   over videos now passes the page's cookies to the download as well as to the look-up
   ([#229](https://github.com/anefzaoui/misterdownloadmanager/issues/229))
-- ✅ When the browser keeps a download, MDM says why: each one is in MDM's log with the setting
+- ✅ When the browser keeps a download, BMD says why: each one is in BMD's log with the setting
   that decided, and the extension's button shows the last one. The extension from the Chrome Web
-  Store needs this release (0.2.x serves only the copy in MDM's folder)
+  Store needs this release (0.2.x serves only the copy in BMD's folder)
   ([#208](https://github.com/anefzaoui/misterdownloadmanager/issues/208))
-- ✅ Waterfox, and Firefox set to ask what to do with each file: MDM takes the download before
+- ✅ Waterfox, and Firefox set to ask what to do with each file: BMD takes the download before
   the browser's *What should … do with this file?* dialog, which no longer shows for the files
-  MDM takes ([#208](https://github.com/anefzaoui/misterdownloadmanager/issues/208))
+  BMD takes ([#208](https://github.com/anefzaoui/misterdownloadmanager/issues/208))
 - ✅ More file types taken from the browser by default: DMG, PKG, DEB, RPM, APPIMAGE, MSIX, APPX,
   CAB, JAR, XZ, ZST, WEBM, FLAC, OPUS and others; a list never edited gains them
   ([#208](https://github.com/anefzaoui/misterdownloadmanager/issues/208))
 - ✅ Windows: Download File Info and the progress window open in front of the browser, even when
-  Windows doesn't let MDM take the foreground; the keyboard stays where it was until a click
+  Windows doesn't let BMD take the foreground; the keyboard stays where it was until a click
   ([#208](https://github.com/anefzaoui/misterdownloadmanager/issues/208))
 - ✅ The window no longer freezes on Linux when the system's sleep service (logind) or keyring
   (Secret Service) is slow or doesn't answer: keeping the computer awake for a woken queue is
@@ -138,12 +138,12 @@ Everything below ships together, in version 0.5.0.
 - ✅ Linux: Dark Mode support follows the desktop's dark or light theme on XFCE, MATE and others
   without the portal's setting, and on GNOME without the portal, live
   ([#156](https://github.com/anefzaoui/misterdownloadmanager/issues/156))
-- ✅ Started with the computer, MDM waits in the notification area instead of opening its window
+- ✅ Started with the computer, BMD waits in the notification area instead of opening its window
   in front, on Windows, Linux and macOS (minimized where no notification area shows its icon);
   startup entries written before are updated, and the installer writes the new one
   ([#226](https://github.com/anefzaoui/misterdownloadmanager/issues/226))
 - ✅ Open folder in Download complete no longer freezes the window on Linux when the file
-  manager is slow to answer or never does: MDM asks in the background and opens the folder after
+  manager is slow to answer or never does: BMD asks in the background and opens the folder after
   5 seconds without an answer; every other program a window starts (Set it up, the Trash, an
   update being put in place, pages and folders) no longer holds the window either
   ([#222](https://github.com/anefzaoui/misterdownloadmanager/issues/222))
@@ -152,7 +152,7 @@ Everything below ships together, in version 0.5.0.
   folder's own drive (shared network folders too) instead of listing every drive; and the host
   connection limit test tells a reconnect from a connection too many ([#224](https://github.com/anefzaoui/misterdownloadmanager/issues/224))
 - ✅ The crash report window in every language: the report keeps its lines (German and Arabic
-  ran them together) and reads left to right in Arabic and Persian; **End and restart MDM** fits
+  ran them together) and reads left to right in Arabic and Persian; **End and restart BMD** fits
   its text ([#204](https://github.com/anefzaoui/misterdownloadmanager/issues/204))
 - ✅ Every window's buttons fit their text in every language: Download File Info (German
   **Später herunterladen** was cut), Download complete, Add torrent, Download a gallery, the
@@ -174,10 +174,10 @@ Everything below ships together, in version 0.5.0.
   which it didn't before ([#201](https://github.com/anefzaoui/misterdownloadmanager/issues/201))
 - ✅ A window closed with its title bar's × keeps its contents until it goes, instead of turning
   black for a moment (seconds on Linux) ([#207](https://github.com/anefzaoui/misterdownloadmanager/issues/207))
-- ✅ A freeze while MDM handles a command, or minimized, opens the crash report window and writes
+- ✅ A freeze while BMD handles a command, or minimized, opens the crash report window and writes
   its freeze report again ([#202](https://github.com/anefzaoui/misterdownloadmanager/issues/202))
 - ✅ Where a download's server is: its country's flag and name and its round trip (near, medium or
-  far) in Download File Info, the progress window and Properties, from a table that comes with MDM
+  far) in Download File Info, the progress window and Properties, from a table that comes with BMD
   (no address is sent anywhere); a proxy or a CDN said as such
   ([#140](https://github.com/anefzaoui/misterdownloadmanager/issues/140))
 - ✅ Torrents: Download in order, to watch a video while it downloads (each file's first and last
@@ -189,7 +189,7 @@ Everything below ships together, in version 0.5.0.
   ([#185](https://github.com/anefzaoui/misterdownloadmanager/issues/185),
   [#170](https://github.com/anefzaoui/misterdownloadmanager/issues/170))
 - ✅ A Linux test machine for every change, scripted: an Ubuntu 24.04 desktop that builds each
-  branch and drives MDM, Firefox and Chrome there (part of
+  branch and drives BMD, Firefox and Chrome there (part of
   [#164](https://github.com/anefzaoui/misterdownloadmanager/issues/164))
 - ✅ The Linux test machine also has KDE Plasma, Cinnamon and XFCE copies, which test a build
   without making it; store packages and theme windows are checked there too (part of
@@ -205,7 +205,7 @@ Everything below ships together, in version 0.5.0.
   the button over the video, the right-click menu and the media list, read only when asked
   ([#171](https://github.com/anefzaoui/misterdownloadmanager/issues/171))
 - ✅ The extension in the [Chrome Web Store](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp): **Add to Chrome** beside **Add to Firefox**
-  on the website, in the help, the FAQ and the README; MDM's **Add Mister Download Manager to
+  on the website, in the help, the FAQ and the README; BMD's **Add BMD to
   your browser** window opens the store in Chrome, Edge, Brave, Opera and Vivaldi, with the
   manual install as the fallback
 - ✅ Themes, the groundwork: every colour and size the controls are drawn with comes from one
@@ -225,7 +225,7 @@ Everything below ships together, in version 0.5.0.
   ([#45](https://github.com/anefzaoui/misterdownloadmanager/issues/45))
 - ✅ Themes: Luna, Aero and Aqua, the looks of Windows XP, Windows 7 and Mac OS X (shaded and
   glossy buttons, their check boxes and progress bars, their title bars on Windows, icons drawn
-  for MDM); Metro, Adwaita and Breeze get MDM's own icons where theirs had none
+  for BMD); Metro, Adwaita and Breeze get BMD's own icons where theirs had none
   ([#45](https://github.com/anefzaoui/misterdownloadmanager/issues/45))
 - ✅ Themes: Base16 and pywal colour schemes imported as themes (View → Theme → Add a theme
   file…, or the themes folder); **pywal** follows `wal` as it writes new colours, text kept
@@ -237,7 +237,7 @@ Everything below ships together, in version 0.5.0.
   ([#45](https://github.com/anefzaoui/misterdownloadmanager/issues/45))
 - ✅ Dark mode: grey notes and error texts readable (4.5:1), Options' failed checks no longer dark
   red on the dark dialog ([#45](https://github.com/anefzaoui/misterdownloadmanager/issues/45))
-- ✅ A minimized MDM keeps working: queues, the Scheduler, download limits, the kill switch and
+- ✅ A minimized BMD keeps working: queues, the Scheduler, download limits, the kill switch and
   saving the list no longer wait for the window to be restored
 - ✅ Download video: every button fits its text in every language (German **ffmpeg installieren**
   was cut), right to left too ([#172](https://github.com/anefzaoui/misterdownloadmanager/issues/172))
@@ -249,20 +249,20 @@ Everything below ships together, in version 0.5.0.
   ([#155](https://github.com/anefzaoui/misterdownloadmanager/issues/155))
 - ✅ A download or magnet link sent while the window is minimized opens its window at once
   ([#162](https://github.com/anefzaoui/misterdownloadmanager/issues/162))
-- ✅ Linux: Ubuntu's Firefox (the Snap) reaches MDM: browser integration is set up for it, and the
-  help says what the desktop asks the first time; Chromium as a Snap, which can't reach MDM, is no
+- ✅ Linux: Ubuntu's Firefox (the Snap) reaches BMD: browser integration is set up for it, and the
+  help says what the desktop asks the first time; Chromium as a Snap, which can't reach BMD, is no
   longer offered (part of [#164](https://github.com/anefzaoui/misterdownloadmanager/issues/164))
 - ✅ A smaller download: the installer 15 % and the zips 19 % smaller, nothing removed
   ([#158](https://github.com/anefzaoui/misterdownloadmanager/issues/158))
-- ✅ Linux: MDM's first window opens seconds sooner; the system's fonts are looked up all at once
+- ✅ Linux: BMD's first window opens seconds sooner; the system's fonts are looked up all at once
   while it starts, not one by one in the window (on a busy computer that froze it, part of
   [#164](https://github.com/anefzaoui/misterdownloadmanager/issues/164))
 - ✅ Firefox's add-on offered from [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/)
-  first: **Add to Firefox** on the website, in the help, the FAQ and the README, and in MDM's
-  **Add Mister Download Manager to your browser** window (for Zen and LibreWolf too)
-- ✅ Support MDM: a way to support its creator on [GitHub Sponsors](https://github.com/sponsors/anefzaoui),
-  asked for only (**Help → Support MDM**, a line in About, the website, the README, the
-  extension's popup and GitHub's Sponsor button); MDM stays free, nothing changes or unlocks
+  first: **Add to Firefox** on the website, in the help, the FAQ and the README, and in BMD's
+  **Add BMD to your browser** window (for Zen and LibreWolf too)
+- ✅ Support BMD: a way to support its creator on [GitHub Sponsors](https://github.com/sponsors/anefzaoui),
+  asked for only (**Help → Support BMD**, a line in About, the website, the README, the
+  extension's popup and GitHub's Sponsor button); BMD stays free, nothing changes or unlocks
 - ✅ A server that can't resume a download no longer gets the file downloaded twice on a busy
   computer (part of [#136](https://github.com/anefzaoui/misterdownloadmanager/issues/136))
 - ✅ Translators: a reviewed translation is never replaced by machine translation, and CI checks it;
@@ -272,11 +272,11 @@ Everything below ships together, in version 0.5.0.
   ([#111](https://github.com/anefzaoui/misterdownloadmanager/issues/111))
 - ✅ Less memory in the notification area after Minimize too, and again 2 minutes after hiding
   ([#72](https://github.com/anefzaoui/misterdownloadmanager/issues/72))
-- ✅ Windows: MDM draws with Direct3D 12 by default; **View → Draw with** goes back to OpenGL, and
+- ✅ Windows: BMD draws with Direct3D 12 by default; **View → Draw with** goes back to OpenGL, and
   either one falls back to the other when it can't start
   ([#89](https://github.com/anefzaoui/misterdownloadmanager/issues/89))
 - ✅ A slow start no longer turns Direct3D off for good: its 10 seconds for the first frame count
-  only Direct3D's own time, not MDM's loading (on one computer that sent MDM to OpenGL, where
+  only Direct3D's own time, not BMD's loading (on one computer that sent BMD to OpenGL, where
   Intel's driver froze it); crash and freeze reports say near the top what drew, on which card
   and driver, and why
   ([#280](https://github.com/anefzaoui/misterdownloadmanager/issues/280))
@@ -383,7 +383,7 @@ Everything below ships together, in version 0.5.0.
   ([#28](https://github.com/anefzaoui/misterdownloadmanager/issues/28))
 - ✅ The extension's Download video menu keeps its highlight inside its edge
   ([#81](https://github.com/anefzaoui/misterdownloadmanager/issues/81))
-- ✅ No crash when a window opens while MDM is minimized or in the notification area, such as a
+- ✅ No crash when a window opens while BMD is minimized or in the notification area, such as a
   download or a magnet link from the browser
   ([#22](https://github.com/anefzaoui/misterdownloadmanager/issues/22),
   [#145](https://github.com/anefzaoui/misterdownloadmanager/issues/145))
@@ -417,8 +417,8 @@ Everything below ships together, in version 0.5.0.
   ([#228](https://github.com/anefzaoui/misterdownloadmanager/issues/228))
 - ✅ Website in European Portuguese, and an [intended use](https://misterdownloadmanager.com/intended-use.html) page
 - ✅ Website: the [free IDM alternative](https://misterdownloadmanager.com/idm-alternative.html) page compares
-  MDM with IDM and with nine other free download managers, each checked on its own site, with
-  their logos, a feature-by-feature form and an MDM-vs-IDM label with the benchmark's times to scale
+  BMD with IDM and with nine other free download managers, each checked on its own site, with
+  their logos, a feature-by-feature form and an BMD-vs-IDM label with the benchmark's times to scale
 - ✅ Website: the header fits its row in every language at every width (it hides the Sponsor heart,
   then tightens, then turns into the menu, only as far as a language needs)
   ([#168](https://github.com/anefzaoui/misterdownloadmanager/issues/168)), and no page scrolls
@@ -431,7 +431,7 @@ Everything below ships together, in version 0.5.0.
   [Themes](https://misterdownloadmanager.com/themes.html) page with every built-in theme, light and
   dark, and how to make, try and share your own
   ([#260](https://github.com/anefzaoui/misterdownloadmanager/issues/260))
-- ✅ Thanks to the people who make MDM possible: everyone who sent a pull request, opened an issue
+- ✅ Thanks to the people who make BMD possible: everyone who sent a pull request, opened an issue
   or commented on GitHub, as round photos in the home page's first view and the README, on a
   [Contributors](https://misterdownloadmanager.com/contributors.html) page with what each one did,
   at the end of each release on the News page, and in each release's notes on GitHub
@@ -446,7 +446,7 @@ Everything below ships together, in version 0.5.0.
   and on KDE Plasma, Cinnamon and Xfce; Wayland sessions (through XWayland, menus under their
   titles on sway too); the .deb and .rpm installed in clean Ubuntu, Debian and Fedora systems, the
   AppImage and the tar.gz; the tray, Dark Mode support and Launch on startup on all four desktops;
-  the Snap Firefox, Google Chrome and Brave reaching MDM
+  the Snap Firefox, Google Chrome and Brave reaching BMD
   ([#164](https://github.com/anefzaoui/misterdownloadmanager/issues/164)), and its release files
   named without "-experimental"
 - ✅ Every screenshot taken again on Windows and Linux (smaller files, WebP), and every page of the
@@ -458,11 +458,11 @@ Everything below ships together, in version 0.5.0.
 Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 - ✅ A link from the browser no longer ends in 403 where a site refuses the browser's
-  User-Agent: MDM asks once more as itself ([#372](https://github.com/anefzaoui/misterdownloadmanager/issues/372))
+  User-Agent: BMD asks once more as itself ([#372](https://github.com/anefzaoui/misterdownloadmanager/issues/372))
 - ✅ The video button no longer covers a control of the page (a preview's own button): it takes
   a free corner, and dragging it keeps it where you put it
   ([#421](https://github.com/anefzaoui/misterdownloadmanager/issues/421))
-- ✅ A background task stopping as MDM closes no longer shows a crash report
+- ✅ A background task stopping as BMD closes no longer shows a crash report
   ([#422](https://github.com/anefzaoui/misterdownloadmanager/issues/422))
 - ✅ A freeze that was over before its dump was taken is reported as a freeze, not a crash in the
   watchdog (part of [#420](https://github.com/anefzaoui/misterdownloadmanager/issues/420))
@@ -484,7 +484,7 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 - ✅ Download video shows the size of a plain file (what the server says), not "size unknown"
   (part of [#320](https://github.com/anefzaoui/misterdownloadmanager/issues/320))
 - ✅ Download video on pages whose player first loads a manifest's address answering something else
-  (SVT Play): the real manifest goes to MDM, not that first answer
+  (SVT Play): the real manifest goes to BMD, not that first answer
   ([#377](https://github.com/anefzaoui/misterdownloadmanager/issues/377))
 - ✅ Windows: sharp, evenly spaced text at every interface size: letters no longer run together
   or drift apart ([#323](https://github.com/anefzaoui/misterdownloadmanager/issues/323),
@@ -494,18 +494,18 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
   ([#382](https://github.com/anefzaoui/misterdownloadmanager/issues/382))
 - ✅ A save folder relative to the home folder is found where it really is
 - ✅ Browser link import: tighter handling of site data
-- ✅ The extension asks for a newer MDM only when a whole release separates them, not over a
+- ✅ The extension asks for a newer BMD only when a whole release separates them, not over a
   bug-fix version
 - ✅ Add URL: a YouTube playlist opens the video window; Dailymotion's embedded player is looked
   up as the video's own page ([#338](https://github.com/anefzaoui/misterdownloadmanager/issues/338),
   [#359](https://github.com/anefzaoui/misterdownloadmanager/issues/359))
-- ✅ macOS: video look-ups work in a copy of MDM a browser downloaded, without the Terminal command:
+- ✅ macOS: video look-ups work in a copy of BMD a browser downloaded, without the Terminal command:
   yt-dlp's folder build, unpacked once and checked against its signed list
   ([#330](https://github.com/anefzaoui/misterdownloadmanager/issues/330),
   [#339](https://github.com/anefzaoui/misterdownloadmanager/issues/339))
 - ✅ In English, the list's dates follow the system's 12- or 24-hour clock
   ([#392](https://github.com/anefzaoui/misterdownloadmanager/issues/392))
-- ✅ Help: what to do when an antivirus or VirusTotal flags MDM, and how to check a copy is the real
+- ✅ Help: what to do when an antivirus or VirusTotal flags BMD, and how to check a copy is the real
   one
 - ✅ The Safari extension (macOS), part of the app: a click on a link to a listed file type, the
   right-click items, the button over videos, Media on this page and the toolbar button, from one
@@ -516,7 +516,7 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 - ✅ The browser extension's media list can name a file after its page, as an option (off as
   installed)
 - ✅ Malay: the menus, toolbar and list columns checked by a native speaker
-- ✅ Closing the main window follows a setting (on by default, MDM keeps running), and with no tray
+- ✅ Closing the main window follows a setting (on by default, BMD keeps running), and with no tray
   icon the window goes to the taskbar instead of vanishing
   ([#457](https://github.com/anefzaoui/misterdownloadmanager/pull/457))
 - ✅ Download File Info no longer stays open but invisible, with later browser downloads waiting
@@ -531,7 +531,7 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
   address is named after its page, not a long encoded string
   ([#344](https://github.com/anefzaoui/misterdownloadmanager/issues/344),
   [#345](https://github.com/anefzaoui/misterdownloadmanager/issues/345))
-- ✅ A page that starts a download by script: MDM gets the file, not the page
+- ✅ A page that starts a download by script: BMD gets the file, not the page
   ([#374](https://github.com/anefzaoui/misterdownloadmanager/issues/374))
 - ✅ "Hide tab" in a download's window takes the tab off its row; **Show hidden tabs** brings it back
   ([#326](https://github.com/anefzaoui/misterdownloadmanager/issues/326))
@@ -543,14 +543,14 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
   ([#354](https://github.com/anefzaoui/misterdownloadmanager/issues/354))
 - ✅ Alt and F10 open the menu bar while a control has the focus
   ([#328](https://github.com/anefzaoui/misterdownloadmanager/issues/328))
-- ✅ Windows: no crash when a window opens while MDM falls back from Direct3D to OpenGL
+- ✅ Windows: no crash when a window opens while BMD falls back from Direct3D to OpenGL
   ([#337](https://github.com/anefzaoui/misterdownloadmanager/issues/337))
-- ✅ Windows: no crash when a screen goes away while MDM runs
+- ✅ Windows: no crash when a screen goes away while BMD runs
   ([#335](https://github.com/anefzaoui/misterdownloadmanager/issues/335))
 - ✅ No duplicate prompt for a finished file that is gone
   ([#342](https://github.com/anefzaoui/misterdownloadmanager/issues/342))
 - ✅ Crash reports: a monitor that cannot open its socket exits, and an unreachable one is cleaned up
-  instead of staying beside MDM
+  instead of staying beside BMD
   ([#458](https://github.com/anefzaoui/misterdownloadmanager/pull/458))
 
 ## Version 0.5.1
@@ -564,7 +564,7 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 These ship in the next version.
 
-- ✅ Updates are checked against iDM's own release key, the key of the repository the app updates
+- ✅ Updates are checked against BMD's own release key, the key of the repository the app updates
   from (rather than upstream's), and a release can't be published unsigned or signed by another key
 - ✅ A Docker image of the headless server is published with each release, at
   `ghcr.io/anefzaoui/misterdownloadmanager` (x86-64 only for now, thanks to
@@ -578,7 +578,7 @@ These ship in the next version.
   a video, a playlist's quality and `video-get -q compatible`; picked, never converted
   ([#1439](https://github.com/anefzaoui/misterdownloadmanager/issues/1439))
 - ✅ SourceForge downloads from the browser: when a site's bot check refuses the browser's
-  User-Agent and the browser-like connection too, MDM asks once more under its own name, with
+  User-Agent and the browser-like connection too, BMD asks once more under its own name, with
   the same cookies and referrer, and remembers the site for the session, resumes included
   ([#1422](https://github.com/anefzaoui/misterdownloadmanager/issues/1422))
 - ✅ Add batch download: a long address scrolls to its caret in right-to-left languages (every
@@ -655,7 +655,7 @@ These ship in the next version.
   the MCP server's add_download tool accepts `private: true` (thanks to
   [@abdul-karim-mia](https://github.com/abdul-karim-mia))
 - ✅ The tests run in English whatever Windows' display language is: a Chinese, German or
-  Arabic Windows ran 27 of `mdm-app`'s tests red on code CI's English runner passed, as the
+  Arabic Windows ran 27 of `bmd-app`'s tests red on code CI's English runner passed, as the
   interface language followed the system in tests too
 - ✅ **Alt** and a button's underlined letter press the button (the **Scheduler**'s **Apply**,
   **Close** and the others pressed nothing), letters of other scripts too, and **Alt** in such a
@@ -688,13 +688,13 @@ These ship in the next version.
   repository an OpenSSF Scorecard (thanks to [@joyahmed](https://github.com/joyahmed))
 - ✅ The Linux AppImage is packaged by the same appimagetool and runtime on every rebuild: each
   at a fixed release, checked by its sha256 (thanks to [@joyahmed](https://github.com/joyahmed))
-- ✅ macOS: dialogs and download progress windows activate MDM and open in front of browsers and
-  other applications (including when raised or opened while MDM is behind another program or hidden
+- ✅ macOS: dialogs and download progress windows activate BMD and open in front of browsers and
+  other applications (including when raised or opened while BMD is behind another program or hidden
   in the menu bar), without pulling up minimized or tray-hidden windows or stealing focus for
   Download complete notices
 - ✅ Screen readers in the main window: Tab goes round the toolbar, the Categories tree and the
   download list, and the screen reader says and follows the download, category or toolbar button
-  the keys are on; the toolbar is a toolbar of named buttons; the lists in MDM's windows say their
+  the keys are on; the toolbar is a toolbar of named buttons; the lists in BMD's windows say their
   selected row as the arrows move it
   ([#1190](https://github.com/anefzaoui/misterdownloadmanager/issues/1190))
 - ✅ A crash monitor slower than half a second to start is still connected to from beside the
@@ -723,7 +723,7 @@ These ship in the next version.
   not "&" on a Bangla letter no key can press (thanks to
   [@Seyamalam](https://github.com/Seyamalam))
 - ✅ The browser extension's window and Test browser integration read the browsers' folders
-  beside the window, so a slow folder can't freeze it; macOS: a browser's folder macOS keeps MDM
+  beside the window, so a slow folder can't freeze it; macOS: a browser's folder macOS keeps BMD
   out of is said, with the setting that allows it
   ([#1218](https://github.com/anefzaoui/misterdownloadmanager/issues/1218))
 - ✅ Malay: a queue is a **baris gilir**, the clipboard a **papan klip** and a checksum a
@@ -751,7 +751,7 @@ These ship in the next version.
 - ✅ The window opens at once when an unfinished download is on a network share that doesn't
   answer or a sleeping drive: downloads' progress, and a new video's name, are read beside it
   (found with [#1170](https://github.com/anefzaoui/misterdownloadmanager/issues/1170))
-- ✅ macOS: MDM no longer closes when the displays change while it draws with OpenGL (a dock
+- ✅ macOS: BMD no longer closes when the displays change while it draws with OpenGL (a dock
   and the lid closed): it takes its OpenGL context back when the system left its thread without
   it, and a texture OpenGL still refuses is made on a later frame
   ([#1173](https://github.com/anefzaoui/misterdownloadmanager/issues/1173))
@@ -776,33 +776,33 @@ These ship in the next version.
   ([#476](https://github.com/anefzaoui/misterdownloadmanager/issues/476))
 - ✅ **Stop All** stops the queues too: a running queue no longer starts its next download
   ([#1164](https://github.com/anefzaoui/misterdownloadmanager/issues/1164))
-- ✅ macOS: closing the window leaves MDM running in the Dock, and a click on its icon there brings
+- ✅ macOS: closing the window leaves BMD running in the Dock, and a click on its icon there brings
   the window back, menu bar icon or not; Cmd+Q quits
-- ✅ Windows: shutting down, restarting or signing out saves MDM as File → Exit does (its
+- ✅ Windows: shutting down, restarting or signing out saves BMD as File → Exit does (its
   downloads stop where they are and resume there, no crash report at the next start), and an
-  installer closing MDM through the Restart Manager closes it; File → Exit also stops the
+  installer closing BMD through the Restart Manager closes it; File → Exit also stops the
   downloads where they are
-- ✅ Linux: logging out or shutting down saves MDM as File → Exit does (its downloads stop where
+- ✅ Linux: logging out or shutting down saves BMD as File → Exit does (its downloads stop where
   they are and resume there, no crash report at the next start), whether the system asks it to end
   or its display goes away first
-- ✅ No more **The window stopped responding** report in the first minutes after MDM starts with
+- ✅ No more **The window stopped responding** report in the first minutes after BMD starts with
   the computer: as after a wake, a stall then is the computer's (logged, and reported only if it
   lasts past the first three minutes)
   (for [#1126](https://github.com/anefzaoui/misterdownloadmanager/issues/1126))
-- ✅ No more **The window stopped responding** report while MDM waits in the notification area
+- ✅ No more **The window stopped responding** report while BMD waits in the notification area
   with no window on screen and its thread waits on the computer: logged, and reported only if it
-  lasts past a minute, if MDM's thread is busy, or if MDM is asked for something meanwhile and
+  lasts past a minute, if BMD's thread is busy, or if BMD is asked for something meanwhile and
   doesn't answer (for [#1126](https://github.com/anefzaoui/misterdownloadmanager/issues/1126))
 - ✅ Link grabber's **Status** column: a failure whose sentence ends in advice shows that advice
   in the column, with the whole sentence on hover, and the column is as wide as its longest answer
   ([#1110](https://github.com/anefzaoui/misterdownloadmanager/issues/1110))
 - ✅ A malformed stream playlist no longer stops the video downloader: that download fails and
   says why ([#1141](https://github.com/anefzaoui/misterdownloadmanager/issues/1141))
-- ✅ A queue (or a download) set to **Exit Mister Download Manager when done** quits MDM, as File →
-  Exit does, with **Keep running when closing the window** on; it only hid MDM in the notification
+- ✅ A queue (or a download) set to **Exit BMD when done** quits BMD, as File →
+  Exit does, with **Keep running when closing the window** on; it only hid BMD in the notification
   area
 - ✅ Windows and macOS: names in any script a font on the computer has show their letters, whatever
-  the interface language: the system's own font for the scripts MDM lists none for
+  the interface language: the system's own font for the scripts BMD lists none for
   ([#1125](https://github.com/anefzaoui/misterdownloadmanager/issues/1125))
 - ✅ Tests: the ones that failed now and then on a busy runner (keeping the computer awake, a
   program or a call to the system that hangs, a stream's time for both its requests, a helper's
@@ -811,7 +811,7 @@ These ship in the next version.
   test says, a program that ends when the test lets it, a count of the work done instead of a
   fixed time
 - ✅ The Download video button over a video in a feed, or on a site yt-dlp can't read (Douyin):
-  when MDM finds nothing on the page, it offers what the tab played for that video, told apart
+  when BMD finds nothing on the page, it offers what the tab played for that video, told apart
   from the feed's next one by its length, and says so when it can't tell
   ([#1092](https://github.com/anefzaoui/misterdownloadmanager/issues/1092))
 - ✅ No freeze when a video or a gallery finishes on a slow or busy disk: its files are marked as
@@ -823,7 +823,7 @@ These ship in the next version.
 - ✅ Declared videos: script text inside a script is not read as a declaration
 - ✅ Reading a page's text stops at the right closing tag
 - ✅ Torrents with a file and a folder of the same name are refused cleanly
-- ✅ Archive volumes with unusual letters in their names no longer close MDM
+- ✅ Archive volumes with unusual letters in their names no longer close BMD
 - ✅ A damaged progress file no longer miscounts a download's size
 - ✅ An RSS feed's failed first fetch leaves its backlog a backlog, and an empty search feed still
   gets its episode as news
@@ -855,7 +855,7 @@ These ship in the next version.
   check the file), not by a total of what the server sent, which grew on a busy runner when a
   part was split while its bytes were on the way
   ([#952](https://github.com/anefzaoui/misterdownloadmanager/issues/952))
-- ✅ macOS: a browser hand-off while MDM is hidden from the menu bar opens its window
+- ✅ macOS: a browser hand-off while BMD is hidden from the menu bar opens its window
 - ✅ Downloads for Windows on ARM, 32-bit Windows and Linux on ARM, beside the x64 ones: the
   installer, the portable zip and the plain zip; the AppImage, .deb, .rpm and .tar.gz. Each is
   built and tested on its own processor, Update now keeps each copy on its own, and the helpers
@@ -882,10 +882,10 @@ These ship in the next version.
   own name once the download is complete (it stays as it was until then); it was saved as
   `name (1)` ([#1088](https://github.com/anefzaoui/misterdownloadmanager/issues/1088))
 - ✅ The browser's **Download all links** on a page with thousands of long links: the list goes to
-  MDM in parts the browser lets through, and opens in Link grabber whole, as one list; past 1 MB of
+  BMD in parts the browser lets through, and opens in Link grabber whole, as one list; past 1 MB of
   links nothing arrived
 - ✅ Browser integration: a copy run from inside a zip (a temporary folder) no longer sets it up
-  for itself and leaves the browsers looking for a copy that is gone; MDM takes back a
+  for itself and leaves the browsers looking for a copy that is gone; BMD takes back a
   registration that leads nowhere at each start, never one that works, and Test browser
   integration says which copy is gone
   ([#818](https://github.com/anefzaoui/misterdownloadmanager/issues/818))
@@ -897,11 +897,11 @@ These ship in the next version.
   its HTML (a hidden welcome video)
   ([#1076](https://github.com/anefzaoui/misterdownloadmanager/issues/1076))
 - ✅ The browser extension's popup has **Hide the download button in full screen**, off as installed: entering full screen hides the **Download video** button at once, as the player's own controls, and the pointer's next move brings it back; on, a page in full screen shows no button at all, for watching without it in the way ([#670](https://github.com/anefzaoui/misterdownloadmanager/issues/670))
-- ✅ Windows: MDM listed in Settings → Default apps for MAGNET and .torrent, and Torrent
+- ✅ Windows: BMD listed in Settings → Default apps for MAGNET and .torrent, and Torrent
   settings' switch says when another app chosen there still opens them, and opens that page
   ([#1091](https://github.com/anefzaoui/misterdownloadmanager/issues/1091))
 - ✅ A .torrent downloaded in the browser stays with the browser (and your own torrent program)
-  while Torrent settings' **Open magnet links and .torrent files with Mister Download Manager**
+  while Torrent settings' **Open magnet links and .torrent files with BMD**
   is off ([#1058](https://github.com/anefzaoui/misterdownloadmanager/issues/1058))
 - ✅ A video in a player embedded from another site (Vimeo's on a film site) is named after the
   page's title, without the site's name, instead of the player's own title
@@ -916,7 +916,7 @@ These ship in the next version.
 - ✅ MediaFire: a download resumed after its address expired asks the file's MediaFire page for a
   fresh one and goes on; a MediaFire file page's link downloads the file
   ([#952](https://github.com/anefzaoui/misterdownloadmanager/issues/952))
-- ✅ Chromium browsers: a video (or a PDF, an MP3) the browser would play, taken by MDM, keeps
+- ✅ Chromium browsers: a video (or a PDF, an MP3) the browser would play, taken by BMD, keeps
   the name its server gives it instead of its address's (`main.mkv`)
   ([#948](https://github.com/anefzaoui/misterdownloadmanager/issues/948))
 - ✅ A download refused for its site's security certificate says why (expired, not trusted, for
@@ -931,11 +931,11 @@ These ship in the next version.
   whose name the DNS doesn't answer in time says it couldn't be found, not that it didn't answer.
   Two tests that failed now and then on macOS check both without the network or the runner's speed
   ([#782](https://github.com/anefzaoui/misterdownloadmanager/issues/782))
-- ✅ Linux, Wayland: MDM chooses its windows' system the same way however it starts (its menu
+- ✅ Linux, Wayland: BMD chooses its windows' system the same way however it starts (its menu
   entry, the browser's helper, autostart): Wayland's own windows on a scaled screen where nothing
   tells X11 programs the scale (Hyprland, labwc, sway), XWayland elsewhere; **View → Window
   system** to choose ([#624](https://github.com/anefzaoui/misterdownloadmanager/issues/624))
-- ✅ A PDF a page shows in a frame, an embed or an object goes to MDM like one opened from a link,
+- ✅ A PDF a page shows in a frame, an embed or an object goes to BMD like one opened from a link,
   in Chromium browsers and Firefox; a page's own PDF viewer keeps the file it reads
   (part of [#1087](https://github.com/anefzaoui/misterdownloadmanager/issues/1087))
 - ✅ The sites in **Don't start downloading automatically from the following sites** take their
@@ -974,11 +974,11 @@ These ship in the next version.
 - ✅ Less memory during fast downloads to a slower disk: what waits for the disk stays within its
   256 MB as allocated (a 4 GB download: 967 MB in 0.5.2, 523 MB now with the window open)
 - ✅ Windows and macOS: **Options → General → Shortcut to show or hide window**: a global
-  shortcut of two or three keys that shows or hides MDM's window from any program
+  shortcut of two or three keys that shows or hides BMD's window from any program
   ([#558](https://github.com/anefzaoui/misterdownloadmanager/issues/558))
-- ✅ Linux: no crash when fontconfig offers a font MDM can't draw with (an old bitmap font for
-  Japanese or for the symbols): the best font that scales and MDM can read is used instead, and
-  no font MDM can't read reaches its windows on any system
+- ✅ Linux: no crash when fontconfig offers a font BMD can't draw with (an old bitmap font for
+  Japanese or for the symbols): the best font that scales and BMD can read is used instead, and
+  no font BMD can't read reaches its windows on any system
   ([#931](https://github.com/anefzaoui/misterdownloadmanager/issues/931),
   [#1412](https://github.com/anefzaoui/misterdownloadmanager/issues/1412))
 - ✅ Bangla reviewed by a native speaker: the main window, the list, the progress window, the
@@ -988,7 +988,7 @@ These ship in the next version.
   reaches By Date Added ([#926](https://github.com/anefzaoui/misterdownloadmanager/issues/926),
   [#928](https://github.com/anefzaoui/misterdownloadmanager/pull/928)); the list's blank-space menu
   adds a download with N, so A reaches Select all; View → Text has X. A test checks every menu
-  MDM builds, in English and in the languages that keep its letters
+  BMD builds, in English and in the languages that keep its letters
 - ✅ Windows 10: no FSI and PDI boxes around a file's name in the taskbar's preview and tip of a
   progress window, or in the notification-area icon's tip; right-to-left titles keep their order
   ([#919](https://github.com/anefzaoui/misterdownloadmanager/issues/919))
@@ -1001,18 +1001,18 @@ These ship in the next version.
   ([#924](https://github.com/anefzaoui/misterdownloadmanager/issues/924))
 - ✅ With a style theme (Metro, Adwaita, Aero…), windows minimize, maximize and restore with
   Windows' animation, as with Classic, and fade out into the notification area; on Windows 10
-  without its own title bar showing over MDM's for those frames
+  without its own title bar showing over BMD's for those frames
   ([#874](https://github.com/anefzaoui/misterdownloadmanager/issues/874))
 - ✅ Windows 10 with a style theme (Metro, Adwaita, Aero…): no black band above the main window's
   title bar, and its menus and clicks land where they show; framed as on Windows 11, as the
   progress window already was ([#802](https://github.com/anefzaoui/misterdownloadmanager/issues/802))
-- ✅ An idle MDM no longer redraws its window each second to watch the clipboard for copied
+- ✅ An idle BMD no longer redraws its window each second to watch the clipboard for copied
   links: the watch runs on its own thread and wakes the window only for a new text (with
-  Windows' software renderer, idle MDM went from most of a processor core to a sixth of it)
+  Windows' software renderer, idle BMD went from most of a processor core to a sixth of it)
   ([#847](https://github.com/anefzaoui/misterdownloadmanager/issues/847))
 - ✅ Windows: a graphics card without Direct3D 12 (Intel's HD Graphics 3000 to 5500, older AMD
   Radeon cards) draws with OpenGL, then with Direct3D 12 on Windows' own software renderer (WARP)
-  once OpenGL fails there: it can't start, is too old, shows no first window, or MDM freezes
+  once OpenGL fails there: it can't start, is too old, shows no first window, or BMD freezes
   inside its driver (read from the freeze report); remembered, **View → Draw with** says why, and
   choosing **OpenGL** tries it again ([#847](https://github.com/anefzaoui/misterdownloadmanager/issues/847))
 - ✅ Chinese, Japanese and Korean: interface text is at least 12 px (the theme's `font.cjk`) and
@@ -1034,12 +1034,12 @@ These ship in the next version.
 - ✅ Tests: the test server's HLS videos carry a real picture (H.264), so its video and sound
   tracks merge into one file as a site's do; its video tracks held only sound, which made the
   merge fail ("Error opening output files: Invalid argument"). Real sites' videos merged already
-- ✅ macOS: .torrent files open in MDM from Finder (double-click, Open With, the Dock's icon) and
-  magnet links from the browser, and Torrent settings can make MDM their default app there
+- ✅ macOS: .torrent files open in BMD from Finder (double-click, Open With, the Dock's icon) and
+  magnet links from the browser, and Torrent settings can make BMD their default app there
   ([#698](https://github.com/anefzaoui/misterdownloadmanager/issues/698))
-- ✅ Windows: a menu closes at once when you click outside MDM, instead of 0.4 seconds later
+- ✅ Windows: a menu closes at once when you click outside BMD, instead of 0.4 seconds later
   ([#859](https://github.com/anefzaoui/misterdownloadmanager/issues/859))
-- ✅ Windows: programs MDM starts (an update's installer, a browser, the power options) start
+- ✅ Windows: programs BMD starts (an update's installer, a browser, the power options) start
   beside the window, which no longer waits while an antivirus checks them
   ([#846](https://github.com/anefzaoui/misterdownloadmanager/issues/846))
 - ✅ No "The window stopped responding" report in the first minute after the computer wakes from
@@ -1070,11 +1070,11 @@ These ship in the next version.
 - ✅ Touch screens: a tap on a menu's item chooses it (the menu bar's, right-click menus,
   drop-downs), where only a mouse could
   ([#733](https://github.com/anefzaoui/misterdownloadmanager/issues/733))
-- ✅ A video's Address is its file's (the stream MDM downloads) in the progress window, Download
+- ✅ A video's Address is its file's (the stream BMD downloads) in the progress window, Download
   complete and File Properties, its page the web page it was obtained from; a download's page and
   Referer are kept after a restart
   ([#795](https://github.com/anefzaoui/misterdownloadmanager/issues/795))
-- ✅ The progress window's connections table while a video downloads: MDM's own connections (as
+- ✅ The progress window's connections table while a video downloads: BMD's own connections (as
   many as Options → Connection gives), and yt-dlp's one connection while it looks the page up or
   downloads a live stream itself, instead of an empty table
   ([#793](https://github.com/anefzaoui/misterdownloadmanager/issues/793))
@@ -1086,11 +1086,11 @@ These ship in the next version.
   ([#736](https://github.com/anefzaoui/misterdownloadmanager/issues/736))
 - ✅ Windows: the file dragged out of **Download complete** is moved or copied as Explorer does
   it (moved on the same drive or with Shift, copied to another drive or with Ctrl), no longer
-  always copied, and its download follows a moved file to its new place; where MDM can't learn
+  always copied, and its download follows a moved file to its new place; where BMD can't learn
   the new place, **Open** and **Open folder** say the file was moved elsewhere
   ([#869](https://github.com/anefzaoui/misterdownloadmanager/issues/869))
 - ✅ Windows: a graphics card whose OpenGL is older than 3.0 and that has no Direct3D 12 (Intel's
-  first HD Graphics) no longer draws MDM's windows as garbage: MDM notices that OpenGL, draws
+  first HD Graphics) no longer draws BMD's windows as garbage: BMD notices that OpenGL, draws
   with Direct3D on Windows' own software renderer (WARP) instead, from then on, and **View → Draw
   with** says why; the reporter confirmed WARP draws it right
   ([#835](https://github.com/anefzaoui/misterdownloadmanager/issues/835))
@@ -1098,7 +1098,7 @@ These ship in the next version.
   (deno, node, quickjs, bun) are discovered across package managers (WinGet, Scoop, Chocolatey,
   Homebrew, Flatpak, Nix), pip environments and standard directories; a bgutil Proof-of-Origin
   Token (POT) provider the person already runs is detected (a server on 127.0.0.1:4416, a
-  `bgutil-pot` binary, an installed yt-dlp plugin), never downloaded or started by MDM
+  `bgutil-pot` binary, an installed yt-dlp plugin), never downloaded or started by BMD
 - ✅ A helper (yt-dlp, ffmpeg, gallery-dl) that can't be downloaded says which server and why
   (not found, refused, no answer, a secure connection an antivirus or a proxy reads, GitHub's
   limit on requests, cut short) and what to do; its release list goes through the proxy set in
@@ -1129,9 +1129,9 @@ These ship in the next version.
   without it until the bus answers, and gets it then, however late
   ([#828](https://github.com/anefzaoui/misterdownloadmanager/issues/828))
 - ✅ Looking up a new video (put online in the last two days) no longer fails with "Permission
-  denied" in MDM's install folder, or in `System32` when MDM started with Windows: the helpers
-  run in your temporary folder, or MDM's own if that one can't be written; on Windows a file
-  opened from MDM starts in its own folder
+  denied" in BMD's install folder, or in `System32` when BMD started with Windows: the helpers
+  run in your temporary folder, or BMD's own if that one can't be written; on Windows a file
+  opened from BMD starts in its own folder
   ([#834](https://github.com/anefzaoui/misterdownloadmanager/issues/834),
   [#1216](https://github.com/anefzaoui/misterdownloadmanager/issues/1216))
 - ✅ A video a site sends through a program's address (`stream.php?file=…`,
@@ -1154,7 +1154,7 @@ These ship in the next version.
   [#780](https://github.com/anefzaoui/misterdownloadmanager/issues/780))
 - ✅ Windows: downloads follow the Group Policy "Do not preserve zone information in file
   attachments", as browsers' do; **Options → Save to → Mark downloaded files as coming from
-  the internet** (on by default) turns the mark off for MDM alone, on every system
+  the internet** (on by default) turns the mark off for BMD alone, on every system
   ([#813](https://github.com/anefzaoui/misterdownloadmanager/issues/813))
 - ✅ No freeze of the window on **Tasks → Import** of a large file, or of one that isn't a list
   (a video, an archive, another program's backup): it is read beside the window, the status strip
@@ -1171,15 +1171,15 @@ These ship in the next version.
   grabber's links) show one summary once all are done, with how many finished and which failed,
   Open folder and Show in list; a single download keeps its window
   ([#766](https://github.com/anefzaoui/misterdownloadmanager/issues/766)). **Snooze** in Download complete keeps it away for
-  30 minutes, 1 hour, 8 hours or until MDM restarts, and Options → Downloads says until when, with
+  30 minutes, 1 hour, 8 hours or until BMD restarts, and Options → Downloads says until when, with
   Resume now ([#741](https://github.com/anefzaoui/misterdownloadmanager/issues/741))
 - ✅ WinGet in the install steps: the README, the help and the website's download page give
-  `winget install AhmedNefzaoui.MisterDownloadManager` and `winget upgrade`
+  `winget install AhmedNefzaoui.BMD` and `winget upgrade`
   ([#798](https://github.com/anefzaoui/misterdownloadmanager/issues/798))
-- ✅ The Download video button, redesigned ([#703](https://github.com/anefzaoui/misterdownloadmanager/issues/703)): MDM looks the video up as the
+- ✅ The Download video button, redesigned ([#703](https://github.com/anefzaoui/misterdownloadmanager/issues/703)): BMD looks the video up as the
   button appears and the button names the best quality, which one click downloads; a plain file
   downloads as a file; its menu lists every quality; after a click it says what happened in its
-  own colour, with Show, Open post, Get MDM and Retry, or Turn on
+  own colour, with Show, Open post, Get BMD and Retry, or Turn on
 - ✅ The video button no longer comes back on play or pause, and fades sooner (part of
   [#741](https://github.com/anefzaoui/misterdownloadmanager/issues/741))
 - ✅ No freeze of the window while it checks Windows' light or dark mode and the registry takes
@@ -1196,22 +1196,22 @@ These ship in the next version.
   10 s once the system's cache is full, and no connection replaced as "much slower" for waiting on
   the disk; a disk slower than the network slows the download down evenly
   ([#782](https://github.com/anefzaoui/misterdownloadmanager/issues/782))
-- ✅ Windows: MDM starts on a PC without Microsoft's Visual C++ runtime, or with the wrong copy of it
-  (0xc000007b at setup's end): the runtime is inside MDM's programs
+- ✅ Windows: BMD starts on a PC without Microsoft's Visual C++ runtime, or with the wrong copy of it
+  (0xc000007b at setup's end): the runtime is inside BMD's programs
   ([#785](https://github.com/anefzaoui/misterdownloadmanager/issues/785))
 - ✅ Videos in one file (YouTube's qualities and their sound, most sites' MP4s) come down through
-  MDM's own downloader: yt-dlp finds them, then every connection Options → Connection gives, the
+  BMD's own downloader: yt-dlp finds them, then every connection Options → Connection gives, the
   speed limits (a change applies at once), pause and resume like a file, after a restart too,
   and a fresh address from yt-dlp when one expires (part of
   [#769](https://github.com/anefzaoui/misterdownloadmanager/issues/769))
-- ✅ Videos sent in pieces (HLS, DASH) through MDM's own downloader too, several pieces at once
+- ✅ Videos sent in pieces (HLS, DASH) through BMD's own downloader too, several pieces at once
   (as many as a file's connections), AES-128 pieces decrypted, expired pieces' addresses asked of
   yt-dlp again ([#531](https://github.com/anefzaoui/misterdownloadmanager/issues/531), part of
   [#769](https://github.com/anefzaoui/misterdownloadmanager/issues/769))
-- ✅ Image galleries through MDM's own downloader: gallery-dl lists the pictures, MDM brings
+- ✅ Image galleries through BMD's own downloader: gallery-dl lists the pictures, BMD brings
   them in 4 at a time under the speed limits, gallery-dl fetches only what is left
   ([#769](https://github.com/anefzaoui/misterdownloadmanager/issues/769))
-- ✅ Sites behind Akamai's bot check (a 403 page for MDM, the file for a browser) download, through the
+- ✅ Sites behind Akamai's bot check (a 403 page for BMD, the file for a browser) download, through the
   browser-like connection ([#771](https://github.com/anefzaoui/misterdownloadmanager/issues/771))
 - ✅ Crash and freeze reports no longer have their log's end filled with warnings about the
   file-type icons ([#767](https://github.com/anefzaoui/misterdownloadmanager/issues/767))
@@ -1233,12 +1233,12 @@ These ship in the next version.
   (Chrome, Edge, Brave, Opera, Vivaldi, Firefox, Safari), instead of a years-old one; **Automatic**
   in Options, or one you type (part of
   [#668](https://github.com/anefzaoui/misterdownloadmanager/issues/668))
-- ✅ Linux freeze and crash reports name MDM's functions again, and the right ones: the stack of
+- ✅ Linux freeze and crash reports name BMD's functions again, and the right ones: the stack of
   a program whose code begins a page after its start (0.5.0's) was read at the wrong place, so
-  reports showed only system libraries, or names from elsewhere in MDM
+  reports showed only system libraries, or names from elsewhere in BMD
   ([#661](https://github.com/anefzaoui/misterdownloadmanager/issues/661))
 - ✅ Windows: a freeze in the C runtime's memory routines, where the window hardly ran, is
-  reported as a computer too busy or slow to load MDM from disk, not as a deadlock
+  reported as a computer too busy or slow to load BMD from disk, not as a deadlock
   ([#663](https://github.com/anefzaoui/misterdownloadmanager/issues/663))
 - ✅ macOS: helpers opened from Finder find Homebrew's Deno and ffmpeg, so YouTube formats
   load ([#659](https://github.com/anefzaoui/misterdownloadmanager/issues/659))
@@ -1258,13 +1258,13 @@ These ship in the next version.
 - ✅ The tools that send the browser extension to the stores, at their current versions
 - ✅ macOS: downloads to a network volume (SMB, AFP, NFS), refused for "0 bytes free"
   ([#623](https://github.com/anefzaoui/misterdownloadmanager/issues/623))
-- ✅ Helium: MDM offers it the extension on Linux and macOS, through Helium's own services, the Linux
+- ✅ Helium: BMD offers it the extension on Linux and macOS, through Helium's own services, the Linux
   packages' helper files cover it, and the docs say how to add the extension in Helium
   ([#685](https://github.com/anefzaoui/misterdownloadmanager/issues/685))
 - ✅ Torrents: the window no longer freezes while torrents run on a busy or slow disk: their numbers
   are read beside the window instead of waiting on the torrent engine
   ([#693](https://github.com/anefzaoui/misterdownloadmanager/issues/693))
-- ✅ Sites that let only browsers through (Cloudflare's bot check, FileHippo's 412): MDM tries once
+- ✅ Sites that let only browsers through (Cloudflare's bot check, FileHippo's 412): BMD tries once
   more connecting the way a browser does, with the cookies it has for that site (part of
   [#668](https://github.com/anefzaoui/misterdownloadmanager/issues/668))
 - ✅ Downloads through the browser-like connection use all their connections, each asking for its
@@ -1277,13 +1277,13 @@ These ship in the next version.
   ([#630](https://github.com/anefzaoui/misterdownloadmanager/issues/630))
 - ✅ Download video: a sound-only choice (MP3, a playlist as sound) saves in the Music folder and is
   listed under Music ([#611](https://github.com/anefzaoui/misterdownloadmanager/issues/611))
-- ✅ Linux and macOS: the system's gallery-dl is used when MDM has none of its own, as yt-dlp is
+- ✅ Linux and macOS: the system's gallery-dl is used when BMD has none of its own, as yt-dlp is
   ([#571](https://github.com/anefzaoui/misterdownloadmanager/issues/571))
-- ✅ Linux and macOS: the system's yt-dlp is used when MDM has none of its own, and Helpers can
-  switch to MDM's copy ([#452](https://github.com/anefzaoui/misterdownloadmanager/issues/452))
+- ✅ Linux and macOS: the system's yt-dlp is used when BMD has none of its own, and Helpers can
+  switch to BMD's copy ([#452](https://github.com/anefzaoui/misterdownloadmanager/issues/452))
 - ✅ The Download video button lists the video's qualities, with their sizes, in a menu on the page,
   video and audio in their own tabs: the one picked downloads at once with only its progress window,
-  MDM's main window staying where it is; "Open in Mister Download Manager…" keeps the Download video
+  BMD's main window staying where it is; "Open in BMD…" keeps the Download video
   window. A stream the page plays (HLS) is listed at once, the same video asked again within 10
   minutes opens at once, and the pick starts without looking the video up a second time
   ([#449](https://github.com/anefzaoui/misterdownloadmanager/pull/449))
@@ -1311,9 +1311,9 @@ These ship in the next version.
   checked on a signed-in LinkedIn feed and Facebook's video pages, Facebook's feed posts still to
   check ([#643](https://github.com/anefzaoui/misterdownloadmanager/issues/643))
 - ✅ Torrents: a pause landing while a piece is being checked no longer leaves the torrent one piece
-  short until MDM restarts: the piece is downloaded again
+  short until BMD restarts: the piece is downloaded again
   ([#706](https://github.com/anefzaoui/misterdownloadmanager/issues/706))
-- ✅ Windows: the tray icon's menu follows MDM's look, dark or light, on Windows 10 and 11
+- ✅ Windows: the tray icon's menu follows BMD's look, dark or light, on Windows 10 and 11
   ([#682](https://github.com/anefzaoui/misterdownloadmanager/issues/682))
 - ✅ Torrents: magnet links without trackers find peers where the DHT's first nodes don't answer:
   four public routers asked together, the IPv6 nodes kept for the next start, and the port picked
@@ -1321,7 +1321,7 @@ These ship in the next version.
   ([#650](https://github.com/anefzaoui/misterdownloadmanager/issues/650))
 - ✅ Windows: the window no longer stops on a stalled system (a disk held for a restore point or a
   backup, for one) to check its title bars' colours: they are set once, when a window opens or the
-  theme changes; MDM's log and the RSS feeds are written beside the window too
+  theme changes; BMD's log and the RSS feeds are written beside the window too
   ([#633](https://github.com/anefzaoui/misterdownloadmanager/issues/633),
   [#583](https://github.com/anefzaoui/misterdownloadmanager/issues/583),
   [#513](https://github.com/anefzaoui/misterdownloadmanager/issues/513))
@@ -1346,13 +1346,13 @@ These ship in the next version.
   ([#899](https://github.com/anefzaoui/misterdownloadmanager/issues/899))
 - ✅ Menus: moving on from an item with a submenu closes the submenu at once, and only the item under
   the pointer is lit ([#579](https://github.com/anefzaoui/misterdownloadmanager/issues/579))
-- ✅ Chromium browsers: a download MDM's extension leaves to the browser keeps the file name and
+- ✅ Chromium browsers: a download BMD's extension leaves to the browser keeps the file name and
   folder another extension gives it (Save In's)
   ([#578](https://github.com/anefzaoui/misterdownloadmanager/issues/578))
 - ✅ Without ffmpeg, YouTube's sound alone comes from a format sent as one file, and HLS pieces are
   saved as what they are, not as an `.mp4` no player opened
   ([#569](https://github.com/anefzaoui/misterdownloadmanager/issues/569))
-- ✅ A progress window with a title of 256 characters or more gets MDM's own title bar, not the
+- ✅ A progress window with a title of 256 characters or more gets BMD's own title bar, not the
   system's above it, so its buttons answer (part of
   [#540](https://github.com/anefzaoui/misterdownloadmanager/issues/540), with the Windows 10 fix
   above)
@@ -1360,7 +1360,7 @@ These ship in the next version.
   ([#541](https://github.com/anefzaoui/misterdownloadmanager/issues/541))
 - ✅ The video button goes when it is switched off, or its site listed, in Options, in pages already
   open ([#532](https://github.com/anefzaoui/misterdownloadmanager/issues/532)); and comes in a page
-  opened while the browser couldn't reach MDM once it can, without a reload
+  opened while the browser couldn't reach BMD once it can, without a reload
   ([#474](https://github.com/anefzaoui/misterdownloadmanager/issues/474))
 - ✅ macOS: Persian and other Arabic-script file names show their letters in the download list, not
   boxes ([#533](https://github.com/anefzaoui/misterdownloadmanager/issues/533))
@@ -1369,7 +1369,7 @@ These ship in the next version.
   [#533](https://github.com/anefzaoui/misterdownloadmanager/issues/533))
 - ✅ macOS: Download File Info opens in front of the browser that asked for it
   ([#484](https://github.com/anefzaoui/misterdownloadmanager/issues/484))
-- ✅ macOS: MDM's icon shows in the menu bar, so closing the window keeps MDM running there instead
+- ✅ macOS: BMD's icon shows in the menu bar, so closing the window keeps BMD running there instead
   of quitting ([#529](https://github.com/anefzaoui/misterdownloadmanager/issues/529))
 - ✅ The video button fades after a click on the player, in fullscreen too, and stays while you use
   the keyboard; its browser test runs before the one that turns the button off
@@ -1378,8 +1378,8 @@ These ship in the next version.
   clicked ([#503](https://github.com/anefzaoui/misterdownloadmanager/issues/503))
 - ✅ Add URL's **Use authorization** shows the login Options → Sites Logins has for the address, the
   one the download uses ([#511](https://github.com/anefzaoui/misterdownloadmanager/issues/511))
-- ✅ Windows: closing the window hides MDM in the notification area again, its icon among the hidden
-  ones behind ^ too; the window stays in the taskbar only when Windows says it has no icon of MDM's
+- ✅ Windows: closing the window hides BMD in the notification area again, its icon among the hidden
+  ones behind ^ too; the window stays in the taskbar only when Windows says it has no icon of BMD's
   ([#750](https://github.com/anefzaoui/misterdownloadmanager/issues/750),
   [#718](https://github.com/anefzaoui/misterdownloadmanager/issues/718),
   [#754](https://github.com/anefzaoui/misterdownloadmanager/issues/754),
@@ -1388,7 +1388,7 @@ These ship in the next version.
   [#527](https://github.com/anefzaoui/misterdownloadmanager/issues/527),
   [#590](https://github.com/anefzaoui/misterdownloadmanager/issues/590),
   [#779](https://github.com/anefzaoui/misterdownloadmanager/issues/779))
-- ✅ The window no longer freezes while Explorer is slow to answer about MDM's notification-area
+- ✅ The window no longer freezes while Explorer is slow to answer about BMD's notification-area
   icon: it is asked beside the window
   ([#747](https://github.com/anefzaoui/misterdownloadmanager/issues/747))
 - ✅ Two tests that failed now and then on busy CI runners: the slow-flush one measures the transfer,
@@ -1431,24 +1431,24 @@ These ship in the next version.
 - ✅ Linux: downloads to an NTFS drive (`ntfs3`) start at once instead of filling the file with
   zeros first, which held the download at 0% and slowed the whole computer
 - ✅ Linux on Wayland (XWayland) with NVIDIA's driver: typing and clicking no longer lag by 1 to 2
-  seconds; MDM spaces its frames itself instead of waiting for the screen's refresh
+  seconds; BMD spaces its frames itself instead of waiting for the screen's refresh
 - ✅ Linux on X11 and XWayland with Mesa's drivers (Intel, AMD, llvmpipe): one window at most waits
   for the screen's refresh, none under XWayland, as `vblank_mode=0` did for the lag when moving the
   main window and clicking in the download dialog (for
   [#347](https://github.com/anefzaoui/misterdownloadmanager/issues/347), waiting for the reporter)
-  seconds; MDM spaces its frames itself instead of waiting for the screen's refresh (other drivers
+  seconds; BMD spaces its frames itself instead of waiting for the screen's refresh (other drivers
   keep the refresh)
 - ✅ The computer stays awake while anything downloads, not only during a queue that woke it, and
   sleeps as its settings say once the downloads are done
   ([#939](https://github.com/anefzaoui/misterdownloadmanager/issues/939))
 - ✅ macOS: a menu whose item opens a file dialog (View → Theme → Add a theme file, Tasks → Open
-  torrent file) closes first, instead of floating on top of every window until MDM quits
+  torrent file) closes first, instead of floating on top of every window until BMD quits
   ([#615](https://github.com/anefzaoui/misterdownloadmanager/issues/615))
 - ✅ Download video works behind an antivirus or a proxy that reads HTTPS: yt-dlp is asked again
   with the system's certificates when it refuses a site's
   ([#955](https://github.com/anefzaoui/misterdownloadmanager/issues/955))
-- ✅ Linux: MDM pins to the taskbar and the dock: its desktop entry names its windows' class, and
-  every window of MDM carries it ([#940](https://github.com/anefzaoui/misterdownloadmanager/issues/940))
+- ✅ Linux: BMD pins to the taskbar and the dock: its desktop entry names its windows' class, and
+  every window of BMD carries it ([#940](https://github.com/anefzaoui/misterdownloadmanager/issues/940))
 - ✅ A menu's underlined letter runs its item without typing that letter into the text box under
   the menu, the arrows move in the menu only, and Alt with a dialog's letter types nothing either;
   letters of other scripts (Arabic, Russian) choose their menu item
@@ -1480,12 +1480,12 @@ These ship in the next version.
   [@abdul-karim-mia](https://github.com/abdul-karim-mia))
 - ✅ Linux (X11): Minimize to the notification area takes the window out of the taskbar's window
   list, as closing it does ([#1255](https://github.com/anefzaoui/misterdownloadmanager/issues/1255))
-- ✅ A failed download says why in MDM's log too, with the site's name and no tokens
+- ✅ A failed download says why in BMD's log too, with the site's name and no tokens
   ([#1262](https://github.com/anefzaoui/misterdownloadmanager/issues/1262))
 - ✅ Download panels: the hint under the sites list has its own row instead of running under
   Export...
 - ✅ Linux: pausing or cancelling a video (or a gallery) ends all of yt-dlp's processes, so it
-  stops downloading; MDM's exit and the command line's Ctrl+C end them too
+  stops downloading; BMD's exit and the command line's Ctrl+C end them too
   ([#1301](https://github.com/anefzaoui/misterdownloadmanager/issues/1301); thanks to
   [@arifrhm](https://github.com/arifrhm), who found the same cause)
 - ✅ Internet Archive: a download that needs your account keeps the browser's sign-in on its way to
@@ -1495,7 +1495,7 @@ These ship in the next version.
   [@RedemptionMHA](https://github.com/RedemptionMHA))
 - ✅ Linux: the notification area's icon has its name (KDE showed none)
   ([#1305](https://github.com/anefzaoui/misterdownloadmanager/issues/1305))
-- ✅ Pause and Resume answer at once on a slow disk: the download stops right away and MDM
+- ✅ Pause and Resume answer at once on a slow disk: the download stops right away and BMD
   finishes writing in the background; a resume no longer waits for the disk before its first
   request ([#1328](https://github.com/anefzaoui/misterdownloadmanager/issues/1328))
 - ✅ Windows: Open folder finds a file manager that names its own default verb for folders
@@ -1525,11 +1525,11 @@ These ship in the next version.
   of a second row starting over; a fresh link on another of Rapidgator's own servers, whose copy
   has its own ETag and date, goes on there instead of failing at 100% with "the file changed on
   the server" (any other site's same-size copy still stops)
-- ✅ Linux (XWayland on Hyprland): a click in MDM's window gives it the keyboard again where
+- ✅ Linux (XWayland on Hyprland): a click in BMD's window gives it the keyboard again where
   Hyprland had left it with another X11 program's window, or with none after the window came back
   from the notification area; a box in File Properties took the caret but no typing or Ctrl+V
 - ✅ Linux: started without a Wayland display in a Wayland session (an XWayland-only start),
-  MDM knows its windows are XWayland's; Download File Info and Download complete answered a click
+  BMD knows its windows are XWayland's; Download File Info and Download complete answered a click
   a second or two late while the main window was out of sight (on another workspace)
 - ✅ Telegram Web's downloads stay with the browser, which makes them in the page
   ([#1345](https://github.com/anefzaoui/misterdownloadmanager/issues/1345))
@@ -1537,11 +1537,11 @@ These ship in the next version.
   player's own ("Watch file.mp4 - VOE")
   ([#1351](https://github.com/anefzaoui/misterdownloadmanager/issues/1351))
 - ✅ Torrents start again after a crash or a power cut left their saved list empty: the list is
-  kept aside and a new one begins, the download list's torrents are added again from MDM's own
-  copies and find their pieces on disk; MDM's own rewrite of the list reaches the disk before it
+  kept aside and a new one begins, the download list's torrents are added again from BMD's own
+  copies and find their pieces on disk; BMD's own rewrite of the list reaches the disk before it
   replaces the old one ([#1357](https://github.com/anefzaoui/misterdownloadmanager/issues/1357))
 - ✅ **Options → General → Keep private-window downloads in the list** (off by default): a private
-  window's downloads are saved like any other and survive MDM closing or restarting, still apart
+  window's downloads are saved like any other and survive BMD closing or restarting, still apart
   from normal windows' downloads (a saved private-window mark; their cookies never saved); a
   private window's video never falls back to Cookies for video sites, after a restart either
 - ✅ CodeQL reads the Rust, the extension's JavaScript and the workflows on every pull request,
@@ -1561,11 +1561,11 @@ These ship in the next version.
   (rmcp) is updated to 3.9.0
 - ✅ Dependency updates leave the font parser to move with the drawing library
 - ✅ Website: Linux is called supported everywhere (no longer "experimental" or "to try"; macOS
-  still is); the download page's **Get it safely** lists the official places to get MDM, how to
+  still is); the download page's **Get it safely** lists the official places to get BMD, how to
   check a download's checksum and signature, and why Windows or an antivirus may warn; the home
   page shows the browser stores' and GitHub's figures and what reviewers wrote, quoted exactly;
   a new [Press and mentions](https://misterdownloadmanager.com/press.html) page lists articles and
-  videos by language, the fair criticism of the benchmark, and where MDM is available (official
+  videos by language, the fair criticism of the benchmark, and where BMD is available (official
   first, community packages labelled); the benchmark's figures say they come from a test server
   on the same PC
 - ✅ CI's Linux libraries step retries a slow package mirror instead of timing out
@@ -1573,7 +1573,7 @@ These ship in the next version.
   page (which Windows files are signed, who reviews and approves, privacy), linked from every
   page's footer, the download page and the README; the privacy policy says what the crash
   report window asks GitHub
-- ✅ A magnet link or .torrent file opened with MDM brings no command-line options with it;
+- ✅ A magnet link or .torrent file opened with BMD brings no command-line options with it;
   Refresh download address opens web pages only
 
 ## Being worked on
@@ -1584,8 +1584,8 @@ These ship in a later version, when they're ready.
 
 - 🔄 **Add torrent**: a **Rename** row (main name and extension) to rename a single-file torrent or a multi-file torrent's folder before the download starts ([#517](https://github.com/anefzaoui/misterdownloadmanager/issues/517)): in review
 - 🔄 Linux, what's left ([#164](https://github.com/anefzaoui/misterdownloadmanager/issues/164)):
-  screen readers (Orca) reading MDM's windows; browsers installed as a Flatpak (Firefox from
-  Flathub may reach MDM through the desktop, as the Snap does: to check); native Wayland windows
+  screen readers (Orca) reading BMD's windows; browsers installed as a Flatpak (Firefox from
+  Flathub may reach BMD through the desktop, as the Snap does: to check); native Wayland windows
   placing their menus, which needs popup windows the window library doesn't have yet, so
   XWayland stays the default unless X11's windows would be scaled up (#624); Vulkan as the
   default renderer (below)
@@ -1596,7 +1596,7 @@ These ship in a later version, when they're ready.
 - 🔍 Linux on native Wayland: while the main window is out of sight (on another workspace), the
   other windows (Download File Info, Download complete, the dialogs) don't open or don't answer
   until it is shown again, as the compositor doesn't let a window it isn't showing redraw and
-  every dialog is drawn with the main window; the fix is in MDM's copy of the window library
+  every dialog is drawn with the main window; the fix is in BMD's copy of the window library
   (eframe), to come with it
 - 🔍 A look-up that waits 20 s on a video server the network doesn't answer
   ([#1053](https://github.com/anefzaoui/misterdownloadmanager/issues/1053))
@@ -1604,10 +1604,10 @@ These ship in a later version, when they're ready.
   download that was already under way, a rename or move when one finishes, and links added
   without Download File Info still wait for it (follows
   [#743](https://github.com/anefzaoui/misterdownloadmanager/issues/743))
-- 🔍 A site's bot check refusing MDM's request (testfile.org, a Cloudflare challenge): the
+- 🔍 A site's bot check refusing BMD's request (testfile.org, a Cloudflare challenge): the
   message now says so ([#376](https://github.com/anefzaoui/misterdownloadmanager/issues/376)); a
   way to hand the download back to the browser is still to decide
-- 🔍 The window not answering for up to half a minute just after the computer wakes, while MDM
+- 🔍 The window not answering for up to half a minute just after the computer wakes, while BMD
   waits in the notification area ([#574](https://github.com/anefzaoui/misterdownloadmanager/issues/574),
   [#613](https://github.com/anefzaoui/misterdownloadmanager/issues/613),
   [#304](https://github.com/anefzaoui/misterdownloadmanager/issues/304)): no longer reported as

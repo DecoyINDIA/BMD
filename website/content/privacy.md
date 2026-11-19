@@ -1,7 +1,7 @@
 ---
 title: Privacy policy
-description: What iDM, its browser extension and this website do with your data: the app and extension collect nothing; the website counts visits with Statcounter.
-lede: Short version: the iDM app and its browser extension don't collect anything about you. No accounts, no analytics, no telemetry, no ads. This website counts its visits with Statcounter.
+description: What BMD, its browser extension and this website do with your data: the app and extension collect nothing; the website counts visits with Statcounter.
+lede: Short version: the BMD app and its browser extension don't collect anything about you. No accounts, no analytics, no telemetry, no ads. This website counts its visits with Statcounter.
 fine: Last updated {{TODAY}} · applies to the app, the browser extension and misterdownloadmanager.com
 priority: 0.4
 ---
@@ -14,12 +14,12 @@ priority: 0.4
 - This **website** counts visits with **Statcounter**, which sets a cookie and sees your IP address; it runs only on the website, never in the app.
 - The app talks to **the servers you download from**, to **GitHub** to check for updates when it starts (you can turn that off), and to GitHub again for **yt-dlp and ffmpeg** if you download videos.
 - **Torrents** are peer to peer: other people in a torrent's swarm see your IP address, as with every torrent client.
-- The **browser extension** talks only to iDM on your own computer.
+- The **browser extension** talks only to BMD on your own computer.
 - Your download list and settings stay **on your computer**.
 
 </div>
 
-iDM ("iDM") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at [github.com/anefzaoui/misterdownloadmanager]({{REPO}}), you don't have to take this page's word for it: every network connection described here can be checked in the code.
+BMD ("BMD") is free, open-source software made by Ahmed Nefzaoui and contributors. Because its whole source code is public at [github.com/anefzaoui/misterdownloadmanager]({{REPO}}), you don't have to take this page's word for it: every network connection described here can be checked in the code.
 
 ## The app
 
@@ -29,51 +29,51 @@ Your download list, settings, logins you save in **Sites Logins**, the history o
 
 ### Who the app talks to, and why
 
-- **The servers you download from.** To download a file, iDM connects to the server that holds it and sends what any browser would: the request, and the cookies, referrer and browser identification the extension passed along, so downloads that need you to be signed in keep working. Those servers see your IP address, as they would if your browser downloaded the file.
-- **Your proxy**, if you set one in **Options → Proxy / Socks**, and your network's proxy auto-config script, if you point iDM at one.
-- **GitHub, to check for updates.** Each time it starts, and once a day while it stays open, iDM asks GitHub's public API for the latest release of iDM (`api.github.com/repos/anefzaoui/misterdownloadmanager/releases/latest`). The request carries iDM's version in its User-Agent and nothing else. Turn the check off in **Help → Check for updates** (**Check for updates at every start**). If you choose **Update now**, iDM downloads the new version's file and its signed checksum list from the same GitHub release. GitHub's own privacy statement applies to these requests.
-- **GitHub, for video helpers.** If you use **Download video from a page**, iDM downloads yt-dlp (and ffmpeg, if you want merged qualities) from their official GitHub releases, checks them, and once per session asks GitHub whether yt-dlp has a newer release. yt-dlp then talks to the video site you asked for, as your browser would.
-- **GitHub, after a crash.** When iDM crashes or freezes, the report window may download that version's debugging symbols from iDM's GitHub release, so the report can say where in iDM's code it happened, and asks GitHub's search whether the same problem was reported already. The search carries only the report's signature, the kind of problem and the name of the function in iDM's code (such as `freeze in misterdownloadmanager::winui::combo_edit`). The report itself goes nowhere unless you send it.
-- **Torrent peers and trackers.** When you download a torrent, iDM connects to the trackers listed in the torrent, to the BitTorrent DHT network and to other peers, who see your IP address and which pieces you have. To accept connections it may ask your router to open a port (UPnP). This is how BitTorrent works; it ends when the torrent stops.
-- **Your AI assistant, only if you connect one.** iDM's MCP server (`misterdownloadmanager-mcp`) talks only to the iDM on your computer. But if you add it to an AI assistant (Claude, Cursor, VS Code…) and turn on the automation API, the assistant can read your download list, and what it reads (file names, addresses, folders) goes to that assistant's AI service, under its privacy terms. Nothing of this happens unless you set it up; see [AI assistants](/help/ai-assistants.html).
+- **The servers you download from.** To download a file, BMD connects to the server that holds it and sends what any browser would: the request, and the cookies, referrer and browser identification the extension passed along, so downloads that need you to be signed in keep working. Those servers see your IP address, as they would if your browser downloaded the file.
+- **Your proxy**, if you set one in **Options → Proxy / Socks**, and your network's proxy auto-config script, if you point BMD at one.
+- **GitHub, to check for updates.** Each time it starts, and once a day while it stays open, BMD asks GitHub's public API for the latest release of BMD (`api.github.com/repos/anefzaoui/misterdownloadmanager/releases/latest`). The request carries BMD's version in its User-Agent and nothing else. Turn the check off in **Help → Check for updates** (**Check for updates at every start**). If you choose **Update now**, BMD downloads the new version's file and its signed checksum list from the same GitHub release. GitHub's own privacy statement applies to these requests.
+- **GitHub, for video helpers.** If you use **Download video from a page**, BMD downloads yt-dlp (and ffmpeg, if you want merged qualities) from their official GitHub releases, checks them, and once per session asks GitHub whether yt-dlp has a newer release. yt-dlp then talks to the video site you asked for, as your browser would.
+- **GitHub, after a crash.** When BMD crashes or freezes, the report window may download that version's debugging symbols from BMD's GitHub release, so the report can say where in BMD's code it happened, and asks GitHub's search whether the same problem was reported already. The search carries only the report's signature, the kind of problem and the name of the function in BMD's code (such as `freeze in bmd::winui::combo_edit`). The report itself goes nowhere unless you send it.
+- **Torrent peers and trackers.** When you download a torrent, BMD connects to the trackers listed in the torrent, to the BitTorrent DHT network and to other peers, who see your IP address and which pieces you have. To accept connections it may ask your router to open a port (UPnP). This is how BitTorrent works; it ends when the torrent stops.
+- **Your AI assistant, only if you connect one.** BMD's MCP server (`bmd-mcp`) talks only to the BMD on your computer. But if you add it to an AI assistant (Claude, Cursor, VS Code…) and turn on the automation API, the assistant can read your download list, and what it reads (file names, addresses, folders) goes to that assistant's AI service, under its privacy terms. Nothing of this happens unless you set it up; see [AI assistants](/help/ai-assistants.html).
 
 From version 0.5.0, only if you choose them:
 
-- **The DNS you choose.** With a DNS other than the system's in **Options → Connection → DNS** (Cloudflare, Google, Quad9, AdGuard, NextDNS or your own), iDM asks it, over HTTPS, TLS or TCP, for the addresses of the servers it downloads from. That service sees those names and your IP address, under its own privacy terms.
+- **The DNS you choose.** With a DNS other than the system's in **Options → Connection → DNS** (Cloudflare, Google, Quad9, AdGuard, NextDNS or your own), BMD asks it, over HTTPS, TLS or TCP, for the addresses of the servers it downloads from. That service sees those names and your IP address, under its own privacy terms.
 - **Your debrid accounts.** A link or torrent you send through a Real-Debrid, AllDebrid, Premiumize or Mega-Debrid account in **Options → Accounts** goes to that service, which then serves the file. Its sign-in stays on your computer, with the passwords above.
-- **Codeberg, for gallery-dl.** If you download an image gallery, iDM installs gallery-dl from its official releases on Codeberg and checks its author's signature; gallery-dl then talks to the site you asked for.
-- **Link sites, for Click'n'Load.** Off until you turn it on in **Options → Archives and Link grabber**: then iDM listens on port 9666 of this computer only. The first time a site sends links iDM asks whether to allow it; what an allowed site sends opens in Link grabber, where nothing is looked up or downloaded until you add it. Links to this computer or your own network are left out.
-- **A torrent IP blocklist**, if you give one: iDM fetches it from the address you entered, again every 7 days.
-- **Your own devices, for the remote control.** Off until you turn it on in **Options → Remote**: then iDM answers, over HTTPS on your local network, only the phones and computers you paired with its code.
+- **Codeberg, for gallery-dl.** If you download an image gallery, BMD installs gallery-dl from its official releases on Codeberg and checks its author's signature; gallery-dl then talks to the site you asked for.
+- **Link sites, for Click'n'Load.** Off until you turn it on in **Options → Archives and Link grabber**: then BMD listens on port 9666 of this computer only. The first time a site sends links BMD asks whether to allow it; what an allowed site sends opens in Link grabber, where nothing is looked up or downloaded until you add it. Links to this computer or your own network are left out.
+- **A torrent IP blocklist**, if you give one: BMD fetches it from the address you entered, again every 7 days.
+- **Your own devices, for the remote control.** Off until you turn it on in **Options → Remote**: then BMD answers, over HTTPS on your local network, only the phones and computers you paired with its code.
 
-The server's country that **Download File Info** and the progress window show comes from a table inside iDM: no address is sent anywhere to look it up.
+The server's country that **Download File Info** and the progress window show comes from a table inside BMD: no address is sent anywhere to look it up.
 
-iDM has **no analytics, no automatic crash reporting, no telemetry and no advertising** (a crash report goes only where you send it yourself). It never sends us your download list, the addresses you download, or anything else.
+BMD has **no analytics, no automatic crash reporting, no telemetry and no advertising** (a crash report goes only where you send it yourself). It never sends us your download list, the addresses you download, or anything else.
 
 ### Reporting a problem
 
-**Help → Report a problem** opens GitHub's bug report form in your browser with iDM's version, your system and its version, how iDM was installed and your language filled in. Nothing is sent until you choose to submit it on GitHub, where it becomes public; read it before you post.
+**Help → Report a problem** opens GitHub's bug report form in your browser with BMD's version, your system and its version, how BMD was installed and your language filled in. Nothing is sent until you choose to submit it on GitHub, where it becomes public; read it before you post.
 
 ### The automation API
 
-The automation API is off by default. When you turn it on, it listens only on `127.0.0.1` (your own computer) and answers only programs that present the secret token from iDM's data folder.
+The automation API is off by default. When you turn it on, it listens only on `127.0.0.1` (your own computer) and answers only programs that present the secret token from BMD's data folder.
 
 ## The browser extension
 
-The **iDM** extension for Chrome, Edge, Brave, Opera, Vivaldi and Firefox:
+The **BMD** extension for Chrome, Edge, Brave, Opera, Vivaldi and Firefox:
 
-- When you start a download that iDM should take, it passes **the download's address (and where its redirects led), the page it came from, the site's cookies for that address, your browser's User-Agent, and the file's name, size and type** to iDM on your computer, through the browser's native-messaging channel. Nothing goes over the internet.
-- Once you switch on **Send downloads through this browser's proxy or VPN extension** in its popup (Firefox asks you first), when the browser uses a proxy for a download (set by a VPN or proxy extension, or in its settings), the extension passes **the proxy's address**, or its **proxy auto-config script**, so iDM downloads through the same proxy. It never reads or passes the proxy's login. It notes only that a proxy asked for one, so iDM can tell you it can't use that proxy. Switched off (as installed), it reads nothing of the browser's proxy.
-- When a download comes from a form you submitted, it passes **the form's data** too, so iDM can submit it again. It notes the data of forms you submit (in memory, used for two minutes at most, never stored) only for that.
-- It notes the addresses of video streams (HLS and DASH playlists) a page's player loads, in memory for that tab, so the **Download video** button can pass the stream on. Its button reads the page only to find video and sound players and place itself. Clicking it passes the page's address, the video's address, the page's title, the site's cookies, the page that embeds the player and your browser's User-Agent to iDM.
-- **Download selected links** and **Download all links** read the links of the page (or of your selection) when you choose them, and pass them to iDM with the page's address and its site's cookies.
-- It notes where page loads' redirects started and ended (in memory, for two minutes), so iDM gets the address you clicked, not only where it led.
+- When you start a download that BMD should take, it passes **the download's address (and where its redirects led), the page it came from, the site's cookies for that address, your browser's User-Agent, and the file's name, size and type** to BMD on your computer, through the browser's native-messaging channel. Nothing goes over the internet.
+- Once you switch on **Send downloads through this browser's proxy or VPN extension** in its popup (Firefox asks you first), when the browser uses a proxy for a download (set by a VPN or proxy extension, or in its settings), the extension passes **the proxy's address**, or its **proxy auto-config script**, so BMD downloads through the same proxy. It never reads or passes the proxy's login. It notes only that a proxy asked for one, so BMD can tell you it can't use that proxy. Switched off (as installed), it reads nothing of the browser's proxy.
+- When a download comes from a form you submitted, it passes **the form's data** too, so BMD can submit it again. It notes the data of forms you submit (in memory, used for two minutes at most, never stored) only for that.
+- It notes the addresses of video streams (HLS and DASH playlists) a page's player loads, in memory for that tab, so the **Download video** button can pass the stream on. Its button reads the page only to find video and sound players and place itself. Clicking it passes the page's address, the video's address, the page's title, the site's cookies, the page that embeds the player and your browser's User-Agent to BMD.
+- **Download selected links** and **Download all links** read the links of the page (or of your selection) when you choose them, and pass them to BMD with the page's address and its site's cookies.
+- It notes where page loads' redirects started and ended (in memory, for two minutes), so BMD gets the address you clicked, not only where it led.
 - A small script in every page notes only the links you click while holding **Alt**, so those downloads stay with the browser; the addresses are kept in memory for a few seconds.
-- Every message to iDM also says which browser it comes from (its name, as the browser tells it) and the extension's version.
-- It stores its own settings (paused or not, iDM's file types and excluded sites, its connection status, where you dragged the video button on each of the last 200 sites; nothing from private windows) in the browser's extension storage, on your computer.
+- Every message to BMD also says which browser it comes from (its name, as the browser tells it) and the extension's version.
+- It stores its own settings (paused or not, BMD's file types and excluded sites, its connection status, where you dragged the video button on each of the last 200 sites; nothing from private windows) in the browser's extension storage, on your computer.
 - It has **no remote code, no analytics and no ads**, and sends nothing to us or anyone else.
 
-Its permissions, and why: *downloads* to see and hand over downloads; *cookies* so signed-in downloads work in iDM; *nativeMessaging* to talk to iDM; *contextMenus* for the right-click items; *storage* for its settings; *webRequest* to see forms submitted and video streams loaded (it changes nothing); *declarativeNetRequestWithHostAccess* (Chrome, Edge and other Chromium browsers) to have the files the browser would open (a PDF) downloaded instead, for the types iDM takes; in Firefox, *webRequestBlocking* does that; *scripting* to read a page's links when you ask, and to add the video button to pages already open when the extension is installed; *proxy* to read which proxy the browser uses, so downloads taken from a browser behind a VPN or proxy extension go through it too, only while you have that switched on in the popup (it never changes the browser's proxy; in Firefox it is optional, asked for when you switch it on; Chrome and the other Chromium browsers can't make it optional, and count it under the access to all sites); access to all sites because downloads and videos can come from any site.
+Its permissions, and why: *downloads* to see and hand over downloads; *cookies* so signed-in downloads work in BMD; *nativeMessaging* to talk to BMD; *contextMenus* for the right-click items; *storage* for its settings; *webRequest* to see forms submitted and video streams loaded (it changes nothing); *declarativeNetRequestWithHostAccess* (Chrome, Edge and other Chromium browsers) to have the files the browser would open (a PDF) downloaded instead, for the types BMD takes; in Firefox, *webRequestBlocking* does that; *scripting* to read a page's links when you ask, and to add the video button to pages already open when the extension is installed; *proxy* to read which proxy the browser uses, so downloads taken from a browser behind a VPN or proxy extension go through it too, only while you have that switched on in the popup (it never changes the browser's proxy; in Firefox it is optional, asked for when you switch it on; Chrome and the other Chromium browsers can't make it optional, and count it under the access to all sites); access to all sites because downloads and videos can come from any site.
 
 ## This website
 
@@ -95,7 +95,7 @@ The app and the extension hold no personal data about you, so there is nothing f
 
 ## Changes
 
-If iDM or this website ever needs to use a new service, this page will say so first, and the change will be listed in [What's new](/news.html). Past versions of this page are in the project's history on GitHub.
+If BMD or this website ever needs to use a new service, this page will say so first, and the change will be listed in [What's new](/news.html). Past versions of this page are in the project's history on GitHub.
 
 ## Questions
 

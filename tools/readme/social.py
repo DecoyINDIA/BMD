@@ -37,9 +37,9 @@ def main():
     card.paste(shot, (x0, y0), mask)
 
     # The words, upper left.
-    icon = Image.open(ROOT / "art/Mister Download Manager.png").convert("RGBA").resize((112, 112), Image.LANCZOS)
+    icon = Image.open(ROOT / "art/Black Marlin Downloader.png").convert("RGBA").resize((112, 112), Image.LANCZOS)
     card.paste(icon, (64, 56), icon)
-    draw.text((196, 58), "iDM", font=font("segoeuib.ttf", 56), fill=INK)
+    draw.text((196, 58), "Black Marlin Downloader", font=font("segoeuib.ttf", 56), fill=INK)
     draw.text((198, 132), "Download files, videos, and torrents.", font=font("segoeui.ttf", 34), fill=ACCENT)
     draw.text((66, 196), "Windows and Linux  ·  Experimental macOS support",
               font=font("segoeui.ttf", 24), fill=MUTED)

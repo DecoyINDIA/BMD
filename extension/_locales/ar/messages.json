@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "يسلم التنزيلات من المستعرض إلى iDM."
+    "message": "يسلم التنزيلات من المستعرض إلى BMD."
   },
   "menu": {
-    "message": "تنزيل باستخدام iDM"
+    "message": "تنزيل باستخدام BMD"
   },
   "video_download": {
     "message": "تنزيل الفيديو"
@@ -30,19 +30,19 @@
     "message": "إعدادات الزر..."
   },
   "video_sent": {
-    "message": "تم الإرسال إلى iDM"
+    "message": "تم الإرسال إلى BMD"
   },
   "menu_selected": {
-    "message": "تنزيل الروابط المحددة باستخدام iDM"
+    "message": "تنزيل الروابط المحددة باستخدام BMD"
   },
   "menu_all": {
-    "message": "تنزيل جميع الروابط باستخدام iDM"
+    "message": "تنزيل جميع الروابط باستخدام BMD"
   },
   "status_connected": {
-    "message": "متصل بـ iDM"
+    "message": "متصل بـ BMD"
   },
   "status_connected_version": {
-    "message": "متصل بـ iDM $version$",
+    "message": "متصل بـ BMD $version$",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "متوقف مؤقتا: تبقى التنزيلات مع المستعرض"
   },
   "status_not_installed": {
-    "message": "لم يتم تثبيت iDM، أو لم يتم إعداد الربط بالمستعرض الخاص به"
+    "message": "لم يتم تثبيت BMD، أو لم يتم إعداد الربط بالمستعرض الخاص به"
   },
   "status_forbidden": {
-    "message": "لا يقبل iDM هذه النسخة من الملحق"
+    "message": "لا يقبل BMD هذه النسخة من الملحق"
   },
   "status_not_running": {
-    "message": "لم يبدأ iDM في الوقت المحدد"
+    "message": "لم يبدأ BMD في الوقت المحدد"
   },
   "status_host_failed": {
-    "message": "فشل الاتصال بـ iDM"
+    "message": "فشل الاتصال بـ BMD"
   },
   "status_too_large": {
     "message": "كانت تفاصيل هذا التنزيل كبيرة جدا بحيث لا يمكن تسليمها"
   },
   "status_update_app": {
-    "message": "قم بتحديث iDM لاستخدام كل ما يوفره هذا الملحق"
+    "message": "قم بتحديث BMD لاستخدام كل ما يوفره هذا الملحق"
   },
   "popup_take": {
     "message": "تلقي التنزيلات من هذا المستعرض"
@@ -78,10 +78,10 @@
     "message": "إرسال التنزيلات عبر وكيل هذا المستعرض أو ملحق VPN"
   },
   "popup_proxy_title": {
-    "message": "يجري iDM التنزيل بعد ذلك عبر الوكيل نفسه الذي يستخدمه هذا المستعرض. يطلب منك المستعرض مرة واحدة السماح بذلك؛ وإيقاف هذا يلغي ذلك."
+    "message": "يجري BMD التنزيل بعد ذلك عبر الوكيل نفسه الذي يستخدمه هذا المستعرض. يطلب منك المستعرض مرة واحدة السماح بذلك؛ وإيقاف هذا يلغي ذلك."
   },
   "popup_proxy_title_chromium": {
-    "message": "يجري iDM التنزيل بعد ذلك عبر الوكيل نفسه الذي يستخدمه هذا المستعرض. عندما يكون هذا الخيار متوقفا، لا يقرأ الملحق وكيل المستعرض."
+    "message": "يجري BMD التنزيل بعد ذلك عبر الوكيل نفسه الذي يستخدمه هذا المستعرض. عندما يكون هذا الخيار متوقفا، لا يقرأ الملحق وكيل المستعرض."
   },
   "popup_exclude_site": {
     "message": "عدم التقاط التنزيلات من $site$ أبدا",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "فتح iDM"
+    "message": "فتح BMD"
   },
   "popup_options": {
     "message": "خيارات..."
@@ -114,7 +114,7 @@
     "message": "تعليمات"
   },
   "popup_support": {
-    "message": "ادعم iDM"
+    "message": "ادعم BMD"
   },
   "popup_fix": {
     "message": "كيفية إصلاحها"
@@ -150,7 +150,7 @@
     "message": "استخدام الربط المتقدم بالمستعرض معطل في خيارات ← عام."
   },
   "declined_torrents": {
-    "message": "إنه تورنت، وخيار «فتح روابط مغناطيسية وملفات .torrent باستخدام iDM» متوقف في إعدادات التورنت."
+    "message": "إنه تورنت، وخيار «فتح روابط مغناطيسية وملفات .torrent باستخدام BMD» متوقف في إعدادات التورنت."
   },
   "declined_site_access": {
     "message": "لا يسمح للملحق بقراءة هذا الموقع (وصول الملحق إلى الموقع)."
@@ -195,16 +195,16 @@
     "message": "لا يوجد فيديو للتنزيل هنا"
   },
   "video_playlist": {
-    "message": "قائمة فيديوهات: اختر منها في iDM"
+    "message": "قائمة فيديوهات: اختر منها في BMD"
   },
   "video_no_ytdlp": {
-    "message": "يحتاج iDM إلى yt-dlp لهذا الفيديو"
+    "message": "يحتاج BMD إلى yt-dlp لهذا الفيديو"
   },
   "video_too_long": {
     "message": "استغرق البحث وقتا طويلا"
   },
   "video_busy": {
-    "message": "iDM مشغول بفيديوهات أخرى"
+    "message": "BMD مشغول بفيديوهات أخرى"
   },
   "video_queued": {
     "message": "تمت الإضافة إلى قائمة الانتظار"
@@ -228,7 +228,7 @@
     "message": "هذا الكمبيوتر"
   },
   "popup_send_remote": {
-    "message": "iDM آخر (خادم)"
+    "message": "BMD آخر (خادم)"
   },
   "popup_remote_code": {
     "message": "رمز الإقران"
@@ -240,7 +240,7 @@
     "message": "إقران"
   },
   "popup_remote_help": {
-    "message": "افتح عنوانه مرة واحدة واقبل شهادته، ثم أدخل رمزا من خياراته، عن بعد، إقران جهاز (أو misterdownloadmanager-cli pair)."
+    "message": "افتح عنوانه مرة واحدة واقبل شهادته، ثم أدخل رمزا من خياراته، عن بعد، إقران جهاز (أو bmd-cli pair)."
   },
   "status_remote": {
     "message": "تنتقل التنزيلات إلى $address$",
@@ -297,19 +297,19 @@
     "message": "نزل أفضل جودة"
   },
   "video_sending": {
-    "message": "قيد الإرسال إلى iDM..."
+    "message": "قيد الإرسال إلى BMD..."
   },
   "video_added": {
-    "message": "أضيف إلى iDM"
+    "message": "أضيف إلى BMD"
   },
   "video_show": {
     "message": "إظهار"
   },
   "video_no_answer": {
-    "message": "لم يستجب iDM"
+    "message": "لم يستجب BMD"
   },
-  "video_get_mdm": {
-    "message": "احصل على iDM"
+  "video_get_bmd": {
+    "message": "احصل على BMD"
   },
   "video_retry": {
     "message": "أعد المحاولة"
@@ -324,7 +324,7 @@
     "message": "كل الجودات والترجمات..."
   },
   "video_failed": {
-    "message": "لم يتم تثبيت iDM أو لم يبدأ"
+    "message": "لم يتم تثبيت BMD أو لم يبدأ"
   },
   "video_download_best": {
     "message": "تنزيل بأفضل جودة"

@@ -1,65 +1,54 @@
-# Run iDM on a server
+# Run BMD on a server
 
-Run iDM on a home server or a NAS (Docker, Unraid, any Linux machine) without
+Run BMD on a home server or a NAS (Docker, Unraid, any Linux machine) without
 a window, and send it downloads from your phone or your browser: the server downloads them into
 its own folders, such as a network share.
 
-It is the same iDM as on a desktop: its list, categories, queues, Scheduler, speed limits and
+It is the same BMD as on a desktop: its list, categories, queues, Scheduler, speed limits and
 torrents. You control it with the [remote control's page](remote-control.md) (from any phone or
 computer on your network), the browser extension pointed at it, or its command line.
 
 > **New:** the server mode is new in this version. Please
-> [tell us how it goes](https://github.com/DecoyINDIA/iDM/issues).
+> [tell us how it goes](https://github.com/DecoyINDIA/BMD/issues).
 
 ## With Docker
 
-The existing GitHub Container Registry images are for the upstream project. To run iDM, build the image from source below. Upstream images are available for x86-64:
+Build the BMD image from source:
 
 ```sh
-docker pull ghcr.io/anefzaoui/misterdownloadmanager:<version>
-# or the latest release:
-docker pull ghcr.io/anefzaoui/misterdownloadmanager:latest
-```
-
-Or build the image yourself from iDM's source:
-
-```sh
-git clone https://github.com/DecoyINDIA/iDM
-cd iDM
-docker build -t misterdownloadmanager .
+git clone https://github.com/DecoyINDIA/BMD bmd
+cd bmd
+docker build -t bmd .
 ```
 
 The first build is long (up to an hour on a small server: the whole program is optimised as
-one). The image is small, about 175 MB: Debian's slim base, iDM's two programs and the
-certificates downloads are checked against. It needs no desktop libraries: iDM loads those only
+one). The image is small, about 175 MB: Debian's slim base, BMD's two programs and the
+certificates downloads are checked against. It needs no desktop libraries: BMD loads those only
 to open a window, which a server never does.
 
 Then run it, with a folder for its settings and one for the downloads. Make both folders first,
-as the user iDM will run as: a folder Docker makes for you belongs to `root`, and iDM can't use it.
+as the user BMD will run as: a folder Docker makes for you belongs to `root`, and BMD can't use it.
 
 ```sh
-mkdir -p /srv/mdm-config /srv/downloads
-docker run -d --name mdm --restart unless-stopped \
+mkdir -p /srv/bmd-config /srv/downloads
+docker run -d --name bmd --restart unless-stopped \
   -p 8463:8463 \
-  -v /srv/mdm-config:/config \
+  -v /srv/bmd-config:/config \
   -v /srv/downloads:/downloads \
   --user "$(id -u):$(id -g)" \
-  ghcr.io/anefzaoui/misterdownloadmanager:<version>
+  bmd
 ```
-
-(Replace `ghcr.io/anefzaoui/misterdownloadmanager:<version>` with `misterdownloadmanager` if
-you built the image yourself.)
 
 - `/config` keeps the list, the settings, the certificate and the paired devices.
 - `/downloads` is where files land: each category has its folder inside (`Music`, `Video`,
   `Torrents`…). Mount a network share there to download straight onto it.
-- `--user`: the user that owns those folders (iDM runs as no particular user).
+- `--user`: the user that owns those folders (BMD runs as no particular user).
 
 [docker/compose.yml](../docker/compose.yml) does the same with Docker Compose.
 
 ## Pair your phone
 
-`docker logs mdm` shows the address to open and, while no device is paired, a pairing code with a
+`docker logs bmd` shows the address to open and, while no device is paired, a pairing code with a
 QR code:
 
 ```text
@@ -68,25 +57,25 @@ Its certificate's SHA-256 fingerprint: DE:26:7F:…
 No device is paired yet. Open the address (or scan this) and enter the code 1037 1606 …
 ```
 
-Inside a container, the address iDM finds is the container's own: give it the one you open, the
+Inside a container, the address BMD finds is the container's own: give it the one you open, the
 **server's** address with the port you published, as `-e MDM_REMOTE_URL=https://192.168.1.10:8463/`,
 and the log and the QR code show that one. Then pair as
-[Control iDM from your phone](remote-control.md#pair-your-phone) says. For another code, at any
+[Control BMD from your phone](remote-control.md#pair-your-phone) says. For another code, at any
 time:
 
 ```sh
-docker exec mdm misterdownloadmanager-cli pair
+docker exec bmd bmd-cli pair
 ```
 
-To open the page by the server's name (`https://nas.local:8463/`), give iDM that name:
+To open the page by the server's name (`https://nas.local:8463/`), give BMD that name:
 `-e MDM_REMOTE_HOSTS=nas.local` (several: separated by commas). Other names are refused, so that
-no web page can reach iDM through a name of its own.
+no web page can reach BMD through a name of its own.
 
 ## On Unraid
 
 [docker/unraid.xml](../docker/unraid.xml) is a template: copy it to
 `/boot/config/plugins/dockerMan/templates-user/` on the flash drive, then **Docker → Add
-Container** and pick **misterdownloadmanager**. It maps `/config` to `appdata`, `/downloads` to a
+Container** and pick **bmd**. It maps `/config` to `appdata`, `/downloads` to a
 share, the port 8463, and runs as `nobody:users` (99:100), as Unraid's shares expect. The image
 must be built first (above), on the server or pushed to a registry you use. If the container's
 log says a folder belongs to another user, give it to `nobody:users` once:
@@ -94,10 +83,10 @@ log says a folder belongs to another user, give it to `nobody:users` once:
 
 ## Without Docker
 
-On any Linux machine with iDM installed (the `.deb`, `.rpm`, AppImage or `tar.gz`):
+On any Linux machine with BMD installed (the `.deb`, `.rpm`, AppImage or `tar.gz`):
 
 ```sh
-misterdownloadmanager --headless --data ~/mdm-server --downloads /srv/downloads
+bmd --headless --data ~/bmd-server --downloads /srv/downloads
 ```
 
 | Flag | Or the variable | What it sets |
@@ -113,15 +102,15 @@ The remote control is on in this mode (`MDM_REMOTE=off` turns it off). It stops 
 its list, when the system stops it (`docker stop`, systemd, Ctrl+C). It works on Windows and
 macOS too, the same way.
 
-The command line talks to it as to a desktop iDM, with the same data folder:
-`MDM_DATA_DIR=~/mdm-server misterdownloadmanager-cli status` (once `api on`), `pair`, and adding
-an address: `misterdownloadmanager /d https://example.com/file.zip`.
+The command line talks to it as to a desktop BMD, with the same data folder:
+`MDM_DATA_DIR=~/bmd-server bmd-cli status` (once `api on`), `pair`, and adding
+an address: `bmd /d https://example.com/file.zip`.
 
 ## Send downloads from your browser
 
-In the browser extension's menu, **Send downloads to → Another iDM (a server)**: type the server's address,
+In the browser extension's menu, **Send downloads to → Another BMD (a server)**: type the server's address,
 open it once in that browser to accept its certificate, then enter a pairing code (`pair`
-above). Downloads the extension catches, and **Download with iDM** on a link,
+above). Downloads the extension catches, and **Download with BMD** on a link,
 then go to the server instead of this computer. The browser's cookies are not sent to the server:
 a download that needs you to be signed in to a site stays with this computer.
 

@@ -1,4 +1,4 @@
-﻿; iDM's installer in Icelandic: tools/installer/languages.py
+﻿; BMD's installer in Icelandic: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Afskrái %1.
 
 [CustomMessages]
 TaskBrowser=Setja upp samþættingu við &vafra (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Opna .&torrent skrár og segultengla með iDM
-TaskStartup=Ræsa iDM þegar &Windows ræsir
+TaskTorrents=Opna .&torrent skrár og segultengla með BMD
+TaskStartup=Ræsa BMD þegar &Windows ræsir
 TaskGroupOther=Annað:
-Launch=Ræsa iDM
+Launch=Ræsa BMD
 KeepData=Eyða líka niðurhalslistanum þínum og stillingum?%n%nNiðurhalaðar skrár þínar verða ekki snertar hvort sem er.

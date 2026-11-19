@@ -1,4 +1,4 @@
-//! The only Windows FFI in iDM (D-008): IDM's dialog frame for our dialog windows, and the
+//! The only Windows FFI in BMD (D-008): IDM's dialog frame for our dialog windows, and the
 //! shell's own small file-type icons (the ones Explorer and IDM show — Windows' artwork, not IDM's),
 //! and the drop target's OLE `IDropTarget` (`ole`).
 #![allow(unsafe_code)]
@@ -164,7 +164,7 @@ pub fn set_main_window(cc: &eframe::CreationContext<'_>) {
     }
 }
 
-// ---- The session's end (shut down, restart, sign out; an installer closing iDM) ---------------
+// ---- The session's end (shut down, restart, sign out; an installer closing BMD) ---------------
 
 /// Why the session ends, as WM_QUERYENDSESSION and WM_ENDSESSION say (their lParam).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -173,7 +173,7 @@ pub enum SessionEnd {
     ShutDown,
     /// The user signs out.
     SignOut,
-    /// A program closes iDM through the Restart Manager (an installer replacing its files).
+    /// A program closes BMD through the Restart Manager (an installer replacing its files).
     Closed,
 }
 
@@ -225,7 +225,7 @@ unsafe fn watch_session_end(hwnd: HWND, end: OnSessionEnd) {
     unsafe { SetWindowSubclass(hwnd, Some(session_proc), SESSION_SUBCLASS, 0) };
 }
 
-/// iDM never holds the session up: nothing it does then needs the user (a download stops where
+/// BMD never holds the session up: nothing it does then needs the user (a download stops where
 /// it is and resumes at the next start), so it answers yes at once and does its saving when the
 /// end is certain (WM_ENDSESSION), not when another program could still cancel it.
 unsafe extern "system" fn session_proc(
@@ -294,8 +294,8 @@ mod session_end_tests {
         use std::cell::RefCell;
         use std::rc::Rc;
         let ran: Rc<RefCell<Vec<SessionEnd>>> = Rc::default();
-        let class: Vec<u16> = "mdm-session-end-test\0".encode_utf16().collect();
-        let title: Vec<u16> = "mdm session end test\0".encode_utf16().collect();
+        let class: Vec<u16> = "bmd-session-end-test\0".encode_utf16().collect();
+        let title: Vec<u16> = "bmd session end test\0".encode_utf16().collect();
         // SAFETY: a class with the system's own procedure and a hidden window of it on this
         // thread, destroyed below; NUL-terminated strings; messages sent to it.
         unsafe {
@@ -370,8 +370,8 @@ fn own_window(title: &str, known: Option<HWND>) -> Option<HWND> {
 
 /// The address a connection to `dst` would leave from (PAC's `myIpAddress`), asked of the
 /// routing table (GetBestRoute2). No socket is opened: a UDP socket, the usual way to ask, is a
-/// listening socket to Windows' firewall, which would ask the user about iDM. Installed as the
-/// engine's lookup at start (`mdm_engine::net::set_source_lookup`); unix.rs has none (the
+/// listening socket to Windows' firewall, which would ask the user about BMD. Installed as the
+/// engine's lookup at start (`bmd_engine::net::set_source_lookup`); unix.rs has none (the
 /// engine's UDP way raises no prompt there).
 pub fn source_address(dst: std::net::IpAddr) -> Option<std::net::IpAddr> {
     use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
@@ -415,7 +415,7 @@ pub fn source_address(dst: std::net::IpAddr) -> Option<std::net::IpAddr> {
     }
 }
 
-/// Off-screen test runs (MDM_OFFSCREEN=1): every top-level window of ours gets WS_EX_NOACTIVATE,
+/// Off-screen test runs (BMD_OFFSCREEN=1): every top-level window of ours gets WS_EX_NOACTIVATE,
 /// so Windows never makes it the foreground window, whatever asks (a click, a dialog coming to
 /// the front, an accessibility client): the user's keystrokes stay in their own window while
 /// tests run. UI Automation still works on them (Select, Invoke, Toggle need no activation).
@@ -573,7 +573,7 @@ pub fn dialog_frame(title: &str, client: [f32; 2], light: bool, scale: f32, owne
         );
         // Owned by the main window, as IDM's dialogs are: no taskbar button, kept above it. Only
         // when asked for (`owned`): Windows brings an owned window's owner forward with it each
-        // time it is activated (by iDM, or by a click on it), so a dialog over another program
+        // time it is activated (by BMD, or by a click on it), so a dialog over another program
         // (the browser's duplicate question) brought the main window up from behind it. One on
         // its own has its own taskbar button.
         if owned && let Some(main) = find_own_window(crate::MAIN_TITLE) {
@@ -1032,7 +1032,7 @@ fn settled_message() -> u32 {
     use windows_sys::Win32::UI::WindowsAndMessaging::RegisterWindowMessageW;
     static ID: std::sync::OnceLock<u32> = std::sync::OnceLock::new();
     *ID.get_or_init(|| {
-        let name: Vec<u16> = "iDM.caption-less.settled\0".encode_utf16().collect();
+        let name: Vec<u16> = "BMD.caption-less.settled\0".encode_utf16().collect();
         // SAFETY: a NUL-terminated string read during the call.
         unsafe { RegisterWindowMessageW(name.as_ptr()) }
     })
@@ -1110,7 +1110,7 @@ fn fading(hwnd: HWND) -> bool {
 /// changes: nothing is measured again, so the window's frame and picture stay as they are. Not
 /// while it has the caption of a minimize, nor taken off one minimized meanwhile (its restore
 /// takes it off). (Shown again, a window appears at once, with Classic too: Windows fades in
-/// none of iDM's windows.)
+/// none of BMD's windows.)
 ///
 /// # Safety
 /// `hwnd` is a window of this thread framed by [`caption_less`] as `kind`.
@@ -1153,7 +1153,7 @@ unsafe fn fade_caption(hwnd: HWND, kind: Drawn, on: bool) {
 /// DWM's own frame off (`caption`) or back on a window framed by [`caption_less`] for as long as it
 /// has the caption style of an animation or a fade, on Windows 10: there DWM draws the caption
 /// style's title bar over the window's for those frames, a white (or accent-coloured) band above
-/// iDM's own title bar (#874). With DWM's frame off, a thin edge shows instead; the window is the
+/// BMD's own title bar (#874). With DWM's frame off, a thin edge shows instead; the window is the
 /// same before and after. Windows 11 draws no such band.
 ///
 /// # Safety
@@ -1731,11 +1731,11 @@ mod caption_less_tests {
         .into_iter()
         .enumerate()
         {
-            let title = format!("mdm caption-less test {n} {}", std::process::id());
+            let title = format!("bmd caption-less test {n} {}", std::process::id());
             let wide: Vec<u16> = title.encode_utf16().chain(Some(0)).collect();
             // A class of its own whose procedure is the system's (a STATIC control answers
             // every hit test as transparent).
-            let class: Vec<u16> = "mdm-caption-less-test\0".encode_utf16().collect();
+            let class: Vec<u16> = "bmd-caption-less-test\0".encode_utf16().collect();
             // SAFETY: a class registered with the system's own procedure, and a hidden window
             // of it on this thread, destroyed below; the strings are NUL-terminated; plain
             // queries and messages to it.
@@ -1951,7 +1951,7 @@ mod find_own_window_tests {
     /// after its file, #540), and never by a title that only starts the same.
     #[test]
     fn a_window_is_found_by_its_whole_title_however_long() {
-        let class: Vec<u16> = "mdm-find-own-window-test\0".encode_utf16().collect();
+        let class: Vec<u16> = "bmd-find-own-window-test\0".encode_utf16().collect();
         // SAFETY: a class registered with the system's own procedure, and hidden windows of it
         // on this thread, destroyed below; the strings are NUL-terminated.
         unsafe {
@@ -1979,7 +1979,7 @@ mod find_own_window_tests {
                 h
             };
             for len in [40, 255, 256, 300, 1000] {
-                let head = format!("mdm find test {} {len} ", std::process::id());
+                let head = format!("bmd find test {} {len} ", std::process::id());
                 let title = format!("{head}{}", "x".repeat(len - head.len()));
                 assert_eq!(title.encode_utf16().count(), len);
                 // One title longer by a unit, made first: found first, were it taken for ours.
@@ -1994,13 +1994,13 @@ mod find_own_window_tests {
         }
     }
 
-    /// #919: a window is given its title without isolates, and found by the title iDM knows it
+    /// #919: a window is given its title without isolates, and found by the title BMD knows it
     /// by, isolates and all.
     #[test]
     fn a_window_titled_without_isolates_is_found() {
         let title = format!(
             "71% {} {}",
-            crate::i18n::isolate("mdm isolate test.zip"),
+            crate::i18n::isolate("bmd isolate test.zip"),
             std::process::id()
         );
         let given = crate::i18n::os_text(&title);
@@ -2017,7 +2017,7 @@ mod find_own_window_tests {
 
     /// A hidden test window of this thread titled `title`, destroyed by the caller.
     fn test_window(title: &str) -> HWND {
-        let class: Vec<u16> = "mdm-find-own-window-test-2\0".encode_utf16().collect();
+        let class: Vec<u16> = "bmd-find-own-window-test-2\0".encode_utf16().collect();
         let t: Vec<u16> = title.encode_utf16().chain(Some(0)).collect();
         // SAFETY: a class registered with the system's own procedure (again: a no-op), and a
         // hidden window of it on this thread; the strings are NUL-terminated.
@@ -2053,7 +2053,7 @@ mod find_own_window_tests {
         let (made, window_made) = std::sync::mpsc::channel();
         let (release, released) = std::sync::mpsc::channel::<()>();
         let busy = std::thread::spawn(move || {
-            let h = test_window(&format!("mdm busy window {pid}"));
+            let h = test_window(&format!("bmd busy window {pid}"));
             made.send(()).unwrap();
             // Busy: no message is taken until the test is done.
             let _ = released.recv();
@@ -2063,7 +2063,7 @@ mod find_own_window_tests {
         window_made.recv().unwrap();
         let (answer, answered) = std::sync::mpsc::channel();
         std::thread::spawn(move || {
-            let _ = answer.send(find_own_window(&format!("mdm no such window {pid}")).is_some());
+            let _ = answer.send(find_own_window(&format!("bmd no such window {pid}")).is_some());
         });
         let got = answered.recv_timeout(std::time::Duration::from_secs(3));
         release.send(()).unwrap();
@@ -2079,7 +2079,7 @@ mod find_own_window_tests {
     #[test]
     fn the_caption_goes_to_dwm_only_when_it_changes() {
         use std::sync::atomic::Ordering::Relaxed;
-        let title = format!("mdm caption test {}", std::process::id());
+        let title = format!("bmd caption test {}", std::process::id());
         let h = test_window(&title);
         let calls = || CAPTION_DWM_CALLS.load(Relaxed);
         let before = calls();
@@ -2141,7 +2141,7 @@ mod come_forward_tests {
     fn above_others_lifts_a_real_window_and_changes_nothing_else() {
         const WINIT_PROGRESS: u32 = 0x04CE_0000;
         const WINIT_EX: u32 = 0x0004_0100;
-        let class: Vec<u16> = "mdm-come-forward-test\0".encode_utf16().collect();
+        let class: Vec<u16> = "bmd-come-forward-test\0".encode_utf16().collect();
         // SAFETY: a class registered with the system's own procedure, and hidden windows of it on
         // this thread, destroyed below; the strings are NUL-terminated; plain queries, and
         // z-order changes of our own windows.
@@ -2151,7 +2151,7 @@ mod come_forward_tests {
             wc.lpszClassName = class.as_ptr();
             RegisterClassW(&wc);
             let make = |n: u32| {
-                let title: Vec<u16> = format!("mdm come-forward test {n} {}", std::process::id())
+                let title: Vec<u16> = format!("bmd come-forward test {n} {}", std::process::id())
                     .encode_utf16()
                     .chain(Some(0))
                     .collect();
@@ -2211,8 +2211,8 @@ mod main_window_tests {
     /// the search by title still answers.
     #[test]
     fn the_known_window_wins_over_its_namesake() {
-        let class: Vec<u16> = "mdm-main-window-test ".encode_utf16().collect();
-        let name = format!("mdm main window test {}", std::process::id());
+        let class: Vec<u16> = "bmd-main-window-test ".encode_utf16().collect();
+        let name = format!("bmd main window test {}", std::process::id());
         let title: Vec<u16> = name.encode_utf16().chain(Some(0)).collect();
         // SAFETY: a class registered with the system's own procedure, and hidden windows of it
         // on this thread, destroyed below; the strings are NUL-terminated.
@@ -2299,7 +2299,7 @@ unsafe extern "system" fn main_minimize_proc(
 }
 
 /// Keep the main window's minimize command in step with "Minimize to the notification area"
-/// (`enabled`: the option is on and a tray shows iDM's icon). Call every frame (cheap once the
+/// (`enabled`: the option is on and a tray shows BMD's icon). Call every frame (cheap once the
 /// window is found). True once after the command came: hide the window now.
 pub fn main_minimize_to_tray(ctx: &egui::Context, enabled: bool) -> bool {
     MAIN_MINIMIZE.with(|m| {
@@ -2328,7 +2328,7 @@ const TRAY_ICON_IDS: u32 = 16;
 /// Shell_NotifyIcon giving up on a busy Explorer, not the shell's answer.
 const TRAY_SLOW: std::time::Duration = std::time::Duration::from_millis(1500);
 
-/// What the shell said of iDM's notification-area icon ([`tray_icon_ask`]).
+/// What the shell said of BMD's notification-area icon ([`tray_icon_ask`]).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TrayAnswer {
     /// No taskbar (no `Shell_TrayWnd` window): Explorer isn't running, or a shell without a
@@ -2354,7 +2354,7 @@ pub enum TrayAnswer {
 ///   before 26200 give an icon behind ^ no place (#750, #718, #754: 0.5.2 asked only this, and
 ///   left the window in the taskbar with the icon there); build 26200 gives it the place of ^.
 ///
-/// `rect_withheld` answers "no place" without asking (MDM_TEST_TRAY_RECT=0: the reporters' case,
+/// `rect_withheld` answers "no place" without asking (BMD_TEST_TRAY_RECT=0: the reporters' case,
 /// on a Windows that gives one).
 pub fn tray_icon_ask(hwnd: isize, known: Option<u32>, rect_withheld: bool) -> TrayAnswer {
     use windows_sys::Win32::UI::WindowsAndMessaging::{FindWindowW, IsHungAppWindow};
@@ -2451,7 +2451,7 @@ pub fn tray_icon_tip(hwnd: isize, id: u32, tip: &str) -> bool {
     unsafe { Shell_NotifyIconW(NIM_MODIFY, &nid) != 0 }
 }
 
-/// The size the notification area draws iDM's icon at, in px, and the taskbar it draws it in (its
+/// The size the notification area draws BMD's icon at, in px, and the taskbar it draws it in (its
 /// window, 0 if none): Windows' small icon size (`SM_CXSMICON`) at the taskbar's DPI (#1161). The
 /// taskbar window's own DPI, not the system's: the system DPI is the main display's scale as it
 /// was when the user signed in, kept until they sign out, while Explorer draws the taskbar at its
@@ -2557,7 +2557,7 @@ pub fn tray_icon_picture(hwnd: isize, id: u32, rgba: &[u8], size: u32) -> Option
 }
 
 /// Whether the window in front (the foreground window, which takes the keyboard) is another
-/// program's: a click outside iDM's windows (the desktop, the taskbar, another program) put it
+/// program's: a click outside BMD's windows (the desktop, the taskbar, another program) put it
 /// there. False while one of ours is in front, and while none is (Windows passing the foreground
 /// on). An open menu closes at once on it (chrome.rs, #859).
 pub fn foreground_is_another_program() -> bool {
@@ -2721,7 +2721,7 @@ mod popup_style_tests {
         .into_iter()
         .enumerate()
         {
-            let title = format!("mdm popup test {n} {}", std::process::id());
+            let title = format!("bmd popup test {n} {}", std::process::id());
             let wide: Vec<u16> = title.encode_utf16().chain(Some(0)).collect();
             let class: Vec<u16> = "STATIC\0".encode_utf16().collect();
             // SAFETY: a hidden window of the system's STATIC class on this thread, destroyed
@@ -2843,8 +2843,8 @@ pub fn popup_window(title: &str, kind: Popup) -> bool {
     // SAFETY: our own window, on its thread; the subclass proc lives as long as the program;
     // the DWM attributes are read from locals during the calls.
     unsafe {
-        // Done once (comctl32 5.8, which iDM links, has no GetWindowSubclass to ask by).
-        let done: Vec<u16> = "iDM.popup\0".encode_utf16().collect();
+        // Done once (comctl32 5.8, which BMD links, has no GetWindowSubclass to ask by).
+        let done: Vec<u16> = "BMD.popup\0".encode_utf16().collect();
         if !GetPropW(hwnd, done.as_ptr()).is_null() {
             return false;
         }
@@ -2997,7 +2997,7 @@ pub fn caption_dark(title: &str, dark: bool) -> bool {
 }
 
 /// The popup menus Windows draws for us — the notification-area icon's (tray-icon's), the
-/// window menu of a drawn title bar — in iDM's mode, not Windows' (#682): dark on a dark surface
+/// window menu of a drawn title bar — in BMD's mode, not Windows' (#682): dark on a dark surface
 /// (dark mode, a dark theme), light otherwise, whatever Windows' own app mode says. Windows has
 /// no documented way: uxtheme's SetPreferredAppMode (ordinal 135, ForceDark 2 / ForceLight 3)
 /// sets the process's mode and FlushMenuThemes (ordinal 136) makes menus read it again, as the
@@ -3077,7 +3077,7 @@ fn menu_mode_fns() -> Option<MenuModeFns> {
 
 #[cfg(test)]
 mod menus_dark_tests {
-    /// #682: uxtheme has the menu mode functions on every Windows iDM is tested on (10 1903 and
+    /// #682: uxtheme has the menu mode functions on every Windows BMD is tested on (10 1903 and
     /// later, Server 2022's runner included), and setting the mode either way returns.
     #[test]
     fn the_menu_mode_functions_are_found_and_answer() {
@@ -3114,13 +3114,13 @@ pub fn dragging_out() -> bool {
 /// interface language, as it shows. The files are looked for on the drag's thread (#743): those
 /// that aren't there are left out, and with none there is no drag.
 ///
-/// The drop target decides what the drag does (#869): iDM offers a move, a copy and a link, so
+/// The drop target decides what the drag does (#869): BMD offers a move, a copy and a link, so
 /// Explorer applies its own rules, as for files dragged in Explorer: moved on the same drive or
 /// with Shift, copied to another drive or with Ctrl, a shortcut with Alt. A move is followed:
 /// `followed` is told, for each file moved (as it was given), where it went (from the shell's
-/// change notifications), or that it went where iDM can't learn; a copy, a link or a cancelled
+/// change notifications), or that it went where BMD can't learn; a copy, a link or a cancelled
 /// drag tell nothing. It may come long after the drop (a move to another drive copies first),
-/// from the drag's thread. iDM never deletes a file itself, even for a target that asks the
+/// from the drag's thread. BMD never deletes a file itself, even for a target that asks the
 /// source to (a move it doesn't optimize): the file stays, so nothing is lost.
 ///
 /// The drag runs on a thread of its own (#561): OLE's drag loop lasts as long as the button is
@@ -3178,7 +3178,7 @@ pub fn drag_files_out(
 }
 
 /// A drag out of ours is over our own windows' drop target now: it refuses it (#1210), so a
-/// download's file dropped back on iDM isn't taken for a list of links or a torrent to add.
+/// download's file dropped back on BMD isn't taken for a list of links or a torrent to add.
 fn own_drag_over_us() -> bool {
     DRAGGING.load(std::sync::atomic::Ordering::Acquire)
 }
@@ -3604,7 +3604,7 @@ mod dragout {
     impl Watch {
         fn start() -> Option<Watch> {
             static CLASS: std::sync::Once = std::sync::Once::new();
-            let class: Vec<u16> = "mdm-drag-out-watch\0".encode_utf16().collect();
+            let class: Vec<u16> = "bmd-drag-out-watch\0".encode_utf16().collect();
             // SAFETY: a class with our procedure, registered once; a message-only window of
             // this thread, destroyed in Drop (or below when the shell won't watch); the desktop's
             // item list freed once registered (the shell keeps its own copy).
@@ -3833,10 +3833,10 @@ mod dragout {
             .collect::<Result<Vec<_>, std::io::Error>>()
             .map_err(|e| e.to_string())?;
         // Watched from before the drop: a move on the same drive is done before the drag ends.
-        // MDM_TEST_NO_SHELL_WATCH=1 (debug builds, for checks): not watched, as when the shell
-        // won't say, so a move is one iDM can't follow.
+        // BMD_TEST_NO_SHELL_WATCH=1 (debug builds, for checks): not watched, as when the shell
+        // won't say, so a move is one BMD can't follow.
         let unwatched = cfg!(debug_assertions)
-            && std::env::var_os("MDM_TEST_NO_SHELL_WATCH").is_some_and(|v| v == "1");
+            && std::env::var_os("BMD_TEST_NO_SHELL_WATCH").is_some_and(|v| v == "1");
         let watch = if unwatched { None } else { Watch::start() };
         if watch.is_none() {
             tracing::warn!("drag out: the shell won't say where files go: a move isn't followed");
@@ -3877,7 +3877,7 @@ mod dragout {
 
     impl Dropped {
         /// What became of each file: `told` the ones moved (as they were given: where to, or
-        /// that iDM can't learn where), nothing of those that stayed (a copy, a link, a drop
+        /// that BMD can't learn where), nothing of those that stayed (a copy, a link, a drop
         /// that did nothing). Waits as long as a move may take, on the drag's thread.
         pub(super) fn follow(self, mut told: impl FnMut(PathBuf, DraggedOut)) {
             let since = Instant::now();
@@ -4007,10 +4007,10 @@ mod dragout {
 }
 
 /// The key of Windows' "Choose your app mode" (`AppsUseLightTheme`), under HKEY_CURRENT_USER.
-/// For tests, `MDM_PERSONALIZE_KEY` names another key to read it from (and to watch), so a check
-/// can switch the mode iDM sees without touching the system's.
+/// For tests, `BMD_PERSONALIZE_KEY` names another key to read it from (and to watch), so a check
+/// can switch the mode BMD sees without touching the system's.
 fn personalize_key() -> String {
-    std::env::var("MDM_PERSONALIZE_KEY")
+    std::env::var("BMD_PERSONALIZE_KEY")
         .ok()
         .filter(|k| !k.trim().is_empty())
         .unwrap_or_else(|| r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize".into())
@@ -4860,7 +4860,7 @@ mod taskbar_tests {
                         crate::i18n::isolate(&item.file_name)
                     ));
                     if pass == 0 {
-                        assert_eq!(*title, format!("mdm-progress-{}", item.id));
+                        assert_eq!(*title, format!("bmd-progress-{}", item.id));
                         assert!(
                             out.viewport_output[&vid].commands.iter().any(|cmd| {
                                 matches!(cmd, egui::ViewportCommand::Title(t) if t == &expected)
@@ -4900,9 +4900,9 @@ mod taskbar_tests {
             CreateWindowExW, DefWindowProcW, DestroyWindow, GetWindowRect, RegisterClassW,
             SetWindowTextW, WNDCLASSW, WS_EX_APPWINDOW, WS_POPUP,
         };
-        let class: Vec<u16> = "mdm-taskbar-binding-test\0".encode_utf16().collect();
+        let class: Vec<u16> = "bmd-taskbar-binding-test\0".encode_utf16().collect();
         let titles: Vec<Vec<u16>> = (0..2)
-            .map(|id| format!("mdm-progress-test-{id}\0").encode_utf16().collect())
+            .map(|id| format!("bmd-progress-test-{id}\0").encode_utf16().collect())
             .collect();
         let same: Vec<u16> = "25% same.bin\0".encode_utf16().collect();
         // SAFETY: hidden test windows on this thread, with the system's window procedure.
@@ -4933,7 +4933,7 @@ mod taskbar_tests {
                 .collect();
             assert!(windows.iter().all(|h| !h.is_null()));
             for (i, h) in windows.iter().enumerate() {
-                let title = format!("mdm-progress-test-{i}");
+                let title = format!("bmd-progress-test-{i}");
                 assert_eq!(super::find_own_window(&title), Some(*h));
                 SetWindowTextW(*h, same.as_ptr());
             }
@@ -5057,7 +5057,7 @@ fn reg_string(key: &str, name: &str) -> Option<String> {
     )
 }
 
-/// The language the installer's wizard ran in (tools/installer/mdm.iss writes it on every
+/// The language the installer's wizard ran in (tools/installer/bmd.iss writes it on every
 /// install), taken once: read, then deleted. A languages.tsv code (`pt-br`); Inno's language
 /// names have `_` for `-`.
 pub fn take_install_language() -> Option<String> {
@@ -5075,7 +5075,7 @@ pub fn take_install_language() -> Option<String> {
 }
 
 /// What the installer's task "Open .torrent files and magnet links with Mister Download
-/// Manager" was (tools/installer/mdm.iss writes `1` or `0` on every install): None when no
+/// Manager" was (tools/installer/bmd.iss writes `1` or `0` on every install): None when no
 /// installer wrote it. Only read: the app settles Torrent settings' switch from it once
 /// (`Settings::settle_torrent_handler`, #1058), and an upgrade's value is never asked again.
 pub fn install_torrents() -> Option<bool> {
@@ -5098,7 +5098,7 @@ pub fn torrent_handler_is_ours() -> bool {
         .is_some_and(|c| runs_program(&c, &exe.display().to_string()))
 }
 
-/// Does an open command (`"C:\…\misterdownloadmanager.exe" "%1"`) start `exe`? Windows' paths
+/// Does an open command (`"C:\…\bmd.exe" "%1"`) start `exe`? Windows' paths
 /// are case-insensitive.
 fn runs_program(command: &str, exe: &str) -> bool {
     !exe.is_empty() && command.to_lowercase().contains(&exe.to_lowercase())
@@ -5108,8 +5108,8 @@ fn runs_program(command: &str, exe: &str) -> bool {
 mod torrent_handler_tests {
     #[test]
     fn an_open_command_names_its_program() {
-        let exe = r"C:\Program Files\iDM\misterdownloadmanager.exe";
-        let ours = r#""c:\program files\idm\MisterDownloadManager.exe" "%1""#;
+        let exe = r"C:\Program Files\BMD\bmd.exe";
+        let ours = r#""c:\program files\bmd\BMD.exe" "%1""#;
         assert!(super::runs_program(ours, exe));
         let other = r#""C:\Program Files\qBittorrent\qbittorrent.exe" "%1""#;
         assert!(!super::runs_program(other, exe));
@@ -5234,9 +5234,9 @@ pub fn windows_version() -> String {
 
 /// The default browser (#668): the program https links open with (the user's choice in Default
 /// apps, `UserChoice`'s ProgId, and that ProgId's `shell\open\command`), and its file's version.
-/// None when it isn't a browser iDM knows (iDM then speaks as Chrome).
-pub fn default_browser() -> Option<mdm_engine::agent::Found> {
-    use mdm_engine::agent::{Browser, Found};
+/// None when it isn't a browser BMD knows (BMD then speaks as Chrome).
+pub fn default_browser() -> Option<bmd_engine::agent::Found> {
+    use bmd_engine::agent::{Browser, Found};
     use windows_sys::Win32::System::Registry::HKEY_CLASSES_ROOT;
     const HTTPS: &str = r"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\https";
     // Windows 11 keeps the choice in UserChoiceLatest since 2025, its ProgId in a key of its
@@ -5414,24 +5414,24 @@ pub fn play_sound(file: &str) {
     }
 }
 
-/// The name iDM is listed under in Windows' Default apps: its value in RegisteredApplications,
+/// The name BMD is listed under in Windows' Default apps: its value in RegisteredApplications,
 /// the same as its Capabilities' ApplicationName (Microsoft: "ApplicationName must always match
-/// the name that is registered under RegisteredApplications"). tools/installer/mdm.iss writes
+/// the name that is registered under RegisteredApplications"). tools/installer/bmd.iss writes
 /// the same.
-pub const REGISTERED_NAME: &str = "iDM";
-/// iDM's Capabilities (Default apps' list of what it can open), under HKCU or HKLM.
+pub const REGISTERED_NAME: &str = "BMD";
+/// BMD's Capabilities (Default apps' list of what it can open), under HKCU or HKLM.
 const CAPABILITIES: &str = r"Software\MisterDownloadManager\Capabilities";
-/// The ProgIDs iDM's Capabilities name: Default apps wants an application-specific one for each
+/// The ProgIDs BMD's Capabilities name: Default apps wants an application-specific one for each
 /// file type and protocol, never the generic `magnet` class.
 const TORRENT_PROGID: &str = "MisterDownloadManager.Torrent";
 const MAGNET_PROGID: &str = "MisterDownloadManager.Magnet";
 
-/// Make iDM (on) or stop it being (off) what Windows opens magnet links and .torrent files
+/// Make BMD (on) or stop it being (off) what Windows opens magnet links and .torrent files
 /// with, for the current user (HKCU; no admin). Off removes only what points at us.
 ///
 /// On writes the classes (`magnet`, `.torrent`), which Windows follows while no one has chosen
-/// in Default apps, and registers iDM with Default apps (#1091: Capabilities and
-/// RegisteredApplications, so iDM is listed for MAGNET and .torrent). A choice recorded there
+/// in Default apps, and registers BMD with Default apps (#1091: Capabilities and
+/// RegisteredApplications, so BMD is listed for MAGNET and .torrent). A choice recorded there
 /// (UserChoice, hash-protected) stays first: no program can set it, only the user, in Settings →
 /// Default apps (`torrent_defaults_elsewhere` tells, `default_apps_page` opens it). An all-users
 /// install that registered this program (the installer's HKLM) isn't registered twice.
@@ -5495,7 +5495,7 @@ pub fn set_torrent_handlers(on: bool) {
         set(&format!("{prog}\\DefaultIcon"), None, &icon);
         set(&format!("{prog}\\shell\\open\\command"), None, &open);
         set("Software\\Classes\\.torrent", None, TORRENT_PROGID);
-        // Default apps (#1091): iDM listed for MAGNET and .torrent, unless everyone's
+        // Default apps (#1091): BMD listed for MAGNET and .torrent, unless everyone's
         // registration (an all-users install of this program) already lists it.
         if !registered_for_everyone(&exe) {
             let magnet = format!("Software\\Classes\\{MAGNET_PROGID}");
@@ -5507,7 +5507,7 @@ pub fn set_torrent_handlers(on: bool) {
             set(
                 CAPABILITIES,
                 Some("ApplicationDescription"),
-                // i18n: Windows' Settings → Default apps: what iDM is
+                // i18n: Windows' Settings → Default apps: what BMD is
                 crate::i18n::t("Downloads files, videos and torrents"),
             );
             set(CAPABILITIES, Some("ApplicationIcon"), &icon);
@@ -5548,7 +5548,7 @@ pub fn set_torrent_handlers(on: bool) {
             value("Software\\Classes\\.torrent", "");
         }
         // Off Default apps' list too (#1091): what this user's registration wrote. A choice made
-        // there for iDM then finds no program, and Windows asks again, as for an app removed.
+        // there for BMD then finds no program, and Windows asks again, as for an app removed.
         tree(&format!("Software\\Classes\\{MAGNET_PROGID}"));
         tree(CAPABILITIES);
         if get("Software\\RegisteredApplications", Some(REGISTERED_NAME)).as_deref()
@@ -5569,7 +5569,7 @@ pub fn set_torrent_handlers(on: bool) {
     }
 }
 
-/// Does everyone's registration (an all-users install, tools/installer/mdm.iss's HKLM) list this
+/// Does everyone's registration (an all-users install, tools/installer/bmd.iss's HKLM) list this
 /// program with Default apps? Its magnet ProgID's command starts `exe`.
 fn registered_for_everyone(exe: &str) -> bool {
     use windows_sys::Win32::System::Registry::HKEY_LOCAL_MACHINE;
@@ -5587,7 +5587,7 @@ fn registered_for_everyone(exe: &str) -> bool {
         .is_some_and(|c| runs_program(&c, exe))
 }
 
-/// Settings → Default apps at iDM's own page (#1091), where the user picks it for MAGNET and
+/// Settings → Default apps at BMD's own page (#1091), where the user picks it for MAGNET and
 /// .torrent: `registeredAppMachine` names an all-users registration, `registeredAppUser` this
 /// user's (Microsoft's "Launch the Default Apps settings page"; Windows 11 since its 2023-04
 /// update, earlier ones open Default apps itself).
@@ -5610,7 +5610,7 @@ fn default_apps_uri(everyone: bool) -> String {
 }
 
 /// What Windows opens magnet links and .torrent files with when that isn't this program (#1091):
-/// the other programs' names (as Windows shows them, else their file), none when iDM opens both.
+/// the other programs' names (as Windows shows them, else their file), none when BMD opens both.
 /// Asked as Windows decides (AssocQueryString: the user's choice in Default apps first, then the
 /// classes), after Torrent settings' switch was turned on.
 pub fn torrent_defaults_elsewhere() -> Vec<String> {
@@ -5690,7 +5690,7 @@ fn others(handlers: &[Handler], exe: &str) -> Vec<String> {
 mod default_apps_tests {
     use super::{Handler, default_apps_uri, others};
 
-    const APP_EXE: &str = r"C:\Program Files\iDM\misterdownloadmanager.exe";
+    const APP_EXE: &str = r"C:\Program Files\BMD\bmd.exe";
     const FDM: &str = r"C:\Program Files\Softdeluxe\Free Download Manager\fdm.exe";
 
     fn h(program: Option<&str>, name: Option<&str>) -> Handler {
@@ -5700,25 +5700,25 @@ mod default_apps_tests {
         }
     }
 
-    /// #1091: Settings opens at iDM's page, by the hive its registration is in.
+    /// #1091: Settings opens at BMD's page, by the hive its registration is in.
     #[test]
     fn the_settings_page_names_the_registration() {
         assert_eq!(
             default_apps_uri(false),
-            "ms-settings:defaultapps?registeredAppUser=iDM"
+            "ms-settings:defaultapps?registeredAppUser=BMD"
         );
         assert_eq!(
             default_apps_uri(true),
-            "ms-settings:defaultapps?registeredAppMachine=iDM"
+            "ms-settings:defaultapps?registeredAppMachine=BMD"
         );
     }
 
     /// #1091: another program chosen in Default apps for magnet links or .torrent files is named,
-    /// once; iDM itself (any case) and nothing found are not.
+    /// once; BMD itself (any case) and nothing found are not.
     #[test]
     fn another_default_is_named_once() {
         let fdm = || h(Some(FDM), Some("Free Download Manager"));
-        let ours = || h(Some(&APP_EXE.to_uppercase()), Some("iDM"));
+        let ours = || h(Some(&APP_EXE.to_uppercase()), Some("BMD"));
         assert_eq!(others(&[fdm(), fdm()], APP_EXE), ["Free Download Manager"]);
         assert_eq!(others(&[fdm(), ours()], APP_EXE), ["Free Download Manager"]);
         assert!(others(&[ours(), ours()], APP_EXE).is_empty());
@@ -5732,9 +5732,9 @@ mod default_apps_tests {
     }
 
     /// #1091, run by hand only, as it redirects this process's HKEY_CURRENT_USER, which other
-    /// tests read: `cargo test -p mdm-app --bin misterdownloadmanager scratch_hive -- --ignored
+    /// tests read: `cargo test -p bmd-app --bin bmd scratch_hive -- --ignored
     /// --test-threads=1`. `set_torrent_handlers` writes into a scratch key standing for HKCU
-    /// (RegOverridePredefKey), never the account's own associations: on, the classes and iDM's
+    /// (RegOverridePredefKey), never the account's own associations: on, the classes and BMD's
     /// Default apps registration as Microsoft documents it; off, all of it gone.
     #[test]
     #[ignore]
@@ -5826,28 +5826,28 @@ mod default_apps_tests {
     }
 }
 
-/// The Run key's value iDM keeps its startup entry in (Options → "Launch on startup", the
+/// The Run key's value BMD keeps its startup entry in (Options → "Launch on startup", the
 /// installer's "Start when Windows starts"). An off-screen test copy never touches the user's:
-/// it uses `MDM_TEST_RUN_VALUE`'s name when given one, else none at all (#226's checks).
+/// it uses `BMD_TEST_RUN_VALUE`'s name when given one, else none at all (#226's checks).
 fn run_value() -> Option<String> {
     if crate::offscreen() {
-        return std::env::var("MDM_TEST_RUN_VALUE")
+        return std::env::var("BMD_TEST_RUN_VALUE")
             .ok()
             .filter(|v| v.starts_with("MisterDownloadManagerTest"));
     }
-    Some("MisterDownloadManager".to_owned())
+    Some("BMD".to_owned())
 }
 
 const RUN_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Run";
 
-/// The startup entry's command for the program `exe`: started with the session, iDM waits in
+/// The startup entry's command for the program `exe`: started with the session, BMD waits in
 /// the notification area (`/startup`, #226).
 fn startup_command(exe: &std::path::Path) -> String {
-    format!("\"{}\" {}", exe.display(), mdm_ipc::STARTUP)
+    format!("\"{}\" {}", exe.display(), bmd_ipc::STARTUP)
 }
 
 /// A startup entry `value` (a command line) written before #226 for the program `exe`: the same
-/// program, without the argument. Another program's entry (a copy of iDM elsewhere) is not this
+/// program, without the argument. Another program's entry (a copy of BMD elsewhere) is not this
 /// one's to rewrite.
 fn startup_outdated(value: &str, exe: &std::path::Path) -> bool {
     // The program compared as Windows compares paths: in any case, either slash.
@@ -5871,10 +5871,10 @@ fn startup_outdated(value: &str, exe: &std::path::Path) -> bool {
     };
     !args
         .split_whitespace()
-        .any(|a| a.eq_ignore_ascii_case(mdm_ipc::STARTUP))
+        .any(|a| a.eq_ignore_ascii_case(bmd_ipc::STARTUP))
 }
 
-/// Is iDM in the user's Run key (set by Options or by the installer's
+/// Is BMD in the user's Run key (set by Options or by the installer's
 /// "Start when Windows starts")? The registry is the truth for Options → "Launch on startup".
 pub fn run_at_startup() -> bool {
     run_value().is_some_and(|name| {
@@ -5945,24 +5945,24 @@ mod startup_tests {
     use super::{startup_command, startup_outdated};
     use std::path::Path;
 
-    const EXE: &str = r"C:\Program Files\iDM\misterdownloadmanager.exe";
+    const EXE: &str = r"C:\Program Files\BMD\bmd.exe";
 
     /// The entry Options and the installer write (#226): the program, quoted, then `/startup`.
     #[test]
-    fn the_startup_entry_starts_mdm_in_the_tray() {
+    fn the_startup_entry_starts_bmd_in_the_tray() {
         let cmd = startup_command(Path::new(EXE));
         assert_eq!(
             cmd,
             format!("\"{EXE}\" /startup"),
-            "as tools/installer/mdm.iss writes it too"
+            "as tools/installer/bmd.iss writes it too"
         );
-        let args = mdm_ipc::parse_args(&["/startup".to_owned()]).unwrap();
+        let args = bmd_ipc::parse_args(&["/startup".to_owned()]).unwrap();
         assert!(args.startup);
         assert!(!startup_outdated(&cmd, Path::new(EXE)));
     }
 
     /// An entry of a version before 0.5.0, or of its installer, is written again; one for another
-    /// copy of iDM, or one already up to date, is left alone.
+    /// copy of BMD, or one already up to date, is left alone.
     #[test]
     fn old_startup_entries_are_rewritten() {
         let exe = Path::new(EXE);
@@ -5983,7 +5983,7 @@ mod startup_tests {
         assert!(!startup_outdated(&format!("\"{EXE}\" /STARTUP"), exe));
         // Another copy's (a portable one, a build elsewhere).
         assert!(!startup_outdated(
-            r#""D:\mdm\misterdownloadmanager.exe""#,
+            r#""D:\bmd\bmd.exe""#,
             exe
         ));
         assert!(!startup_outdated("", exe));
@@ -5992,7 +5992,7 @@ mod startup_tests {
     /// The installer's "Start when Windows starts" writes the entry Options writes.
     #[test]
     fn the_installer_writes_the_same_entry() {
-        let iss = include_str!("../../../tools/installer/mdm.iss");
+        let iss = include_str!("../../../tools/installer/bmd.iss");
         assert!(iss.contains(
             r#"ValueName: "MisterDownloadManager"; ValueData: """{app}\{#AppExe}"" /startup""#
         ));
@@ -6625,7 +6625,7 @@ pub mod ole {
             Some(Registration { hwnd, target })
         }
 
-        /// Off-screen test copies only (MDM_TEST_DROP, droptarget.rs): `text` dropped on the
+        /// Off-screen test copies only (BMD_TEST_DROP, droptarget.rs): `text` dropped on the
         /// window as a browser drops a link, without a mouse: a data object holding it as
         /// "UniformResourceLocatorW" goes to the drop target OLE has registered for the window
         /// (DragEnter, then Drop), as OLE's drag loop hands it. False when the window holds no
@@ -6761,15 +6761,15 @@ pub fn mark_running() {
     }
 }
 
-// ---- Crash reports (crash.rs, mdm-crash) -------------------------------------------------------
+// ---- Crash reports (crash.rs, bmd-crash) -------------------------------------------------------
 
-static CRASH_HANDLER: std::sync::OnceLock<mdm_crash::crash_handler::CrashHandler> =
+static CRASH_HANDLER: std::sync::OnceLock<bmd_crash::crash_handler::CrashHandler> =
     std::sync::OnceLock::new();
 
 /// Catch native crashes (access violations, stack overflows, … : Windows' structured exceptions)
 /// and have `reporter`'s monitor dump this process when one comes. False when it can't attach.
-pub fn attach_crash_handler(reporter: std::sync::Arc<mdm_crash::client::Reporter>) -> bool {
-    use mdm_crash::crash_handler::{CrashEventResult, CrashHandler, make_crash_event};
+pub fn attach_crash_handler(reporter: std::sync::Arc<bmd_crash::client::Reporter>) -> bool {
+    use bmd_crash::crash_handler::{CrashEventResult, CrashHandler, make_crash_event};
     // SAFETY: the closure runs in the exception's context; it only sends the dump request over
     // the monitor's socket, when its connection is open (no allocation needed by minidumper's
     // request; before it is, the dump is refused and the process dies the system's way).
@@ -6789,7 +6789,7 @@ pub fn dump_now() -> bool {
     CRASH_HANDLER.get().is_some_and(|h| {
         matches!(
             h.simulate_exception(None),
-            mdm_crash::crash_handler::CrashEventResult::Handled(true)
+            bmd_crash::crash_handler::CrashEventResult::Handled(true)
         )
     })
 }
@@ -6901,7 +6901,7 @@ pub fn process_alive(pid: u32) -> bool {
     }
 }
 
-/// The command line in this windowed program (main.rs, `misterdownloadmanager-cli`'s
+/// The command line in this windowed program (main.rs, `bmd-cli`'s
 /// launcher started it): the console it was started from, for what it prints and reads and for
 /// Ctrl+C. Input and output the launcher handed over stay as they are (a file, a pipe, the console
 /// itself); only those it didn't have get the console's. With the launcher's process id, this
@@ -7041,7 +7041,7 @@ pub fn clipboard_sequence() -> u32 {
 /// Windows keeps one clipboard per window station; the person's is on the interactive one,
 /// `WinSta0`. [`in_private_clipboard`] runs a test again in a process of its own that moves to
 /// another window station (and a desktop on it) before it touches the clipboard: there the test
-/// reads and writes with the real clipboard functions, arboard's and iDM's own, and the person's
+/// reads and writes with the real clipboard functions, arboard's and BMD's own, and the person's
 /// clipboard is neither read nor written. Without a name, Windows makes (or opens) the window
 /// station of the logon session, `Service-0x0-…$`, which shows nothing and whose clipboard no
 /// program of the person's uses; the tests that use it run one at a time.
@@ -7052,7 +7052,7 @@ pub mod private_clipboard {
     use std::ffi::c_void;
 
     /// Set in the process [`in_private_clipboard`] starts: the test runs there, and only there.
-    const CHILD: &str = "MDM_TEST_PRIVATE_CLIPBOARD";
+    const CHILD: &str = "BMD_TEST_PRIVATE_CLIPBOARD";
 
     #[link(name = "user32")]
     unsafe extern "system" {
@@ -7158,7 +7158,7 @@ pub mod private_clipboard {
                 "process not moved: {}",
                 std::io::Error::last_os_error()
             );
-            let desk = wide(&format!("mdm-test-{}", std::process::id()));
+            let desk = wide(&format!("bmd-test-{}", std::process::id()));
             // SAFETY: a NUL-terminated name, no device, mode or security attributes; it is made
             // on the process's window station, the test's.
             let desktop = unsafe {
@@ -7262,7 +7262,7 @@ pub mod private_clipboard {
     mod tests {
         use super::*;
 
-        /// #629, #1103: why iDM's reads and writes of the clipboard, egui's copy and paste
+        /// #629, #1103: why BMD's reads and writes of the clipboard, egui's copy and paste
         /// among them, take one lock (main.rs `clipboard_lock`). Opened without a window, as
         /// arboard opens it, the clipboard lets a second thread of the process in while the
         /// first still has it open, and the second's close closes it under the first: a read
@@ -7296,7 +7296,7 @@ pub mod private_clipboard {
     }
 }
 
-/// End process `pid` (a frozen iDM the user chose to close from the crash report).
+/// End process `pid` (a frozen BMD the user chose to close from the crash report).
 pub fn end_process(pid: u32) -> bool {
     use windows_sys::Win32::Foundation::CloseHandle;
     use windows_sys::Win32::System::Threading::{OpenProcess, PROCESS_TERMINATE, TerminateProcess};
@@ -7312,7 +7312,7 @@ pub fn end_process(pid: u32) -> bool {
     }
 }
 
-/// The crash test's access violation (MDM_CRASH_TEST=1, `/show crash-test:crash`).
+/// The crash test's access violation (BMD_CRASH_TEST=1, `/show crash-test:crash`).
 pub fn crash_now() {
     // SAFETY: none: a write through a null pointer, on purpose, to test the crash reports.
     unsafe { std::ptr::write_volatile(std::ptr::null_mut::<u32>(), 1) };
@@ -7358,11 +7358,11 @@ fn reg_subkeys(root: windows_sys::Win32::System::Registry::HKEY, key: &str) -> V
 
 /// The browsers installed, by name, with their program: those Windows lists for "default
 /// browser" (StartMenuInternet, this user's then everyone's), named by their program
-/// (mdm_ipc::browsers::windows_named: Helium's chrome.exe isn't Chrome) or else by their own
+/// (bmd_ipc::browsers::windows_named: Helium's chrome.exe isn't Chrome) or else by their own
 /// display name; then the known programs registered only under the shell's App Paths (a zip or
 /// portable install). The browser extension's offer (extension.rs) opens its page in each.
 pub fn browsers() -> Vec<(String, std::path::PathBuf)> {
-    use mdm_ipc::browsers::{command_program, windows_can_run_extension, windows_named};
+    use bmd_ipc::browsers::{command_program, windows_can_run_extension, windows_named};
     use windows_sys::Win32::System::Registry::{HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE};
     const CLIENTS: &str = r"Software\Clients\StartMenuInternet";
     const APP_PATHS: &str = r"Software\Microsoft\Windows\CurrentVersion\App Paths";
@@ -7394,7 +7394,7 @@ pub fn browsers() -> Vec<(String, std::path::PathBuf)> {
             add(name.unwrap_or(sub), std::path::PathBuf::from(program));
         }
     }
-    for (exe, _, _) in mdm_ipc::browsers::WINDOWS_PROGRAMS {
+    for (exe, _, _) in bmd_ipc::browsers::WINDOWS_PROGRAMS {
         let key = format!(r"{APP_PATHS}\{exe}");
         let Some(path) = reg_string_in(HKEY_CURRENT_USER, &key, "")
             .or_else(|| reg_string_in(HKEY_LOCAL_MACHINE, &key, ""))
@@ -7506,12 +7506,12 @@ pub fn rename_no_replace(from: &std::path::Path, to: &std::path::Path) -> std::i
 }
 
 /// What each browser's registry entries for the native host lead to: the user's (HKCU) and the
-/// computer's (HKLM), for every key the browsers read (`mdm_ipc::browsers::WINDOWS_HOST_KEYS`).
+/// computer's (HKLM), for every key the browsers read (`bmd_ipc::browsers::WINDOWS_HOST_KEYS`).
 fn host_holders() -> Vec<(
-    Option<mdm_ipc::browsers::Holder>,
-    Option<mdm_ipc::browsers::Holder>,
+    Option<bmd_ipc::browsers::Holder>,
+    Option<bmd_ipc::browsers::Holder>,
 )> {
-    use mdm_ipc::browsers::{HOST_NAME, Holder, WINDOWS_HOST_KEYS, registered_manifest};
+    use bmd_ipc::browsers::{HOST_NAME, Holder, WINDOWS_HOST_KEYS, registered_manifest};
     use windows_sys::Win32::System::Registry::{HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE};
     WINDOWS_HOST_KEYS
         .iter()
@@ -7532,7 +7532,7 @@ fn host_holders() -> Vec<(
 /// problem, whatever the others say (Options → General → Test browser integration).
 pub fn host_registration() -> crate::extension::Registration {
     use crate::extension::Registration;
-    use mdm_ipc::browsers::Holder;
+    use bmd_ipc::browsers::Holder;
     let mut ready = false;
     let mut dead = None;
     for (user, machine) in host_holders() {
@@ -7551,12 +7551,12 @@ pub fn host_registration() -> crate::extension::Registration {
 }
 
 /// At each start, on a thread of its own (#818): when a browser's registration leads nowhere
-/// (`mdm_ipc::browsers::windows_repair`: its manifest or helper gone, such as a copy run from
+/// (`bmd_ipc::browsers::windows_repair`: its manifest or helper gone, such as a copy run from
 /// inside a zip whose temporary folder was deleted), the native host's `--repair` points it at
 /// this copy, for this user. Nothing runs while every one works or there is none: one that works
 /// naming another copy is that copy's, and none is the setup's box unticked.
 pub fn repair_browsers() {
-    use mdm_ipc::browsers::{Repair, windows_repair};
+    use bmd_ipc::browsers::{Repair, windows_repair};
     let started = std::thread::Builder::new()
         .name("repair-browsers".into())
         .spawn(|| {
@@ -7570,7 +7570,7 @@ pub fn repair_browsers() {
                 .map_err(|e| e.to_string())
                 .and_then(|exe| {
                     crate::extension::run_host(
-                        &exe.with_file_name("misterdownloadmanager-nmhost.exe"),
+                        &exe.with_file_name("bmd-nmhost.exe"),
                         "--repair",
                         crate::extension::SET_UP_LIMIT,
                     )
@@ -7662,7 +7662,7 @@ fn blob_bytes(
 }
 
 // Sign-in secrets in Windows Credential Manager (#44, secrets.rs): generic credentials named
-// `<service>/<account>`, for this Windows user, roaming with the profile as iDM's data folder
+// `<service>/<account>`, for this Windows user, roaming with the profile as BMD's data folder
 // (%APPDATA%) does. Credential Manager (Control Panel → Credential Manager → Windows
 // Credentials) shows them, the label as their user name, and can remove them.
 
@@ -7694,7 +7694,7 @@ fn cred_not_found() -> bool {
     unsafe { GetLastError() == ERROR_NOT_FOUND }
 }
 
-/// Whether Credential Manager answers (listing iDM's own entries).
+/// Whether Credential Manager answers (listing BMD's own entries).
 pub fn keychain_probe(service: &str) -> Result<(), crate::secrets::Fault> {
     keychain_list(service).map(|_| ())
 }
@@ -7785,7 +7785,7 @@ pub fn keychain_delete(service: &str, account: &str) -> Result<(), crate::secret
     Ok(())
 }
 
-/// The accounts of `service`'s generic credentials (the filter `<service>/*`: only iDM's; the
+/// The accounts of `service`'s generic credentials (the filter `<service>/*`: only BMD's; the
 /// others' blobs are never read).
 #[allow(unsafe_code)]
 pub fn keychain_list(service: &str) -> Result<Vec<String>, crate::secrets::Fault> {
@@ -7910,16 +7910,16 @@ struct WakeCmd {
 
 /// Wake the computer at `at` (seconds since 1970, UTC; for the queue named), or cancel the wake
 /// (None). A waitable timer set to resume the computer (SetWaitableTimer, fResume): it lives in
-/// iDM's process (Windows cancels it if the thread that set it ends, so one thread of its own
-/// keeps it), lists in `powercfg /waketimers`, and goes with iDM: nothing is left behind when
-/// iDM quits or is uninstalled.
+/// BMD's process (Windows cancels it if the thread that set it ends, so one thread of its own
+/// keeps it), lists in `powercfg /waketimers`, and goes with BMD: nothing is left behind when
+/// BMD quits or is uninstalled.
 pub fn wake_at(at: Option<(i64, &str)>) -> Result<(), String> {
     use std::sync::{Mutex, OnceLock, mpsc};
     static THREAD: OnceLock<Mutex<mpsc::Sender<WakeCmd>>> = OnceLock::new();
     let tx = THREAD.get_or_init(|| {
         let (tx, rx) = mpsc::channel();
         let _ = std::thread::Builder::new()
-            .name("mdm-wake".into())
+            .name("bmd-wake".into())
             .spawn(move || wake_thread(rx));
         Mutex::new(tx)
     });
@@ -8072,7 +8072,7 @@ pub fn text_rasterizer(
     let glyphs = std::sync::Mutex::new(glyphs);
     Some(
         egui::epaint::text::GlyphRasterizer::new(
-            "mdm::win32::classic_text",
+            "bmd::win32::classic_text",
             move |req: &egui::epaint::text::GlyphRasterizerRequest<'_>| {
                 glyphs.lock().ok()?.glyph(req, rtl, smooth)
             },
@@ -8447,8 +8447,8 @@ mod open_with_tests {
 /// invokes the user's registered file association directly.
 ///
 /// The program starts in the file's folder, as Explorer starts it (#1216): without a folder it
-/// would start in iDM's own working folder, which is `C:\Windows\System32` when Windows started
-/// iDM with the session, and a downloaded program writing beside itself would be refused there.
+/// would start in BMD's own working folder, which is `C:\Windows\System32` when Windows started
+/// BMD with the session, and a downloaded program writing beside itself would be refused there.
 pub fn open_file_shell(path: &std::path::Path) -> Result<(), std::io::Error> {
     use std::os::windows::ffi::OsStrExt;
     use windows_sys::Win32::UI::Shell::ShellExecuteW;
@@ -8486,9 +8486,9 @@ pub fn open_file_shell(path: &std::path::Path) -> Result<(), std::io::Error> {
 
 #[cfg(test)]
 mod open_file_tests {
-    /// #1216: the program a file opens with starts in the file's folder, not in iDM's own
+    /// #1216: the program a file opens with starts in the file's folder, not in BMD's own
     /// working folder. A batch file writes where it runs; Windows shows its console a moment,
-    /// so it is run by hand: `cargo test -p mdm-app opened_in_its_folder -- --ignored`.
+    /// so it is run by hand: `cargo test -p bmd-app opened_in_its_folder -- --ignored`.
     #[test]
     #[ignore = "opens a console window for a moment"]
     fn a_file_is_opened_in_its_folder() {
@@ -8943,7 +8943,7 @@ impl GlobalHotKeyOs {
         let vk = shortcut.key.win32_vk();
         let mods = shortcut.win32_modifiers();
         let handle = std::thread::Builder::new()
-            .name("mdm-global-hotkey".into())
+            .name("bmd-global-hotkey".into())
             .spawn(move || {
                 // SAFETY: creates the thread's message queue (`PeekMessageW` with `PM_NOREMOVE`)
                 // before publishing `thread_id`, so `PostThreadMessageW(WM_QUIT)` from `Drop`

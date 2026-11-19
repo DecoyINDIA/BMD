@@ -13,7 +13,7 @@
 //! archive ([`work_folder`]), which stays when HatchZip stops partway. Running it again with the
 //! same folder continues where it stopped (HatchZip keeps its progress next to the archive).
 //!
-//! iDM continues only a run it started itself: it writes a record of it in its own data
+//! BMD continues only a run it started itself: it writes a record of it in its own data
 //! ([`Runs`]) before HatchZip starts. HatchZip's progress file beside an archive (one that came
 //! with a download or a torrent, say) is never enough.
 
@@ -42,7 +42,7 @@ pub fn find_hatchzip() -> Option<PathBuf> {
 /// `<archive's name>.hatchzip-out` beside the archive (numbered when that name is taken). The
 /// record of the run keeps it, so a second run continues the first in the same folder.
 pub fn work_folder(dest: &Path, base: &str) -> PathBuf {
-    let name = mdm_engine::naming::sanitize(base);
+    let name = bmd_engine::naming::sanitize(base);
     let name = if name.is_empty() {
         "extracted".to_owned()
     } else {
@@ -82,7 +82,7 @@ fn path_key(path: &Path, ignore_case: bool) -> Vec<u8> {
     }
 }
 
-/// The extractions in place iDM started, one small file each in a folder of iDM's own data:
+/// The extractions in place BMD started, one small file each in a folder of BMD's own data:
 /// the archive's full path and the folder its files go into. Written before HatchZip starts,
 /// removed once its progress file is gone (finished, or nothing changed).
 pub struct Runs {
@@ -94,7 +94,7 @@ impl Runs {
         Runs { dir }
     }
 
-    /// One file per archive, named after its path (FNV-1a: the same in every iDM version).
+    /// One file per archive, named after its path (FNV-1a: the same in every BMD version).
     fn file(&self, archive: &Path) -> PathBuf {
         let mut h: u64 = 0xcbf2_9ce4_8422_2325;
         for b in path_key(archive, cfg!(windows)) {
@@ -103,7 +103,7 @@ impl Runs {
         self.dir.join(format!("{h:016x}.run"))
     }
 
-    /// The folder of the run iDM started for `archive`, if it recorded one.
+    /// The folder of the run BMD started for `archive`, if it recorded one.
     pub fn find(&self, archive: &Path) -> Option<PathBuf> {
         let text = std::fs::read_to_string(self.file(archive)).ok()?;
         let mut lines = text.lines();
@@ -112,7 +112,7 @@ impl Runs {
         (same && !out.is_empty()).then(|| PathBuf::from(out))
     }
 
-    /// Record that iDM starts extracting `archive` in place into `out`. Paths that aren't
+    /// Record that BMD starts extracting `archive` in place into `out`. Paths that aren't
     /// Unicode can't be written down, so they are never extracted in place.
     pub fn start(&self, archive: &Path, out: &Path) -> std::io::Result<()> {
         let (Some(a), Some(o)) = (archive.to_str(), out.to_str()) else {
@@ -144,8 +144,8 @@ pub fn extract(
     cancel: Option<&AtomicBool>,
 ) -> Result<(), Error> {
     std::fs::create_dir_all(out)?;
-    // Full paths: HatchZip runs in its output folder, iDM's own and writable, never in the
-    // folder iDM was started in (its install folder from the Start menu), as 7-Zip does (#845).
+    // Full paths: HatchZip runs in its output folder, BMD's own and writable, never in the
+    // folder BMD was started in (its install folder from the Start menu), as 7-Zip does (#845).
     let full = |p: &Path| std::path::absolute(p).unwrap_or_else(|_| p.to_owned());
     let (out, archive) = (full(out), full(archive));
     let mut output = OsString::from("--output=");

@@ -1,15 +1,15 @@
 {
   "name": {
-    "message": "iDM",
-    "description": "the extension's name in the browser's list of extensions and on its toolbar button; keep the name iDM as it is"
+    "message": "BMD",
+    "description": "the extension's name in the browser's list of extensions and on its toolbar button; keep the name BMD as it is"
   },
   "description": {
-    "message": "Hands downloads from the browser to iDM.",
-    "description": "the extension's description in the browser's list of extensions; keep the name iDM as it is"
+    "message": "Hands downloads from the browser to BMD.",
+    "description": "the extension's description in the browser's list of extensions; keep the name BMD as it is"
   },
   "menu": {
-    "message": "Download with iDM",
-    "description": "command in the browser's right-click menu on a link, picture, video or sound; keep the name iDM as it is"
+    "message": "Download with BMD",
+    "description": "command in the browser's right-click menu on a link, picture, video or sound; keep the name BMD as it is"
   },
   "video_download": {
     "message": "Download video",
@@ -35,27 +35,27 @@
   },
   "video_settings": {
     "message": "Button settings...",
-    "description": "menu command of the download button over a video: opens its settings in iDM"
+    "description": "menu command of the download button over a video: opens its settings in BMD"
   },
   "video_sent": {
-    "message": "Sent to iDM",
-    "description": "shown briefly on the download button after it was clicked; keep the name iDM as it is"
+    "message": "Sent to BMD",
+    "description": "shown briefly on the download button after it was clicked; keep the name BMD as it is"
   },
   "menu_selected": {
-    "message": "Download selected links with iDM",
-    "description": "command in the browser's right-click menu on selected text: download the links in the selection; keep the name iDM as it is"
+    "message": "Download selected links with BMD",
+    "description": "command in the browser's right-click menu on selected text: download the links in the selection; keep the name BMD as it is"
   },
   "menu_all": {
-    "message": "Download all links with iDM",
-    "description": "command in the browser's right-click menu on a page: download the links of the whole page; keep the name iDM as it is"
+    "message": "Download all links with BMD",
+    "description": "command in the browser's right-click menu on a page: download the links of the whole page; keep the name BMD as it is"
   },
   "status_connected": {
-    "message": "Connected to iDM",
-    "description": "the toolbar button's status when the browser reaches the app; keep the name iDM as it is"
+    "message": "Connected to BMD",
+    "description": "the toolbar button's status when the browser reaches the app; keep the name BMD as it is"
   },
   "status_connected_version": {
-    "message": "Connected to iDM $version$",
-    "description": "the toolbar button's status when the browser reaches the app, with the app's version number; keep the name iDM as it is",
+    "message": "Connected to BMD $version$",
+    "description": "the toolbar button's status when the browser reaches the app, with the app's version number; keep the name BMD as it is",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -68,28 +68,28 @@
     "description": "status when the user switched off taking downloads in the toolbar button's popup"
   },
   "status_not_installed": {
-    "message": "iDM isn't installed, or its browser integration isn't set up",
-    "description": "status when the browser can't find the app's connection; keep the name iDM as it is"
+    "message": "BMD isn't installed, or its browser integration isn't set up",
+    "description": "status when the browser can't find the app's connection; keep the name BMD as it is"
   },
   "status_forbidden": {
-    "message": "iDM doesn't accept this copy of the extension",
-    "description": "status when the app refuses this copy of the extension (another copy is installed, or it came from another store); keep the name iDM as it is"
+    "message": "BMD doesn't accept this copy of the extension",
+    "description": "status when the app refuses this copy of the extension (another copy is installed, or it came from another store); keep the name BMD as it is"
   },
   "status_not_running": {
-    "message": "iDM didn't start in time",
-    "description": "status when the app was started for a download but didn't answer in time; keep the name iDM as it is"
+    "message": "BMD didn't start in time",
+    "description": "status when the app was started for a download but didn't answer in time; keep the name BMD as it is"
   },
   "status_host_failed": {
-    "message": "The connection to iDM failed",
-    "description": "status when the connection to the app broke off (often security software blocking it); keep the name iDM as it is"
+    "message": "The connection to BMD failed",
+    "description": "status when the connection to the app broke off (often security software blocking it); keep the name BMD as it is"
   },
   "status_too_large": {
     "message": "This download's details were too large to hand over",
     "description": "status when a download carried too much data (very large cookies) to give to the app"
   },
   "status_update_app": {
-    "message": "Update iDM to use everything this extension offers",
-    "description": "status when the app is older than the extension; keep the name iDM as it is"
+    "message": "Update BMD to use everything this extension offers",
+    "description": "status when the app is older than the extension; keep the name BMD as it is"
   },
   "popup_take": {
     "message": "Take downloads from this browser",
@@ -100,12 +100,12 @@
     "description": "switch in the toolbar button's popup: on, the app downloads through the same proxy the browser uses (one a VPN or proxy extension sets); the browser then asks once to allow reading it"
   },
   "popup_proxy_title": {
-    "message": "iDM then downloads through the same proxy as this browser. The browser asks you once to allow it; turning this off takes that back.",
-    "description": "tooltip of the switch Send downloads through this browser's proxy or VPN extension; keep the name iDM as it is"
+    "message": "BMD then downloads through the same proxy as this browser. The browser asks you once to allow it; turning this off takes that back.",
+    "description": "tooltip of the switch Send downloads through this browser's proxy or VPN extension; keep the name BMD as it is"
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM then downloads through the same proxy as this browser. While this is off, the extension doesn't read the browser's proxy.",
-    "description": "tooltip of the switch Send downloads through this browser's proxy or VPN extension in Chrome, Edge and the other Chromium browsers (they ask for no permission at the switch); keep the name iDM as it is"
+    "message": "BMD then downloads through the same proxy as this browser. While this is off, the extension doesn't read the browser's proxy.",
+    "description": "tooltip of the switch Send downloads through this browser's proxy or VPN extension in Chrome, Edge and the other Chromium browsers (they ask for no permission at the switch); keep the name BMD as it is"
   },
   "popup_exclude_site": {
     "message": "Never take downloads from $site$",
@@ -132,8 +132,8 @@
     }
   },
   "popup_open": {
-    "message": "Open iDM",
-    "description": "button in the toolbar button's popup; keep the name iDM as it is"
+    "message": "Open BMD",
+    "description": "button in the toolbar button's popup; keep the name BMD as it is"
   },
   "popup_options": {
     "message": "Options...",
@@ -144,8 +144,8 @@
     "description": "link in the toolbar button's popup to the help page"
   },
   "popup_support": {
-    "message": "Support iDM",
-    "description": "link at the foot of the toolbar button's popup to the iDM repository on GitHub"
+    "message": "Support BMD",
+    "description": "link at the foot of the toolbar button's popup to the BMD repository on GitHub"
   },
   "popup_fix": {
     "message": "How to fix it",
@@ -190,8 +190,8 @@
     "description": "why a download stayed with the browser: the app's setting 'Use advanced browser integration' is off; keep the setting's name as the app shows it"
   },
   "declined_torrents": {
-    "message": "It's a torrent, and Open magnet links and .torrent files with iDM is off in Torrent settings.",
-    "description": "why a download stayed with the browser: it is a .torrent file and the app's Torrent settings don't open torrents with iDM, so the browser keeps it for the user's own torrent program; keep the setting's name as the app shows it"
+    "message": "It's a torrent, and Open magnet links and .torrent files with BMD is off in Torrent settings.",
+    "description": "why a download stayed with the browser: it is a .torrent file and the app's Torrent settings don't open torrents with BMD, so the browser keeps it for the user's own torrent program; keep the setting's name as the app shows it"
   },
   "declined_site_access": {
     "message": "The extension isn't allowed to read this site (the browser's site access).",
@@ -250,20 +250,20 @@
     "description": "in the menu under the download button over a video: the app found no quality of the video it could download"
   },
   "video_playlist": {
-    "message": "A list of videos: choose them in iDM",
-    "description": "in the menu under the download button over a video: the page is a list of videos (a playlist), whose videos are chosen in the app's window; keep the name iDM as it is"
+    "message": "A list of videos: choose them in BMD",
+    "description": "in the menu under the download button over a video: the page is a list of videos (a playlist), whose videos are chosen in the app's window; keep the name BMD as it is"
   },
   "video_no_ytdlp": {
-    "message": "iDM needs yt-dlp for this video",
-    "description": "in the menu under the download button over a video: the app needs the yt-dlp tool (a program's name, keep it as it is) to find this video's qualities, and it isn't installed; keep the name iDM as it is"
+    "message": "BMD needs yt-dlp for this video",
+    "description": "in the menu under the download button over a video: the app needs the yt-dlp tool (a program's name, keep it as it is) to find this video's qualities, and it isn't installed; keep the name BMD as it is"
   },
   "video_too_long": {
     "message": "Looking up took too long",
     "description": "in the menu under the download button over a video: the app took more than a minute to find the video's qualities, so the menu stopped waiting"
   },
   "video_busy": {
-    "message": "iDM is busy with other videos",
-    "description": "in the menu under the download button over a video: the app is already looking up other videos and can't look this one up now; keep the name iDM as it is"
+    "message": "BMD is busy with other videos",
+    "description": "in the menu under the download button over a video: the app is already looking up other videos and can't look this one up now; keep the name BMD as it is"
   },
   "video_queued": {
     "message": "Added to the queue",
@@ -291,31 +291,31 @@
   },
   "popup_send_here": {
     "message": "This computer",
-    "description": "choice under Send downloads to: the iDM on this computer"
+    "description": "choice under Send downloads to: the BMD on this computer"
   },
   "popup_send_remote": {
-    "message": "Another iDM (a server)",
-    "description": "choice under Send downloads to: an iDM running on another computer of the network, such as a home server; keep the name iDM as it is"
+    "message": "Another BMD (a server)",
+    "description": "choice under Send downloads to: an BMD running on another computer of the network, such as a home server; keep the name BMD as it is"
   },
   "popup_remote_code": {
     "message": "Pairing code",
-    "description": "placeholder of the box for the 8-digit code the other iDM shows"
+    "description": "placeholder of the box for the 8-digit code the other BMD shows"
   },
   "popup_remote_open": {
     "message": "Open it",
-    "description": "button: open the other iDM's address in a tab (to accept its certificate once)"
+    "description": "button: open the other BMD's address in a tab (to accept its certificate once)"
   },
   "popup_remote_pair": {
     "message": "Pair",
-    "description": "button: pair this browser with the other iDM using the code"
+    "description": "button: pair this browser with the other BMD using the code"
   },
   "popup_remote_help": {
-    "message": "Open its address once and accept its certificate, then enter a code from its Options, Remote, Pair a device (or misterdownloadmanager-cli pair).",
-    "description": "help under the pairing boxes; Options, Remote and Pair a device are the app's window, tab and button; keep misterdownloadmanager-cli pair as it is"
+    "message": "Open its address once and accept its certificate, then enter a code from its Options, Remote, Pair a device (or bmd-cli pair).",
+    "description": "help under the pairing boxes; Options, Remote and Pair a device are the app's window, tab and button; keep bmd-cli pair as it is"
   },
   "status_remote": {
     "message": "Downloads go to $address$",
-    "description": "the toolbar button's status while downloads go to another iDM",
+    "description": "the toolbar button's status while downloads go to another BMD",
     "placeholders": {
       "address": {
         "content": "$1",
@@ -329,7 +329,7 @@
   },
   "remote_unreachable": {
     "message": "Not reached. Open its address once in this browser and accept its certificate, then try again.",
-    "description": "pairing failed: the other iDM didn't answer"
+    "description": "pairing failed: the other BMD didn't answer"
   },
   "remote_wrong_code": {
     "message": "Wrong code.",
@@ -337,7 +337,7 @@
   },
   "remote_no_code": {
     "message": "It shows no code now: click Pair a device there first.",
-    "description": "pairing failed: the other iDM shows no pairing code; Pair a device is its button"
+    "description": "pairing failed: the other BMD shows no pairing code; Pair a device is its button"
   },
   "remote_too_soon": {
     "message": "Wait a moment, then try again.",
@@ -349,7 +349,7 @@
   },
   "remote_device_name": {
     "message": "Browser extension",
-    "description": "the name this browser gets in the other iDM's list of paired devices"
+    "description": "the name this browser gets in the other BMD's list of paired devices"
   },
   "popup_media_title_name": {
     "message": "Prefix media file names with the page title",
@@ -382,24 +382,24 @@
     "description": "first line of the tooltip of the download button over a video while the app is still finding its qualities"
   },
   "video_sending": {
-    "message": "Sending to iDM...",
-    "description": "on the download button over a video right after it was clicked, while the download goes to the app; iDM is iDM's short name, keep it as it is; short"
+    "message": "Sending to BMD...",
+    "description": "on the download button over a video right after it was clicked, while the download goes to the app; BMD is BMD's short name, keep it as it is; short"
   },
   "video_added": {
-    "message": "Added to iDM",
-    "description": "on the download button (green) over a video after the app added and started the download; a quality may follow ('· 1080p') and a 'Show' button; iDM is the app's short name, keep it; short"
+    "message": "Added to BMD",
+    "description": "on the download button (green) over a video after the app added and started the download; a quality may follow ('· 1080p') and a 'Show' button; BMD is the app's short name, keep it; short"
   },
   "video_show": {
     "message": "Show",
     "description": "button on the download button over a video after a download was added: shows that download in the app's window; verb; very short"
   },
   "video_no_answer": {
-    "message": "iDM didn't answer",
-    "description": "on the download button (red) over a video when the app isn't installed or didn't start; 'Get iDM' and 'Retry' buttons follow; iDM is the app's short name, keep it; short"
+    "message": "BMD didn't answer",
+    "description": "on the download button (red) over a video when the app isn't installed or didn't start; 'Get BMD' and 'Retry' buttons follow; BMD is the app's short name, keep it; short"
   },
-  "video_get_mdm": {
-    "message": "Get iDM",
-    "description": "button on the download button over a video when the app didn't answer: opens the app's download page; iDM is the app's short name, keep it; very short"
+  "video_get_bmd": {
+    "message": "Get BMD",
+    "description": "button on the download button over a video when the app didn't answer: opens the app's download page; BMD is the app's short name, keep it; very short"
   },
   "video_retry": {
     "message": "Retry",
@@ -418,8 +418,8 @@
     "description": "command in the menu of the download button over a video: opens the app's Download video window, with every quality and the subtitles"
   },
   "video_failed": {
-    "message": "iDM isn't installed or didn't start",
-    "description": "shown briefly on the download button when the app could not be reached; keep the name iDM as it is"
+    "message": "BMD isn't installed or didn't start",
+    "description": "shown briefly on the download button when the app could not be reached; keep the name BMD as it is"
   },
   "video_download_best": {
     "message": "Download best",

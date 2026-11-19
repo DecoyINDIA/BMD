@@ -1,8 +1,8 @@
 // Benchmarks section: draws bench/results.json (tools/bench/report.py) with Apache ECharts.
 (function () {
   "use strict";
-  // Words for people in the page's language (main.js has the same; sitei18n.py fills MDM_I18N).
-  function t(s) { return (window.MDM_I18N || {})[s] || s; }
+  // Words for people in the page's language (main.js has the same; sitei18n.py fills BMD_I18N).
+  function t(s) { return (window.BMD_I18N || {})[s] || s; }
   var root = document.getElementById("bench");
   if (!root || !window.fetch) return;
   var data = null;
@@ -20,7 +20,7 @@
       surface: css("--surface"),
       line: css("--line"),
       idm: css("--bench-idm"),
-      mdm: css("--bench-mdm"),
+      bmd: css("--bench-bmd"),
       startup: css("--bench-startup"),
       transfer: css("--bench-transfer"),
       finish: css("--bench-finish"),
@@ -77,7 +77,7 @@
       var head = el("header");
       head.appendChild(el("h3", null, sc.title));
       var cmp = el("p", "bench-ratio");
-      var a = sc.clients.IDM.stats[metric], b = sc.clients.iDM.stats[metric];
+      var a = sc.clients.IDM.stats[metric], b = sc.clients.BMD.stats[metric];
       if (sc.provisional) {
         // Numbers shown, no verdict: the scenario is being measured again.
         card.classList.add("is-provisional");
@@ -106,11 +106,11 @@
         return most > 2 * med ? med + " (up to " + most.toLocaleString("en-US") + ")" : String(med);
       };
       var foot = el("p", "bench-meta", "faults: " + sc.faults + " · n=" + (a ? a.n : 0) +
-        " each · requests per run: IDM " + rq("IDM") + ", iDM " + rq("iDM"));
+        " each · requests per run: IDM " + rq("IDM") + ", BMD " + rq("BMD"));
       card.appendChild(foot);
       grid.appendChild(card);
 
-      var clients = ["IDM", "iDM"];
+      var clients = ["IDM", "BMD"];
       var stats = clients.map(function (c) { return sc.clients[c].stats[metric]; });
       var far = clients.map(function (c) { return Math.max.apply(null, values(sc, c, metric).concat([0])); });
       onView(box, function () {
@@ -152,7 +152,7 @@
               var y = api.coord([0, i])[1];
               var x1 = api.coord([s.q1, i])[0], x3 = api.coord([s.q3, i])[0], xm = api.coord([s.median, i])[0];
               var h = 18;
-              var color = i === 0 ? p.idm : p.mdm;
+              var color = i === 0 ? p.idm : p.bmd;
               return {
                 type: "group",
                 children: [
@@ -177,7 +177,7 @@
             z: 2,
             data: [].concat(
               values(sc, "IDM", metric).map(function (v) { return { name: "IDM", value: [v, 0], itemStyle: { color: p.idm } }; }),
-              values(sc, "iDM", metric).map(function (v) { return { name: "iDM", value: [v, 1], itemStyle: { color: p.mdm } }; })
+              values(sc, "BMD", metric).map(function (v) { return { name: "BMD", value: [v, 1], itemStyle: { color: p.bmd } }; })
             ),
             itemStyle: { opacity: 0.85 },
             animationDelay: function (i) { return i * 45; },
@@ -195,7 +195,7 @@
     var cats = [];
     var parts = { startup_ms: [], transfer_ms: [], finish_ms: [] };
     data.scenarios.forEach(function (sc) {
-      ["IDM", "iDM"].forEach(function (c) {
+      ["IDM", "BMD"].forEach(function (c) {
         cats.push((SHORT[sc.id] || sc.id) + " · " + c);
         Object.keys(parts).forEach(function (m) {
           var s = sc.clients[c].stats[m];
@@ -256,9 +256,9 @@
       ],
       series: [
         { name: "IDM", type: "bar", data: med("IDM", "cpu_ms"), itemStyle: { color: p.idm, borderRadius: [3, 3, 0, 0] }, xAxisIndex: 0, yAxisIndex: 0, animationDelay: first },
-        { name: "iDM", type: "bar", data: med("iDM", "cpu_ms"), itemStyle: { color: p.mdm, borderRadius: [3, 3, 0, 0] }, xAxisIndex: 0, yAxisIndex: 0, animationDelay: first },
+        { name: "BMD", type: "bar", data: med("BMD", "cpu_ms"), itemStyle: { color: p.bmd, borderRadius: [3, 3, 0, 0] }, xAxisIndex: 0, yAxisIndex: 0, animationDelay: first },
         { name: "IDM", type: "bar", data: med("IDM", "peak_ws_mb"), itemStyle: { color: p.idm, borderRadius: [3, 3, 0, 0] }, xAxisIndex: 1, yAxisIndex: 1, animationDelay: second },
-        { name: "iDM", type: "bar", data: med("iDM", "peak_ws_mb"), itemStyle: { color: p.mdm, borderRadius: [3, 3, 0, 0] }, xAxisIndex: 1, yAxisIndex: 1, animationDelay: second },
+        { name: "BMD", type: "bar", data: med("BMD", "peak_ws_mb"), itemStyle: { color: p.bmd, borderRadius: [3, 3, 0, 0] }, xAxisIndex: 1, yAxisIndex: 1, animationDelay: second },
       ],
     }));
     });
@@ -268,7 +268,7 @@
     var tb = root.querySelector("[data-bench-table] tbody");
     tb.innerHTML = "";
     data.scenarios.forEach(function (sc) {
-      ["IDM", "iDM"].forEach(function (c, k) {
+      ["IDM", "BMD"].forEach(function (c, k) {
         var st = sc.clients[c].stats;
         var tr = document.createElement("tr");
         var cells = [
@@ -299,7 +299,7 @@
     var env = data.environment;
     root.querySelector("[data-bench-env]").textContent =
       env.cpu + " · " + env.ram_gb + " GB RAM · " + env.os + " · IDM " + env.idm_version +
-      " · iDM " + env.mdm_commit + " · " + env.date.replace("T", " ");
+      " · BMD " + env.bmd_commit + " · " + env.date.replace("T", " ");
   }
 
   function drawStatus() {
@@ -329,9 +329,9 @@
         return ["startup_ms", "transfer_ms", "finish_ms"].map(function (m) { return Math.max(1, st[m] ? st[m].median : 0); });
       };
       var two = sc.id === "maxconns-50m";
-      return { tab: SHORT[sc.id] || sc.title, note: sc.title + ".", mdm: ph("iDM"), idm: ph("IDM"),
-               e2e: [sc.clients.iDM.stats.e2e_ms.median, sc.clients.IDM.stats.e2e_ms.median],
-               ratio: sc.compare.ratio_idm_over_mdm, conns: two ? [2, 2] : [8, 8], bytes: bytes(sc.size) };
+      return { tab: SHORT[sc.id] || sc.title, note: sc.title + ".", bmd: ph("BMD"), idm: ph("IDM"),
+               e2e: [sc.clients.BMD.stats.e2e_ms.median, sc.clients.IDM.stats.e2e_ms.median],
+               ratio: sc.compare.ratio_idm_over_bmd, conns: two ? [2, 2] : [8, 8], bytes: bytes(sc.size) };
     });
     window.mdmRace(box, races);
   }
@@ -343,7 +343,7 @@
     if (!box || box.childNodes.length) return;
     var top = 200, lg = function (v) { return Math.log(Math.max(1, v)) / Math.log(top); };
     var rows = data.scenarios.filter(final)
-      .sort(function (a, b) { return b.compare.ratio_idm_over_mdm - a.compare.ratio_idm_over_mdm; });
+      .sort(function (a, b) { return b.compare.ratio_idm_over_bmd - a.compare.ratio_idm_over_bmd; });
     var axis = el("div", "su-axis");
     [1, 2, 5, 10, 20, 50, 100, 200].forEach(function (v) {
       var t = el("span", null, v + "\u00d7"); t.style.left = (lg(v) * 100) + "%"; axis.appendChild(t);
@@ -356,7 +356,7 @@
       name.appendChild(el("b", null, SHORT[sc.id] || sc.title));
       name.appendChild(el("small", null, sc.title));
       var track = el("div", "su-track");
-      var bar = el("i", "su-bar"); bar.style.setProperty("--w", (lg(c.ratio_idm_over_mdm) * 100) + "%");
+      var bar = el("i", "su-bar"); bar.style.setProperty("--w", (lg(c.ratio_idm_over_bmd) * 100) + "%");
       var ci = el("i", "su-ci");
       ci.style.left = (lg(c.ratio_ci95[0]) * 100) + "%";
       ci.style.width = Math.max(0.4, (lg(c.ratio_ci95[1]) - lg(c.ratio_ci95[0])) * 100) + "%";
@@ -364,7 +364,7 @@
         var t = el("i", "su-tick"); t.style.left = (lg(v) * 100) + "%"; track.appendChild(t);
       });
       track.appendChild(bar); track.appendChild(ci);
-      var val = el("div", "su-val"), num = el("b", null, fmtRatio(c.ratio_idm_over_mdm));
+      var val = el("div", "su-val"), num = el("b", null, fmtRatio(c.ratio_idm_over_bmd));
       val.appendChild(num);
       val.appendChild(el("small", null, "p " + (c.mann_whitney_p < 0.001 ? "< 0.001" : c.mann_whitney_p)));
       row.appendChild(name); row.appendChild(track); row.appendChild(val);
@@ -384,7 +384,7 @@
     var sc = data.scenarios.filter(function (s) { return s.id === "maxconns-50m"; })[0];
     if (!sc) return;
     box.setAttribute("data-done", "1");
-    var n = { mdm: Math.round(sc.clients.iDM.stats.connections.median), idm: Math.round(sc.clients.IDM.stats.connections.median) };
+    var n = { bmd: Math.round(sc.clients.BMD.stats.connections.median), idm: Math.round(sc.clients.IDM.stats.connections.median) };
     Object.keys(n).forEach(function (k) {
       var grid = box.querySelector('[data-conn-grid="' + k + '"]');
       for (var i = 0; i < n[k]; i++) { var q = el("i"); q.style.setProperty("--i", i); grid.appendChild(q); }

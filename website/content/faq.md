@@ -3,47 +3,47 @@
 Each question becomes its own page (faq/<id>.html) and an entry of faq/index.html; groups are the
 level-two headings. Answers link to the full help page. Built by tools/website/build.py.
 
-## About iDM
+## About BMD
 
-### Is iDM really free? {#is-it-free}
+### Is BMD really free? {#is-it-free}
 
-Yes, completely. iDM is free and open-source software under the GNU General Public License, version 3. There is no trial period, no paid edition, no registration key, no nag screen and no ads, and there never will be. You may use it at home or at work, copy it and give it to others.
+Yes, completely. BMD is free and open-source software under the GNU General Public License, version 3. There is no trial period, no paid edition, no registration key, no nag screen and no ads, and there never will be. You may use it at home or at work, copy it and give it to others.
 
 ### Is it a copy or a crack of Internet Download Manager? {#is-it-idm}
 
-No. iDM is an independent program written from scratch in Rust, with no connection to Tonec Inc., the makers of Internet Download Manager (IDM). It contains none of IDM's code or artwork. Its windows are laid out the way IDM users expect, so you can switch without learning anything new — and because iDM is free, there is nothing to crack. Please don't download "cracked" download managers: they are a common way to spread malware.
+No. BMD is an independent program written from scratch in Rust, with no connection to Tonec Inc., the makers of Internet Download Manager (IDM). It contains none of IDM's code or artwork. Its windows are laid out the way IDM users expect, so you can switch without learning anything new — and because BMD is free, there is nothing to crack. Please don't download "cracked" download managers: they are a common way to spread malware.
 
-### How is iDM different from IDM? {#mdm-vs-idm}
+### How is BMD different from IDM? {#bmd-vs-idm}
 
-The layout is familiar on purpose: the toolbar, the categories, the download list, the progress window with every connection, queues and the scheduler. The differences: iDM is free and open source, downloads BitTorrent and magnet links in the same list, finished faster in [our benchmark](/benchmark.html), speaks 86 languages and has builds for Linux and macOS. IDM is the more mature product, refined over many years. See the full [comparison](/idm-alternative.html).
+The layout is familiar on purpose: the toolbar, the categories, the download list, the progress window with every connection, queues and the scheduler. The differences: BMD is free and open source, downloads BitTorrent and magnet links in the same list, finished faster in [our benchmark](/benchmark.html), speaks 86 languages and has builds for Linux and macOS. IDM is the more mature product, refined over many years. See the full [comparison](/idm-alternative.html).
 
-### Why does iDM show a larger memory figure than IDM? {#memory-vs-idm}
+### Why does BMD show a larger memory figure than IDM? {#memory-vs-idm}
 
 Windows reports two different memory numbers. Memory in use (Task Manager's "Memory" column, the private working set) is what a program is holding in RAM right now. Committed memory (Process Explorer's "Private Bytes", Resource Monitor's "Commit") is memory Windows has set aside for the program; most of it can be paged out, so it doesn't mean the program is using that much RAM.
 
-On one test machine (Windows 11, iDM 0.5.2, IDM 6.42, release builds), memory in use in the tray was 6–9 MB for iDM and about 6 MB for IDM. With its window open, iDM uses about 70 MB right after it starts, and about 10 MB once the window has been hidden in the tray, which gives memory back to Windows. Committed memory was 130–160 MB for iDM and about 10 MB for IDM. While iDM downloads fast, its memory in use can rise to a few hundred MB for a moment (it holds data in memory while the disk catches up); it drops back within seconds of the download ending, and in the tray it hands the rest back to Windows within about ten minutes.
+On one test machine (Windows 11, BMD 0.5.2, IDM 6.42, release builds), memory in use in the tray was 6–9 MB for BMD and about 6 MB for IDM. With its window open, BMD uses about 70 MB right after it starts, and about 10 MB once the window has been hidden in the tray, which gives memory back to Windows. Committed memory was 130–160 MB for BMD and about 10 MB for IDM. While BMD downloads fast, its memory in use can rise to a few hundred MB for a moment (it holds data in memory while the disk catches up); it drops back within seconds of the download ending, and in the tray it hands the rest back to Windows within about ten minutes.
 
 ### Is it safe? Does it contain adware or spyware? {#is-it-safe}
 
-iDM contains no adware, spyware, bundled offers or tracking. Its whole source code is public, so anyone can check what it does, and every release is built from that code by GitHub's servers, where the build can be inspected. The helper programs it can fetch for videos are verified before they run: yt-dlp against its developers' signing key, ffmpeg against its published checksums. Download iDM only from [this site](/download.html) or the project's GitHub releases.
+BMD contains no adware, spyware, bundled offers or tracking. Its whole source code is public, so anyone can check what it does, and every release is built from that code by GitHub's servers, where the build can be inspected. The helper programs it can fetch for videos are verified before they run: yt-dlp against its developers' signing key, ffmpeg against its published checksums. Download BMD only from [this site](/download.html) or the project's GitHub releases.
 
-### Does iDM collect my data? {#privacy}
+### Does BMD collect my data? {#privacy}
 
-No. iDM has no accounts, no analytics and no telemetry. It connects to the servers you download from and, each time it starts and once a day while it runs, asks GitHub whether a newer version exists (you can turn that off in Help → Check for updates). The browser extension talks only to iDM on your own computer. The details are in the [privacy policy](/privacy.html).
+No. BMD has no accounts, no analytics and no telemetry. It connects to the servers you download from and, each time it starts and once a day while it runs, asks GitHub whether a newer version exists (you can turn that off in Help → Check for updates). The browser extension talks only to BMD on your own computer. The details are in the [privacy policy](/privacy.html).
 
-### Who makes iDM? {#who-makes-it}
+### Who makes BMD? {#who-makes-it}
 
-iDM is made by Ahmed Nefzaoui, an independent developer, and is open to contributions from anyone on [GitHub]({{REPO}}). Bug reports, translations and code are all welcome.
+BMD is made by Ahmed Nefzaoui, an independent developer, and is open to contributions from anyone on [GitHub]({{REPO}}). Bug reports, translations and code are all welcome.
 
 ## Installing
 
 ### Which systems does it run on? {#systems}
 
-Windows 10 and 11 is the main platform, on 64-bit PCs (x64); from the version after 0.5.2, on Windows on ARM PCs and 32-bit Windows 10 too, each with files of its own. Linux is supported too, with an AppImage, a .deb, an .rpm and a .tar.gz in every release: since version 0.5.0 it isn't experimental any more, and it is checked on GNOME, KDE Plasma, Xfce and Cinnamon, in Wayland sessions too, and its packages in clean Ubuntu, Debian and Fedora systems. Still to come there: the Flatpak Firefox isn't checked yet, and screen readers (Orca) don't read iDM's windows yet. macOS builds (.dmg) come with every release too, and stay experimental. See [Windows, Mac and Linux](/features/systems.html) and [Download](/download.html).
+Windows 10 and 11 is the main platform, on 64-bit PCs (x64); from the version after 0.5.2, on Windows on ARM PCs and 32-bit Windows 10 too, each with files of its own. Linux is supported too, with an AppImage, a .deb, an .rpm and a .tar.gz in every release: since version 0.5.0 it isn't experimental any more, and it is checked on GNOME, KDE Plasma, Xfce and Cinnamon, in Wayland sessions too, and its packages in clean Ubuntu, Debian and Fedora systems. Still to come there: the Flatpak Firefox isn't checked yet, and screen readers (Orca) don't read BMD's windows yet. macOS builds (.dmg) come with every release too, and stay experimental. See [Windows, Mac and Linux](/features/systems.html) and [Download](/download.html).
 
 ### Does it run on Windows 7 or 8? {#windows-7}
 
-No. iDM needs Windows 10 or 11. The Rust toolchain it is built with no longer supports Windows 7 and 8, and neither does Microsoft.
+No. BMD needs Windows 10 or 11. The Rust toolchain it is built with no longer supports Windows 7 and 8, and neither does Microsoft.
 
 ### Can I use it without installing it? {#portable}
 
@@ -51,43 +51,43 @@ Yes. The portable download is a zip: unzip it anywhere, a USB stick included, an
 
 ### Can I bring my download list over from IDM? {#import-from-idm}
 
-Yes. In IDM, export your list with **Tasks → Export → To IDM export file**. In iDM, choose **Tasks → Import → From IDM export file** and pick that `.ef2` file: every download comes over with its address, referrer and cookies. A plain text file of links works too. See [Adding downloads](/help/adding-downloads.html).
+Yes. In IDM, export your list with **Tasks → Export → To IDM export file**. In BMD, choose **Tasks → Import → From IDM export file** and pick that `.ef2` file: every download comes over with its address, referrer and cookies. A plain text file of links works too. See [Adding downloads](/help/adding-downloads.html).
 
 ### How do I uninstall it? {#uninstall}
 
-Open Windows **Settings → Apps**, find iDM and choose Uninstall. The uninstaller asks whether to delete your download list and settings as well. Files you downloaded are never touched. For the portable copy, delete its folder. On Linux, remove the package with your package manager, or delete the AppImage; [Uninstall on Linux](/help/getting-started.html#uninstall-linux) says what stays in your home folder and how to remove it.
+Open Windows **Settings → Apps**, find BMD and choose Uninstall. The uninstaller asks whether to delete your download list and settings as well. Files you downloaded are never touched. For the portable copy, delete its folder. On Linux, remove the package with your package manager, or delete the AppImage; [Uninstall on Linux](/help/getting-started.html#uninstall-linux) says what stays in your home folder and how to remove it.
 
 ## Browsers
 
 ### Which browsers does it work with? {#browsers}
 
-Firefox (from [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/)), Google Chrome, Microsoft Edge, Brave, Opera and Vivaldi (from [the Chrome Web Store](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp)), through the iDM browser extension, and browsers built on them: Zen and LibreWolf, Helium. The extension hands downloads to iDM with their cookies and referrer, so files behind a sign-in still work, and it adds **Download with iDM** to the right-click menu and a **Download video** button over videos. See [Browser integration](/help/browser-integration.html).
+Firefox (from [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/)), Google Chrome, Microsoft Edge, Brave, Opera and Vivaldi (from [the Chrome Web Store](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp)), through the BMD browser extension, and browsers built on them: Zen and LibreWolf, Helium. The extension hands downloads to BMD with their cookies and referrer, so files behind a sign-in still work, and it adds **Download with BMD** to the right-click menu and a **Download video** button over videos. See [Browser integration](/help/browser-integration.html).
 
 ### How do I install the browser extension? {#install-extension}
 
-Install iDM with the setup and keep **Set up browser integration** ticked. In Firefox, then open [the add-on's page on addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/) and click **Add to Firefox**. In Chrome, Edge, Brave, Opera and Vivaldi, open [its page in the Chrome Web Store](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp) and click **Add to Chrome** (Edge shows **Get**, and first asks to allow extensions from other stores). Can't use a store? Open the browser's extensions page, turn on Developer mode, choose **Load unpacked** and pick the `extension\chromium` folder in iDM's folder. The [tutorial](/help/guide-catch-browser-downloads.html) walks through it.
+Install BMD with the setup and keep **Set up browser integration** ticked. In Firefox, then open [the add-on's page on addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/) and click **Add to Firefox**. In Chrome, Edge, Brave, Opera and Vivaldi, open [its page in the Chrome Web Store](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp) and click **Add to Chrome** (Edge shows **Get**, and first asks to allow extensions from other stores). Can't use a store? Open the browser's extensions page, turn on Developer mode, choose **Load unpacked** and pick the `extension\chromium` folder in BMD's folder. The [tutorial](/help/guide-catch-browser-downloads.html) walks through it.
 
-### Why doesn't iDM take over my download? {#not-catching}
+### Why doesn't BMD take over my download? {#not-catching}
 
-Check four things: the extension is installed and turned on; **Options → General → Use advanced browser integration** is on and your browser is ticked; the file's type is in **Options → File types**; and the site isn't in the list of sites iDM leaves alone. Right-click a link and choose **Download with iDM** to send any file whatever its type. More in [Troubleshooting](/help/troubleshooting.html).
+Check four things: the extension is installed and turned on; **Options → General → Use advanced browser integration** is on and your browser is ticked; the file's type is in **Options → File types**; and the site isn't in the list of sites BMD leaves alone. Right-click a link and choose **Download with BMD** to send any file whatever its type. More in [Troubleshooting](/help/troubleshooting.html).
 
 ### Can I download without the browser extension? {#without-extension}
 
-Yes. Copy a link to a file and iDM offers to download it at once (**Options → General → Offer to download links copied to the clipboard**, on by default). You can also paste links into **Add URL**, drag them onto the drop target, add a whole batch, or use the command line. See [Adding downloads](/help/adding-downloads.html).
+Yes. Copy a link to a file and BMD offers to download it at once (**Options → General → Offer to download links copied to the clipboard**, on by default). You can also paste links into **Add URL**, drag them onto the drop target, add a whole batch, or use the command line. See [Adding downloads](/help/adding-downloads.html).
 
 ## Downloading
 
-### Why is iDM faster than a browser? {#why-faster}
+### Why is BMD faster than a browser? {#why-faster}
 
-A browser fetches a file over one connection. iDM asks the server for several parts of the file at once, up to 32 connections (128 if you allow it), and keeps re-splitting: when a connection finishes its part, it takes over half of the biggest part still left, so no slow connection holds up the end. It also remembers servers that refuse extra connections and stops asking them. See [Connections and speed](/help/connections-and-speed.html).
+A browser fetches a file over one connection. BMD asks the server for several parts of the file at once, up to 32 connections (128 if you allow it), and keeps re-splitting: when a connection finishes its part, it takes over half of the biggest part still left, so no slow connection holds up the end. It also remembers servers that refuse extra connections and stops asking them. See [Connections and speed](/help/connections-and-speed.html).
 
 ### How many connections does it use? {#connections}
 
-Eight per download by default, and up to 32 if you choose in **Options → Connection**, or 128 after ticking **Allow more than 32 connections** there. iDM uses fewer when a server allows fewer, and only one when a server can't send parts of a file at all.
+Eight per download by default, and up to 32 if you choose in **Options → Connection**, or 128 after ticking **Allow more than 32 connections** there. BMD uses fewer when a server allows fewer, and only one when a server can't send parts of a file at all.
 
 ### Can it resume broken downloads? {#resume}
 
-Yes. iDM writes its progress as it goes, so after a lost connection, a crash or a restart it carries on where it stopped. Before resuming it checks that the file on the server hasn't changed. When a download address has expired, **Refresh download address** lets you give it a fresh one and keep the data. See [Resume a broken download](/help/guide-resume-broken-download.html).
+Yes. BMD writes its progress as it goes, so after a lost connection, a crash or a restart it carries on where it stopped. Before resuming it checks that the file on the server hasn't changed. When a download address has expired, **Refresh download address** lets you give it a fresh one and keep the data. See [Resume a broken download](/help/guide-resume-broken-download.html).
 
 ### Can I limit the download speed? {#speed-limit}
 
@@ -109,7 +109,7 @@ Yes: HTTP and SOCKS proxies, and proxy auto-config (PAC) scripts, in **Options �
 
 ### How do I download a video from YouTube or another site? {#download-video}
 
-Point at the video in your browser and click the **Download video** button that appears over it, or paste the page's address into **Tasks → Download video from a page**. iDM lists every quality the site offers, with sizes; pick one and it downloads like any file. It uses yt-dlp, which supports thousands of sites. Download only videos you have the right to. See [Download a video from a page](/help/guide-video-from-page.html).
+Point at the video in your browser and click the **Download video** button that appears over it, or paste the page's address into **Tasks → Download video from a page**. BMD lists every quality the site offers, with sizes; pick one and it downloads like any file. It uses yt-dlp, which supports thousands of sites. Download only videos you have the right to. See [Download a video from a page](/help/guide-video-from-page.html).
 
 ### Can it download a video's subtitles? {#subtitles}
 
@@ -117,7 +117,7 @@ Yes. When a video has subtitles, the **Subtitles** list in the video window offe
 
 ### Can it download from Netflix or other paid streaming services? {#drm}
 
-No. iDM doesn't break copy protection (DRM), by design. Videos that are protected stay protected. See also [what iDM is made for](/intended-use.html).
+No. BMD doesn't break copy protection (DRM), by design. Videos that are protected stay protected. See also [what BMD is made for](/intended-use.html).
 
 ### Does it download torrents? {#torrents}
 
@@ -129,18 +129,18 @@ No, unless you want it to. While a torrent downloads it trades pieces with other
 
 ## Help and more
 
-### Is iDM available in my language? {#languages}
+### Is BMD available in my language? {#languages}
 
-Very likely: iDM speaks 86 languages, every display language Windows 11 offers, chosen on the first start or any time in **View → Language**. Arabic, Hebrew, Persian, Urdu and Uyghur are laid out right to left. See [all the languages](/languages.html) and how to help improve yours.
+Very likely: BMD speaks 86 languages, every display language Windows 11 offers, chosen on the first start or any time in **View → Language**. Arabic, Hebrew, Persian, Urdu and Uyghur are laid out right to left. See [all the languages](/languages.html) and how to help improve yours.
 
-### Can other programs or scripts control iDM? {#automation}
+### Can other programs or scripts control BMD? {#automation}
 
-Yes. iDM accepts IDM's familiar command-line switches, comes with `misterdownloadmanager-cli` for downloads from a terminal, and has a local, token-protected automation API that can list, pause, start and remove downloads. The API is off until you turn it on. See [Command line and automation](/help/command-line.html).
+Yes. BMD accepts IDM's familiar command-line switches, comes with `bmd-cli` for downloads from a terminal, and has a local, token-protected automation API that can list, pause, start and remove downloads. The API is off until you turn it on. See [Command line and automation](/help/command-line.html).
 
-### Can my AI assistant use iDM? {#ai}
+### Can my AI assistant use BMD? {#ai}
 
-Yes. iDM comes with an MCP server, `misterdownloadmanager-mcp`: add it to Claude Desktop, Claude Code, Cursor, VS Code or another assistant that supports MCP, and you can ask it in your own words to list, add, pause, resume or remove downloads. It works with the iDM on your computer only, and needs the automation API on. See [AI assistants](/help/ai-assistants.html).
+Yes. BMD comes with an MCP server, `bmd-mcp`: add it to Claude Desktop, Claude Code, Cursor, VS Code or another assistant that supports MCP, and you can ask it in your own words to list, add, pause, resume or remove downloads. It works with the BMD on your computer only, and needs the automation API on. See [AI assistants](/help/ai-assistants.html).
 
 ### How do I report a bug or ask for a feature? {#report-bug}
 
-Use **Help → Report a problem** in iDM: it opens the bug report form on GitHub with your version, system and language filled in. Or [open the form]({{REPO}}/issues/new?template=bug.yml) yourself. Security problems go privately through the [security page](/security.html).
+Use **Help → Report a problem** in BMD: it opens the bug report form on GitHub with your version, system and language filled in. Or [open the form]({{REPO}}/issues/new?template=bug.yml) yourself. Security problems go privately through the [security page](/security.html).

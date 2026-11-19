@@ -1,6 +1,6 @@
-//! Whether a torrent's file names are safe to write (#40). iDM checks every name itself, before a
+//! Whether a torrent's file names are safe to write (#40). BMD checks every name itself, before a
 //! torrent is listed or added, so only plain names reach the disk. librqbit writes the files under
-//! the torrent's own names, so iDM can't rename them: an unsafe name refuses the torrent, saying
+//! the torrent's own names, so BMD can't rename them: an unsafe name refuses the torrent, saying
 //! which.
 //!
 //! Everywhere: no empty part, `.`, `..`, separator or control character. On Windows also none of

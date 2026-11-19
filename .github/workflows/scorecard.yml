@@ -1,6 +1,6 @@
 # OpenSSF Scorecard: a public, automated check of the repository's security practices (pinned
 # actions, branch protection, signed releases, token permissions...). The result shows on
-# https://scorecard.dev/viewer/?uri=github.com/DecoyINDIA/iDM and, with
+# https://scorecard.dev/viewer/?uri=github.com/DecoyINDIA/BMD and, with
 # upload-sarif, in the Security tab. Read-only except for the result upload.
 name: Scorecard
 

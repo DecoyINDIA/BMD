@@ -99,7 +99,7 @@ impl Picker {
                     &p,
                     o.x + 12.0,
                     o.y + 20.0,
-                    crate::i18n::t("Choose the language iDM shows its windows in:"),
+                    crate::i18n::t("Choose the language BMD shows its windows in:"),
                     ink,
                     o.x + W - 12.0,
                     13.0,

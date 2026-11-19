@@ -37,8 +37,8 @@ updates:
     commit-message:
       prefix: Dependencies
     labels: [dependencies]
-    # MDM's own forks, patched in Cargo.toml's [patch.crates-io] (or taken from git) at a commit
-    # that carries MDM's changes: they move by hand, with those changes on the new release.
+    # BMD's own forks, patched in Cargo.toml's [patch.crates-io] (or taken from git) at a commit
+    # that carries BMD's changes: they move by hand, with those changes on the new release.
     ignore:
       - dependency-name: "egui*"
       - dependency-name: eframe
@@ -50,7 +50,7 @@ updates:
       - dependency-name: "naga*"
       - dependency-name: "librqbit*"
       - dependency-name: "craft-*"
-      # The font parser egui's epaint uses: MDM checks fonts with the same one (#953, #1412),
+      # The font parser egui's epaint uses: BMD checks fonts with the same one (#953, #1412),
       # so it moves with egui.
       - dependency-name: skrifa
     groups:

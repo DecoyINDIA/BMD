@@ -1,6 +1,6 @@
 [package]
-name = "mdm-cli"
-description = "iDM, headless command line (in the app's program) and its launcher"
+name = "bmd-cli"
+description = "BMD, headless command line (in the app's program) and its launcher"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -8,23 +8,23 @@ license.workspace = true
 authors.workspace = true
 publish.workspace = true
 
-# The commands, which the app's program runs (mdm-app depends on this library).
+# The commands, which the app's program runs (bmd-app depends on this library).
 [lib]
 path = "src/lib.rs"
 
 # The launcher: starts the app's program for them (std only, but for Ctrl+C on Windows).
 [[bin]]
-name = "misterdownloadmanager-cli"
+name = "bmd-cli"
 path = "src/main.rs"
 
 [dependencies]
-mdm-ipc.workspace = true
-mdm-tools.workspace = true
-mdm-torrent.workspace = true
+bmd-ipc.workspace = true
+bmd-tools.workspace = true
+bmd-torrent.workspace = true
 tempfile.workspace = true
 anyhow.workspace = true
 clap.workspace = true
-mdm-engine.workspace = true
+bmd-engine.workspace = true
 reqwest.workspace = true
 serde_json.workspace = true
 tokio.workspace = true

@@ -1,7 +1,7 @@
 # Checks the workspace for Linux and macOS from Windows: `cargo clippy -D warnings` for
 # x86_64-unknown-linux-gnu and aarch64-apple-darwin, into target/cross. Nothing is linked, so
 # no Linux or macOS libraries are needed: Zig (a portable zip from ziglang.org; $env:ZIG, else
-# %USERPROFILE%\.mdm-dev\zig-*\zig.exe) compiles the few C dependencies, and pkg-config is a
+# %USERPROFILE%\.bmd-dev\zig-*\zig.exe) compiles the few C dependencies, and pkg-config is a
 # stub. The real builds run on GitHub's runners (release.yml).
 #
 #   tools\dev\check-cross.ps1 [-Targets linux, macos]
@@ -9,7 +9,7 @@ param([string[]]$Targets = @("linux", "macos"))
 $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $zig = if ($env:ZIG) { $env:ZIG } else {
-  Get-ChildItem "$env:USERPROFILE\.mdm-dev\zig-*\zig.exe" -ErrorAction SilentlyContinue |
+  Get-ChildItem "$env:USERPROFILE\.bmd-dev\zig-*\zig.exe" -ErrorAction SilentlyContinue |
     Select-Object -First 1 -ExpandProperty FullName
 }
 if (-not $zig -or -not (Test-Path $zig)) { throw "Zig not found: set `$env:ZIG to zig.exe" }
@@ -40,7 +40,7 @@ foreach ($t in $Targets) {
   # Without the engine's browser-like connection (#668): its BoringSSL doesn't cross-compile
   # through Zig here (CMake looks for the target's threads and macOS tools); the runners build it.
   # The other default features are named back.
-  & cargo clippy --workspace --all-targets --no-default-features --features mdm-crash/native-symbols --target $triple --target-dir (Join-Path $root "target\cross") -q -- -D warnings
+  & cargo clippy --workspace --all-targets --no-default-features --features bmd-crash/native-symbols --target $triple --target-dir (Join-Path $root "target\cross") -q -- -D warnings
   if ($LASTEXITCODE) { $failed += $t }
 }
 if ($failed) { throw "failed: $($failed -join ', ')" }

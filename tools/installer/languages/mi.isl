@@ -1,4 +1,4 @@
-﻿; iDM's installer in Maori: tools/installer/languages.py
+﻿; BMD's installer in Maori: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=E tango ana i a %1.
 
 [CustomMessages]
 TaskBrowser=Whakaritea te whakauru &pūtirotiro (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Whakatuwheratia ngā kōnae .&torrent me ngā hononga autō ki te iDM
-TaskStartup=Tīmatahia te iDM ina tīmata a &Windows
+TaskTorrents=Whakatuwheratia ngā kōnae .&torrent me ngā hononga autō ki te BMD
+TaskStartup=Tīmatahia te BMD ina tīmata a &Windows
 TaskGroupOther=Ētahi atu:
-Launch=Tīmatahia te iDM
+Launch=Tīmatahia te BMD
 KeepData=Mukua hoki tō rārangi tikiake me ngā tautuhinga?%n%nKāore ō kōnae i tikiakehia e pā ki tēnā.

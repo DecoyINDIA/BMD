@@ -1,42 +1,42 @@
 ---
 name: Server mode
-title: Run iDM on a home server, NAS, Docker or Unraid
+title: Run BMD on a home server, NAS, Docker or Unraid
 headline: Let the home server do the downloading.
-line: iDM without a window on a NAS, in Docker or on Unraid, fed from your phone or browser.
-lede: Run iDM without a window on a home server or a NAS, and send it downloads from your phone or your browser. The files land in the server's own folders, such as a network share.
-description: Run iDM without a window on a home server, NAS, Docker or Unraid, and send it downloads from your phone or your browser.
+line: BMD without a window on a NAS, in Docker or on Unraid, fed from your phone or browser.
+lede: Run BMD without a window on a home server or a NAS, and send it downloads from your phone or your browser. The files land in the server's own folders, such as a network share.
+description: Run BMD without a window on a home server, NAS, Docker or Unraid, and send it downloads from your phone or your browser.
 group: network
 order: 240
 since: 0.5
-where: The command line: `misterdownloadmanager --headless`
+where: The command line: `bmd --headless`
 help: server.md
 ---
 
-## The same iDM, without a window
+## The same BMD, without a window
 
-`misterdownloadmanager --headless` runs iDM with its list, categories, queues, Scheduler, speed
+`bmd --headless` runs BMD with its list, categories, queues, Scheduler, speed
 limits and torrents, but no window. Its folders and port come from flags or the environment. It
-stops cleanly, saving its list, when the system stops it. It runs on any Linux machine with iDM
+stops cleanly, saving its list, when the system stops it. It runs on any Linux machine with BMD
 installed, and on Windows and macOS the same way.
 
 ## Docker and Unraid
 
-A `Dockerfile` and a Compose file come with iDM's source. For now you build the image yourself; a
+A `Dockerfile` and a Compose file come with BMD's source. For now you build the image yourself; a
 published image comes later. The first build is long, up to an hour on a small server, and the
 image is small, about 175 MB, with no desktop libraries.
 
 Give it a folder for its settings and one for the downloads, where each category gets its own
 folder. Mount a network share there and the files land straight on it. On Unraid, a template
-maps the folders and runs iDM as `nobody:users`, as Unraid's shares expect.
+maps the folders and runs BMD as `nobody:users`, as Unraid's shares expect.
 
 ## Control it from your phone or your browser
 
 The remote control is on in this mode. The log prints the address to open and a pairing code
 with a QR code: pair your phone as with the [remote control](/features/remote.html), and
-`misterdownloadmanager-cli pair` makes a new code at any time.
+`bmd-cli pair` makes a new code at any time.
 
-In the browser extension, **Send downloads to → Another iDM (a server)** sends the downloads it catches, and
-**Download with iDM** on a link, to the server instead of your computer. The
+In the browser extension, **Send downloads to → Another BMD (a server)** sends the downloads it catches, and
+**Download with BMD** on a link, to the server instead of your computer. The
 browser's cookies stay behind, so a download that needs you signed in to a site stays with your
 computer.
 
@@ -47,4 +47,4 @@ window, so a download that would ask a question, such as a duplicate, takes the 
 settings, or isn't added. Don't publish the port on the internet: reach your home network through
 a VPN instead.
 
-Server mode is new, so please [tell us how it goes](https://github.com/DecoyINDIA/iDM/issues).
+Server mode is new, so please [tell us how it goes](https://github.com/DecoyINDIA/BMD/issues).

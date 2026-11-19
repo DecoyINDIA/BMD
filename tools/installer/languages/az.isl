@@ -1,4 +1,4 @@
-﻿; iDM's installer in Azerbaijani: tools/installer/languages.py
+﻿; BMD's installer in Azerbaijani: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=%1 silinir.
 
 [CustomMessages]
 TaskBrowser=Brauzer inteqrasiyasını quraşdırın (&Chrome, Edge, Brave, Firefox)
-TaskTorrents=.&torrent fayllarını və maqnit keçidlərini iDM ilə açın
-TaskStartup=&Windows işə düşəndə iDM proqramını başladın
+TaskTorrents=.&torrent fayllarını və maqnit keçidlərini BMD ilə açın
+TaskStartup=&Windows işə düşəndə BMD proqramını başladın
 TaskGroupOther=Digər:
-Launch=iDM işə salınsın
+Launch=BMD işə salınsın
 KeepData=Yükləmə siyahınızı və parametrlərinizi də silmək istəyirsiniz?%n%nYüklənmiş fayllarınıza hər iki halda toxunulmayacaq.

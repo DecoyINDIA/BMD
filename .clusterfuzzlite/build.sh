@@ -2,7 +2,7 @@
 # Builds every fuzz target (fuzz/fuzz_targets) with the sanitizer ClusterFuzzLite asks for, each
 # with its seeds (fuzz/seeds/<target>) as its starting corpus and its dictionary
 # (fuzz/dicts/<target>.dict), when it has one.
-cd "$SRC/misterdownloadmanager"
+cd "$SRC/bmd"
 cargo fuzz build -O --debug-assertions
 for target in $(cargo fuzz list); do
   cp "fuzz/target/x86_64-unknown-linux-gnu/release/$target" "$OUT/"

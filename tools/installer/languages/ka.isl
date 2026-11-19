@@ -1,4 +1,4 @@
-﻿; iDM's installer in Georgian: tools/installer/languages.py
+﻿; BMD's installer in Georgian: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=%1-ის დეინსტალაცი�
 
 [CustomMessages]
 TaskBrowser=დააყენეთ &ბრაუზერის ინტეგრაცია (Chrome, Edge, Brave, Firefox)
-TaskTorrents=.&torrent ფაილების და მაგნიტური ბმულების გახსნა iDM-ით
-TaskStartup=iDM-ის გაშვება &Windows-ის გაშვებისას
+TaskTorrents=.&torrent ფაილების და მაგნიტური ბმულების გახსნა BMD-ით
+TaskStartup=BMD-ის გაშვება &Windows-ის გაშვებისას
 TaskGroupOther=სხვა:
-Launch=გაუშვით iDM
+Launch=გაუშვით BMD
 KeepData=ასევე წაიშალოს თქვენი ჩამოტვირთვების სია და პარამეტრები?%n%nთქვენს ჩამოტვირთულ ფაილებს არ შეეხება არც ერთი გზით.

@@ -1,12 +1,12 @@
 {
   "name": {
-    "message": "iDM"
+    "message": "BMD"
   },
   "description": {
-    "message": "ማውረዶችን ከብሮውዘር ወደ iDM ያስተላልፋል።"
+    "message": "ማውረዶችን ከብሮውዘር ወደ BMD ያስተላልፋል።"
   },
   "menu": {
-    "message": "በiDM ያውርዱ"
+    "message": "በBMD ያውርዱ"
   },
   "video_download": {
     "message": "ቪዲዮ አውርድ"
@@ -30,19 +30,19 @@
     "message": "የአዝራር ቅንብሮች..."
   },
   "video_sent": {
-    "message": "ወደ iDM ተልኳል"
+    "message": "ወደ BMD ተልኳል"
   },
   "menu_selected": {
-    "message": "የተመረጡ አገናኞችን በiDM ያውርዱ"
+    "message": "የተመረጡ አገናኞችን በBMD ያውርዱ"
   },
   "menu_all": {
-    "message": "ሁሉንም አገናኞች በiDM ያውርዱ"
+    "message": "ሁሉንም አገናኞች በBMD ያውርዱ"
   },
   "status_connected": {
-    "message": "ከiDM ጋር ተገናኝቷል"
+    "message": "ከBMD ጋር ተገናኝቷል"
   },
   "status_connected_version": {
-    "message": "ከiDM $version$ ጋር ተገናኝቷል",
+    "message": "ከBMD $version$ ጋር ተገናኝቷል",
     "placeholders": {
       "version": {
         "content": "$1",
@@ -54,22 +54,22 @@
     "message": "ባለበት ቆሟል፦ ውርዶች በአሳሹ ይቀራሉ"
   },
   "status_not_installed": {
-    "message": "iDM አልተጫነም፣ ወይም የአሳሽ ውህደቱ አልተዘጋጀም"
+    "message": "BMD አልተጫነም፣ ወይም የአሳሽ ውህደቱ አልተዘጋጀም"
   },
   "status_forbidden": {
-    "message": "iDM የዚህን ቅጥያ ቅጂ አይቀበልም"
+    "message": "BMD የዚህን ቅጥያ ቅጂ አይቀበልም"
   },
   "status_not_running": {
-    "message": "iDM በጊዜ አልጀመረም"
+    "message": "BMD በጊዜ አልጀመረም"
   },
   "status_host_failed": {
-    "message": "ከiDM ጋር ያለው ግንኙነት አልተሳካም"
+    "message": "ከBMD ጋር ያለው ግንኙነት አልተሳካም"
   },
   "status_too_large": {
     "message": "የዚህ ውርድ ዝርዝሮች ለማስተላለፍ በጣም ትልቅ ነበሩ"
   },
   "status_update_app": {
-    "message": "ይህ ቅጥያ የሚያቀርበውን ሁሉ ለመጠቀም iDMን ያዘምኑ"
+    "message": "ይህ ቅጥያ የሚያቀርበውን ሁሉ ለመጠቀም BMDን ያዘምኑ"
   },
   "popup_take": {
     "message": "ውርዶችን ከዚህ አሳሽ ይውሰዱ"
@@ -78,10 +78,10 @@
     "message": "ውርዶችን በዚህ አሳሽ ፕሮክሲ ወይም ቪፒኤን ቅጥያ በኩል ይላኩ"
   },
   "popup_proxy_title": {
-    "message": "iDM ከዚያ በዚህ አሳሽ ከሚጠቀምበት ፕሮክሲ በኩል ያወርዳል። አሳሹ አንድ ጊዜ እንዲፈቅዱ ይጠይቅዎታል፤ ይህን ማጥፋት ፈቃዱን ይሽራል።"
+    "message": "BMD ከዚያ በዚህ አሳሽ ከሚጠቀምበት ፕሮክሲ በኩል ያወርዳል። አሳሹ አንድ ጊዜ እንዲፈቅዱ ይጠይቅዎታል፤ ይህን ማጥፋት ፈቃዱን ይሽራል።"
   },
   "popup_proxy_title_chromium": {
-    "message": "iDM ከዚያም በዚህ አሳሽ በኩል በተመሳሳይ ፕሮክሲ ያወርዳል። ይህ ሲጠፋ፣ ቅጥያው የአሳሹን ፕሮክሲ አያነብም።"
+    "message": "BMD ከዚያም በዚህ አሳሽ በኩል በተመሳሳይ ፕሮክሲ ያወርዳል። ይህ ሲጠፋ፣ ቅጥያው የአሳሹን ፕሮክሲ አያነብም።"
   },
   "popup_exclude_site": {
     "message": "ከ$site$ የሚመጡ ውርዶችን ዳግም አትውሰዱ",
@@ -105,7 +105,7 @@
     }
   },
   "popup_open": {
-    "message": "iDMን ይክፈቱ"
+    "message": "BMDን ይክፈቱ"
   },
   "popup_options": {
     "message": "አማራጮች..."
@@ -114,7 +114,7 @@
     "message": "እርዳታ"
   },
   "popup_support": {
-    "message": "MDMን ይደግፉ"
+    "message": "BMDን ይደግፉ"
   },
   "popup_fix": {
     "message": "እንዴት ማስተካከል ይቻላል"
@@ -150,7 +150,7 @@
     "message": "የላቀ የአሳሽ ውህደትን ተጠቀም በአማራጮች → አጠቃላይ ውስጥ ጠፍቷል።"
   },
   "declined_torrents": {
-    "message": "ቶረንት ነው፣ እና በቶረንት ቅንብሮች ውስጥ Open magnet links and .torrent files with iDM ተሰናክሏል።"
+    "message": "ቶረንት ነው፣ እና በቶረንት ቅንብሮች ውስጥ Open magnet links and .torrent files with BMD ተሰናክሏል።"
   },
   "declined_site_access": {
     "message": "ቅጥያው ይህንን ጣቢያ ለማንበብ አልተፈቀደለትም (የአሳሹ የጣቢያ መዳረሻ)።"
@@ -195,16 +195,16 @@
     "message": "እዚህ የሚወርድ ቪዲዮ የለም"
   },
   "video_playlist": {
-    "message": "የቪዲዮዎች ዝርዝር፦ በiDM ውስጥ ይምረጧቸው"
+    "message": "የቪዲዮዎች ዝርዝር፦ በBMD ውስጥ ይምረጧቸው"
   },
   "video_no_ytdlp": {
-    "message": "iDM ለዚህ ቪዲዮ yt-dlp ይፈልጋል"
+    "message": "BMD ለዚህ ቪዲዮ yt-dlp ይፈልጋል"
   },
   "video_too_long": {
     "message": "መፈለጉ በጣም ረጅም ጊዜ ወሰደ"
   },
   "video_busy": {
-    "message": "iDM በሌሎች ቪዲዮዎች ተጠምዷል"
+    "message": "BMD በሌሎች ቪዲዮዎች ተጠምዷል"
   },
   "video_queued": {
     "message": "ወደ ወረፋው ታክሏል"
@@ -228,7 +228,7 @@
     "message": "ይህ ኮምፒውተር"
   },
   "popup_send_remote": {
-    "message": "ሌላ iDM (አገልጋይ)"
+    "message": "ሌላ BMD (አገልጋይ)"
   },
   "popup_remote_code": {
     "message": "የማጣመሪያ ኮድ"
@@ -240,7 +240,7 @@
     "message": "ያጣምሩ"
   },
   "popup_remote_help": {
-    "message": "አድራሻውን አንድ ጊዜ ይክፈቱ እና የምስክር ወረቀቱን ይቀበሉ፣ ከዚያ ከ Options, Remote, Pair a device (ወይም misterdownloadmanager-cli pair) ኮድ ያስገቡ።"
+    "message": "አድራሻውን አንድ ጊዜ ይክፈቱ እና የምስክር ወረቀቱን ይቀበሉ፣ ከዚያ ከ Options, Remote, Pair a device (ወይም bmd-cli pair) ኮድ ያስገቡ።"
   },
   "status_remote": {
     "message": "ውርዶች ወደ $address$ ይሄዳሉ",
@@ -297,19 +297,19 @@
     "message": "ምርጡን ጥራት ያውርዱ"
   },
   "video_sending": {
-    "message": "ወደ iDM በመላክ ላይ..."
+    "message": "ወደ BMD በመላክ ላይ..."
   },
   "video_added": {
-    "message": "ወደ iDM ታክሏል"
+    "message": "ወደ BMD ታክሏል"
   },
   "video_show": {
     "message": "አሳይ"
   },
   "video_no_answer": {
-    "message": "iDM ምላሽ አልሰጠም"
+    "message": "BMD ምላሽ አልሰጠም"
   },
-  "video_get_mdm": {
-    "message": "iDM ያግኙ"
+  "video_get_bmd": {
+    "message": "BMD ያግኙ"
   },
   "video_retry": {
     "message": "እንደገና ይሞክሩ"
@@ -324,7 +324,7 @@
     "message": "ሁሉም ጥራቶች እና የትርጉም ጽሑፎች..."
   },
   "video_failed": {
-    "message": "iDM አልተጫነም ወይም አልጀመረም"
+    "message": "BMD አልተጫነም ወይም አልጀመረም"
   },
   "video_download_best": {
     "message": "ምርጡን አውርድ"

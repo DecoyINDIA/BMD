@@ -1,4 +1,4 @@
-<!-- How Bangla writes Mister Download Manager: sent with every translation request in this language (lingo.style). Written from a native speaker's review of the main window, download list, progress window and dialogs; a person checks every rule. -->
+<!-- How Bangla writes BMD: sent with every translation request in this language (lingo.style). Written from a native speaker's review of the main window, download list, progress window and dialogs; a person checks every rule. -->
 - Write standard Bangla as used in Bangladesh, following Bangla Academy spelling: শ্রেণি and সূচি with ি, সংগীত and loanwords such as লিংক with ং, পুরোনো, ইতোমধ্যে, এখনো, ভেতরে, and কী for “what” but কি for a yes or no question. (শ্রেণি যোগ করুন; আপনি কি এটি তৈরি করতে চান?)
 - Use the plural marker “-গুলো”, never “-গুলি”, and no plural marker at all on menu items, buttons, tab titles and column titles. (ফাইলগুলো আবার যাচাই করুন; চলমান ডাউনলোড)
 - Commands, action buttons, and menu items use concise, polite imperatives. Use established short labels such as “ঠিক আছে” or “বাতিল” where appropriate. (ডাউনলোড শুরু করুন; বিরতি দিন)
@@ -11,10 +11,10 @@
 - Use concise progressive phrasing for ongoing work and preserve placeholders exactly. Keep a trailing ellipsis exactly as the source writes it, three dots “...” or the single “…”, and add none the source lacks. (যাচাই করা হচ্ছে...; সংযোগ করা হচ্ছে...)
 - Keep error text direct and factual. When the source is a fragment, do not add a subject that the surrounding UI may already provide. (খোলা যায়নি: {error}; সংযোগ করা যায়নি)
 - Write event log entries as neutral statements, usually naming the event and using a natural completed-action form. Do not address the user. (ডাউনলোড শুরু হয়েছে; ফাইলটি সংরক্ষণ করা হয়েছে)
-- Bangla script has no upper- or lowercase. Do not imitate English title case; retain the official capitalization of Latin-script product names and acronyms. (স্পিড লিমিটার সেটিংস; Mister Download Manager)
+- Bangla script has no upper- or lowercase. Do not imitate English title case; retain the official capitalization of Latin-script product names and acronyms. (স্পিড লিমিটার সেটিংস; BMD)
 - Keep product, program and theme names in Latin script as written, and join a Bangla case ending to a Latin word or a placeholder with a hyphen. (Windows-এর ভাষা; {time}-এ পুনরায় শুরু হবে)
 - Put the counter “টি” straight after a number placeholder. (আরও {n}টি ডাউনলোড; {total}টির মধ্যে {have}টি)
-- Write numbers that the translation itself contains in Bangla digits, as MDM writes its own numbers in Bangla; keep Latin digits inside names, versions, file extensions and key names. (১০ সেকেন্ডের মধ্যে; Direct3D 12)
+- Write numbers that the translation itself contains in Bangla digits, as BMD writes its own numbers in Bangla; keep Latin digits inside names, versions, file extensions and key names. (১০ সেকেন্ডের মধ্যে; Direct3D 12)
 - Write month and weekday names in Bangla script without capitalization or unnecessary abbreviations. (জানুয়ারি; সোমবার)
 - Use “।” to end a sentence where the source ends one with a full stop, “?” for a question, and no end punctuation on short labels, menu items, titles, or where the source has none. Abbreviations take no “।”. (ডাউনলোড সম্পূর্ণ হয়েছে।; নং)
 - Do not put a space before punctuation; use one space after it when another phrase follows. Use curly double quotation marks for quoted UI text and names, and quote a label exactly as that label is translated. (ত্রুটি: ফাইলটি খোলা যায়নি।; “না” চাপলে ফিরে গিয়ে অন্য ফোল্ডার বেছে নিতে পারবেন।)

@@ -65,7 +65,7 @@ const MOST_DIGITS: usize = 6;
 /// user changes (Batch download puts the keys there).
 pub fn numbered(address: &str) -> Option<Pattern> {
     let url = url::Url::parse(address).ok()?;
-    if !mdm_engine::supported(&url) {
+    if !bmd_engine::supported(&url) {
         return None;
     }
     let path = url.path();

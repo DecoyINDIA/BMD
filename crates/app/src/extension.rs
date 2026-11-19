@@ -1,5 +1,5 @@
 //! The browser extension's offer: at each start, until a browser's extension has reached the
-//! app (the native host notes it: mdm_ipc::extension::seen), a window lists the browsers
+//! app (the native host notes it: bmd_ipc::extension::seen), a window lists the browsers
 //! installed and opens the extension's page in the one picked (addons.mozilla.org for Firefox
 //! and its family, the Chrome Web Store for Chrome, Edge, Brave, Opera and Vivaldi), with the
 //! tutorial that adds it by hand as the fallback. Chrome may ask by itself too: registering the
@@ -11,7 +11,7 @@
 //!
 //! Where it stands (the browsers' folders, the extension's notes) is read beside the window,
 //! never on its thread (#1218): a browser's folder can take seconds to answer (a sleeping disk,
-//! a network home folder, macOS asking the person whether iDM may read another app's data), and
+//! a network home folder, macOS asking the person whether BMD may read another app's data), and
 //! the window shows what it read last meanwhile.
 
 use std::path::PathBuf;
@@ -34,8 +34,8 @@ const SAFARI: &str = "Apple Safari";
 pub fn worth_asking(settings: &crate::settings::Settings) -> bool {
     !settings.extension_never_ask
         && settings.advanced_integration
-        && mdm_ipc::portable_dir().is_none()
-        && !mdm_ipc::extension::seen()
+        && bmd_ipc::portable_dir().is_none()
+        && !bmd_ipc::extension::seen()
 }
 
 pub struct Extension {
@@ -64,11 +64,11 @@ const FIRST_WAIT: Duration = Duration::from_millis(100);
 struct Status {
     /// A browser's extension has reached the app.
     connected: bool,
-    /// The browsers whose extension has (Options' names, mdm_ipc::extension::seen_browsers).
+    /// The browsers whose extension has (Options' names, bmd_ipc::extension::seen_browsers).
     seen: Vec<String>,
     /// The browsers can find the app (the native host is registered).
     registered: bool,
-    /// macOS kept iDM out of a browser's folder, when reading it or setting it up.
+    /// macOS kept BMD out of a browser's folder, when reading it or setting it up.
     refused: Option<Refused>,
 }
 
@@ -79,7 +79,7 @@ impl Status {
         let registration = registration();
         let registered = registration == Registration::Ready;
         Status {
-            connected: mdm_ipc::extension::seen(),
+            connected: bmd_ipc::extension::seen(),
             seen: seen_names(),
             registered,
             refused: if registered {
@@ -107,7 +107,7 @@ fn is_seen(seen: &[String], row: &str) -> bool {
 /// A row for a browser of Firefox's family (Firefox, Zen, LibreWolf …): it gets the add-on's
 /// page on addons.mozilla.org, not the Chrome Web Store.
 fn is_gecko(row: &str) -> bool {
-    mdm_ipc::browsers::named(row).is_some_and(|b| b.family == mdm_ipc::browsers::Family::Gecko)
+    bmd_ipc::browsers::named(row).is_some_and(|b| b.family == bmd_ipc::browsers::Family::Gecko)
 }
 
 impl Extension {
@@ -119,7 +119,7 @@ impl Extension {
         let mut browsers: Vec<_> = found.into_iter().map(|(n, p)| (n, Some(p))).collect();
         // The table's order (Chrome first, its button the accent one), others after.
         browsers.sort_by_key(|(n, _)| {
-            mdm_ipc::browsers::BROWSERS
+            bmd_ipc::browsers::BROWSERS
                 .iter()
                 .position(|b| b.name == n.as_str())
                 .unwrap_or(usize::MAX)
@@ -186,7 +186,7 @@ impl Extension {
             ctx,
             "extension",
             // i18n: title of the window that offers the browser extension
-            "Add iDM to your browser",
+            "Add BMD to your browser",
             [W, h + extra],
             false,
             winui::BG(),
@@ -253,11 +253,11 @@ impl Extension {
         // One row per browser: its name, and the button that opens the extension's page in it:
         // Firefox's on addons.mozilla.org, the Chrome Web Store's for the others (the tutorial
         // while STORE_ID is a placeholder, as in a build of its own).
-        let store = mdm_ipc::extension::store_page();
+        let store = bmd_ipc::extension::store_page();
         for (k, (name, program)) in self.browsers.iter().enumerate() {
             let y = BANNER + 16.0 + k as f32 * ROW;
             let page = if is_gecko(name) {
-                Some(mdm_ipc::extension::FIREFOX_PAGE.to_owned())
+                Some(bmd_ipc::extension::FIREFOX_PAGE.to_owned())
             } else {
                 store.clone()
             };
@@ -296,7 +296,7 @@ impl Extension {
                     o.y + y + 16.0,
                     &format!(
                         "\u{2714} {}",
-                        // i18n: in the browser extension's window, beside a browser whose extension reached iDM
+                        // i18n: in the browser extension's window, beside a browser whose extension reached BMD
                         crate::i18n::t("Connected")
                     ),
                     winui::SUCCESS(),
@@ -319,7 +319,7 @@ impl Extension {
             } else if add.clicked() {
                 // No store page: the tutorial on the website, in the interface language.
                 let url = page.clone().unwrap_or_else(|| {
-                    crate::help::page_url(mdm_ipc::extension::GUIDE_DOC, crate::i18n::code())
+                    crate::help::page_url(bmd_ipc::extension::GUIDE_DOC, crate::i18n::code())
                 });
                 let url = url.as_str();
                 match program {
@@ -345,11 +345,11 @@ impl Extension {
             // As wide as its label in this language (#192); the paragraph ends 10 px before it.
             let (fix_x, fix_w) =
                 winui::buttons_to_right(&p, W - 18.0, 8.0, &[("Set it up", 110.0)], 180.0)[0];
-            // macOS kept iDM out of a browser's folder (#1218, #1173): what to allow, and where.
+            // macOS kept BMD out of a browser's folder (#1218, #1173): what to allow, and where.
             let why = match &refused {
                 Some(refused) => format!("{} {}", refused_line(refused), refused_how()),
                 None => crate::i18n::t(
-                    "Browser integration isn't set up on this computer, so no browser can reach iDM yet.",
+                    "Browser integration isn't set up on this computer, so no browser can reach BMD yet.",
                 )
                 .to_owned(),
             };
@@ -365,7 +365,7 @@ impl Extension {
             let fix = winui::button(
                 ui,
                 r(o, fix_x, y - 4.0, fix_w, 25.0),
-                // i18n: button in the browser extension's window: register iDM's helper with the browsers
+                // i18n: button in the browser extension's window: register BMD's helper with the browsers
                 "Set it up",
                 ButtonKind::Accent,
                 false,
@@ -378,7 +378,7 @@ impl Extension {
         let (line, color) = if !registered {
             (String::new(), muted)
         } else if !known {
-            // i18n: in the browser extension's window, while it reads whether the browsers can reach iDM (a moment, usually)
+            // i18n: in the browser extension's window, while it reads whether the browsers can reach BMD (a moment, usually)
             (crate::i18n::t("Checking...").to_owned(), muted)
         } else if connected {
             (
@@ -417,10 +417,10 @@ impl Extension {
                 "by-hand",
             )
         {
-            crate::help::open_page(mdm_ipc::extension::GUIDE_DOC);
+            crate::help::open_page(bmd_ipc::extension::GUIDE_DOC);
         }
         // As wide as their labels in this language (#192), Don't ask again only while no
-        // extension has reached iDM.
+        // extension has reached BMD.
         let row: Vec<(&str, f32)> = if connected {
             vec![("Close", 90.0)]
         } else {
@@ -584,12 +584,12 @@ const STEPS: [&str; 8] = [
     // i18n: step 7 of turning on the Safari extension; the quoted tab name is what Safari's settings show in this language: use Apple's own word for it, or keep the English name when unsure
     "Switch to the \"Extensions\" tab (the puzzle piece).",
     // i18n: step 8 of turning on the Safari extension
-    "Turn on \"iDM\" and allow it on all websites.",
+    "Turn on \"BMD\" and allow it on all websites.",
 ];
 
 /// The browsers whose extension reached the app, by Options' names.
 fn seen_names() -> Vec<String> {
-    mdm_ipc::extension::seen_browsers()
+    bmd_ipc::extension::seen_browsers()
         .into_iter()
         .map(|(b, _)| b)
         .collect()
@@ -602,7 +602,7 @@ pub enum Registration {
     Ready,
     /// A browser's folder (or the registry) has no manifest.
     Missing,
-    /// No browser iDM knows was found to register with (Linux and macOS find them by their
+    /// No browser BMD knows was found to register with (Linux and macOS find them by their
     /// folders; Windows registers for every browser at once).
     #[cfg_attr(windows, allow(dead_code))]
     NoBrowser,
@@ -612,9 +612,9 @@ pub enum Registration {
     /// that wrote it: one run from inside a zip, whose temporary folder was deleted (#818).
     #[cfg_attr(unix, allow(dead_code))]
     Gone(PathBuf),
-    /// macOS refused to let iDM read this browser folder ("Operation not permitted", #1218):
+    /// macOS refused to let BMD read this browser folder ("Operation not permitted", #1218):
     /// its protection of other apps' data. Other systems never say it (their folders don't
-    /// refuse that way); an off-screen test copy can, for its screenshots (MDM_TEST_REFUSED).
+    /// refuse that way); an off-screen test copy can, for its screenshots (BMD_TEST_REFUSED).
     Refused(PathBuf),
 }
 
@@ -622,21 +622,21 @@ pub enum Registration {
 /// browsers look, and the helper they name. It reads the browsers' folders, which can take
 /// seconds (#1218): never on the window's thread ([`Status::read`], [`Tester`]).
 ///
-/// Off-screen test copies only: MDM_TEST_SLOW_REGISTRATION=<seconds> makes it take that long
-/// first (a folder that doesn't answer), MDM_TEST_REFUSED=<folder> says macOS refused that one.
+/// Off-screen test copies only: BMD_TEST_SLOW_REGISTRATION=<seconds> makes it take that long
+/// first (a folder that doesn't answer), BMD_TEST_REFUSED=<folder> says macOS refused that one.
 pub fn registration() -> Registration {
     if crate::offscreen() {
-        if let Some(secs) = std::env::var("MDM_TEST_SLOW_REGISTRATION")
+        if let Some(secs) = std::env::var("BMD_TEST_SLOW_REGISTRATION")
             .ok()
             .and_then(|s| s.trim().parse::<f64>().ok())
             .filter(|s| s.is_finite() && *s > 0.0)
         {
             tracing::info!(
-                "browser integration: a slow read ({secs} s, MDM_TEST_SLOW_REGISTRATION)"
+                "browser integration: a slow read ({secs} s, BMD_TEST_SLOW_REGISTRATION)"
             );
             std::thread::sleep(Duration::from_secs_f64(secs.min(600.0)));
         }
-        if let Some(folder) = std::env::var_os("MDM_TEST_REFUSED").filter(|f| !f.is_empty()) {
+        if let Some(folder) = std::env::var_os("BMD_TEST_REFUSED").filter(|f| !f.is_empty()) {
             return Registration::Refused(PathBuf::from(folder));
         }
     }
@@ -646,8 +646,8 @@ pub fn registration() -> Registration {
     return crate::unix::host_registration();
 }
 
-/// macOS kept iDM out of a browser's folder ("Operation not permitted", EPERM, #1218, #1173):
-/// which browser's (its name in the app; empty when the folder is no browser's iDM knows by
+/// macOS kept BMD out of a browser's folder ("Operation not permitted", EPERM, #1218, #1173):
+/// which browser's (its name in the app; empty when the folder is no browser's BMD knows by
 /// name), and the folder.
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Refused {
@@ -667,13 +667,13 @@ impl Refused {
     }
 }
 
-/// The browser whose folder `path` is in (under `Library/Application Support/`, as iDM's table
+/// The browser whose folder `path` is in (under `Library/Application Support/`, as BMD's table
 /// names its data and host folders on macOS: `Google/Chrome/NativeMessagingHosts` is Chrome's,
 /// `Mozilla/...` Firefox's), None for another folder.
 fn browser_of_folder(path: &str) -> Option<&'static str> {
     const SUPPORT: &str = "Library/Application Support/";
     let under = &path[path.rfind(SUPPORT)? + SUPPORT.len()..];
-    mdm_ipc::browsers::BROWSERS
+    bmd_ipc::browsers::BROWSERS
         .iter()
         .find(|b| {
             b.mac_data.iter().chain(b.mac_hosts.iter()).any(|d| {
@@ -686,7 +686,7 @@ fn browser_of_folder(path: &str) -> Option<&'static str> {
 }
 
 /// Whether the native host's error `error` (its `--register`, or the window's own) says macOS
-/// kept iDM out of a browser's folder: "<folder>: Operation not permitted (os error 1)", the
+/// kept BMD out of a browser's folder: "<folder>: Operation not permitted (os error 1)", the
 /// folder under `Library/Application Support/`. Only on macOS (`macos`): elsewhere EPERM means
 /// other things, and the error is shown as it is.
 fn refused_in(error: &str, macos: bool) -> Option<Refused> {
@@ -698,7 +698,7 @@ fn refused_in(error: &str, macos: bool) -> Option<Refused> {
     let at = error.find(EPERM)?;
     let before = &error[..at];
     let head = &before[..before.rfind("/Library/Application Support/")?];
-    // The folder starts after the words before it ("misterdownloadmanager-nmhost: /Users/…"),
+    // The folder starts after the words before it ("bmd-nmhost: /Users/…"),
     // or the error before it ("…; /Users/…").
     let start = [head.rfind(": "), head.rfind("; ")]
         .into_iter()
@@ -708,7 +708,7 @@ fn refused_in(error: &str, macos: bool) -> Option<Refused> {
     Some(Refused::at(std::path::Path::new(before[start..].trim())))
 }
 
-/// macOS keeping iDM out of a browser's folder now: the folder it refused to read, else the last
+/// macOS keeping BMD out of a browser's folder now: the folder it refused to read, else the last
 /// Set it up's error, if it says so.
 fn refused_now(registration: &Registration) -> Option<Refused> {
     match registration {
@@ -717,15 +717,15 @@ fn refused_now(registration: &Registration) -> Option<Refused> {
     }
 }
 
-/// What macOS refusing a folder means, in a line: "macOS keeps iDM out of Google Chrome's folder".
+/// What macOS refusing a folder means, in a line: "macOS keeps BMD out of Google Chrome's folder".
 fn refused_line(refused: &Refused) -> String {
     if refused.browser.is_empty() {
-        // i18n: a check of Test browser integration, and the browser extension's window (macOS): macOS refused to let iDM read or write a browser's folder (where the browser finds iDM's helper)
-        crate::i18n::t("macOS keeps iDM out of a browser's folder.").to_owned()
+        // i18n: a check of Test browser integration, and the browser extension's window (macOS): macOS refused to let BMD read or write a browser's folder (where the browser finds BMD's helper)
+        crate::i18n::t("macOS keeps BMD out of a browser's folder.").to_owned()
     } else {
         crate::i18n::fmt(
-            // i18n: a check of Test browser integration, and the browser extension's window (macOS): macOS refused to let iDM read or write {browser}'s folder (where the browser finds iDM's helper); {browser} is a browser's name
-            crate::i18n::t("macOS keeps iDM out of {browser}'s folder."),
+            // i18n: a check of Test browser integration, and the browser extension's window (macOS): macOS refused to let BMD read or write {browser}'s folder (where the browser finds BMD's helper); {browser} is a browser's name
+            crate::i18n::t("macOS keeps BMD out of {browser}'s folder."),
             &[("browser", &refused.browser)],
         )
     }
@@ -736,9 +736,9 @@ fn refused_line(refused: &Refused) -> String {
 /// apps", Apple's Platform Support guide; the prompt macOS shows is "… would like to access data
 /// from other apps").
 fn refused_how() -> &'static str {
-    // i18n: under "macOS keeps iDM out of …'s folder" (Test browser integration, the browser extension's window): how to allow it. The quoted words and System Settings → Privacy & Security → Full Disk Access are macOS's own: use Apple's words in this language, or keep the English ones when unsure
+    // i18n: under "macOS keeps BMD out of …'s folder" (Test browser integration, the browser extension's window): how to allow it. The quoted words and System Settings → Privacy & Security → Full Disk Access are macOS's own: use Apple's words in this language, or keep the English ones when unsure
     crate::i18n::t(
-        "If macOS asks whether it may access data from other apps, allow it. Or turn on iDM in System Settings → Privacy & Security → Full Disk Access. Then press Set it up.",
+        "If macOS asks whether it may access data from other apps, allow it. Or turn on BMD in System Settings → Privacy & Security → Full Disk Access. Then press Set it up.",
     )
 }
 
@@ -811,7 +811,7 @@ pub fn temporary_copy() -> bool {
         let program = image
             .map(PathBuf::from)
             .or_else(|| std::env::current_exe().ok());
-        program.is_some_and(|p| mdm_ipc::browsers::in_temporary_folder(&p))
+        program.is_some_and(|p| bmd_ipc::browsers::in_temporary_folder(&p))
     })
 }
 
@@ -821,7 +821,7 @@ pub fn temporary_copy() -> bool {
 /// (#818). Linux and macOS, which have no installer step, also register with a browser that has
 /// none yet.
 pub fn repair_at_start() {
-    if mdm_ipc::portable_dir().is_some() || crate::offscreen() {
+    if bmd_ipc::portable_dir().is_some() || crate::offscreen() {
         return;
     }
     if temporary_copy() {
@@ -867,7 +867,7 @@ pub fn set_up(ctx: &egui::Context) {
                     .map_err(|e| e.to_string())
                     .and_then(|exe| {
                         run_host(
-                            &exe.with_file_name("misterdownloadmanager-nmhost.exe"),
+                            &exe.with_file_name("bmd-nmhost.exe"),
                             "--register",
                             SET_UP_LIMIT,
                         )
@@ -955,7 +955,7 @@ pub fn checks(advanced: bool) -> Vec<Check> {
             Some("options"),
         ),
         check(
-            mdm_ipc::portable_dir().is_none(),
+            bmd_ipc::portable_dir().is_none(),
             // i18n: a check of Test browser integration: a portable copy can't be connected
             "This is the installed copy, not a portable one",
             Some("not-installed"),
@@ -964,7 +964,7 @@ pub fn checks(advanced: bool) -> Vec<Check> {
     if temporary_copy() {
         out.push(check(
             false,
-            // i18n: a check of Test browser integration: iDM was started from inside a zip (or from the temporary folder), which is deleted after it quits, so it can't be connected to the browsers
+            // i18n: a check of Test browser integration: BMD was started from inside a zip (or from the temporary folder), which is deleted after it quits, so it can't be connected to the browsers
             "This copy runs from a temporary folder that will be deleted",
             Some("not-installed"),
         ));
@@ -973,21 +973,21 @@ pub fn checks(advanced: bool) -> Vec<Check> {
     out.push(match &registration {
         Registration::Ready | Registration::Missing => check(
             registration == Registration::Ready,
-            // i18n: a check of Test browser integration: the browsers find iDM's helper program
-            "The browsers can find iDM",
+            // i18n: a check of Test browser integration: the browsers find BMD's helper program
+            "The browsers can find BMD",
             Some("not-installed"),
         ),
         Registration::NoBrowser => check(
             false,
-            // i18n: a check of Test browser integration (Linux, macOS): iDM found no browser it can connect to (one installed as a Flatpak isn't found)
-            "No browser iDM can connect to was found",
+            // i18n: a check of Test browser integration (Linux, macOS): BMD found no browser it can connect to (one installed as a Flatpak isn't found)
+            "No browser BMD can connect to was found",
             Some("not-installed"),
         ),
         Registration::HelperMissing(path) => {
             tracing::warn!("browser integration: {} is missing", path.display());
             check(
                 false,
-                // i18n: a check of Test browser integration: the browsers are set up, but the small helper program they start (misterdownloadmanager-nmhost) is gone
+                // i18n: a check of Test browser integration: the browsers are set up, but the small helper program they start (bmd-nmhost) is gone
                 "The helper program the browsers start is missing",
                 Some("not-installed"),
             )
@@ -997,7 +997,7 @@ pub fn checks(advanced: bool) -> Vec<Check> {
             let folder = manifest.parent().unwrap_or(manifest);
             Check {
                 ok: false,
-                // i18n: a check of Test browser integration: the browsers are pointed at a copy of iDM that was deleted (often one started from inside a zip); that copy's folder shows on the line under it
+                // i18n: a check of Test browser integration: the browsers are pointed at a copy of BMD that was deleted (often one started from inside a zip); that copy's folder shows on the line under it
                 text: crate::i18n::t("The browsers are set up for a copy that is gone:").to_owned(),
                 why: Some("not-installed"),
                 detail: Some(folder.display().to_string()),
@@ -1037,11 +1037,11 @@ pub fn checks(advanced: bool) -> Vec<Check> {
             how: None,
         });
     }
-    let seen = mdm_ipc::extension::seen_browsers();
+    let seen = bmd_ipc::extension::seen_browsers();
     if seen.is_empty() {
         out.push(check(
             false,
-            // i18n: a check of Test browser integration: no browser's extension has reached iDM
+            // i18n: a check of Test browser integration: no browser's extension has reached BMD
             "No browser's extension has connected yet",
             None,
         ));
@@ -1111,7 +1111,7 @@ mod tests {
         assert!(is_seen(&[SAFARI.to_owned()], SAFARI));
         assert_eq!(SAFARI, "Apple Safari");
         assert!(
-            mdm_ipc::capture::browser_of(
+            bmd_ipc::capture::browser_of(
                 "Mozilla/5.0 (Macintosh) AppleWebKit/605.1.15 Version/18.0 Safari/605.1.15"
             ) == SAFARI
         );
@@ -1237,9 +1237,9 @@ mod tests {
     fn a_folder_macos_refused_is_named_with_its_browser() {
         let chrome = "/Users/a b/Library/Application Support/Google/Chrome/NativeMessagingHosts";
         let error = format!(
-            "/Applications/iDM.app/Contents/MacOS/misterdownloadmanager-nmhost \
+            "/Applications/BMD.app/Contents/MacOS/bmd-nmhost \
              --repair: exit status: 1: registered com.misterdownloadmanager.host in /Users/a b/\
-             Library/Application Support/Vivaldi/NativeMessagingHosts misterdownloadmanager-nmhost: \
+             Library/Application Support/Vivaldi/NativeMessagingHosts bmd-nmhost: \
              {chrome}: Operation not permitted (os error 1)"
         );
         let refused = refused_in(&error, true).unwrap();
@@ -1275,7 +1275,7 @@ mod tests {
         );
     }
 
-    /// The browser of a folder, by iDM's table: each of Chrome's channels has a folder of its
+    /// The browser of a folder, by BMD's table: each of Chrome's channels has a folder of its
     /// own, all Chrome's; Brave's hosts folder is Chrome's; another folder is none.
     #[test]
     fn folders_name_their_browser() {
@@ -1305,8 +1305,8 @@ mod tests {
         let line = refused_line(&chrome);
         let unknown = refused_line(&Refused::default());
         println!("{line}\n{unknown}\n{}", refused_how());
-        assert_eq!(line, "macOS keeps iDM out of Google Chrome's folder.");
-        assert_eq!(unknown, "macOS keeps iDM out of a browser's folder.");
+        assert_eq!(line, "macOS keeps BMD out of Google Chrome's folder.");
+        assert_eq!(unknown, "macOS keeps BMD out of a browser's folder.");
         assert!(refused_how().contains("Privacy & Security → Full Disk Access"));
         let check = refused_check(&chrome);
         assert!(!check.ok && check.why == Some("not-installed") && check.how.is_some());

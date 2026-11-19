@@ -2,9 +2,9 @@
 name: Verify checksum
 title: Verify a download's checksum (MD5, SHA-256)
 headline: Make sure it's the file they published.
-line: Paste the checksum a site publishes, and iDM says plainly whether your file matches it.
-lede: Many sites publish a checksum next to a download. Paste it into iDM and it tells you in plain words whether the file you got is the one they meant.
-description: Check a download against its published MD5, SHA-1, SHA-256, SHA-512 or CRC32 checksum in iDM, from the list or the command line.
+line: Paste the checksum a site publishes, and BMD says plainly whether your file matches it.
+lede: Many sites publish a checksum next to a download. Paste it into BMD and it tells you in plain words whether the file you got is the one they meant.
+description: Check a download against its published MD5, SHA-1, SHA-256, SHA-512 or CRC32 checksum in BMD, from the list or the command line.
 group: organising
 order: 150
 since: 0.1.0
@@ -16,17 +16,17 @@ help: download-list.md#verify-checksum
 
 A checksum is a short code worked out from a file's contents, published so you can tell that
 the copy you downloaded is the right one. Right-click a download in the list, choose **Verify
-checksum...** and paste the code from the site. iDM answers **The file matches** or **The file
+checksum...** and paste the code from the site. BMD answers **The file matches** or **The file
 does NOT match**. Nothing to install, and no command to type.
 
 ## The common kinds, read as they are
 
-iDM reads MD5, SHA-1, SHA-256, SHA-512 and CRC32 checksums. Paste the code as the site shows it:
-there is no list to pick the kind from, as iDM tells them apart by their length.
+BMD reads MD5, SHA-1, SHA-256, SHA-512 and CRC32 checksums. Paste the code as the site shows it:
+there is no list to pick the kind from, as BMD tells them apart by their length.
 
 ## Ask before it's done
 
-A finished file is checked at once. Ask while it is still downloading, and iDM checks it when the
+A finished file is checked at once. Ask while it is still downloading, and BMD checks it when the
 download ends. You can paste the code as soon as the download starts, and come back to the
 answer.
 
@@ -36,14 +36,14 @@ The command line's `get` takes `--checksum` and checks the finished file: the co
 own or named, as in `sha256:…`. One command downloads the file and checks it:
 
 ```
-misterdownloadmanager-cli get https://example.com/big.iso -o D:\Downloads --checksum sha256:9f86d0…
+bmd-cli get https://example.com/big.iso -o D:\Downloads --checksum sha256:9f86d0…
 ```
 
 The [command line guide](command-line.md) lists everything `get` takes.
 
-## iDM checks its own downloads too
+## BMD checks its own downloads too
 
-The same care goes into what iDM fetches for itself. The helpers it can install for videos are
+The same care goes into what BMD fetches for itself. The helpers it can install for videos are
 verified before they run: yt-dlp against its developers' signing key, ffmpeg against its
-published checksums. iDM's own updates install only files listed in a checksum list signed with
-iDM's release key, which every release carries.
+published checksums. BMD's own updates install only files listed in a checksum list signed with
+BMD's release key, which every release carries.

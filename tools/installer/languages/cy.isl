@@ -1,4 +1,4 @@
-﻿; iDM's installer in Welsh: tools/installer/languages.py
+﻿; BMD's installer in Welsh: tools/installer/languages.py
 ; (machine-translated; a native speaker may correct any line).
 
 [LangOptions]
@@ -291,8 +291,8 @@ ShutdownBlockReasonUninstallingApp=Yn dad-osod %1.
 
 [CustomMessages]
 TaskBrowser=Sefydlu integreiddio porwr (&browser integration) (Chrome, Edge, Brave, Firefox)
-TaskTorrents=Agor ffeiliau .&torrent a dolenni magnet gyda iDM
-TaskStartup=Dechrau iDM pan fydd &Windows yn cychwyn
+TaskTorrents=Agor ffeiliau .&torrent a dolenni magnet gyda BMD
+TaskStartup=Dechrau BMD pan fydd &Windows yn cychwyn
 TaskGroupOther=Arall:
-Launch=Dechrau iDM
+Launch=Dechrau BMD
 KeepData=Dileu eich rhestr lawrlwytho a'ch gosodiadau hefyd?%n%nNi chyffyrddir â'ch ffeiliau sydd wedi'u lawrlwytho beth bynnag.

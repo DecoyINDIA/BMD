@@ -1,10 +1,10 @@
 # Builds the Windows release for one processor into target/dist/ (-Arch x64, the default; arm64;
 # x86). The x64 files keep the names they had before there were others, so every copy installed
 # before finds its update (crates/tools/src/update.rs Install::assets_on):
-#   iDM-<version>-setup.exe        the installer (tools/installer/mdm.iss)
-#   iDM-<version>-portable.zip     the same programs with a `data` folder (portable
+#   BMD-<version>-setup.exe        the installer (tools/installer/bmd.iss)
+#   BMD-<version>-portable.zip     the same programs with a `data` folder (portable
 #                                                    mode: settings beside the exe, no registry)
-#   iDM-<version>-x64.zip          the same programs, data in %APPDATA% as installed
+#   BMD-<version>-x64.zip          the same programs, data in %APPDATA% as installed
 #   ...-setup-arm64.exe, ...-portable-arm64.zip, ...-arm64.zip   Windows on ARM (-Arch arm64)
 #   ...-setup-x86.exe, ...-portable-x86.zip, ...-x86.zip         32-bit Windows (-Arch x86)
 #   SHA256SUMS.txt
@@ -31,13 +31,13 @@ if (-not $version) { throw "no version in Cargo.toml" }
 
 if (-not $NoBuild) {
   # The build machine's paths out of the programs (#25): panic locations and debug info say
-  # "cargo\..." for cargo's folder and "mdm\..." for this checkout (shorter, and no user name).
+  # "cargo\..." for cargo's folder and "bmd\..." for this checkout (shorter, and no user name).
   # Encoded flags, as those paths may hold spaces. They replace .cargo/config.toml's, so its
   # C runtime built into the programs (#785: no VCRUNTIME140.dll from Windows) is repeated here.
   $cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $env:USERPROFILE ".cargo" }
-  $env:CARGO_ENCODED_RUSTFLAGS = "--remap-path-prefix=$cargoHome=cargo" + [char]0x1f + "--remap-path-prefix=$root=mdm" + [char]0x1f + "-Ctarget-feature=+crt-static"
+  $env:CARGO_ENCODED_RUSTFLAGS = "--remap-path-prefix=$cargoHome=cargo" + [char]0x1f + "--remap-path-prefix=$root=bmd" + [char]0x1f + "-Ctarget-feature=+crt-static"
   try {
-    & cargo build --release --target $target -p mdm-app -p mdm-nmhost -p mdm-cli -p mdm-mcp
+    & cargo build --release --target $target -p bmd-app -p bmd-nmhost -p bmd-cli -p bmd-mcp
     if ($LASTEXITCODE) { throw "cargo build failed" }
   } finally {
     Remove-Item Env:CARGO_ENCODED_RUSTFLAGS
@@ -57,7 +57,7 @@ if (-not $iscc) { throw "Inno Setup 6 (ISCC.exe) not found" }
 New-Item -ItemType Directory -Force $dist | Out-Null
 $isccArgs = @("/Qp", "/DAppVersion=$version", "/DArch=$Arch", "/DBin=$bin")
 if ($SignCommand) { $isccArgs += @("/DSign", "/Smdmsign=$SignCommand") }
-& $iscc @isccArgs (Join-Path $PSScriptRoot "mdm.iss")
+& $iscc @isccArgs (Join-Path $PSScriptRoot "bmd.iss")
 if ($LASTEXITCODE) { throw "ISCC failed" }
 
 # The zips: the same programs; the portable one adds a `data` folder next to the exe, which
@@ -66,18 +66,18 @@ function New-Zip([string]$name, [bool]$portable) {
   $stage = Join-Path $dist "stage\$name"
   if (Test-Path $stage) { Remove-Item -LiteralPath $stage -Recurse -Force }
   New-Item -ItemType Directory -Force $stage | Out-Null
-  foreach ($exe in "misterdownloadmanager.exe", "misterdownloadmanager-nmhost.exe", "misterdownloadmanager-cli.exe", "misterdownloadmanager-mcp.exe") {
+  foreach ($exe in "bmd.exe", "bmd-nmhost.exe", "bmd-cli.exe", "bmd-mcp.exe") {
     Copy-Item (Join-Path $bin $exe) $stage
   }
   New-Item -ItemType Directory -Force (Join-Path $stage "extension") | Out-Null
   Copy-Item (Join-Path $root "target\extension\chromium") (Join-Path $stage "extension\chromium") -Recurse
-  Copy-Item (Join-Path $root "target\extension\mdm-firefox.xpi") (Join-Path $stage "extension")
+  Copy-Item (Join-Path $root "target\extension\bmd-firefox.xpi") (Join-Path $stage "extension")
   Copy-Item (Join-Path $root "LICENSE") (Join-Path $stage "LICENSE.txt")
   Copy-Item (Join-Path $root "ATTRIBUTION.md") (Join-Path $stage "ATTRIBUTION.txt")
   if ($portable) {
     New-Item -ItemType Directory -Force (Join-Path $stage "data") | Out-Null
     Set-Content -Encoding utf8 (Join-Path $stage "data\README.txt") @"
-This folder makes iDM portable: the download list and settings are kept
+This folder makes BMD portable: the download list and settings are kept
 here instead of in your profile, and nothing is written to the registry. Delete the folder to
 use the profile instead. Browser integration needs the installer.
 "@
@@ -107,11 +107,11 @@ use the profile instead. Browser integration needs the installer.
   }
 }
 Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
-New-Zip "iDM-$version-portable$suffix" $true
-New-Zip "iDM-$version-$Arch" $false
+New-Zip "BMD-$version-portable$suffix" $true
+New-Zip "BMD-$version-$Arch" $false
 Remove-Item -LiteralPath (Join-Path $dist "stage") -Recurse -Force
 
-$files = Get-ChildItem $dist -File | Where-Object { $_.Name -like "iDM-$version-*" }
+$files = Get-ChildItem $dist -File | Where-Object { $_.Name -like "BMD-$version-*" }
 $files | ForEach-Object { "{0}  {1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name } |
   Set-Content -Encoding ascii (Join-Path $dist "SHA256SUMS.txt")
 $files | ForEach-Object { "{0}  {1:N1} MB" -f $_.Name, ($_.Length / 1MB) }
