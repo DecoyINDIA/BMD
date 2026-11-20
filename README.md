@@ -10,7 +10,15 @@ Losing your connection halfway through a big download shouldn't cost you the fir
 
 Free and open source. No ads, trials, or sign-up. Experimental macOS builds are available on the same releases page.
 
-![Four parts of a file download together, pause with their progress saved, then resume and finish.](docs/images/segmented-download.svg)
+## Screenshots
+
+### Light theme
+
+![Black Marlin Downloader 1.0.0 on Windows in the light theme, with the Mint Forward icon and an active download.](docs/images/main-light.webp)
+
+### Dark theme
+
+![Black Marlin Downloader 1.0.0 on Windows in the dark theme, with the Mint Forward icon and an active download.](docs/images/main-dark.webp)
 
 ## Make room for the way you work
 
@@ -18,6 +26,8 @@ Free and open source. No ads, trials, or sign-up. Experimental macOS builds are 
 - **Keep your call running smoothly.** Set a speed limit while you're on a video call, or schedule the whole queue for after work.
 - **Send a file straight from your browser.** The browser extension hands the download to Black Marlin so you can close the tab and carry on.
 - **Pick the files you want from a torrent.** Open a magnet link, select what you need, and follow its progress alongside your other downloads.
+
+![Four parts of a file download together, pause with their progress saved, then resume and finish.](docs/images/segmented-download.svg)
 
 The [user guide](docs/README.md) walks you through your first download, browser setup, and scheduling.
 
