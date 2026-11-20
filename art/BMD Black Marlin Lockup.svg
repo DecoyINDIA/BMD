@@ -1,21 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 328 104" role="img" aria-label="BMD Black Marlin wordmark">
-<defs>
-  <linearGradient id="marlin-body" x1="83" y1="14" x2="95" y2="62" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#547572"/>
-    <stop offset=".42" stop-color="#355154"/>
-    <stop offset=".75" stop-color="#253b3e"/>
-    <stop offset="1" stop-color="#1f3033"/>
-  </linearGradient>
-  <linearGradient id="marlin-flank" x1="43" y1="46" x2="137" y2="34" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#1d3639" stop-opacity="0"/>
-    <stop offset=".52" stop-color="#426162"/>
-    <stop offset=".86" stop-color="#87aaa0"/>
-    <stop offset="1" stop-color="#a6bdb0"/>
-  </linearGradient>
-  <linearGradient id="marlin-back" x1="102" y1="15" x2="101" y2="39" gradientUnits="userSpaceOnUse">
-    <stop stop-color="#9fbbb0" stop-opacity=".7"/>
-    <stop offset="1" stop-color="#73998e" stop-opacity="0"/>
-  </linearGradient>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 252 104" role="img" aria-label="Black Marlin Downloader wordmark">
+  <defs>
+    <linearGradient id="dorsal" x1="161" y1="110" x2="185" y2="269" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#80dbad"/>
+      <stop offset=".29" stop-color="#55c99d"/>
+      <stop offset=".67" stop-color="#187052"/>
+      <stop offset="1" stop-color="#369d77"/>
+    </linearGradient>
+    <linearGradient id="tail" x1="81" y1="358" x2="204" y2="438" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#66d2a5"/>
+      <stop offset=".63" stop-color="#359a75"/>
+      <stop offset="1" stop-color="#187052"/>
+    </linearGradient>
   <linearGradient id="wordmark-face" x2="0" y2="1">
     <stop stop-color="#5a786f"/>
     <stop offset="1" stop-color="#364d49"/>
@@ -25,9 +20,13 @@
     <stop offset=".52" stop-color="#627f77"/>
     <stop offset="1" stop-color="#192b2a"/>
   </linearGradient>
-</defs><g transform="rotate(-18 91 52)">
-  <path fill="url(#marlin-body)" stroke="url(#stamp-edge)" stroke-width="1.25" stroke-linejoin="round" paint-order="stroke" d="M7 24C20 37 30 43 43 43c14-1 24-10 40-15 9-3 12-11 25-15-4 5-5 8-5 12 15-2 27 1 36 6 13-1 25-4 37-4 2 0 3 1 1 3-7 4-23 7-31 11-7 9-18 13-32 16-9 3-15 13-30 17 5-5 7-10 9-14-20 2-34-3-50-7C28 57 19 68 7 77c7-12 10-20 10-27 0-8-4-17-10-26Z"/>
-  <path fill="url(#marlin-flank)" d="M38 47c17 2 36-5 54-11 17-6 31-6 46-2-8 1-13 4-19 8-15 12-37 14-55 10-11-2-18-4-26-5Z"/>
-  <path fill="url(#marlin-back)" d="M56 41c12-6 20-10 28-12 8-3 13-9 22-14-4 5-5 8-5 12 12-2 25 0 33 4-17-3-31 0-43 3-13 4-26 7-35 7Z"/>
-</g><path transform="translate(168 -7) scale(.94)" fill="url(#wordmark-face)" fill-rule="evenodd" stroke="url(#stamp-edge)" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke" d="M10 30h20c13 0 20 7 20 18 0 7-3 12-9 15 8 3 12 8 12 15 0 11-8 18-22 18H10zm13 12v15h6c5 0 8-3 8-8 0-4-3-7-8-7zm0 26v16h7c6 0 9-3 9-8s-3-8-9-8zM61 30h13l10 21 10-21h13v66H94V56L84 76 74 56v40H61zM116 30h17c19 0 30 13 30 33s-11 33-30 33h-17zm13 13v40h4c11 0 17-7 17-20s-6-20-17-20z"/>
+  </defs>
+  <g transform="translate(0 4) scale(.2)">
+    <path fill="url(#dorsal)" d="M125 118C177 88 255 83 312 111C238 158 155 217 128 293C120 252 139 209 166 173C191 139 177 115 125 118Z"/>
+    <path fill="#c1f0d6" stroke="#187052" stroke-width="5" stroke-opacity=".72" stroke-linejoin="round" paint-order="stroke" d="M437 15C387 67 362 96 344 125C357 113 371 105 386 99C359 124 339 151 330 180C346 208 354 241 346 274C344 256 339 240 330 229C327 298 278 360 205 387C191 393 176 397 158 399L130 356C167 344 213 354 239 308C263 266 244 219 204 211C169 204 140 235 128 293C119 240 167 179 221 150C252 133 273 119 309 109C352 98 394 48 437 15Z"/>
+    <path fill="#eef7f2" d="M223 179C261 148 306 162 326 191C344 215 351 244 346 274C343 248 332 229 311 215C287 198 252 184 223 179Z"/>
+    <path fill="url(#tail)" d="M49 295C103 296 136 323 176 341C205 354 229 351 255 337C232 360 194 374 165 394C145 414 132 438 124 462C122 423 148 395 133 367C114 337 81 306 49 295Z"/>
+    <circle cx="325" cy="119" r="3.65" fill="#14211d"/>
+  </g>
+  <path transform="translate(90 -7) scale(.94)" fill="url(#wordmark-face)" fill-rule="evenodd" stroke="url(#stamp-edge)" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke" d="M10 30h20c13 0 20 7 20 18 0 7-3 12-9 15 8 3 12 8 12 15 0 11-8 18-22 18H10zm13 12v15h6c5 0 8-3 8-8 0-4-3-7-8-7zm0 26v16h7c6 0 9-3 9-8s-3-8-9-8zM61 30h13l10 21 10-21h13v66H94V56L84 76 74 56v40H61zM116 30h17c19 0 30 13 30 33s-11 33-30 33h-17zm13 13v40h4c11 0 17-7 17-20s-6-20-17-20z"/>
 </svg>

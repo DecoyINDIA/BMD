@@ -107,17 +107,32 @@ pub fn window_builder() -> egui::ViewportBuilder {
 /// The main window's title (dialogs find their owner by it).
 pub const MAIN_TITLE: &str = concat!("BMD ", env!("CARGO_PKG_VERSION"));
 
-/// The app icon (art/, made with ChatGPT; sizes by tools/icon/build_icon.py), for windows that
-/// show one as IDM's do: the 256 px size, which the system scales down for the title bar, the
-/// taskbar and Alt+Tab at any display scaling. On macOS none: the Dock keeps the app bundle's own
-/// icon (AppIcon.icns, every size, tools/installer/build-macos.sh), which an icon set at run
-/// time would replace.
+/// The Mint Forward mark for the Windows caption and other native window icons.
+pub const WINDOW_ICON_PNG: &[u8] = if cfg!(windows) {
+    include_bytes!("../assets/icons/app/bmd-windows.png")
+} else {
+    include_bytes!("../assets/icons/app/bmd-256.png")
+};
+
+/// The system scales this icon for the caption, taskbar and Alt+Tab. On macOS the app bundle
+/// supplies the Dock icon.
 pub fn app_icon() -> std::sync::Arc<egui::IconData> {
     if cfg!(target_os = "macos") {
         // eframe takes an empty icon as "none" (AppTitleIconSetter).
         static NONE: std::sync::OnceLock<std::sync::Arc<egui::IconData>> =
             std::sync::OnceLock::new();
         return NONE.get_or_init(Default::default).clone();
+    }
+    if cfg!(windows) {
+        static ICON: std::sync::OnceLock<std::sync::Arc<egui::IconData>> =
+            std::sync::OnceLock::new();
+        return ICON
+            .get_or_init(|| {
+                std::sync::Arc::new(
+                    eframe::icon_data::from_png_bytes(WINDOW_ICON_PNG).unwrap_or_default(),
+                )
+            })
+            .clone();
     }
     app_picture()
 }

@@ -32,6 +32,7 @@ def main() -> None:
     icons = {s: src.resize((s, s), Image.LANCZOS) for s in SIZES}
     for size in SIZES:
         icons[size].save(APP / f"bmd-{size}.png")
+    icons[256].save(APP / "bmd-windows.png")
     save_ico(APP / "bmd.ico", SIZES, icons)
     for size in (16, 32, 48, 128):
         icons[size].save(EXT / f"icon-{size}.png")
