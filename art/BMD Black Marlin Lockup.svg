@@ -28,5 +28,8 @@
     <path fill="url(#tail)" d="M49 295C103 296 136 323 176 341C205 354 229 351 255 337C232 360 194 374 165 394C145 414 132 438 124 462C122 423 148 395 133 367C114 337 81 306 49 295Z"/>
     <circle cx="325" cy="119" r="3.65" fill="#14211d"/>
   </g>
-  <path transform="translate(90 -7) scale(.94)" fill="url(#wordmark-face)" fill-rule="evenodd" stroke="url(#stamp-edge)" stroke-width="1.5" stroke-linejoin="round" paint-order="stroke" d="M10 30h20c13 0 20 7 20 18 0 7-3 12-9 15 8 3 12 8 12 15 0 11-8 18-22 18H10zm13 12v15h6c5 0 8-3 8-8 0-4-3-7-8-7zm0 26v16h7c6 0 9-3 9-8s-3-8-9-8zM61 30h13l10 21 10-21h13v66H94V56L84 76 74 56v40H61zM116 30h17c19 0 30 13 30 33s-11 33-30 33h-17zm13 13v40h4c11 0 17-7 17-20s-6-20-17-20z"/>
+  <text x="99" y="83" textLength="144" lengthAdjust="spacingAndGlyphs"
+        fill="url(#wordmark-face)" stroke="url(#stamp-edge)" stroke-width="1.5"
+        paint-order="stroke" font-family="Segoe UI, system-ui, sans-serif"
+        font-size="76" font-weight="700">BMD</text>
 </svg>
