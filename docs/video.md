@@ -20,6 +20,16 @@ Any other page address that turns out to be a web page, not a file, is offered t
 3. ![A video's progress window while yt-dlp brings it in](images/help/video-progress.webp)
    *It downloads like any other file, in its own row and window.*
 
+### Social posts start at once
+
+A post's address from **TikTok, X (Twitter), Instagram, Facebook or Threads** doesn't wait for a choice: give it to **Add URL** (**Ctrl+N**), or click **Download video** over it in the browser, and the video window looks it up and starts the download itself, in the **best quality** the post has: its best video joined with its best sound, the window's first line. The links the apps' **Share** buttons copy work too: `vm.tiktok.com/…`, `tiktok.com/t/…`, `facebook.com/share/v/…`, `fb.watch/…`, `instagram.com/<name>/reel/…`, `threads.net/@name/post/…`.
+
+- The best quality is a video and its sound joined by **ffmpeg**. Without it, the window stays open and offers it; once it is installed, the download starts.
+- A post the site keeps private or has removed, or one it wants you signed in for, stays in the window with the reason (see [Sites that want you signed in](#sites-that-want-you-signed-in)).
+- **Instagram** gives a visitor who isn't signed in some reels without their sound. If a reel comes down silent, choose your browser in **Options → Sites Logins → Cookies for video sites**, or use the **Download video** button over the reel, which passes your sign-in.
+- **Threads**: yt-dlp has no reader of its own for Threads, so BMD reads the video the post's page names. Many posts show nothing to a visitor who isn't signed in, and then the window says so.
+- To pick a quality yourself again, untick **Social posts: start at once** in the video window, beside **Embed chapters**. It stays as you leave it. Other sites (YouTube, Vimeo…) always show their qualities.
+
 ## yt-dlp and ffmpeg
 
 BMD offers its two helpers on its first start, and again the first time they are needed. It
