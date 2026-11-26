@@ -147,7 +147,20 @@ jobs:
           command -v sdkmanager
           command -v avdmanager
           sdkmanager "platform-tools" "emulator" "system-images;android-${{ matrix.api }};google_apis;x86_64"
-          echo no | avdmanager create avd --name bmd-ci --package "system-images;android-${{ matrix.api }};google_apis;x86_64" --force
+          # avdmanager and emulator must use the same explicit preferences/AVD roots.
+          # https://developer.android.com/tools/variables
+          export ANDROID_USER_HOME="$RUNNER_TEMP/bmd-android-user"
+          export ANDROID_EMULATOR_HOME="$ANDROID_USER_HOME"
+          export ANDROID_AVD_HOME="$ANDROID_USER_HOME/avd"
+          mkdir -p "$ANDROID_AVD_HOME"
+          echo "ANDROID_USER_HOME=$ANDROID_USER_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_EMULATOR_HOME=$ANDROID_EMULATOR_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_AVD_HOME=$ANDROID_AVD_HOME" >> "$GITHUB_ENV"
+          avdmanager create avd --name bmd-ci --package "system-images;android-${{ matrix.api }};google_apis;x86_64" --device pixel_2 --path "$ANDROID_AVD_HOME/bmd-ci.avd" --force
+          test -s "$ANDROID_AVD_HOME/bmd-ci.ini"
+          test -s "$ANDROID_AVD_HOME/bmd-ci.avd/config.ini"
+          "$ANDROID_HOME/emulator/emulator" -list-avds | tee available-avds.txt
+          grep -qx bmd-ci available-avds.txt
           sudo chmod a+rw /dev/kvm
           "$ANDROID_HOME/emulator/emulator" -avd bmd-ci -no-window -no-audio -no-snapshot -gpu swiftshader_indirect -no-boot-anim > emulator.log 2>&1 &
       - name: Real deterministic download fixture
@@ -213,6 +226,7 @@ jobs:
           name: android-device-api${{ matrix.api }}-${{ github.sha }}
           path: |
             emulator.log
+            available-avds.txt
             instrumentation.txt
             acceptance.json
             fixture.json
