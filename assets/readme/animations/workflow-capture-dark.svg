@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 340" width="1120" height="340" role="img" aria-labelledby="svg-title svg-desc">
+  <title id="svg-title">BMD Capture Pipeline (dark)</title>
+  <desc id="svg-desc">Animated 4-stage pipeline from browser extension through bmd-nmhost and bmd-ipc to desktop app, remote control, or MCP.</desc>
+  <defs>
+    <linearGradient id="wf-dark-bg" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0%" stop-color="#0c1a33"/>
+      <stop offset="100%" stop-color="#081226"/>
+    </linearGradient><clipPath id="wf-dark-clip"><rect x="24" y="24" width="1072" height="292" rx="12"/></clipPath>
+  </defs>
+  <style>
+    .t-disp { font-family: 'Space Grotesk', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    .t-body { font-family: 'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    .t-mono { font-family: 'IBM Plex Mono', 'Cascadia Mono', Consolas, ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+    .tnum { font-variant-numeric: tabular-nums; }
+
+    .pkt-dot { animation: pkt-move 8s linear infinite; }
+    .wf-done { animation: wf-stamp 8s ease-out infinite; }
+    @keyframes pkt-move {
+      0% { transform: translateX(0px); opacity: 0; }
+      6% { opacity: 1; }
+      82% { transform: translateX(840px); opacity: 1; }
+      88%, 100% { transform: translateX(840px); opacity: 0; }
+    }
+    @keyframes wf-stamp {
+      0%, 78% { opacity: 0.3; }
+      84%, 94% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+    @keyframes ring0 { 0% { opacity: 0.25; } 6%, 22% { opacity: 1; } 30%, 100% { opacity: 0.25; } }
+.stage-ring-0 { animation: ring0 8s ease-in-out infinite; }
+@keyframes ring1 { 0%, 20% { opacity: 0.25; } 26%, 42% { opacity: 1; } 50%, 100% { opacity: 0.25; } }
+.stage-ring-1 { animation: ring1 8s ease-in-out infinite; }
+@keyframes ring2 { 0%, 40% { opacity: 0.25; } 46%, 62% { opacity: 1; } 70%, 100% { opacity: 0.25; } }
+.stage-ring-2 { animation: ring2 8s ease-in-out infinite; }
+@keyframes ring3 { 0%, 60% { opacity: 0.25; } 66%, 82% { opacity: 1; } 90%, 100% { opacity: 0.25; } }
+.stage-ring-3 { animation: ring3 8s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) {
+      .pkt-dot { animation: none; opacity: 0; }
+      .stage-ring-0, .stage-ring-1, .stage-ring-2, .stage-ring-3, .wf-done { animation: none !important; opacity: 1 !important; }
+    }
+  </style>
+  <rect width="1120" height="340" rx="16" fill="url(#wf-dark-bg)"/>
+  <path d="M40 0v340M80 0v340M120 0v340M160 0v340M200 0v340M240 0v340M280 0v340M320 0v340M360 0v340M400 0v340M440 0v340M480 0v340M520 0v340M560 0v340M600 0v340M640 0v340M680 0v340M720 0v340M760 0v340M800 0v340M840 0v340M880 0v340M920 0v340M960 0v340M1000 0v340M1040 0v340M1080 0v340M0 40h1120M0 80h1120M0 120h1120M0 160h1120M0 200h1120M0 240h1120M0 280h1120M0 320h1120" stroke="#1c2e52" stroke-width="1" stroke-opacity="0.22"/>
+  <path d="M16 24h12M22 18v12M1092 24h12M1098 18v12M16 316h12M22 310v12M1092 316h12M1098 310v12" stroke="#c3cde0" stroke-width="1.2" stroke-opacity="0.35" stroke-linecap="round"/>
+  <rect x="1" y="1" width="1118" height="338" rx="15" fill="none" stroke="#1c2e52" stroke-width="1.5"/>
+    <g>
+    <rect x="24" y="32" width="1072" height="292" rx="12" fill="#000000" fill-opacity="0.24"/>
+    <rect x="24" y="25" width="1072" height="292" rx="12" fill="#000000" fill-opacity="0.16"/>
+    <rect x="24" y="24" width="1072" height="292" rx="12" fill="#11151d"/>
+  </g>
+  <g clip-path="url(#wf-dark-clip)">
+    <rect x="24" y="24" width="1072" height="46" fill="#eef1f6"/>
+    <text x="48" y="53" fill="#11151d" font-size="15.5" font-weight="800" letter-spacing="0.7" class="t-disp">CAPTURE PIPELINE  ·  BROWSER EXTENSION TO ENGINE</text>
+    <text x="1072" y="52" text-anchor="end" fill="#192030" font-size="12" class="t-mono">Zero duplicate instances · Browser keeps fallback on reject</text>
+  </g>
+
+  <rect x="48" y="96" width="224" height="152" rx="8" fill="#192030" stroke="#2a3242" stroke-width="1.2"/><rect class="stage-ring-0" x="48" y="96" width="224" height="152" rx="8" fill="none" stroke="#86b6ff" stroke-width="2.2"/><rect x="62" y="110" width="32" height="22" rx="4" fill="#eef1f6"/><text x="78" y="125" text-anchor="middle" fill="#11151d" font-size="11.5" font-weight="800" class="t-mono">01</text><text x="104" y="125" fill="#86b6ff" font-size="11" font-weight="600" class="t-mono">extension/</text><text x="62" y="160" fill="#eef1f6" font-size="16" font-weight="800" class="t-disp">Browser Extension</text><text x="62" y="188" fill="#c3cad6" font-size="12.5" class="t-body">Chrome, Edge, Brave,</text><text x="62" y="206" fill="#c3cad6" font-size="12.5" class="t-body">Opera, Vivaldi, Firefox</text><line x1="62" y1="224" x2="258" y2="224" stroke="#2a3242" stroke-width="1"/><line x1="278" y1="172" x2="310" y2="172" stroke="#86b6ff" stroke-width="2" stroke-dasharray="4 4"/><path d="M304 166l7 6-7 6" fill="none" stroke="#86b6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="316" y="96" width="224" height="152" rx="8" fill="#192030" stroke="#2a3242" stroke-width="1.2"/><rect class="stage-ring-1" x="316" y="96" width="224" height="152" rx="8" fill="none" stroke="#86b6ff" stroke-width="2.2"/><rect x="330" y="110" width="32" height="22" rx="4" fill="#eef1f6"/><text x="346" y="125" text-anchor="middle" fill="#11151d" font-size="11.5" font-weight="800" class="t-mono">02</text><text x="372" y="125" fill="#86b6ff" font-size="11" font-weight="600" class="t-mono">bmd-nmhost</text><text x="330" y="160" fill="#eef1f6" font-size="16" font-weight="800" class="t-disp">Native Host</text><text x="330" y="188" fill="#c3cad6" font-size="12.5" class="t-body">Checks capture rules &amp;</text><text x="330" y="206" fill="#c3cad6" font-size="12.5" class="t-body">1 MB LinksPart frames</text><line x1="330" y1="224" x2="526" y2="224" stroke="#2a3242" stroke-width="1"/><line x1="546" y1="172" x2="578" y2="172" stroke="#86b6ff" stroke-width="2" stroke-dasharray="4 4"/><path d="M572 166l7 6-7 6" fill="none" stroke="#86b6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="584" y="96" width="224" height="152" rx="8" fill="#192030" stroke="#2a3242" stroke-width="1.2"/><rect class="stage-ring-2" x="584" y="96" width="224" height="152" rx="8" fill="none" stroke="#86b6ff" stroke-width="2.2"/><rect x="598" y="110" width="32" height="22" rx="4" fill="#eef1f6"/><text x="614" y="125" text-anchor="middle" fill="#11151d" font-size="11.5" font-weight="800" class="t-mono">03</text><text x="640" y="125" fill="#86b6ff" font-size="11" font-weight="600" class="t-mono">bmd-ipc</text><text x="598" y="160" fill="#eef1f6" font-size="16" font-weight="800" class="t-disp">Single-Instance IPC</text><text x="598" y="188" fill="#c3cad6" font-size="12.5" class="t-body">Token-protected local</text><text x="598" y="206" fill="#c3cad6" font-size="12.5" class="t-body">socket · zero relaunch</text><line x1="598" y1="224" x2="794" y2="224" stroke="#2a3242" stroke-width="1"/><line x1="814" y1="172" x2="846" y2="172" stroke="#86b6ff" stroke-width="2" stroke-dasharray="4 4"/><path d="M840 166l7 6-7 6" fill="none" stroke="#86b6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="852" y="96" width="224" height="152" rx="8" fill="#192030" stroke="#2a3242" stroke-width="1.2"/><rect class="stage-ring-3" x="852" y="96" width="224" height="152" rx="8" fill="none" stroke="#86b6ff" stroke-width="2.2"/><rect x="866" y="110" width="32" height="22" rx="4" fill="#eef1f6"/><text x="882" y="125" text-anchor="middle" fill="#11151d" font-size="11.5" font-weight="800" class="t-mono">04</text><text x="908" y="125" fill="#86b6ff" font-size="11" font-weight="600" class="t-mono">app / remote / mcp</text><text x="866" y="160" fill="#eef1f6" font-size="16" font-weight="800" class="t-disp">Dispatch Target</text><text x="866" y="188" fill="#c3cad6" font-size="12.5" class="t-body">Desktop GUI, Headless</text><text x="866" y="206" fill="#c3cad6" font-size="12.5" class="t-body">HTTPS, or AI Assistant</text><line x1="866" y1="224" x2="1062" y2="224" stroke="#2a3242" stroke-width="1"/>
+
+  <!-- Bottom Live Transit Track -->
+  <rect x="48" y="268" width="900" height="26" rx="5" fill="#192030" stroke="#2a3242" stroke-width="1"/>
+  <line x1="68" y1="281" x2="928" y2="281" stroke="#2a3242" stroke-width="2"/>
+  <circle class="pkt-dot" cx="76" cy="281" r="6" fill="#86b6ff"/>
+  <rect class="wf-done" x="962" y="266" width="110" height="30" rx="6" fill="#57cc5a" stroke="#08200b" stroke-width="1.2"/>
+  <text class="wf-done t-disp" x="1017" y="285" text-anchor="middle" fill="#08200b" font-size="12" font-weight="800">DISPATCHED</text>
+</svg>
