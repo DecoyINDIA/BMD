@@ -1,0 +1,322 @@
+name: Android
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "android/**"
+      - "crates/engine/**"
+      - "crates/android-bridge/**"
+      - "tools/android/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".cargo/**"
+      - ".github/workflows/android.yml"
+  pull_request:
+    paths:
+      - "android/**"
+      - "crates/engine/**"
+      - "crates/android-bridge/**"
+      - "tools/android/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".cargo/**"
+      - ".github/workflows/android.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || startsWith(github.ref, 'refs/heads/android/') }}
+env:
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: always
+  RUSTUP_TOOLCHAIN: "1.98.0"
+
+jobs:
+  rust-contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Rust toolchain
+        run: rustup toolchain install 1.98.0 --profile minimal --component rustfmt --component clippy
+      - name: Formatting
+        run: cargo fmt --check -p bmd-engine -p bmd-android-bridge
+      - name: Rust lint contract
+        run: cargo clippy --locked -p bmd-engine -p bmd-android-bridge --all-targets --no-default-features -- -D warnings
+      - name: Engine and JNI ownership contracts
+        run: cargo test --locked -p bmd-engine -p bmd-android-bridge --no-default-features --lib --test mobile
+      - name: Existing desktop resume and recovery behavior
+        run: cargo test --locked -p bmd-engine --no-default-features --test e2e -- --test-threads=2 pause_and_resume_continues_where_it_stopped per_node_etags_fall_back_to_the_date signed_links_that_expire_while_downloading_are_refreshed a_wrong_checksum_fails_and_keeps_the_data
+
+  build:
+    needs: rust-contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5, resolved 2026-11-26
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Android command-line tools and PATH
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3, resolved 2026-11-26
+        with:
+          cmdline-tools-version: "12266719"
+          packages: "platform-tools"
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: android-deps-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'android/**/*.gradle.kts', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: android-deps-${{ runner.os }}-
+      - name: Locked native toolchain and Android SDK
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal --target aarch64-linux-android --target x86_64-linux-android
+          command -v sdkmanager
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;29.0.14206865"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/29.0.14206865" >> "$GITHUB_ENV"
+      - name: Real native libraries, provenance, licenses and ELF verification
+        run: python3 tools/android/build_native.py --jobs 4
+      - name: Check transport classifier and resolve external dependencies
+        run: |
+          python3 -m unittest discover -s tools/android -p test_dependency_resolution.py -v
+          python3 -m unittest discover -s tools/android -p test_device_runtime.py -v
+          python3 -m unittest discover -s tools/android -p test_release_harness.py -v
+          python3 tools/android/run_dependency_resolution.py
+      - name: Android lint, JVM tests and distributable artifacts
+        working-directory: android
+        run: ./gradlew --no-daemon --no-parallel --max-workers=2 -PskipNativeBuild=true :app:lintDebug :app:lintRelease :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:assembleRelease :app:bundleRelease
+      - name: Verify packaged JNI and 16 KiB ZIP alignment
+        run: |
+          python3 tools/android/verify_native.py --apk android/app/build/outputs/apk/debug/app-debug.apk --apk android/app/build/outputs/apk/release/app-release-unsigned.apk --bundle android/app/build/outputs/bundle/release/app-release.aab
+          "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 -v 4 android/app/build/outputs/apk/debug/app-debug.apk
+          "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 -v 4 android/app/build/outputs/apk/release/app-release-unsigned.apk
+      - name: Build isolated release runtime harness without changing the verified APK
+        run: |
+          sha256sum android/app/build/outputs/apk/release/app-release-unsigned.apk > verified-release-before-harness.sha256
+          cd android
+          # This disposable test-only APK owns its runtime and cannot change app R8 inputs.
+          # The production application lint gates ran above.
+          ./gradlew --no-daemon --no-parallel --max-workers=2 -PskipNativeBuild=true :release-check:assembleRelease
+          cd ..
+          sha256sum --check verified-release-before-harness.sha256
+          python3 tools/android/verify_native.py --apk android/app/build/outputs/apk/release/app-release-unsigned.apk --bundle android/app/build/outputs/bundle/release/app-release.aab
+          mkdir -p android/app/build/outputs/release-runtime-harness
+          cp android/release-check/build/outputs/apk/release/release-check-release-unsigned.apk android/app/build/outputs/release-runtime-harness/release-check-release.apk
+          python3 tools/android/check_release_harness.py --release-apk android/app/build/outputs/apk/release/app-release-unsigned.apk --test-apk android/app/build/outputs/release-runtime-harness/release-check-release.apk --android-jar "$ANDROID_HOME/platforms/android-36/android.jar" --build-tools "$ANDROID_HOME/build-tools/36.0.0" > android/app/build/outputs/release-runtime-harness/dex-closure.json
+      - name: Preserve build identity
+        run: |
+          mkdir -p android/app/build/outputs/native
+          cp android/app/build/generated/native/assets/native-build.json android/app/build/outputs/native/
+          cp android/app/build/generated/native/assets/THIRD_PARTY_RUST_NOTICES.txt android/app/build/outputs/native/
+          cp android/app/build/generated/androidNotices/THIRD_PARTY_ANDROID_NOTICES.txt android/app/build/outputs/native/
+          cp android/app/build/generated/androidNotices/android-dependencies.json android/app/build/outputs/native/
+          sha256sum android/app/build/outputs/apk/debug/*.apk android/app/build/outputs/apk/release/*.apk android/app/build/outputs/bundle/release/*.aab > android/app/build/outputs/native/SHA256SUMS
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: android-build-${{ github.sha }}
+          if-no-files-found: error
+          path: |
+            android/app/build/outputs/apk
+            android/app/build/outputs/bundle
+            android/app/build/outputs/native
+            android/app/build/outputs/release-runtime-harness
+            android/app/build/reports
+            android/app/build/test-results
+
+  device-smoke:
+    name: device-smoke (${{ matrix.name }})
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: api26
+            api: 26
+            image: google_apis
+            page_size: 4096
+            ram_mb: 2048
+          - name: api36
+            api: 36
+            image: google_apis
+            page_size: 4096
+            ram_mb: 4096
+          - name: api36-16k
+            api: 36
+            image: google_apis_ps16k
+            page_size: 16384
+            ram_mb: 4096
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5, resolved 2026-11-26
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Android command-line tools and PATH
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3, resolved 2026-11-26
+        with:
+          cmdline-tools-version: "12266719"
+          packages: "platform-tools"
+          log-accepted-android-sdk-licenses: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: android-build-${{ github.sha }}
+          path: artifacts
+      - name: Prepare Android emulator
+        run: |
+          command -v sdkmanager
+          command -v avdmanager
+          sdkmanager "platform-tools" "emulator" "build-tools;36.0.0" "system-images;android-${{ matrix.api }};${{ matrix.image }};x86_64"
+          # avdmanager and emulator must use the same explicit preferences/AVD roots.
+          # https://developer.android.com/tools/variables
+          export ANDROID_USER_HOME="$RUNNER_TEMP/bmd-android-user"
+          export ANDROID_EMULATOR_HOME="$ANDROID_USER_HOME"
+          export ANDROID_AVD_HOME="$ANDROID_USER_HOME/avd"
+          mkdir -p "$ANDROID_AVD_HOME"
+          echo "ANDROID_USER_HOME=$ANDROID_USER_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_EMULATOR_HOME=$ANDROID_EMULATOR_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_AVD_HOME=$ANDROID_AVD_HOME" >> "$GITHUB_ENV"
+          avdmanager create avd --name bmd-ci --package "system-images;android-${{ matrix.api }};${{ matrix.image }};x86_64" --device pixel_2 --path "$ANDROID_AVD_HOME/bmd-ci.avd" --force
+          test -s "$ANDROID_AVD_HOME/bmd-ci.ini"
+          test -s "$ANDROID_AVD_HOME/bmd-ci.avd/config.ini"
+          # The modern 16 KiB Google image exhausted its default 2560 MiB
+          # during first-boot services and killed the foreground test process.
+          python3 - "$ANDROID_AVD_HOME/bmd-ci.avd/config.ini" "${{ matrix.ram_mb }}" <<'PY'
+          import pathlib, sys
+          config = pathlib.Path(sys.argv[1])
+          lines = [line for line in config.read_text().splitlines() if not line.startswith("hw.ramSize=")]
+          config.write_text("\n".join(lines + ["hw.ramSize=" + sys.argv[2]]) + "\n")
+          PY
+          cp "$ANDROID_AVD_HOME/bmd-ci.avd/config.ini" avd-config.ini
+          free -m > host-memory.txt
+          "$ANDROID_HOME/emulator/emulator" -list-avds | tee available-avds.txt
+          grep -qx bmd-ci available-avds.txt
+          sudo chmod a+rw /dev/kvm
+          "$ANDROID_HOME/emulator/emulator" -avd bmd-ci -memory "${{ matrix.ram_mb }}" -no-window -no-audio -no-snapshot -gpu swiftshader_indirect -no-boot-anim > emulator.log 2>&1 &
+      - name: Real deterministic download fixture
+        run: |
+          python3 tools/android/fixture_server.py --port 8088 --manifest fixture.json > fixture.log 2>&1 &
+          timeout 20 bash -c 'until test -f fixture.json; do sleep 1; done'
+          curl --fail --silent http://127.0.0.1:8088/bmd-native-fixture.bin -o fixture-body.bin
+          python3 -c 'import hashlib,json,pathlib; m=json.loads(pathlib.Path("fixture.json").read_text()); assert hashlib.sha256(pathlib.Path("fixture-body.bin").read_bytes()).hexdigest()==m["sha256"]'
+      - name: Observe Android runtime and install test APKs
+        id: device-ready
+        run: |
+          timeout 240 adb wait-for-device
+          timeout 240 bash -c 'until adb shell getprop sys.boot_completed | tr -d "\r" | grep -q "^1$"; do sleep 2; done'
+          python3 tools/android/observe_device_runtime.py --api "${{ matrix.api }}" --page-size "${{ matrix.page_size }}" --image "${{ matrix.image }}" > device-runtime.json
+          adb shell input keyevent 82
+          adb install -r artifacts/outputs/apk/debug/app-debug.apk
+          adb install -r artifacts/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+      - name: Run actual instrumented tests
+        run: |
+          fixture_url=$(python3 -c 'import json; print(json.load(open("fixture.json"))["fixtureUrl"])')
+          fixture_sha256=$(python3 -c 'import json; print(json.load(open("fixture.json"))["sha256"])')
+          timeout 900 adb shell am instrument -w -r -e fixtureUrl "$fixture_url" -e fixtureSha256 "$fixture_sha256" com.blackmarlin.downloader.debug.test/androidx.test.runner.AndroidJUnitRunner | tee instrumentation.txt
+          python3 tools/android/check_instrumentation.py instrumentation.txt --api "${{ matrix.api }}" > acceptance.json
+      - name: Prepare ephemeral signed copies of the exact minified release payload
+        id: release-signing
+        if: ${{ !cancelled() && matrix.api == 36 && steps.device-ready.conclusion == 'success' }}
+        run: |
+          sdkmanager "platforms;android-36"
+          python3 tools/android/prepare_release_runtime.py --release-apk artifacts/outputs/apk/release/app-release-unsigned.apk --test-apk artifacts/outputs/release-runtime-harness/release-check-release.apk --build-tools "$ANDROID_HOME/build-tools/36.0.0" --android-jar "$ANDROID_HOME/platforms/android-36/android.jar" --output-dir "$RUNNER_TEMP/bmd-release-runtime" --evidence release-runtime-signing.json
+      - name: Run actual minified release HTTPS and publication acceptance
+        if: ${{ !cancelled() && matrix.api == 36 && steps.device-ready.conclusion == 'success' && steps.release-signing.conclusion == 'success' }}
+        run: |
+          adb install -r "$RUNNER_TEMP/bmd-release-runtime/release-test-signed.apk"
+          adb install -t -r "$RUNNER_TEMP/bmd-release-runtime/harness-test-signed.apk"
+          fixture_url=$(python3 -c 'import json; print(json.load(open("fixture.json"))["fixtureUrl"])')
+          fixture_sha256=$(python3 -c 'import json; print(json.load(open("fixture.json"))["sha256"])')
+          release_sha256=$(python3 -c 'import json; print(json.load(open("release-runtime-signing.json"))["release"]["signedApkSha256"])')
+          timeout 900 adb shell am instrument -w -r -e fixtureUrl "$fixture_url" -e fixtureSha256 "$fixture_sha256" -e releaseApkSha256 "$release_sha256" com.blackmarlin.downloader.releasecheck/androidx.test.runner.AndroidJUnitRunner | tee release-instrumentation.txt
+          python3 tools/android/check_instrumentation.py release-instrumentation.txt --api 36 --release-runtime > release-acceptance.json
+      - name: Preserve actual device diagnostics
+        if: always()
+        run: |
+          timeout 20 adb logcat -d -v threadtime > logcat.txt 2>&1 || true
+          timeout 20 adb shell dumpsys activity exit-info com.blackmarlin.downloader.debug > debug-exit-info.txt 2>&1 || true
+          timeout 20 adb shell dumpsys activity exit-info com.blackmarlin.downloader > release-exit-info.txt 2>&1 || true
+          timeout 20 adb pull /sdcard/Android/data/com.blackmarlin.downloader.debug/files/device-test-evidence device-test-evidence 2> evidence-pull.txt || true
+          if [ "${{ matrix.api }}" = "36" ]; then
+            timeout 20 adb pull /sdcard/Android/data/com.blackmarlin.downloader/files/release-test-evidence release-test-evidence 2> release-evidence-pull.txt || true
+          fi
+          python3 tools/android/print_device_diagnostics.py
+      - name: Remove ephemeral runtime copies and keys
+        if: always() && matrix.api == 36
+        run: rm -rf "$RUNNER_TEMP/bmd-release-runtime"
+      - name: Capture actual native UI evidence
+        if: always()
+        timeout-minutes: 3
+        continue-on-error: true
+        run: |
+          mkdir -p native-ui-evidence
+          # Diagnostic evidence only: the named instrumentation passes above remain the gate.
+          timeout 30 adb shell am start -W -n com.blackmarlin.downloader.debug/com.blackmarlin.downloader.MainActivity > native-ui-evidence/launch.txt 2>&1 || true
+          timeout 30 adb shell uiautomator dump /sdcard/bmd-native-ui.xml > native-ui-evidence/dump.txt 2>&1 || true
+          timeout 10 adb pull /sdcard/bmd-native-ui.xml native-ui-evidence/hierarchy.xml > native-ui-evidence/pull.txt 2>&1 || true
+          timeout 15 adb exec-out screencap -p > native-ui-evidence/display.png.tmp 2> native-ui-evidence/screencap.txt || true
+          timeout 10 adb shell dumpsys activity activities > native-ui-evidence/activities.txt 2>&1 || true
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          evidence = Path("native-ui-evidence")
+          launch = (evidence / "launch.txt").read_text(errors="replace")
+          activities = (evidence / "activities.txt").read_text(errors="replace")
+          resumed = [line.strip() for line in activities.splitlines() if "ResumedActivity" in line or "topResumedActivity" in line]
+          app_observed = "Status: ok" in launch and any("com.blackmarlin.downloader.debug/com.blackmarlin.downloader.MainActivity" in line for line in resumed)
+          screenshot = evidence / "display.png.tmp"
+          png = screenshot.read_bytes() if screenshot.exists() else b""
+          valid_png = len(png) > 33 and png.startswith(b"\x89PNG\r\n\x1a\n") and png.endswith(b"IEND\xaeB\x60\x82")
+          if valid_png:
+              screenshot.rename(evidence / "display.png")
+          elif screenshot.exists():
+              screenshot.unlink()
+          (evidence / "capture.json").write_text(json.dumps({
+              "purpose": "Actual device display and hierarchy for independent visual inspection; never an acceptance result.",
+              "mainActivityObserved": app_observed,
+              "displayPngCaptured": valid_png,
+              "resumedActivities": resumed,
+              "interpretation": "MainActivity was observed resumed after the capture; inspect the PNG and hierarchy together." if app_observed else "App foreground was not established. Any PNG is a diagnostic device display, not verified app UI."
+          }, indent=2) + "\n")
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: android-device-${{ matrix.name }}-${{ github.sha }}
+          path: |
+            emulator.log
+            available-avds.txt
+            avd-config.ini
+            host-memory.txt
+            instrumentation.txt
+            acceptance.json
+            fixture.json
+            fixture.log
+            device-runtime.json
+            logcat.txt
+            debug-exit-info.txt
+            release-exit-info.txt
+            device-test-evidence
+            evidence-pull.txt
+            native-ui-evidence
+            release-runtime-signing.json
+            release-instrumentation.txt
+            release-acceptance.json
+            release-test-evidence
+            release-evidence-pull.txt

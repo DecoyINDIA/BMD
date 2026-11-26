@@ -2,6 +2,7 @@
 
 pub mod agent;
 pub mod browserlike;
+pub mod completion;
 pub mod disk;
 pub mod dns;
 pub mod download;
@@ -13,6 +14,7 @@ pub mod html;
 pub mod limiter;
 pub mod naming;
 pub mod net;
+#[cfg(not(target_os = "android"))]
 pub mod pac;
 pub mod planner;
 pub mod server;

@@ -91,6 +91,15 @@ pub struct Options {
     /// Max simultaneous connections. IDM's default is 8 (notes/ENGINE.md §4). Read through
     /// [`Options::connections`], which keeps it in `1..=MAX_CONNECTIONS_UNLOCKED`.
     pub max_connections: u32,
+    /// Mobile admission policy: HTTP(S) only, exact-origin credentials, no site rewrites,
+    /// no HTTPS downgrade, no synthesized Referer. Desktop defaults remain unchanged.
+    pub strict_http: bool,
+    /// Maximum receive/write backlog per download; desktop default is unchanged. Mobile
+    /// callers lower this so stalled storage cannot consume hundreds of MiB per task.
+    pub buffer_budget: u64,
+    /// Stop after durable network staging, releasing transports before writing its proof.
+    /// Verification and publication are separate local operations for mobile executors.
+    pub network_completion: Option<crate::completion::NetworkCompletion>,
     /// Smallest half a split may leave. IDM split pieces down to ≤ 12.6 KB (lab S4, D-007).
     pub min_split: u64,
     pub connect_timeout: Duration,
@@ -271,6 +280,9 @@ impl Default for Options {
     fn default() -> Self {
         Options {
             max_connections: 8,
+            strict_http: false,
+            buffer_budget: HOLD_MAX,
+            network_completion: None,
             min_split: 12 * 1024,
             connect_timeout: Duration::from_secs(30),
             read_timeout: Duration::from_secs(30),
@@ -327,6 +339,12 @@ impl Options {
     /// `1..=MAX_CONNECTIONS_UNLOCKED` (a hand-edited setting can hold anything).
     pub fn connections(&self) -> u32 {
         self.max_connections.clamp(1, MAX_CONNECTIONS_UNLOCKED)
+    }
+
+    /// Receive backlog budget, with at least two fixed-size batches per connection.
+    pub fn buffer_budget(&self) -> u64 {
+        self.buffer_budget
+            .clamp(2 * BATCH as u64 * self.connections() as u64, HOLD_MAX)
     }
 
     /// `request_cap`, when it applies: some bytes, without a form's POST.
@@ -674,6 +692,62 @@ pub(crate) fn scoped_headers(headers: &HeaderMap, from: &Url, to: &Url) -> Heade
     h
 }
 
+fn validate_strict_url(url: &Url) -> Result<(), Error> {
+    if url.as_str().len() > 8192
+        || !matches!(url.scheme(), "http" | "https")
+        || !url.username().is_empty()
+        || url.password().is_some()
+        || url.host_str().is_none()
+    {
+        return Err(Error::BadState("mobile URL policy refused".into()));
+    }
+    Ok(())
+}
+
+fn strict_scoped_headers(headers: &HeaderMap, from: &Url, to: &Url) -> HeaderMap {
+    let mut out = headers.clone();
+    out.remove(header::REFERER);
+    out.remove(header::PROXY_AUTHORIZATION);
+    if from.scheme() != "https" || from.origin() != to.origin() {
+        // The mobile bridge permits only Authorization as a custom/source header. Clear
+        // every source header on another origin, also safe if a future caller adds one.
+        out.clear();
+    }
+    out
+}
+
+async fn strict_get(
+    client: &Client,
+    url: Url,
+    headers: HeaderMap,
+    post: Option<&Bytes>,
+    cancel: &CancellationToken,
+) -> Result<(Response, HeaderMap, Duration), Error> {
+    validate_strict_url(&url)?;
+    if post.is_some() {
+        return Err(Error::BadState("mobile POST refused".into()));
+    }
+    if url.scheme() != "https" && headers.contains_key(header::AUTHORIZATION) {
+        return Err(Error::BadState("credentials require HTTPS".into()));
+    }
+    let started = std::time::Instant::now();
+    let resp = cancellable(cancel, async {
+        Ok(build(client, url.clone(), None, &headers, false)
+            .send()
+            .await?)
+    })
+    .await?;
+    match resp.status() {
+        StatusCode::OK | StatusCode::PARTIAL_CONTENT => {}
+        StatusCode::TOO_MANY_REQUESTS | StatusCode::SERVICE_UNAVAILABLE => {
+            return Err(Error::Throttled(resp.status(), retry_after(resp.headers())));
+        }
+        other => return Err(Error::Status(other)),
+    }
+    let scoped = strict_scoped_headers(&headers, &url, resp.url());
+    Ok((resp, scoped, started.elapsed()))
+}
+
 /// The addresses a POST download's redirects turned into GETs (301, 302, 303, as browsers
 /// do), recorded by its client's redirect policy: requests to them afterwards are GETs too.
 #[derive(Clone, Default)]
@@ -959,6 +1033,9 @@ pub async fn probe_kept(
     headers: HeaderMap,
     opts: &Options,
 ) -> Result<(ProbeInfo, Option<KeptAnswer>), Error> {
+    if opts.strict_http {
+        validate_strict_url(&url)?;
+    }
     if crate::ftp::is_ftp(&url) {
         let site = crate::ftp::Site::new(&url, &headers, opts)?;
         let facts = site.check().await?;
@@ -1004,6 +1081,7 @@ pub async fn probe_kept(
         headers.clone(),
         opts.post.as_ref(),
         first_opts.site_agent(),
+        first_opts.strict_http,
         expects,
         &CancellationToken::new(),
     )
@@ -1019,6 +1097,7 @@ pub async fn probe_kept(
                 headers,
                 opts.post.as_ref(),
                 plain.site_agent(),
+                plain.strict_http,
                 expects,
                 &CancellationToken::new(),
             )
@@ -1033,7 +1112,12 @@ pub async fn probe_kept(
         // #668: the site refused BMD's connection as a program's (`refused_as_a_program`):
         // looked at once more the way a browser connects, its answer kept for the download
         // (which then asks no more).
-        Err(e) if refused_as_a_program(&e) && unlocked.is_none() && opts.post.is_none() => {
+        Err(e)
+            if !opts.strict_http
+                && refused_as_a_program(&e)
+                && unlocked.is_none()
+                && opts.post.is_none() =>
+        {
             if own_agent.take().is_some() {
                 // Remembered, but no longer let through: learnt again next time.
                 crate::agent::forget_own(&asked_at);
@@ -1053,6 +1137,7 @@ pub async fn probe_kept(
                             asked_with,
                             None,
                             o.site_agent(),
+                            o.strict_http,
                             expects,
                             &cancel,
                         )
@@ -1196,6 +1281,9 @@ async fn unlock_origin(
     shared: Option<&Shared>,
     cancel: &CancellationToken,
 ) -> Result<Option<crate::unlock::Unlocked>, Error> {
+    if opts.strict_http {
+        return Ok(None);
+    }
     let Some(u) = &opts.unlocker else {
         return Ok(None);
     };
@@ -1258,7 +1346,11 @@ impl Download {
     pub fn start_with(req: Request, opts: Options, kept: Option<KeptAnswer>) -> Download {
         Download::spawn(req.url.clone(), move |shared, cancel| {
             let sh = shared.clone();
+            let completion = opts.network_completion.clone();
             let body = async move {
+                if opts.strict_http {
+                    validate_strict_url(&req.url)?;
+                }
                 after_clearing(req.dest.folder(), &cancel).await?;
                 after_settling(&req.dest, &cancel).await?;
                 if crate::ftp::is_ftp(&req.url) {
@@ -1267,7 +1359,7 @@ impl Download {
                     run_fresh(req, opts, sh, cancel, kept).await
                 }
             };
-            run(body, shared)
+            run(body, shared, completion)
         })
     }
 
@@ -1287,9 +1379,11 @@ impl Download {
         }
         let saved = ResumeState::load(&state_file).map_err(Error::BadState)?;
         Ok(Download::spawn(saved.url.clone(), move |shared, cancel| {
+            let completion = opts.network_completion.clone();
             run(
                 run_resume(saved, state_file, headers, opts, shared.clone(), cancel),
                 shared,
+                completion,
             )
         }))
     }
@@ -1312,7 +1406,11 @@ impl Download {
     ) -> Download {
         Download::spawn_showing(req.url.clone(), shown, move |shared, cancel| {
             let sh = shared.clone();
+            let completion = opts.network_completion.clone();
             let body = async move {
+                if opts.strict_http {
+                    validate_strict_url(&req.url)?;
+                }
                 after_clearing(req.dest.folder(), &cancel).await?;
                 after_settling(&req.dest, &cancel).await?;
                 let look = {
@@ -1327,6 +1425,9 @@ impl Download {
                 };
                 match found {
                     Found::State(Ok(saved)) => {
+                        if opts.strict_http && saved.url != req.url {
+                            return Err(Error::BadState("source changed: restart required".into()));
+                        }
                         run_resume(*saved, state_file, req.headers, opts, sh, cancel).await
                     }
                     Found::State(Err(e)) => Err(Error::BadState(e)),
@@ -1343,7 +1444,7 @@ impl Download {
                     }
                 }
             };
-            run(body, shared)
+            run(body, shared, completion)
         })
     }
 
@@ -1363,6 +1464,7 @@ impl Download {
     {
         let cancel = CancellationToken::new();
         let shared = Arc::new(Shared {
+            pending_completion: Default::default(),
             view: Mutex::new(Snapshot {
                 state: State::Probing,
                 url,
@@ -1398,6 +1500,14 @@ impl Download {
         }
     }
 
+    /// A read/control view without transferring ownership of the joined writer task.
+    pub fn monitor(&self) -> DownloadMonitor {
+        DownloadMonitor {
+            shared: self.shared.clone(),
+            cancel: self.cancel.clone(),
+        }
+    }
+
     pub fn snapshot(&self) -> Snapshot {
         self.shared.snapshot()
     }
@@ -1421,6 +1531,24 @@ impl Download {
             Err(e) if e.is_cancelled() => Err(Error::Cancelled),
             Err(e) => std::panic::resume_unwind(e.into_panic()),
         }
+    }
+}
+
+/// A cloneable control/snapshot view. Only `Download::wait` acknowledges writer release.
+#[derive(Clone)]
+pub struct DownloadMonitor {
+    shared: Arc<Shared>,
+    cancel: CancellationToken,
+}
+impl DownloadMonitor {
+    pub fn snapshot(&self) -> Snapshot {
+        self.shared.snapshot()
+    }
+    pub fn cancel(&self) {
+        self.cancel.cancel();
+    }
+    pub fn set_speed_limit(&self, rate: Option<u64>) {
+        self.shared.limiter.set(rate);
     }
 }
 
@@ -1491,6 +1619,7 @@ pub async fn fetch(
 }
 
 struct Shared {
+    pending_completion: Mutex<Option<crate::completion::NetworkCompleteProof>>,
     view: Mutex<Snapshot>,
     /// What the download's client learnt of its server (#140); the look's when it went on
     /// from the look's answer.
@@ -1810,6 +1939,7 @@ impl Ctx {
             headers,
             self.opts.post.as_ref(),
             self.opts.site_agent(),
+            self.opts.strict_http,
             self.size,
             &self.cancel,
             self.opts.unlocker.as_ref(),
@@ -1820,6 +1950,9 @@ impl Ctx {
             refreshes.failed_at = Some(std::time::Instant::now());
             return false;
         };
+        if self.opts.strict_http && url.origin() != self.target.lock().unwrap().url.origin() {
+            return false;
+        }
         refreshes.failed_at = None;
         refreshes.switched_at = Some(std::time::Instant::now());
         self.shared.event(format!(
@@ -1861,7 +1994,11 @@ fn origin_of(
     target: &Url,
     browser_like: bool,
     pages: &[Url],
+    strict_http: bool,
 ) -> Option<(Url, HeaderMap)> {
+    if strict_http {
+        return (given != target).then(|| (given.clone(), headers.clone()));
+    }
     if browser_like {
         None
     } else if given != target {
@@ -1903,6 +2040,9 @@ fn client_with(
     seen: &Arc<crate::server::ServerSeen>,
     follow: bool,
 ) -> Result<Client, Error> {
+    if opts.strict_http {
+        validate_strict_url(url)?;
+    }
     let port = url.port_or_known_default().unwrap_or(443);
     let route = &opts.route;
     // An IP address in the URL never reaches the resolver, which drops what the chosen adapter
@@ -1975,15 +2115,22 @@ fn client_with(
                 *http
             };
             let mut b = builder.no_proxy();
-            if *http {
+            if *http && *https {
+                b = b.proxy(with_login(reqwest::Proxy::all(proxy.as_str())?));
+            } else if *http {
                 b = b.proxy(with_login(reqwest::Proxy::http(proxy.as_str())?));
             }
-            if *https {
+            if *https && !*http {
                 b = b.proxy(with_login(reqwest::Proxy::https(proxy.as_str())?));
             }
             b
         }
         // The script's first route BMD can use: a proxy, or straight to the server.
+        #[cfg(target_os = "android")]
+        (Proxy::Pac { .. }, _) => {
+            return Err(Error::BadState("PAC is not available on Android".into()));
+        }
+        #[cfg(not(target_os = "android"))]
         (Proxy::Pac { script }, _) => {
             let first = crate::pac::routes(script, url).ok().and_then(|routes| {
                 routes.into_iter().find_map(|r| match r {
@@ -2017,9 +2164,28 @@ fn client_with(
         || (net::is_this_computer(url.host_str().unwrap_or_default())
             && !matches!(opts.proxy, Proxy::Manual { .. } | Proxy::Pac { .. }));
     let builder = net::bind_client(builder, route, to_this_computer)?;
-    let inner = match opts.post {
-        Some(_) => as_get.policy(),
-        None => get_policy(),
+    let inner = if opts.strict_http {
+        reqwest::redirect::Policy::custom(|attempt| {
+            let downgrade = attempt
+                .previous()
+                .last()
+                .is_some_and(|u| u.scheme() == "https" && attempt.url().scheme() != "https");
+            if downgrade || validate_strict_url(attempt.url()).is_err() {
+                attempt.error("mobile redirect refused")
+            } else {
+                reqwest::redirect::Policy::limited(MAX_REDIRECTS).redirect(attempt)
+            }
+        })
+    } else {
+        match opts.post {
+            Some(_) => as_get.policy(),
+            None => get_policy(),
+        }
+    };
+    let builder = if opts.strict_http {
+        builder.referer(false)
+    } else {
+        builder
     };
     let builder = if !follow {
         builder
@@ -2070,8 +2236,28 @@ fn client_with(
 async fn run(
     body: impl Future<Output = Result<Outcome, Error>>,
     shared: Arc<Shared>,
+    completion: Option<crate::completion::NetworkCompletion>,
 ) -> Result<Outcome, Error> {
-    let result = body.await;
+    let mut result = body.await;
+    if let Some(completion) = completion {
+        // The body and its reqwest clients have dropped. Join every platform relay before
+        // claiming the network lease ended; this barrier also runs on failure/cancellation.
+        if let Err(e) = (completion.release_network.0)().await {
+            result = Err(e.into());
+        }
+        if result.is_ok() {
+            let pending = shared.pending_completion.lock().unwrap().take();
+            result = match pending {
+                Some(proof) => proof
+                    .persist(&completion.proof_path)
+                    .map(|()| result.unwrap())
+                    .map_err(Error::from),
+                None => Err(Error::BadState(
+                    "missing network completion evidence".into(),
+                )),
+            };
+        }
+    }
     // Said as it stopped (`Shared::stopping`) when it was downloading.
     let said = shared.view.lock().unwrap().state == State::Stopping;
     match &result {
@@ -2238,6 +2424,7 @@ async fn run_fresh(
                 && link_refused(e)
                 && unlocked.is_none()
                 && opts.post.is_none()
+                && !opts.strict_http
                 && let Some(other) = opts.browser_final.clone().filter(|o| *o != target)
             {
                 shared.event(format!(
@@ -2267,7 +2454,12 @@ async fn run_fresh(
                     let head = Head::of(&resp);
                     (as_get, client0, (head, Body::Http(resp)), headers, ttfb)
                 }
-                Err(e) if refused_as_a_program(&e) && unlocked.is_none() && opts.post.is_none() => {
+                Err(e)
+                    if !opts.strict_http
+                        && refused_as_a_program(&e)
+                        && unlocked.is_none()
+                        && opts.post.is_none() =>
+                {
                     if asked_as_bmd || asked_own {
                         (opts.user_agent, opts.automatic_agent) = given_agent;
                         (asked_as_bmd, asked_own) = (false, false);
@@ -2378,6 +2570,8 @@ async fn run_fresh(
         .flatten()
         .and_then(|lm| httpdate::parse_http_date(lm).ok());
 
+    let completion_url = final_url.clone();
+    let completion_validators = validators.clone();
     let content_type = head
         .headers
         .get(header::CONTENT_TYPE)
@@ -2445,6 +2639,7 @@ async fn run_fresh(
                 &final_url,
                 browser.is_some(),
                 &pages_of(&opts, &req.headers),
+                opts.strict_http,
             ),
             refreshed: Default::default(),
             answered: Default::default(),
@@ -2487,10 +2682,17 @@ async fn run_fresh(
                             headers,
                             post.as_ref(),
                             agent,
+                            opts.strict_http,
                             expects,
                             cancel,
                         )
                         .await?;
+                        if opts.strict_http
+                            && (resp.url().origin() != completion_url.origin()
+                                || !strict_same_validators(&completion_validators, resp.headers()))
+                        {
+                            return Err(Error::FileChanged);
+                        }
                         Body::Http(resp)
                     }
                 };
@@ -2506,6 +2708,20 @@ async fn run_fresh(
     } else {
         single_stream(body, &file, shared, opts.global.as_deref(), cancel).await?
     };
+    if let Some(completion) = &opts.network_completion {
+        return stage_network(
+            shared,
+            file,
+            &dest,
+            size,
+            completion,
+            &req.url,
+            &completion_url,
+            completion_validators,
+            checksum,
+            opts.checksum.is_some(),
+        );
+    }
     verify_part(shared, &dest, checksum.as_ref()).await?;
     finish(shared, file, &dest, size, stamp, replaces(&req.dest, &opts))
 }
@@ -2729,6 +2945,15 @@ async fn run_resume(
     cancel: CancellationToken,
 ) -> Result<Outcome, Error> {
     let mut opts = opts;
+    if opts.strict_http {
+        validate_strict_url(&saved.url)?;
+        validate_strict_url(&saved.final_url)?;
+        if saved.browser_like
+            || (saved.url.scheme() == "https" && saved.final_url.scheme() != "https")
+        {
+            return Err(Error::BadState("incompatible mobile checkpoint".into()));
+        }
+    }
     if saved.asked_as_bmd
         && let Some(agent) = opts.agent_fallback.take()
     {
@@ -2799,6 +3024,7 @@ async fn run_resume(
                 &headers,
                 post,
                 agent,
+                opts.strict_http,
                 saved.size,
                 &cancel,
                 opts.unlocker.as_ref(),
@@ -2813,16 +3039,26 @@ async fn run_resume(
         Some((url, h)) => (url.clone(), as_get.contains(&url), Some(h)),
         None => (saved.final_url.clone(), saved.final_get, None),
     };
+    if opts.strict_http && url.origin() != saved.final_url.origin() {
+        return Err(Error::FileChanged);
+    }
     let origin = origin_of(
         &saved.url,
         &headers,
         &url,
         browser.is_some(),
         &pages_of(&opts, &headers),
+        opts.strict_http,
     );
     // Credentials stay with the host they were given for (the refresh's own way there scoped
     // them as it went).
-    headers = refreshed_headers.unwrap_or_else(|| scoped_headers(&headers, &saved.url, &url));
+    headers = refreshed_headers.unwrap_or_else(|| {
+        if opts.strict_http {
+            strict_scoped_headers(&headers, &saved.url, &url)
+        } else {
+            scoped_headers(&headers, &saved.url, &url)
+        }
+    });
     let post = post_for(&opts, final_get, &mut headers);
     let file = std::fs::OpenOptions::new()
         .read(true)
@@ -2926,7 +3162,26 @@ async fn run_resume(
         .then(|| ctx.validators.lock().unwrap().last_modified.clone())
         .flatten()
         .and_then(|lm| httpdate::parse_http_date(&lm).ok());
+    let completion = ctx.opts.network_completion.clone();
+    let source = saved.url.clone();
+    let final_url = ctx.target().url;
+    let validators = ctx.validators.lock().unwrap().clone();
+    let user_checksum = ctx.opts.checksum.is_some();
     segmented(ctx, saved, None).await?;
+    if let Some(completion) = &completion {
+        return stage_network(
+            &shared,
+            file,
+            &dest,
+            size,
+            completion,
+            &source,
+            &final_url,
+            validators,
+            checksum,
+            user_checksum,
+        );
+    }
     verify_part(&shared, &dest, checksum.as_ref()).await?;
     finish(&shared, file, &dest, size, stamp, replace)
 }
@@ -2943,6 +3198,7 @@ async fn refresh_final_url(
     headers: &HeaderMap,
     post: Option<&Bytes>,
     site_agent: bool,
+    strict_http: bool,
     size: u64,
     cancel: &CancellationToken,
     unlocker: Option<&Arc<dyn crate::unlock::Unlocker>>,
@@ -2962,9 +3218,18 @@ async fn refresh_final_url(
         None => (origin.clone(), headers.clone()),
     };
     asked.insert(header::RANGE, HeaderValue::from_static("bytes=0-0"));
-    let (resp, mut headers, _) = get(client, target, asked, post, site_agent, false, cancel)
-        .await
-        .ok()?;
+    let (resp, mut headers, _) = get(
+        client,
+        target,
+        asked,
+        post,
+        site_agent,
+        strict_http,
+        false,
+        cancel,
+    )
+    .await
+    .ok()?;
     headers.remove(header::RANGE);
     if resp.status() != StatusCode::PARTIAL_CONTENT {
         return None;
@@ -2985,6 +3250,51 @@ async fn refresh_final_url(
         read += chunk.len();
     }
     Some((url, headers))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn stage_network(
+    shared: &Shared,
+    file: Arc<File>,
+    dest: &Path,
+    size: u64,
+    completion: &crate::completion::NetworkCompletion,
+    source: &Url,
+    final_url: &Url,
+    validators: Validators,
+    checksum: Option<crate::verify::Hash>,
+    user_checksum: bool,
+) -> Result<Outcome, Error> {
+    shared.every_byte_in();
+    shared.set_state(State::Completing);
+    let file = Arc::try_unwrap(file).map_err(|_| io::Error::other("part writer still in use"))?;
+    file.set_len(size)?;
+    file.sync_all()?;
+    drop(file);
+    let part = naming::part_path(dest);
+    let provenance = if checksum.is_none() {
+        crate::completion::ChecksumProvenance::None
+    } else if user_checksum {
+        crate::completion::ChecksumProvenance::User
+    } else {
+        crate::completion::ChecksumProvenance::ServerOrCheckpoint
+    };
+    *shared.pending_completion.lock().unwrap() = Some(crate::completion::NetworkCompleteProof {
+        version: 1,
+        checkpoint_version: 1,
+        task_id: completion.task_id.clone(),
+        generation: completion.generation,
+        source_url: source.clone(),
+        final_url: final_url.clone(),
+        staging_path: part.clone(),
+        size,
+        completed_start: 0,
+        completed_end: size,
+        validators,
+        checksum,
+        checksum_provenance: provenance,
+    });
+    Ok(Outcome { path: part, size })
 }
 
 /// Check the finished part file against `hash` (at most two files at once: it reads them
@@ -3301,7 +3611,10 @@ async fn save_state(
         || final_get != saved.final_get;
     let bytes: u64 = segments.iter().map(|s| s.cursor - s.start).sum();
     // Room left in memory for what arrives while the flush holds the writes.
-    let room = HOLD_MAX.saturating_sub(ctx.shared.held.load(Ordering::Relaxed));
+    let room = ctx
+        .opts
+        .buffer_budget()
+        .saturating_sub(ctx.shared.held.load(Ordering::Relaxed));
     let due = force || synced.due(bytes, ctx.size, synced.at.elapsed(), room);
     let file = ctx.file.clone();
     let path = path.to_owned();
@@ -3584,9 +3897,13 @@ async fn get(
     headers: HeaderMap,
     post: Option<&Bytes>,
     site_agent: bool,
+    strict_http: bool,
     expects: bool,
     cancel: &CancellationToken,
 ) -> Result<(Response, HeaderMap, Duration), Error> {
+    if strict_http {
+        return strict_get(client, url, headers, post, cancel).await;
+    }
     let (mut url, mut headers) = (url, headers);
     // A site's link is asked at its file's address (a Drive link: Drive's file host), the same
     // party, so the user's cookies go too. A form's POST goes where it was given.
@@ -3792,6 +4109,7 @@ async fn web_page(
         headers,
         None,
         opts.site_agent(),
+        opts.strict_http,
         false,
         &cancel,
     )
@@ -3934,6 +4252,7 @@ async fn first_get(
             headers.clone(),
             opts.post.as_ref(),
             opts.site_agent(),
+            opts.strict_http,
             expects,
             cancel,
         )
@@ -4366,6 +4685,13 @@ async fn request(ctx: &Ctx, target: &Target, from: u64, to: u64) -> Result<Body,
             (Head::of(&resp), Body::Http(resp))
         }
     };
+    if ctx.opts.strict_http
+        && (head.url.origin() != target.url.origin()
+            || (head.status.is_success()
+                && !strict_same_validators(&ctx.validators.lock().unwrap(), &head.headers)))
+    {
+        return Err(Error::FileChanged);
+    }
     // A resumed download asks nothing before its connections: the first one's answer is the
     // first it gets (#954).
     if let Some(seen) = ctx.shared.seen.get() {
@@ -4426,7 +4752,10 @@ async fn request(ctx: &Ctx, target: &Target, from: u64, to: u64) -> Result<Body,
         s => return Err(Error::Status(s)),
     }
     let (start, _, total) = parse_content_range(&head.headers)?;
-    if start != from || total.is_some_and(|t| t != ctx.size) {
+    if start != from
+        || total.is_some_and(|t| t != ctx.size)
+        || (ctx.opts.strict_http && total != Some(ctx.size))
+    {
         return Err(Error::BadRange(format!(
             "asked {from}-{}, got {start}..",
             to - 1
@@ -4448,6 +4777,18 @@ fn browser_ranges_refused(ctx: &Ctx, head: &Head, why: &str) {
     }
 }
 
+/// Mobile never downgrades a strong ETag to a date or accepts a changed validator even
+/// when a broken server returns 206 after ignoring If-Range.
+fn strict_same_validators(expected: &Validators, headers: &HeaderMap) -> bool {
+    if let Some(etag) = &expected.etag {
+        return header_str(headers, header::ETAG) == Some(etag.as_str());
+    }
+    if let Some(modified) = &expected.last_modified {
+        return header_str(headers, header::LAST_MODIFIED) == Some(modified.as_str());
+    }
+    true
+}
+
 /// A full answer that still describes the file being downloaded: the same length and, when the
 /// download has validators, the same one it would send.
 fn same_file(ctx: &Ctx, resp: &Head) -> bool {
@@ -4466,6 +4807,9 @@ fn same_file(ctx: &Ctx, resp: &Head) -> bool {
 /// ETag differs per node (CDNs, mirrors), not the file. The ETag is dropped for the rest of the
 /// download, so the next request validates with the date (and the overlap check).
 fn per_node_etag(ctx: &Ctx, sent: Option<&HeaderValue>, resp: &Head) -> bool {
+    if ctx.opts.strict_http {
+        return false;
+    }
     let mut v = ctx.validators.lock().unwrap();
     // Sent with an ETag (dates never start with a quote) — possibly one another connection has
     // just dropped, so don't compare it with the current one.
@@ -4493,6 +4837,9 @@ fn per_node_etag(ctx: &Ctx, sent: Option<&HeaderValue>, resp: &Head) -> bool {
 /// file has its own ETag and date), with the file's length and validators of its own: that
 /// server's are taken for the rest of the download, so its ranges are asked with them.
 fn other_server_copy(ctx: &Ctx, resp: &Head) -> bool {
+    if ctx.opts.strict_http {
+        return false;
+    }
     let mut v = ctx.validators.lock().unwrap();
     let host = resp.url.host_str();
     let theirs = Validators::from_response(
@@ -5403,7 +5750,12 @@ impl<'a> Writer<'a> {
         self.ctx.shared.held.fetch_sub(n, Ordering::Relaxed);
         // The written batches, emptied, take the next bytes (a few; the rest are freed).
         for mut batch in written? {
-            if self.spare.len() < SPARE_MAX {
+            let spare_max = if self.ctx.opts.buffer_budget >= HOLD_MAX {
+                SPARE_MAX
+            } else {
+                ((hold_cap(self.ctx) / BATCH as u64 / 2) as usize).clamp(1, SPARE_MAX)
+            };
+            if self.spare.len() < spare_max {
                 batch.clear();
                 self.spare.push(batch);
             }
@@ -5428,7 +5780,7 @@ impl Drop for Writer<'_> {
 /// How much memory a connection may fill while the disk takes its writes (`HOLD_MAX`, shared
 /// by the connections this download may open), counted as `Writer::in_memory` counts it.
 fn hold_cap(ctx: &Ctx) -> u64 {
-    HOLD_MAX / u64::from(ctx.opts.connections().max(1))
+    ctx.opts.buffer_budget() / u64::from(ctx.opts.connections().max(1))
 }
 
 /// The memory a connection's bytes not yet written take: `writing` batches on their way to the

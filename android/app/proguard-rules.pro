@@ -1,0 +1,4 @@
+-keep class com.blackmarlin.downloader.bridge.NativeEngine { *; }
+-keep class org.rustls.platformverifier.** { *; }
+-keep class rustls.** { *; }
+-keepclasseswithmembernames,includedescriptorclasses class * { native <methods>; }
