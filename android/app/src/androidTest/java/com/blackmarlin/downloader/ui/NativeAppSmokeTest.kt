@@ -5,12 +5,14 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.DocumentsContract
+import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
@@ -36,12 +38,50 @@ import org.junit.Assert.*
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
+import org.junit.rules.TestRule
 import org.junit.runner.RunWith
+import org.junit.runners.model.Statement
 
 /** Runs against the actual app, Room database, Rust JNI library and Android scheduler. */
 @RunWith(AndroidJUnit4::class)
 class NativeAppSmokeTest {
-    @get:Rule val compose = createAndroidComposeRule<MainActivity>()
+    private val compose = createAndroidComposeRule<MainActivity>()
+    /**
+     * MainActivity correctly retains a real SEND intent. ActivityScenario instead identifies
+     * lifecycle callbacks by the original launch intent and ignores subsequent callbacks after
+     * onNewIntent/setIntent. Restore only the test rule's launch identity after all assertions,
+     * so the outer rule can observe actual destruction. No production intent handling changes.
+     * Capture the primary failure before ActivityScenario cleanup can replace its stack trace.
+     */
+    @get:Rule val rules: TestRule = RuleChain.outerRule(compose).around(TestRule { base, description ->
+        object : Statement() {
+            override fun evaluate() {
+                val instrumentation = InstrumentationRegistry.getInstrumentation()
+                val activity = compose.activity
+                val launchIntent = Intent(activity.intent)
+                var primaryFailure: Throwable? = null
+                try {
+                    base.evaluate()
+                } catch (failure: Throwable) {
+                    primaryFailure = failure
+                    Log.e("BmdDeviceTest", "Primary test failure: ${description.methodName}", failure)
+                    runCatching { recordDeviceFailure(UiDevice.getInstance(instrumentation), description.methodName, failure) }
+                    throw failure
+                } finally {
+                    val cleanupFailure = runCatching {
+                        instrumentation.runOnMainSync {
+                            if (!activity.isDestroyed) activity.intent = launchIntent
+                        }
+                    }.exceptionOrNull()
+                    if (cleanupFailure != null) {
+                        if (primaryFailure != null) primaryFailure.addSuppressed(cleanupFailure)
+                        else throw cleanupFailure
+                    }
+                }
+            }
+        }
+    })
     private val graph get() = (compose.activity.application as BmdApplication).graph
 
     @Test fun realDatabaseAndNativeEngineInitialize() {
@@ -93,12 +133,17 @@ class NativeAppSmokeTest {
             compose.onNodeWithText("Appearance").performScrollTo().performClick()
             compose.onNodeWithText("Dark", substring = false).performClick()
             compose.waitUntil(10_000) { graph.repository.state.value.settings.theme == ThemeMode.DARK }
+            // A Material snackbar can cover a row scrolled to the bottom of the screen.
+            // Observe the real persistence acknowledgement, then wait for it to leave.
+            compose.waitUntil(10_000) { compose.onAllNodesWithText("Settings saved.", substring = true).fetchSemanticsNodes().isNotEmpty() }
+            compose.waitUntil(15_000) { compose.onAllNodesWithText("Settings saved.", substring = true).fetchSemanticsNodes().isEmpty() }
             compose.onNodeWithContentDescription("Back").performClick()
             compose.onNodeWithText("Network and performance").performScrollTo().performClick()
             compose.onNodeWithText("Default network").assertExists()
             compose.onNodeWithContentDescription("Back").performClick()
             compose.onNodeWithText("Help and diagnostics").performScrollTo().performClick()
-            compose.onNodeWithText("What links are supported?").performClick()
+            compose.waitUntil(10_000) { compose.onAllNodesWithTag("screen-help").fetchSemanticsNodes().isNotEmpty() }
+            compose.onNodeWithText("What links are supported?").performScrollTo().performClick()
             compose.onNodeWithText("Use a direct HTTP or HTTPS link", substring = true).assertExists()
         } finally {
             runBlocking { graph.repository.execute(BmdCommand.UpdateSettings(before)) }
@@ -153,7 +198,9 @@ class NativeAppSmokeTest {
         val id = graph.repository.state.value.tasks.first { it.id !in before }.id
         if (compose.onAllNodesWithText("Later", substring = false).fetchSemanticsNodes().isNotEmpty()) compose.onNodeWithText("Later", substring = false).performClick()
         compose.waitUntil(120_000) {
-            graph.repository.state.value.tasks.find { it.id == id }?.stage in setOf(TransferStage.COMPLETE, TransferStage.FAILED, TransferStage.FILE_CHANGED, TransferStage.NEEDS_LINK, TransferStage.NEEDS_CREDENTIALS)
+            val task = graph.repository.state.value.tasks.find { it.id == id }
+            task?.stage in setOf(TransferStage.COMPLETE, TransferStage.FAILED, TransferStage.FILE_CHANGED, TransferStage.NEEDS_LINK, TransferStage.NEEDS_CREDENTIALS) ||
+                (task?.stage == TransferStage.WAITING_SAVE && task.errorCode != null && TaskOperation.RETRY_SAVE in task.permittedActions)
         }
         val task = graph.repository.state.value.tasks.first { it.id == id }
         assertEquals("Actual state: ${task.stage}; ${task.detail}; ${task.errorCode}", TransferStage.COMPLETE, task.stage)
@@ -266,7 +313,7 @@ class NativeAppSmokeTest {
                 graph.repository.execute(BmdCommand.RemoveTransfers(setOf(id)))
             }
         } catch (failure: Throwable) {
-            recordDeviceFailure(device, "saf-picker", failure)
+            runCatching { recordDeviceFailure(device, "saf-picker", failure) }
             throw failure
         }
     }
@@ -281,16 +328,21 @@ class NativeAppSmokeTest {
             val showStorage = device.wait(Until.findObject(By.text(Pattern.compile("(?i)Show (internal storage|SD card)"))), 1_500)
             if (showStorage != null) showStorage.click() else device.pressBack()
         }
-        val showRoots = device.findObject(By.desc("Show roots"))
-            ?: device.findObject(By.res(Pattern.compile(".*:id/toolbar")))
-                ?.findObject(By.clazz("android.widget.ImageButton").clickable(true))
-            ?: error("The system folder picker has no storage navigation control")
-        showRoots.click()
-        device.waitForIdle(1_500)
-        val internalStorage = device.findObject(By.text(Build.MODEL))
-            ?: device.findObject(By.text(Pattern.compile("(?i)Internal (shared )?storage")))
-            ?: error("The real internal-storage root was not available in DocumentsUI")
-        internalStorage.click()
+        // The observed API 36 picker opens directly at the internal-storage root and omits
+        // its drawer button. Use the visible root children there; other versions need the drawer.
+        // The returned grant is still checked against primary:Download/BmdDeviceTest below.
+        if (device.findObject(By.text("Download")) == null) {
+            val showRoots = device.findObject(By.desc("Show roots"))
+                ?: device.findObject(By.res(Pattern.compile(".*:id/toolbar")))
+                    ?.findObject(By.clazz("android.widget.ImageButton").clickable(true))
+                ?: error("The system folder picker has neither the Download directory nor a storage navigation control")
+            showRoots.click()
+            device.waitForIdle(1_500)
+            val internalStorage = device.findObject(By.text(Build.MODEL))
+                ?: device.findObject(By.text(Pattern.compile("(?i)Internal (shared )?storage")))
+                ?: error("The real internal-storage root was not available in DocumentsUI")
+            internalStorage.click()
+        }
         findDirectoryEntry(device, "Download").click()
         findDirectoryEntry(device, "BmdDeviceTest").click()
         val select = device.wait(Until.findObject(By.res(Pattern.compile(".*:id/action_menu_select")).enabled(true)), 5_000)
@@ -331,13 +383,27 @@ class NativeAppSmokeTest {
     private fun recordDeviceFailure(device: UiDevice, label: String, failure: Throwable) {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val directory = File(context.getExternalFilesDir(null) ?: context.filesDir, "device-test-evidence").apply { mkdirs() }
-        val prefix = "$label-api${Build.VERSION.SDK_INT}"
-        runCatching { device.dumpWindowHierarchy(File(directory, "$prefix.xml")) }
-        runCatching { device.takeScreenshot(File(directory, "$prefix.png")) }
+        val prefix = "${label.replace(Regex("[^A-Za-z0-9_-]"), "_")}-api${Build.VERSION.SDK_INT}"
+        // Preserve the failure first. Provider paths/URIs, source URLs and credentials are excluded.
         File(directory, "$prefix.txt").writeText("${failure.javaClass.name}: ${failure.message}\n" +
             graph.repository.state.value.tasks.joinToString("\n") { "${it.id} ${it.stage} ${it.errorCode}: ${it.detail}" })
+        runCatching {
+            val phases = runBlocking { withTimeout(3_000) {
+                val rows = mutableListOf<String>()
+                for (task in graph.db.tasks().tasks()) {
+                    val publication = graph.db.tasks().publication(task.id)
+                    rows += "${task.id} total=${task.totalBytes} verified=${task.verified} " +
+                        "phase=${publication?.phase} adapter=${publication?.adapter} copied=${publication?.copiedBytes} " +
+                        "expected=${publication?.expectedBytes} commit=${publication?.commitPlanned}"
+                }
+                rows.joinToString("\n")
+            } }
+            File(directory, "$prefix.txt").appendText("\n$phases\n")
+        }
+        runCatching { device.dumpWindowHierarchy(File(directory, "$prefix.xml")) }
+        runCatching { device.takeScreenshot(File(directory, "$prefix.png")) }
         InstrumentationRegistry.getInstrumentation().sendStatus(0, Bundle().apply {
-            putString("stream", "\nSAF device failure evidence: ${directory.absolutePath}/$prefix.*\n")
+            putString("stream", "\nPrimary device failure evidence: ${directory.absolutePath}/$prefix.*\n")
         })
     }
 

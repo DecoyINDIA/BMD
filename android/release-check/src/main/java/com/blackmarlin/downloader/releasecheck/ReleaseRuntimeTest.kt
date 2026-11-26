@@ -239,11 +239,13 @@ class ReleaseRuntimeTest {
 
     private fun waitForPublishedFixture(name: String, expectedBytes: Long, timeout: Long): PublishedRow {
         var published: PublishedRow? = null
-        waitForCondition(timeout, "The fixture never reached a nonpending MediaStore publication") {
+        waitForCondition(timeout, "The fixture never reached a nonpending MediaStore publication with the expected indexed length") {
             dismissNotificationEducation()
             val row = queryFixture(name)
-            if (row != null && row.pending == 0) {
-                assertEquals(expectedBytes, row.bytes)
+            // The provider can clear IS_PENDING before its metadata scan updates _size.
+            // Wait for both states within the same deadline; the final row, actual stream
+            // length and full SHA-256 assertions remain mandatory after this returns.
+            if (row != null && row.pending == 0 && row.bytes == expectedBytes) {
                 published = row
                 true
             } else false

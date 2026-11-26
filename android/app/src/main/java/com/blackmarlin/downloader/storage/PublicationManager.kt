@@ -17,6 +17,7 @@ import android.provider.OpenableColumns
 import android.system.ErrnoException
 import android.system.Os
 import android.system.OsConstants
+import android.util.Log
 import androidx.room.withTransaction
 import com.blackmarlin.downloader.data.BmdDatabase
 import com.blackmarlin.downloader.data.PublicationEntity
@@ -74,6 +75,7 @@ class PublicationManager internal constructor(
         onProgress: suspend (Long) -> Unit,
     ): PublicationOutcome = withContext(Dispatchers.IO) {
         var writer: PublicationWriter? = null
+        var operation = PublicationOperation.LOAD_STAGING
         try {
             var task = ownedTask(taskId, generation, owner)
             val existingAttempt = dao.publication(taskId)
@@ -101,6 +103,7 @@ class PublicationManager internal constructor(
                     }
                 }
                 // An exception or process loss here leaves CREATE_PLANNED. Never create again blindly.
+                operation = PublicationOperation.CREATE
                 val createdUri = io.create(task, planned, isStopped)
                 attempt = withContext(NonCancellable) { recordCreatedUri(planned, createdUri, generation, owner) }
                 freshlyCreated = true
@@ -108,27 +111,40 @@ class PublicationManager internal constructor(
                 attempt = journal(existingAttempt, generation, owner) { copy(runGeneration = generation, ownerSession = owner) }
                 if (attempt.uri == null) {
                     // Only MediaStore can recover the exact app-owned pending attempt marker.
+                    operation = PublicationOperation.RECOVER_CREATED
                     val recovered = if (attempt.adapter == "MEDIASTORE") io.recoverCreated(attempt, isStopped) else null
                     if (recovered == null) throw IdentityUncertain("The provider may have created a document, but its identity was not recorded. Locate the saved file or explicitly save a separate copy.")
                     attempt = recordCreatedUri(attempt, recovered, generation, owner)
                 }
             }
             val uri = attempt.uri ?: throw IdentityUncertain("The save location needs to be resolved.")
+            operation = PublicationOperation.IDENTIFY
             io.assertIdentity(attempt)
 
             if (attempt.commitPlanned || attempt.phase in completedCopyPhases) {
                 // A close/finalization may have happened before the previous process ended.
+                operation = PublicationOperation.PROVE_EXISTING
                 val proof = compare(stage, uri, allowPrefix = false, isStopped, onProgress)
                 requireExpectedDigest(task, proof.digest)
                 if (attempt.digest != null && attempt.digest != proof.digest) throw IdentityUncertain("The saved document no longer matches the recorded download. Its contents were left unchanged.")
                 attempt = journal(attempt, generation, owner) { copy(phase = "COPY_COMPLETE", copiedBytes = proof.bytes, digest = proof.digest) }
                 attempt = commitBarrier(attempt, generation, owner, isStopped)
+                operation = PublicationOperation.FINALIZE
                 return@withContext finalizeKnownBytes(task, attempt, generation, owner, isStopped)
             }
 
-            if (freshlyCreated) {
-                val empty = compare(stage, uri, allowPrefix = true, isStopped, onProgress = {})
-                if (empty.bytes != 0L) throw IdentityUncertain("The provider returned a nonempty document from create. It was left unchanged.")
+            // MediaStore insert may create only the database row. A read-only open before the
+            // first write can fail because its backing file does not exist yet. For these exact
+            // zero-copy journal states, open nontruncating rw and prove size zero on the SAME
+            // descriptor that will receive bytes. A nonempty result is held without any write.
+            val emptyMediaStoreAttempt = attempt.adapter == "MEDIASTORE" && attempt.copiedBytes == 0L &&
+                attempt.phase == "URI_RECORDED"
+            operation = PublicationOperation.PROVE_EXISTING
+            if (freshlyCreated || emptyMediaStoreAttempt) {
+                if (attempt.adapter != "MEDIASTORE") {
+                    val empty = compare(stage, uri, allowPrefix = true, isStopped, onProgress = {})
+                    if (empty.bytes != 0L) throw IdentityUncertain("The provider returned a nonempty document from create. It was left unchanged.")
+                }
             } else {
                 // Own URI + exact prefix proof is required before any destructive truncate.
                 val prefix = compare(stage, uri, allowPrefix = true, isStopped, onProgress = {})
@@ -136,15 +152,21 @@ class PublicationManager internal constructor(
                     requireExpectedDigest(task, prefix.digest)
                     attempt = journal(attempt, generation, owner) { copy(phase = "COPY_COMPLETE", copiedBytes = prefix.bytes, digest = prefix.digest) }
                     attempt = commitBarrier(attempt, generation, owner, isStopped)
+                    operation = PublicationOperation.FINALIZE
                     return@withContext finalizeKnownBytes(task, attempt, generation, owner, isStopped)
                 }
                 if (attempt.adapter == "SAF") throw IdentityUncertain("This partial provider document cannot be safely overwritten after reopening. Locate it or explicitly save a separate copy.")
             }
             checkRunning(isStopped)
             gate.withLock { requireRunIntent(requireOwner(taskId, generation, owner), isStopped) }
-            attempt = journal(attempt, generation, owner) { copy(phase = "COPYING", copiedBytes = 0) }
             // Recovered documents must prove seek/truncate support. A fresh created stream may be sequential.
-            writer = io.openWrite(attempt, requireSafeTruncate = !freshlyCreated, isStopped)
+            operation = PublicationOperation.OPEN_WRITE
+            writer = io.openWrite(attempt, requireSafeTruncate = !(freshlyCreated || emptyMediaStoreAttempt), isStopped)
+            // Do not persist COPYING before the initial backing file exists. After this barrier,
+            // crash recovery can read and prove an empty or partial prefix before a safe restart.
+            gate.withLock { requireRunIntent(requireOwner(taskId, generation, owner), isStopped) }
+            attempt = journal(attempt, generation, owner) { copy(phase = "COPYING", copiedBytes = 0) }
+            operation = PublicationOperation.COPY
             val digest = MessageDigest.getInstance("SHA-256")
             val buffer = ByteArray(BUFFER_BYTES)
             var copied = 0L
@@ -168,12 +190,14 @@ class PublicationManager internal constructor(
                 }
             }
             if (copied != expectedBytes) throw IdentityUncertain("The private download changed while it was being saved.")
+            operation = PublicationOperation.FLUSH
             writer!!.flushDurably()
             val checksum = digest.digest().hex()
             requireExpectedDigest(task, checksum)
             attempt = journal(attempt, generation, owner) { copy(phase = "COPY_COMPLETE", copiedBytes = copied, digest = checksum) }
             // This is the serialized winner against Cancel. It precedes successful close/finalization.
             attempt = commitBarrier(attempt, generation, owner, isStopped)
+            operation = PublicationOperation.CLOSE
             withContext(NonCancellable) {
                 writer!!.closeSuccessfully()
                 writer = null
@@ -181,10 +205,12 @@ class PublicationManager internal constructor(
             }
             // Generic SAF providers can buffer, replace, or truncate on close. Read back actual bytes.
             // A stop/timeout after CommitPlanned leaves the stage for subsequent reconciliation.
+            operation = PublicationOperation.READBACK
             if (attempt.adapter != "MEDIASTORE") {
                 val proof = compare(stage, uri, allowPrefix = false, isStopped, onProgress = {})
                 if (proof.digest != checksum) throw IdentityUncertain("The provider did not preserve the downloaded bytes. The private download is retained.")
-            } else io.assertClosedLength(attempt)
+            } else io.assertClosedLength(attempt, isStopped)
+            operation = PublicationOperation.FINALIZE
             finalizeKnownBytes(task, attempt, generation, owner, isStopped)
         } catch (cancelled: CancellationException) {
             withContext(NonCancellable) {
@@ -195,6 +221,7 @@ class PublicationManager internal constructor(
         } catch (failure: Exception) {
             withContext(NonCancellable) { runCatching { writer?.abort() } }
             if (failure is StaleOwner) return@withContext PublicationOutcome(false, "A newer task action owns this transfer.")
+            recordFailure(taskId, operation, failure)
             val message = safeFailure(failure)
             hold(taskId, generation, owner, message, forceUnresolved = failure is IdentityUncertain || failure is ByteMismatch || failure is UnsupportedProviderStream,
                 invalidStage = failure is LocalIntegrityFailure)
@@ -241,6 +268,7 @@ class PublicationManager internal constructor(
             throw cancelled
         } catch (failure: Exception) {
             if (failure is StaleOwner) return@withContext PublicationOutcome(false, "A newer task action owns this transfer.")
+            recordFailure(taskId, PublicationOperation.LOCATE, failure)
             val message = if (failure is ByteMismatch) "The chosen document does not match the retained download. No document was changed or adopted." else safeFailure(failure)
             hold(taskId, generation, owner, message, forceUnresolved = failure is UnsupportedProviderStream,
                 invalidStage = failure is LocalIntegrityFailure)
@@ -435,6 +463,14 @@ class PublicationManager internal constructor(
         else -> "The provider could not complete this save. Downloaded data is retained; retry or inspect the destination."
     }
 
+    private suspend fun recordFailure(taskId: String, operation: PublicationOperation, error: Exception) {
+        // Fixed phase/type/errno only: no exception message, stack, URI, path, filename or URL.
+        runCatching {
+            val attempt = dao.publication(taskId)
+            Log.w("BmdPublication", publicationFailureDiagnostic(operation, attempt?.phase, attempt?.adapter, error))
+        }
+    }
+
     companion object {
         internal const val BUFFER_BYTES = 64 * 1024
         private val publishedPhases = setOf("PUBLISHED", "CLEANED")
@@ -457,7 +493,7 @@ internal interface PublicationIo {
     fun assertIdentity(attempt: PublicationEntity)
     suspend fun openWrite(attempt: PublicationEntity, requireSafeTruncate: Boolean, stop: () -> Boolean): PublicationWriter
     suspend fun openRead(uri: String, stop: () -> Boolean): PublicationReader
-    fun assertClosedLength(attempt: PublicationEntity)
+    suspend fun assertClosedLength(attempt: PublicationEntity, stop: () -> Boolean)
     fun finalizeDocument(attempt: PublicationEntity)
     fun metadata(uri: String): DocumentMetadata
 }
@@ -503,8 +539,9 @@ internal class AndroidPublicationIo(private val context: Context) : PublicationI
             }
         }
         if (matches.size != 1) return null
-        // No copy can start before URI_RECORDED, so a lost create result must still contain no bytes.
-        openRead(matches.single(), stop).use { if (it.read(ByteArray(1), stop) != -1) return null }
+        // Return only this exact owned pending marker. The manager durably records its URI,
+        // then proves empty content on the same nontruncating rw FD used for the first copy.
+        // A read-only open here is invalid: insert need not have created the backing file yet.
         return matches.single()
     }
 
@@ -527,10 +564,15 @@ internal class AndroidPublicationIo(private val context: Context) : PublicationI
 
     override suspend fun openWrite(attempt: PublicationEntity, requireSafeTruncate: Boolean, stop: () -> Boolean): PublicationWriter {
         assertIdentity(attempt)
-        val descriptor = openDescriptor(Uri.parse(attempt.uri), if (requireSafeTruncate) "rw" else "w", stop)
+        val emptyMediaStore = attempt.adapter == "MEDIASTORE" && !requireSafeTruncate
+        val descriptor = openDescriptor(Uri.parse(attempt.uri), if (requireSafeTruncate || emptyMediaStore) "rw" else "w", stop)
         try {
             val regular = admitProviderDescriptor(descriptor)
-            if (requireSafeTruncate) {
+            if (emptyMediaStore) {
+                if (!regular || Os.fstat(descriptor.fileDescriptor).st_size != 0L)
+                    throw IdentityUncertain("The pending save is not a proven empty regular file. Its existing contents were left unchanged.")
+                Os.lseek(descriptor.fileDescriptor, 0, OsConstants.SEEK_SET)
+            } else if (requireSafeTruncate) {
                 // Do not request 'rwt': prove seeking before the destructive truncate happens.
                 Os.lseek(descriptor.fileDescriptor, 0, OsConstants.SEEK_SET)
                 Os.ftruncate(descriptor.fileDescriptor, 0)
@@ -539,7 +581,7 @@ internal class AndroidPublicationIo(private val context: Context) : PublicationI
             return DescriptorWriter(descriptor, regular)
         } catch (error: Exception) {
             runCatching { descriptor.closeWithError("BMD save was not admitted") }
-            if (error is UnsupportedProviderStream) throw error
+            if (error is UnsupportedProviderStream || error is IdentityUncertain) throw error
             throw IdentityUncertain("This provider cannot safely restart the existing document. Locate it or explicitly save a separate copy.")
         }
     }
@@ -552,10 +594,15 @@ internal class AndroidPublicationIo(private val context: Context) : PublicationI
         } catch (error: Exception) { runCatching { descriptor.close() }; throw error }
     }
 
-    override fun assertClosedLength(attempt: PublicationEntity) {
+    override suspend fun assertClosedLength(attempt: PublicationEntity, stop: () -> Boolean) {
         assertIdentity(attempt)
-        val length = metadata(attempt.uri!!).bytes
-        if (length == null || length != attempt.expectedBytes) throw IdentityUncertain("The provider has not confirmed the completed file length. The download is retained.")
+        // MediaStore deliberately skips metadata scanning while IS_PENDING is true, so _size
+        // can be null/stale after close. Read the closed object's actual regular descriptor size.
+        openDescriptor(Uri.parse(attempt.uri), "r", stop).use { descriptor ->
+            val stat = Os.fstat(descriptor.fileDescriptor)
+            if (!OsConstants.S_ISREG(stat.st_mode) || stat.st_size != attempt.expectedBytes)
+                throw IdentityUncertain("The provider has not confirmed the completed file length. The download is retained.")
+        }
     }
 
     override fun finalizeDocument(attempt: PublicationEntity) {
@@ -639,6 +686,21 @@ internal class UnsupportedProviderStream : IOException(
         "Your downloaded data is retained. Choose Save a separate copy, then select a local device folder. " +
         "Check any document that may already exist at the provider.",
 )
+
+internal enum class PublicationOperation {
+    LOAD_STAGING, CREATE, RECOVER_CREATED, IDENTIFY, PROVE_EXISTING, OPEN_WRITE,
+    COPY, FLUSH, CLOSE, READBACK, FINALIZE, LOCATE,
+}
+
+/** Local diagnostics intentionally exclude provider-controlled exception text and stack traces. */
+internal fun publicationFailureDiagnostic(operation: PublicationOperation, phase: String?, adapter: String?, error: Exception): String {
+    val safePhase = phase?.takeIf { it.matches(Regex("[A-Z_]{1,32}")) } ?: "NONE"
+    val safeAdapter = adapter?.takeIf { it in setOf("MEDIASTORE", "SAF", "USER_SELECTED") } ?: "NONE"
+    val causes = generateSequence<Throwable>(error) { it.cause }.take(4).toList()
+    val types = causes.joinToString(",") { it.javaClass.simpleName.replace(Regex("[^A-Za-z0-9_]"), "_").take(64) }
+    val errno = causes.filterIsInstance<ErrnoException>().firstOrNull()?.errno
+    return "operation=${operation.name} adapter=$safeAdapter phase=$safePhase types=$types errno=${errno ?: "none"}"
+}
 
 internal class DescriptorReader(private val descriptor: ParcelFileDescriptor) : PublicationReader {
     override suspend fun read(buffer: ByteArray, stop: () -> Boolean): Int {

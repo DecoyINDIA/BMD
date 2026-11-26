@@ -91,6 +91,7 @@ jobs:
       - name: Check transport classifier and resolve external dependencies
         run: |
           python3 -m unittest discover -s tools/android -p test_dependency_resolution.py -v
+          python3 -m unittest discover -s tools/android -p test_device_runtime.py -v
           python3 tools/android/run_dependency_resolution.py
       - name: Android lint, JVM tests and distributable artifacts
         working-directory: android
@@ -146,14 +147,17 @@ jobs:
             api: 26
             image: google_apis
             page_size: 4096
+            ram_mb: 2048
           - name: api36
             api: 36
             image: google_apis
             page_size: 4096
+            ram_mb: 4096
           - name: api36-16k
             api: 36
             image: google_apis_ps16k
             page_size: 16384
+            ram_mb: 4096
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -189,10 +193,20 @@ jobs:
           avdmanager create avd --name bmd-ci --package "system-images;android-${{ matrix.api }};${{ matrix.image }};x86_64" --device pixel_2 --path "$ANDROID_AVD_HOME/bmd-ci.avd" --force
           test -s "$ANDROID_AVD_HOME/bmd-ci.ini"
           test -s "$ANDROID_AVD_HOME/bmd-ci.avd/config.ini"
+          # The modern 16 KiB Google image exhausted its default 2560 MiB
+          # during first-boot services and killed the foreground test process.
+          python3 - "$ANDROID_AVD_HOME/bmd-ci.avd/config.ini" "${{ matrix.ram_mb }}" <<'PY'
+          import pathlib, sys
+          config = pathlib.Path(sys.argv[1])
+          lines = [line for line in config.read_text().splitlines() if not line.startswith("hw.ramSize=")]
+          config.write_text("\n".join(lines + ["hw.ramSize=" + sys.argv[2]]) + "\n")
+          PY
+          cp "$ANDROID_AVD_HOME/bmd-ci.avd/config.ini" avd-config.ini
+          free -m > host-memory.txt
           "$ANDROID_HOME/emulator/emulator" -list-avds | tee available-avds.txt
           grep -qx bmd-ci available-avds.txt
           sudo chmod a+rw /dev/kvm
-          "$ANDROID_HOME/emulator/emulator" -avd bmd-ci -no-window -no-audio -no-snapshot -gpu swiftshader_indirect -no-boot-anim > emulator.log 2>&1 &
+          "$ANDROID_HOME/emulator/emulator" -avd bmd-ci -memory "${{ matrix.ram_mb }}" -no-window -no-audio -no-snapshot -gpu swiftshader_indirect -no-boot-anim > emulator.log 2>&1 &
       - name: Real deterministic download fixture
         run: |
           python3 tools/android/fixture_server.py --port 8088 --manifest fixture.json > fixture.log 2>&1 &
@@ -203,13 +217,7 @@ jobs:
         run: |
           timeout 240 adb wait-for-device
           timeout 240 bash -c 'until adb shell getprop sys.boot_completed | tr -d "\r" | grep -q "^1$"; do sleep 2; done'
-          observed_api=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
-          observed_page_size=$(adb shell getconf PAGE_SIZE | tr -d '\r')
-          observed_abi=$(adb shell getprop ro.product.cpu.abi | tr -d '\r')
-          test "$observed_api" = "${{ matrix.api }}"
-          test "$observed_page_size" = "${{ matrix.page_size }}"
-          test "$observed_abi" = "x86_64"
-          python3 -c 'import json,sys; print(json.dumps({"observedApi":int(sys.argv[1]),"observedPageSizeBytes":int(sys.argv[2]),"systemImageTag":sys.argv[3],"observedAbi":sys.argv[4]}))' "$observed_api" "$observed_page_size" "${{ matrix.image }}" "$observed_abi" > device-runtime.json
+          python3 tools/android/observe_device_runtime.py --api "${{ matrix.api }}" --page-size "${{ matrix.page_size }}" --image "${{ matrix.image }}" > device-runtime.json
           adb shell input keyevent 82
           adb install -r artifacts/outputs/apk/debug/app-debug.apk
           adb install -r artifacts/outputs/apk/androidTest/debug/app-debug-androidTest.apk
@@ -284,6 +292,8 @@ jobs:
           path: |
             emulator.log
             available-avds.txt
+            avd-config.ini
+            host-memory.txt
             instrumentation.txt
             acceptance.json
             fixture.json
