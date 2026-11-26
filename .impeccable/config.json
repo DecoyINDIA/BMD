@@ -25,7 +25,7 @@
         "rule": "design-system-font",
         "value": "ui\",system-ui,sans-serif",
         "createdAt": "2026-11-02T00:26:55.245Z",
-        "reason": "Claude: extension popup follows the app's native Windows controls (Segoe UI/system font, classic-look decision), not the website's DESIGN.md type system"
+        "reason": "Claude: extension popup follows the app's native Windows controls (classic-look decision); its type is the app's (IBM Plex Sans, Space Grotesk), not the website's DESIGN.md type system"
       },
       {
         "rule": "cramped-padding",
