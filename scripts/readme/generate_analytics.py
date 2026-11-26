@@ -290,9 +290,9 @@ def render_telemetry_dashboard(data: dict[str, Any], theme_name: str, animated: 
     total_product = int(summary.get("total_product_downloads") or 0)
     total_all = int(summary.get("total_all_assets") or 0)
     total_aux = int(summary.get("total_auxiliary_downloads") or 0)
-    latest_tag = summary.get("latest_release_tag") or "—"
+    latest_tag = summary.get("latest_release_tag") or "-"
     latest_dl = int(summary.get("latest_release_downloads") or 0)
-    latest_pub = (summary.get("latest_release_published_at") or "")[:10] or "—"
+    latest_pub = (summary.get("latest_release_published_at") or "")[:10] or "-"
     release_count = int(summary.get("release_count") or 0)
     stars = int(repo.get("stars") or 0)
     forks = int(repo.get("forks") or 0)
@@ -301,7 +301,7 @@ def render_telemetry_dashboard(data: dict[str, Any], theme_name: str, animated: 
 
     api_status = data.get("api_status") or "ok"
     synced_str = fmt_timestamp(data.get("last_successful_api_sync_at") or data.get("last_updated_at"))
-    started_str = (data.get("tracking_started_at") or "")[:10] or "—"
+    started_str = (data.get("tracking_started_at") or "")[:10] or "-"
     status_label = "API VERIFIED" if api_status == "ok" else "CACHED FALLBACK"
 
     milestone = next_milestone(total_product)
@@ -481,7 +481,7 @@ def render_telemetry_dashboard(data: dict[str, Any], theme_name: str, animated: 
         )
         parts.append(
             f'<text x="{panel_x + 18}" y="{panel_y + 68}" class="t-body" font-size="12">'
-            f'accumulate automatically — zero synthetic or backfilled history.</text>'
+            f'accumulate over time, with no synthetic or backfilled history.</text>'
         )
         # Baseline track with moving scanner tick
         track_x, track_y, track_w = panel_x + 18, panel_y + 92, panel_w - 36
@@ -561,7 +561,7 @@ def render_telemetry_dashboard(data: dict[str, Any], theme_name: str, animated: 
     )
     parts.append(
         f'<text x="1074" y="421" class="t-mono" font-size="11" text-anchor="end" fill="{t["ink_3"]}">'
-        f'Periodically refreshed every 6h  ·  Last synced {esc(synced_str)}</text>'
+        f'Updated every 6h  ·  Last synced {esc(synced_str)}</text>'
     )
 
     parts.append("</svg>")
@@ -612,7 +612,7 @@ def render_platform_breakdown(data: dict[str, Any], theme_name: str, animated: b
             h,
             t,
             "BMD · PLATFORM & RELEASE MANIFEST",
-            f"PRODUCT {fmt_num(total_product)}  ·  ALL ASSETS {fmt_num(total_all)}  ·  ZERO DOUBLE-COUNTING",
+            f"PRODUCT {fmt_num(total_product)}  ·  ALL ASSETS {fmt_num(total_all)}  ·  NO DOUBLE-COUNTING",
         ),
     ]
 
@@ -759,9 +759,9 @@ def render_markdown_telemetry(data: dict[str, Any]) -> str:
 
     total_product = int(summary.get("total_product_downloads") or 0)
     total_all = int(summary.get("total_all_assets") or 0)
-    latest_tag = summary.get("latest_release_tag") or "—"
+    latest_tag = summary.get("latest_release_tag") or "-"
     latest_dl = int(summary.get("latest_release_downloads") or 0)
-    latest_pub = (summary.get("latest_release_published_at") or "")[:10] or "—"
+    latest_pub = (summary.get("latest_release_published_at") or "")[:10] or "-"
     stars = int(repo.get("stars") or 0)
     forks = int(repo.get("forks") or 0)
     contributors = int(repo.get("contributors_count") or 0)
@@ -794,7 +794,7 @@ def render_markdown_telemetry(data: dict[str, Any]) -> str:
         share_prod = (
             f"{float(plat.get('share_of_product_pct') or 0.0):.1f}%"
             if plat.get("category") != "auxiliary"
-            else "—"
+            else "n/a"
         )
         share_all = f"{float(plat.get('share_of_all_assets_pct') or 0.0):.1f}%"
         lines.append(f"| {pname} | {cat} | {pdls} | {share_prod} | {share_all} |")

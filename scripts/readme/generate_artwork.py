@@ -362,7 +362,7 @@ def build_hero_waybill(mode: str) -> str:
   <text x="440" y="152" text-anchor="middle" fill="{t['paper']}" font-size="12" font-weight="800" class="t-mono">v1.0.0</text>
 
   <text x="48" y="206" fill="{t['on_board']}" font-size="22" font-weight="700" class="t-disp">A download is a delivery.</text>
-  <text x="48" y="232" fill="{t['on_board_2']}" font-size="14.5" class="t-body">The desktop workflow you already know — rebuilt in Rust with dynamic re-splitting.</text>
+  <text x="48" y="232" fill="{t['on_board_2']}" font-size="14.5" class="t-body">The familiar desktop workflow, rebuilt in Rust with live segments.</text>
 
   <!-- 8-Lane Live Telemetry Panel -->
   <rect x="46" y="256" width="584" height="184" rx="10" fill="{t['inset_bg']}" stroke="{t['inset_edge']}" stroke-width="1.2"/>
@@ -385,7 +385,7 @@ def build_hero_waybill(mode: str) -> str:
     </g>
 
     <text x="{wb_x+26}" y="{wb_y+94}" fill="{t['ink']}" font-size="27" font-weight="800" letter-spacing="-0.6" class="t-disp">5.41&#215; faster than IDM 6.42</text>
-    <text x="{wb_x+26}" y="{wb_y+120}" fill="{t['ink_2']}" font-size="13.5" class="t-body">Zero trial. Zero ads. Atomic resume &amp; torrents built in.</text>
+    <text x="{wb_x+26}" y="{wb_y+120}" fill="{t['ink_2']}" font-size="13.5" class="t-body">No trials or ads. Atomic resume and torrents built right in.</text>
 
     <!-- Ruled 2x2 Fields -->
     <line x1="{wb_x+26}" y1="{wb_y+142}" x2="{wb_x+wb_w-26}" y2="{wb_y+142}" stroke="{t['ink']}" stroke-width="1.5"/>
@@ -603,7 +603,7 @@ def build_segment_engine(mode: str) -> str:
   <text x="854" y="120" fill="{t['ink_3']}" font-size="11" font-weight="700" letter-spacing="0.9" class="t-disp">STAGE 03  ·  ATOMIC COMMIT</text>
   <line x1="854" y1="130" x2="1056" y2="130" stroke="{t['ink']}" stroke-width="1.5"/>
   <text x="854" y="156" fill="{t['ink']}" font-size="12.5" font-weight="700" class="t-mono">sparse .bmd.part</text>
-  <text x="854" y="178" fill="{t['ink_2']}" font-size="12" class="t-body">Direct offset pwrite, zero</text>
+  <text x="854" y="178" fill="{t['ink_2']}" font-size="12" class="t-body">Direct offset pwrite, no</text>
   <text x="854" y="196" fill="{t['ink_2']}" font-size="12" class="t-body">post-download file merge.</text>
   <text x="854" y="224" fill="{t['ink']}" font-size="12.5" font-weight="700" class="t-mono">craft-atomic .bmd.json</text>
   <text x="854" y="244" fill="{t['ink_2']}" font-size="12" class="t-body">Crash-safe resume table.</text>
@@ -626,7 +626,7 @@ def build_segment_engine(mode: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 4. BENCHMARK RACE (1120 x 500) — Real numbers from website/bench/results.json
+# 4. BENCHMARK RACE (1120 x 500): Real numbers from website/bench/results.json
 # ---------------------------------------------------------------------------
 def build_benchmark_race(mode: str) -> str:
     t = THEMES[mode]
@@ -805,7 +805,7 @@ def build_benchmark_race(mode: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 5. ARCHITECTURE MAP (1160 x 560) — 15 Rust crates + extension/
+# 5. ARCHITECTURE MAP (1160 x 560): 15 Rust crates + extension/
 # ---------------------------------------------------------------------------
 def build_architecture_map(mode: str) -> str:
     t = THEMES[mode]
@@ -926,7 +926,7 @@ def build_workflow_capture(mode: str) -> str:
     stages = [
         ("01", "Browser Extension", "extension/", "Chrome, Edge, Brave,", "Opera, Vivaldi, Firefox"),
         ("02", "Native Host", "bmd-nmhost", "Checks capture rules &", "1 MB LinksPart frames"),
-        ("03", "Single-Instance IPC", "bmd-ipc", "Token-protected local", "socket · zero relaunch"),
+        ("03", "Single-Instance IPC", "bmd-ipc", "Token-protected local", "socket · no relaunch"),
         ("04", "Dispatch Target", "app / remote / mcp", "Desktop GUI, Headless", "HTTPS, or AI Assistant"),
     ]
     cards = []
@@ -984,7 +984,7 @@ def build_workflow_capture(mode: str) -> str:
   <g clip-path="url(#{pid}-clip)">
     <rect x="24" y="24" width="1072" height="46" fill="{t['ink']}"/>
     <text x="48" y="53" fill="{t['paper']}" font-size="15.5" font-weight="800" letter-spacing="0.7" class="t-disp">CAPTURE PIPELINE  ·  BROWSER EXTENSION TO ENGINE</text>
-    <text x="1072" y="52" text-anchor="end" fill="{t['paper_2']}" font-size="12" class="t-mono">Zero duplicate instances · Browser keeps fallback on reject</text>
+    <text x="1072" y="52" text-anchor="end" fill="{t['paper_2']}" font-size="12" class="t-mono">Single running instance · Browser keeps fallback on reject</text>
   </g>
 
   {"".join(cards)}
@@ -1008,7 +1008,7 @@ def build_workflow_capture(mode: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 7. FEATURE MATRIX (1120 x 480) — Packing-list ruled grid
+# 7. FEATURE MATRIX (1120 x 480): Packing-list ruled grid
 # ---------------------------------------------------------------------------
 def build_feature_matrix(mode: str) -> str:
     t = THEMES[mode]
@@ -1079,7 +1079,7 @@ def build_feature_matrix(mode: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# 8. DOWNLOAD CTA (640 x 92) — Branded Sticker-Edge Dispatch Green button
+# 8. DOWNLOAD CTA (640 x 92): Branded Sticker-Edge Dispatch Green button
 # ---------------------------------------------------------------------------
 def build_download_cta(mode: str) -> str:
     t = THEMES[mode]
@@ -1160,13 +1160,13 @@ def build_closing_waybill(mode: str) -> str:
     <g clip-path="url(#{pid}-clip)">
       <rect x="44" y="28" width="1032" height="44" fill="{t['ink']}"/>
       <text x="68" y="55" fill="{t['paper']}" font-size="14" font-weight="800" letter-spacing="0.9" class="t-disp">SIGN OFF  ·  CARRIER: DECOYINDIA/BMD</text>
-      <text x="1052" y="55" text-anchor="end" fill="{t['paper_2']}" font-size="12" class="t-mono">GPL-3.0 · RUST · 86 LANGUAGES · ZERO ADS</text>
+      <text x="1052" y="55" text-anchor="end" fill="{t['paper_2']}" font-size="12" class="t-mono">GPL-3.0 · RUST · 86 LANGUAGES · NO ADS</text>
     </g>
 
     {marlin_group(pid, 62, 92, 0.22, draw_anim=False)}
 
     <text x="186" y="122" fill="{t['ink']}" font-size="30" font-weight="800" letter-spacing="-0.6" class="t-disp">Black Marlin Downloader</text>
-    <text x="186" y="148" fill="{t['ink_2']}" font-size="14" class="t-body">Rebuilt from scratch in Rust. Free for everyone, forever — no trials, no telemetry, no ads.</text>
+    <text x="186" y="148" fill="{t['ink_2']}" font-size="14" class="t-body">Built from scratch in Rust. Free to use, with no ads, trials, or tracking.</text>
 
     <!-- Ruled Sign-off Fields -->
     <line x1="186" y1="168" x2="736" y2="168" stroke="{t['ink']}" stroke-width="1.5"/>
