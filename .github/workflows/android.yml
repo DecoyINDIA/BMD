@@ -1,0 +1,167 @@
+name: Android
+
+on:
+  push:
+    branches: [main, "android/**"]
+    paths:
+      - "android/**"
+      - "crates/engine/**"
+      - "crates/android-bridge/**"
+      - "tools/android/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".cargo/**"
+      - ".github/workflows/android.yml"
+  pull_request:
+    paths:
+      - "android/**"
+      - "crates/engine/**"
+      - "crates/android-bridge/**"
+      - "tools/android/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".cargo/**"
+      - ".github/workflows/android.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+env:
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: always
+  RUSTUP_TOOLCHAIN: "1.98.0"
+
+jobs:
+  rust-contracts:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Rust toolchain
+        run: rustup toolchain install 1.98.0 --profile minimal --component rustfmt --component clippy
+      - name: Formatting
+        run: cargo fmt --check -p bmd-engine -p bmd-android-bridge
+      - name: Rust lint contract
+        run: cargo clippy --locked -p bmd-engine -p bmd-android-bridge --all-targets --no-default-features -- -D warnings
+      - name: Engine and JNI ownership contracts
+        run: cargo test --locked -p bmd-engine -p bmd-android-bridge --no-default-features --lib --test mobile
+      - name: Existing desktop resume and recovery behavior
+        run: cargo test --locked -p bmd-engine --no-default-features --test e2e -- --test-threads=2 pause_and_resume_continues_where_it_stopped per_node_etags_fall_back_to_the_date signed_links_that_expire_while_downloading_are_refreshed a_wrong_checksum_fails_and_keeps_the_data
+
+  build:
+    needs: rust-contracts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5, resolved 2026-11-26
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: android-deps-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'android/**/*.gradle.kts', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: android-deps-${{ runner.os }}-
+      - name: Locked native toolchain and Android SDK
+        run: |
+          rustup toolchain install 1.98.0 --profile minimal --target aarch64-linux-android --target x86_64-linux-android
+          sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;29.0.14206865"
+      - name: Real native libraries, provenance, licenses and ELF verification
+        run: python3 tools/android/build_native.py --jobs 4
+      - name: Android lint, JVM tests and distributable artifacts
+        working-directory: android
+        run: ./gradlew --no-daemon -PskipNativeBuild=true lintDebug lintRelease testDebugUnitTest assembleDebug assembleDebugAndroidTest assembleRelease bundleRelease
+      - name: Verify packaged JNI and 16 KiB ZIP alignment
+        run: |
+          python3 tools/android/verify_native.py --apk android/app/build/outputs/apk/debug/app-debug.apk --apk android/app/build/outputs/apk/release/app-release-unsigned.apk --bundle android/app/build/outputs/bundle/release/app-release.aab
+          "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 -v 4 android/app/build/outputs/apk/debug/app-debug.apk
+          "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 -v 4 android/app/build/outputs/apk/release/app-release-unsigned.apk
+      - name: Preserve build identity
+        run: |
+          mkdir -p android/app/build/outputs/native
+          cp android/app/build/generated/native/assets/native-build.json android/app/build/outputs/native/
+          cp android/app/build/generated/native/assets/THIRD_PARTY_RUST_NOTICES.txt android/app/build/outputs/native/
+          cp android/app/build/generated/androidNotices/THIRD_PARTY_ANDROID_NOTICES.txt android/app/build/outputs/native/
+          cp android/app/build/generated/androidNotices/android-dependencies.json android/app/build/outputs/native/
+          sha256sum android/app/build/outputs/apk/debug/*.apk android/app/build/outputs/apk/release/*.apk android/app/build/outputs/bundle/release/*.aab > android/app/build/outputs/native/SHA256SUMS
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: android-build-${{ github.sha }}
+          if-no-files-found: error
+          path: |
+            android/app/build/outputs/apk
+            android/app/build/outputs/bundle
+            android/app/build/outputs/native
+            android/app/build/reports
+            android/app/build/test-results
+
+  device-smoke:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        api: [26, 36]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: android-build-${{ github.sha }}
+          path: artifacts
+      - name: Prepare Android emulator
+        run: |
+          sdkmanager "platform-tools" "emulator" "system-images;android-${{ matrix.api }};google_apis;x86_64"
+          echo no | avdmanager create avd --name bmd-ci --package "system-images;android-${{ matrix.api }};google_apis;x86_64" --force
+          sudo chmod a+rw /dev/kvm
+          "$ANDROID_HOME/emulator/emulator" -avd bmd-ci -no-window -no-audio -no-snapshot -gpu swiftshader_indirect -no-boot-anim > emulator.log 2>&1 &
+      - name: Real deterministic download fixture
+        run: |
+          python3 tools/android/fixture_server.py --port 8088 --manifest fixture.json > fixture.log 2>&1 &
+          timeout 20 bash -c 'until test -f fixture.json; do sleep 1; done'
+          curl --fail --silent http://127.0.0.1:8088/bmd-native-fixture.bin -o fixture-body.bin
+          python3 -c 'import hashlib,json,pathlib; m=json.loads(pathlib.Path("fixture.json").read_text()); assert hashlib.sha256(pathlib.Path("fixture-body.bin").read_bytes()).hexdigest()==m["sha256"]'
+      - name: Run actual instrumented tests
+        run: |
+          timeout 240 adb wait-for-device
+          timeout 240 bash -c 'until adb shell getprop sys.boot_completed | tr -d "\r" | grep -q "^1$"; do sleep 2; done'
+          adb shell input keyevent 82
+          adb install -r artifacts/outputs/apk/debug/app-debug.apk
+          adb install -r artifacts/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+          fixture_url=$(python3 -c 'import json; print(json.load(open("fixture.json"))["fixtureUrl"])')
+          fixture_sha256=$(python3 -c 'import json; print(json.load(open("fixture.json"))["sha256"])')
+          adb shell am instrument -w -r -e fixtureUrl "$fixture_url" -e fixtureSha256 "$fixture_sha256" com.blackmarlin.downloader.debug.test/androidx.test.runner.AndroidJUnitRunner | tee instrumentation.txt
+          python3 tools/android/check_instrumentation.py instrumentation.txt --api "${{ matrix.api }}" > acceptance.json
+      - name: Preserve actual device diagnostics
+        if: always()
+        run: |
+          adb logcat -d -v threadtime > logcat.txt 2>&1 || true
+          adb pull /sdcard/Android/data/com.blackmarlin.downloader.debug/files/device-test-evidence device-test-evidence 2> evidence-pull.txt || true
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: android-device-api${{ matrix.api }}-${{ github.sha }}
+          path: |
+            emulator.log
+            instrumentation.txt
+            acceptance.json
+            fixture.json
+            fixture.log
+            logcat.txt
+            device-test-evidence
+            evidence-pull.txt
