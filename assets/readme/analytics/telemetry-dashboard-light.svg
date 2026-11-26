@@ -122,13 +122,13 @@
 <rect x="460" y="74" width="624" height="362" rx="12" fill="#FFFFFF" stroke="#9AC8B5" stroke-width="1.2"/>
 <text x="482" y="102" class="t-lbl">PRODUCT &amp; EXT. DOWNLOADS</text>
 <text x="482" y="136" class="t-disp" font-size="34" fill="#136F50">27</text>
-<text x="482" y="154" class="t-mono" font-size="10.5" fill="#5A756A">Baseline active (3 checkpoints, &lt; 24h span)</text>
-<text x="686" y="102" class="t-lbl">ALL RELEASE ASSETS</text>
-<text x="686" y="136" class="t-val" font-size="30">46</text>
-<text x="686" y="154" class="t-body" font-size="11.5">+19 aux · v1.0.0 (2026-11-19)</text>
-<text x="882" y="102" class="t-lbl">REPOSITORY PULSE</text>
-<text x="882" y="130" class="t-val" font-size="20">0 <tspan font-size="12" font-weight="500" fill="#2B4239">stars</tspan> · 0 <tspan font-size="12" font-weight="500" fill="#2B4239">forks</tspan></text>
-<text x="882" y="154" class="t-body" font-size="11.5"><tspan class="t-strong">3</tspan> contributors · 1 release · 4 issues</text>
+<text x="482" y="154" class="t-mono" font-size="10.5" fill="#5A756A">Baseline (3 chk · &lt; 24h)</text>
+<text x="682" y="102" class="t-lbl">ALL RELEASE ASSETS</text>
+<text x="682" y="136" class="t-val" font-size="30">46</text>
+<text x="682" y="154" class="t-body" font-size="11.5">+19 aux · v1.0.0 (2026-11-19)</text>
+<text x="874" y="102" class="t-lbl">REPOSITORY PULSE</text>
+<text x="874" y="130" class="t-val" font-size="20">0 <tspan font-size="12" font-weight="500" fill="#2B4239">stars</tspan> · 0 <tspan font-size="12" font-weight="500" fill="#2B4239">forks</tspan></text>
+<text x="874" y="154" class="t-body" font-size="11.5"><tspan class="t-strong">3</tspan> contributors · 1 release · 4 issues</text>
 <line x1="480" y1="170" x2="1064" y2="170" stroke="#CBE2D8" stroke-width="1"/>
 <text x="482" y="190" class="t-lbl">PLATFORM DISTRIBUTION (ZERO DOUBLE-COUNTING)</text>
 <circle cx="488" cy="216" r="4.5" fill="#136F50"/>
