@@ -187,7 +187,9 @@ class ReleaseRuntimeTest {
 
     private fun editField(label: String, value: String) {
         val end = SystemClock.elapsedRealtime() + remaining(15_000)
-        scrollTo(By.text(label), maxOf(1L, end - SystemClock.elapsedRealtime()))
+        // Keep five seconds of the same field deadline for input and exact confirmation.
+        val scrollBudget = maxOf(1L, end - SystemClock.elapsedRealtime() - 5_000)
+        scrollTo(By.text(label), scrollBudget)
         // The observed Compose field contains its label as a direct accessibility child.
         // Never edit an unrelated field merely because it is closest to the label's bounds.
         val selector = By.pkg(TARGET_PACKAGE).clazz("android.widget.EditText").enabled(true)
@@ -240,37 +242,45 @@ class ReleaseRuntimeTest {
     private fun scrollTo(selector: BySelector, timeout: Long): UiObject2 {
         val end = SystemClock.elapsedRealtime() + remaining(timeout)
         val target = selector.pkg(TARGET_PACKAGE)
+        fun visibleTarget(): UiObject2? = device.findObjects(target).firstOrNull {
+            val bounds = it.visibleBounds
+            bounds.height() > 0 && bounds.width() > 0
+        }
         var gestures = 0
         while (SystemClock.elapsedRealtime() < end) {
             try {
-                device.findObject(target)?.takeIf {
-                    it.visibleBounds.height() > 0 && it.visibleBounds.width() > 0
-                }?.let { return it }
-                if (gestures >= 12) break
-                // A Compose scroll can move without the scroll-end event UiObject2.scroll
-                // expects. Reacquire the real app viewport and inspect the exact target after
-                // each overlapping swipe instead of treating that missing event as a boundary.
-                val bounds = device.findObjects(By.pkg(TARGET_PACKAGE).scrollable(true))
-                    .map { it.visibleBounds }
-                    .filter { it.height() >= 8 && it.width() > 0 }
-                    .maxByOrNull { it.height() }
-                if (bounds != null) {
-                    // Fresh bounds also follow the resized viewport when the keyboard is shown.
-                    val upper = bounds.top + bounds.height() / 4
-                    val lower = bounds.bottom - bounds.height() / 4
-                    val down = gestures < 6
-                    assertTrue("The app viewport swipe could not be injected during $phase",
-                        device.swipe(bounds.centerX(), if (down) lower else upper,
-                            bounds.centerX(), if (down) upper else lower, 80))
-                    gestures++
+                visibleTarget()?.let { return it }
+                // Reserve the tail for fresh observations instead of starting another stroke.
+                if (gestures < 12 && end - SystemClock.elapsedRealtime() > 2_000) {
+                    // Reacquire the actual app viewport, including keyboard-driven resizing.
+                    val bounds = device.findObjects(By.pkg(TARGET_PACKAGE).scrollable(true))
+                        .map { it.visibleBounds }
+                        .filter { it.height() >= 8 && it.width() > 0 }
+                        .maxByOrNull { it.height() }
+                    if (bounds != null) {
+                        val upper = bounds.top + bounds.height() / 4
+                        val lower = bounds.bottom - bounds.height() / 4
+                        val down = gestures < 6
+                        // Eighty injected steps took 3–6 seconds on the observed emulator.
+                        // A shorter continuous, overlapping stroke leaves time to observe it.
+                        assertTrue("The app viewport swipe could not be injected during $phase",
+                            device.swipe(bounds.centerX(), if (down) lower else upper,
+                                bounds.centerX(), if (down) upper else lower, 24))
+                        gestures++
+                        remaining(1)
+                        visibleTarget()?.let { return it }
+                    }
                 }
             } catch (_: StaleObjectException) {
-                // Only a detached accessibility node is retried; reacquire it inside the same
-                // deadline. Other failures retain the original primary-failure diagnostics.
+                // Only detached accessibility nodes are retried inside the bounded search.
             }
             val settle = minOf(200L, end - SystemClock.elapsedRealtime())
             if (settle > 0) SystemClock.sleep(settle)
         }
+        // A completed input operation may consume the last local slice. Observe its result
+        // once more under the unchanged global deadline before declaring the target absent.
+        remaining(1)
+        try { visibleTarget()?.let { return it } } catch (_: StaleObjectException) { }
         throw AssertionError("UI element $selector was unavailable during $phase")
     }
 
