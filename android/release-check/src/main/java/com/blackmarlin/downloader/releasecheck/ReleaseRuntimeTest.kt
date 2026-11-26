@@ -24,7 +24,6 @@ import java.io.InputStream
 import java.security.MessageDigest
 import java.util.Locale
 import java.util.UUID
-import kotlin.math.abs
 import org.json.JSONObject
 import org.junit.Assert.*
 import org.junit.Test
@@ -187,18 +186,50 @@ class ReleaseRuntimeTest {
     }
 
     private fun editField(label: String, value: String) {
-        val labelNode = scrollTo(By.textContains(label), 15_000)
-        val labelBounds = labelNode.visibleBounds
-        val fields = device.findObjects(By.clazz("android.widget.EditText"))
-            .filter { it.visibleBounds.height() > 0 }
-        val field = fields.minByOrNull { candidate ->
-            val bounds = candidate.visibleBounds
-            if (bounds.contains(labelBounds.centerX(), labelBounds.centerY())) 0
-            else abs(bounds.top - labelBounds.top)
-        } ?: throw AssertionError("No editable field for $label")
-        field.text = value
-        assertTrue("The field $label did not accept the confirmed value",
-            field.text.orEmpty().contains(value))
+        val end = SystemClock.elapsedRealtime() + remaining(15_000)
+        scrollTo(By.text(label), maxOf(1L, end - SystemClock.elapsedRealtime()))
+        // The observed Compose field contains its label as a direct accessibility child.
+        // Never edit an unrelated field merely because it is closest to the label's bounds.
+        val selector = By.pkg(TARGET_PACKAGE).clazz("android.widget.EditText").enabled(true)
+            .hasChild(By.pkg(TARGET_PACKAGE).text(label))
+        var writeAttempts = 0
+        var nextWriteAt = 0L
+        var focusAttempted = false
+        var matchingReads = 0
+        while (SystemClock.elapsedRealtime() < end) {
+            try {
+                val field = device.findObjects(selector).filter {
+                    val bounds = it.visibleBounds
+                    bounds.height() > 0 && bounds.width() > 0
+                }.singleOrNull()
+                if (field != null && field.text == value) {
+                    // ACTION_SET_TEXT can return before Compose publishes its updated value.
+                    // Confirm exact equality through fresh nodes on successive observations.
+                    matchingReads++
+                    if (matchingReads >= 2) return
+                } else {
+                    matchingReads = 0
+                    if (field != null && writeAttempts < 3 &&
+                        SystemClock.elapsedRealtime() >= nextWriteAt) {
+                        if (writeAttempts > 0 && !focusAttempted) {
+                            focusAttempted = true
+                            if (!field.isFocused) field.click()
+                            nextWriteAt = SystemClock.elapsedRealtime() + 300
+                        } else {
+                            writeAttempts++
+                            nextWriteAt = SystemClock.elapsedRealtime() + 1_000
+                            field.text = value
+                        }
+                    }
+                }
+            } catch (_: StaleObjectException) {
+                // Reacquire only detached nodes inside the same field/overall deadline.
+                matchingReads = 0
+            }
+            val settle = minOf(200L, end - SystemClock.elapsedRealtime())
+            if (settle > 0) SystemClock.sleep(settle)
+        }
+        throw AssertionError("The field $label did not accept the exact confirmed value during $phase")
     }
 
     private fun clickText(text: String, mergedRow: Boolean = false) {
