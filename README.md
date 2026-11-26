@@ -425,38 +425,7 @@ Every release ships with a SHA-256 manifest and keyless Sigstore GitHub build pr
 
 ## Contributors & Documentation
 
-Thanks to everyone who has contributed code, translation reviews, bug reports, and ideas.
-
-<p align="center">
-  <a href="https://github.com/adixxdev"><img src="art/contributors/adixxdev.png" alt="adixxdev" width="44" height="44"></a>
-  <a href="https://github.com/awesomeironman"><img src="art/contributors/awesomeironman.png" alt="awesomeironman" width="44" height="44"></a>
-  <a href="https://github.com/azureknigh7"><img src="art/contributors/azureknigh7.png" alt="azureknigh7" width="44" height="44"></a>
-  <a href="https://github.com/crse"><img src="art/contributors/crse.png" alt="crse" width="44" height="44"></a>
-  <a href="https://github.com/dhrubo11"><img src="art/contributors/dhrubo11.png" alt="dhrubo11" width="44" height="44"></a>
-  <a href="https://github.com/dr-strange15"><img src="art/contributors/dr-strange15.png" alt="dr-strange15" width="44" height="44"></a>
-  <a href="https://github.com/drigva"><img src="art/contributors/drigva.png" alt="drigva" width="44" height="44"></a>
-  <a href="https://github.com/enderdobra"><img src="art/contributors/enderdobra.png" alt="enderdobra" width="44" height="44"></a>
-  <a href="https://github.com/farjanatech"><img src="art/contributors/farjanatech.png" alt="farjanatech" width="44" height="44"></a>
-  <a href="https://github.com/gowzee"><img src="art/contributors/gowzee.png" alt="gowzee" width="44" height="44"></a>
-  <a href="https://github.com/husnainahmedrana"><img src="art/contributors/husnainahmedrana.png" alt="husnainahmedrana" width="44" height="44"></a>
-  <a href="https://github.com/justnxhom"><img src="art/contributors/justnxhom.png" alt="justnxhom" width="44" height="44"></a>
-  <a href="https://github.com/maldo-0750"><img src="art/contributors/maldo-0750.png" alt="maldo-0750" width="44" height="44"></a>
-  <a href="https://github.com/mayankmohan1992"><img src="art/contributors/mayankmohan1992.png" alt="mayankmohan1992" width="44" height="44"></a>
-  <a href="https://github.com/mfat"><img src="art/contributors/mfat.png" alt="mfat" width="44" height="44"></a>
-  <a href="https://github.com/mpsp4321"><img src="art/contributors/mpsp4321.png" alt="mpsp4321" width="44" height="44"></a>
-  <a href="https://github.com/osunday"><img src="art/contributors/osunday.png" alt="osunday" width="44" height="44"></a>
-  <a href="https://github.com/praveenkumar2k06"><img src="art/contributors/praveenkumar2k06.png" alt="praveenkumar2k06" width="44" height="44"></a>
-  <a href="https://github.com/sadatdaniel"><img src="art/contributors/sadatdaniel.png" alt="sadatdaniel" width="44" height="44"></a>
-  <a href="https://github.com/shreeramncity"><img src="art/contributors/shreeramncity.png" alt="shreeramncity" width="44" height="44"></a>
-  <a href="https://github.com/shurmanizer"><img src="art/contributors/shurmanizer.png" alt="shurmanizer" width="44" height="44"></a>
-  <a href="https://github.com/specailm5"><img src="art/contributors/specailm5.png" alt="specailm5" width="44" height="44"></a>
-  <a href="https://github.com/stark-0505"><img src="art/contributors/stark-0505.png" alt="stark-0505" width="44" height="44"></a>
-  <a href="https://github.com/swiftypop"><img src="art/contributors/swiftypop.png" alt="swiftypop" width="44" height="44"></a>
-  <a href="https://github.com/twig6943"><img src="art/contributors/twig6943.png" alt="twig6943" width="44" height="44"></a>
-  <a href="https://github.com/uyaii"><img src="art/contributors/uyaii.png" alt="uyaii" width="44" height="44"></a>
-  <a href="https://github.com/volcanify"><img src="art/contributors/volcanify.png" alt="volcanify" width="44" height="44"></a>
-  <a href="https://github.com/zekidt"><img src="art/contributors/zekidt.png" alt="zekidt" width="44" height="44"></a>
-</p>
+Thanks to everyone who has contributed code, translation reviews, bug reports, and ideas. See the [GitHub contributors graph](https://github.com/DecoyINDIA/BMD/graphs/contributors) or [CONTRIBUTING.md](CONTRIBUTING.md) to get involved.
 
 | Guide & Reference | Purpose |
 | :--- | :--- |
