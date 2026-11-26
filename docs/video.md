@@ -9,6 +9,16 @@ BMD downloads videos from their web pages: YouTube, Vimeo, Dailymotion, Twitch, 
 - Give the video's page address to **Add URL** (**Ctrl+N**). BMD recognises video pages and opens the video window, already looking the page up.
 - Or choose **Tasks → Download video from a page...**, paste the address into **Page address** and click **Look up**.
 
+### Social posts start at once
+
+A post's address from **TikTok, X (Twitter), Instagram, Facebook or Threads** doesn't wait for a choice: give it to **Add URL** (**Ctrl+N**), or click **Download video** over it in the browser, and the video window looks it up and starts the download itself, in the **best quality** the post has: its best video joined with its best sound, the window's first line. The links the apps' **Share** buttons copy work too: `vm.tiktok.com/…`, `tiktok.com/t/…`, `facebook.com/share/v/…`, `fb.watch/…`, `instagram.com/<name>/reel/…`, `threads.net/@name/post/…`.
+
+- The best quality is a video and its sound joined by **ffmpeg**. Without it, the window stays open and offers it; once it is installed, the download starts.
+- A post the site keeps private or has removed, or one it wants you signed in for, stays in the window with the reason (see [Sites that want you signed in](#sites-that-want-you-signed-in)).
+- **Instagram** gives a visitor who isn't signed in some reels without their sound. If a reel comes down silent, choose your browser in **Options → Sites Logins → Cookies for video sites**, or use the **Download video** button over the reel, which passes your sign-in.
+- **Threads**: yt-dlp has no reader of its own for Threads, so BMD reads the video the post's page names. Many posts show nothing to a visitor who isn't signed in, and then the window says so.
+- To pick a quality yourself again, untick **Social posts: start at once** in the video window, beside **Embed chapters**. It stays as you leave it. Other sites (YouTube, Vimeo…) always show their qualities.
+
 Any other page address that turns out to be a web page, not a file, is offered to the video window too. On a site yt-dlp has no reader of its own for, the video is the one the page says it is about, when it names one (in what it tells search engines and link previews: its JSON-LD, `og:video` or `twitter:player`), rather than the first player written in its HTML, and the file is named as the page names it.
 
 <!-- steps -->

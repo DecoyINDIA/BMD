@@ -77,8 +77,8 @@ pub fn is_video_page(url: &Url) -> bool {
 }
 
 /// Whether `url` is a post on a social site (TikTok, X, Instagram, Facebook, Threads) that holds
-/// a video: Add URL starts these at once in the best quality, without the quality window, when
-/// Download video's "Start social posts at once" is ticked. A post is one video, never a list.
+/// a video: the video window starts these at once in the best quality, without a choice, when
+/// its "Social posts: start at once" is ticked. A post is one video, never a list.
 pub fn is_social_post(url: &Url) -> bool {
     let social = url.host_str().is_some_and(|host| {
         let host = host.to_ascii_lowercase();
