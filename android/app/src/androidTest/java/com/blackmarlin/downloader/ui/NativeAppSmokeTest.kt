@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.DocumentsContract
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
@@ -23,6 +24,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.filters.SdkSuppress
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
@@ -369,14 +371,26 @@ class NativeAppSmokeTest {
             ?: error("The Android picker did not allow choosing the test subfolder")
         select.click()
         // Newer Android versions require a second native confirmation of the tree grant.
-        val allow = device.wait(Until.findObject(By.res("android:id/button1")), 2_000)
-        if (allow != null) {
-            assertTrue("Unexpected native confirmation: ${allow.text}",
-                allow.text.orEmpty().matches(Regex("(?i)(allow|use this folder|select)")))
-            allow.click()
+        // The observed 16 KiB picker replaced its ALLOW node during dialog attachment.
+        // Match text in the fresh selector and retry only that stale-node transition.
+        val appPackage = InstrumentationRegistry.getInstrumentation().targetContext.packageName
+        fun appReturned() = device.currentPackageName == appPackage && device.hasObject(By.pkg(appPackage))
+        val confirmation = By.pkg(Pattern.compile("^(?:android|com\\.android\\.documentsui|com\\.google\\.android\\.documentsui)$"))
+            .res("android:id/button1").text(Pattern.compile("(?i)^(?:allow|use this folder|select)$")).enabled(true)
+        val confirmationDeadline = SystemClock.uptimeMillis() + 10_000L
+        while (!appReturned() && SystemClock.uptimeMillis() < confirmationDeadline) {
+            val remaining = (confirmationDeadline - SystemClock.uptimeMillis()).coerceAtLeast(1L)
+            try {
+                val allow = device.wait(Until.findObject(confirmation), minOf(500L, remaining))
+                if (allow != null) {
+                    allow.click()
+                    break
+                }
+            } catch (_: StaleObjectException) {
+                // Reacquire the same scoped, recognized confirmation within the deadline.
+            }
         }
-        assertTrue("The picker never returned its real grant to Black Marlin",
-            device.wait(Until.hasObject(By.pkg(InstrumentationRegistry.getInstrumentation().targetContext.packageName)), 20_000))
+        compose.waitUntil(20_000) { appReturned() }
     }
 
     private fun findDirectoryEntry(device: UiDevice, name: String): UiObject2 {
