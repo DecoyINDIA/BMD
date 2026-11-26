@@ -35,6 +35,94 @@ env:
   RUSTUP_TOOLCHAIN: "1.98.0"
 
 jobs:
+  prior-runtime-diagnostics:
+    name: PRIOR 24e runtime diagnostics (not acceptance)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      actions: read
+    steps:
+      - name: Download exact prior device evidence
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          artifact-ids: "15138915672,15138158077,15138752357"
+          run-id: 45859282531
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          merge-multiple: false
+          path: prior-device-evidence
+      - name: Print bounded PRIOR 24e primary evidence
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, re, uuid
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          root = Path("prior-device-evidence")
+          expected = {
+              "android-device-api26-24e133e341b31dde48766e2a5703ccada7fd1706",
+              "android-device-api36-24e133e341b31dde48766e2a5703ccada7fd1706",
+              "android-device-api36-16k-24e133e341b31dde48766e2a5703ccada7fd1706",
+          }
+          actual = {p.name for p in root.iterdir() if p.is_dir()}
+          if actual != expected:
+              raise SystemExit("Prior artifact directory set differs: " + repr(actual))
+          def emit(label, text, limit=30000):
+              marker = uuid.uuid4().hex
+              print("::group::PRIOR 24e / run 45859282531 / " + label)
+              print("::stop-commands::" + marker)
+              print(text[:limit])
+              if len(text) > limit:
+                  print("[bounded output truncated]")
+              print("::" + marker + "::")
+              print("::endgroup::")
+          def read(path):
+              if path.stat().st_size > 64 * 1024 * 1024:
+                  raise RuntimeError("Diagnostic file exceeds 64 MiB: " + str(path))
+              raw = path.read_bytes()
+              return "fileSha256=" + hashlib.sha256(raw).hexdigest() + "\n", raw.decode("utf-8", errors="replace")
+          for directory in sorted(root.iterdir()):
+              if not directory.is_dir():
+                  continue
+              patterns = ["device-runtime.json", "acceptance.json", "release-acceptance.json", "device-test-evidence/*.txt", "release-test-evidence/*.txt", "release-test-evidence/*.json"]
+              for pattern in patterns:
+                  for path in sorted(directory.glob(pattern)):
+                      digest, text = read(path)
+                      emit(directory.name + "/" + str(path.relative_to(directory)), digest + text)
+              for folder in ["device-test-evidence", "release-test-evidence", "native-ui-evidence"]:
+                  for path in sorted((directory / folder).glob("*.xml")):
+                      digest, text = read(path)
+                      try:
+                          nodes = []
+                          for node in ET.fromstring(text).iter("node"):
+                              fields = {key: node.get(key) for key in ["package", "class", "resource-id", "text", "content-desc", "clickable", "enabled", "scrollable", "checked", "bounds"] if node.get(key)}
+                              nodes.append(json.dumps(fields, ensure_ascii=False))
+                          body = "\n".join(nodes[:250])
+                          if len(nodes) > 250:
+                              body += "\n[node limit reached]"
+                      except ET.ParseError:
+                          body = "XML parse failed; bounded original follows:\n" + text
+                      emit(directory.name + "/" + str(path.relative_to(directory)), digest + body, 48000)
+              path = directory / "logcat.txt"
+              if path.exists():
+                  digest, text = read(path)
+                  lines = text.splitlines()
+                  chosen = set()
+                  fatal = re.compile(r"FATAL EXCEPTION|Fatal signal|Abort message|NoClassDefFoundError|ClassNotFoundException|VerifyError|Unable to instantiate|Crash of app|lowmemorykiller.*blackmarlin|Process.*blackmarlin.*has died", re.I)
+                  relevant = re.compile(r"blackmarlin|releasecheck|AndroidJUnitRunner|InstrumentationTestRunner", re.I)
+                  for index, line in enumerate(lines):
+                      if fatal.search(line):
+                          start, end = max(0, index - 5), min(len(lines), index + 85)
+                          if relevant.search("\n".join(lines[start:end])):
+                              chosen.update(range(start, end))
+                  selected = sorted(chosen)[-600:]
+                  if selected:
+                      body = "\n".join(str(index + 1) + ": " + lines[index] for index in selected)
+                  else:
+                      body = "No matched fatal window. Last package/runner lines:\n" + "\n".join(line for line in lines if relevant.search(line))[-30000:]
+                  emit(directory.name + "/logcat-primary-windows", digest + body, 60000)
+          print("PRIOR evidence retrieval only. No current test acceptance is inferred.")
+          PY
+
   rust-contracts:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
