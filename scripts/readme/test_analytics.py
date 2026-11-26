@@ -337,6 +337,18 @@ class TestSvgGenerationAndValidation(unittest.TestCase):
             self.assertTrue(any("<script>" in e for e in errs))
             self.assertTrue(any("@import" in e for e in errs))
 
+    def test_validator_catches_em_dash(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            bad_svg = Path(tmp) / "emdash.svg"
+            bad_svg.write_text(
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
+                "<text>A \u2014 B</text>"
+                "</svg>",
+                encoding="utf-8",
+            )
+            errs = validate_assets.validate_svg_file(bad_svg, max_bytes=80 * 1024)
+            self.assertTrue(any("\\u2014" in e for e in errs))
+
     def test_readme_marker_replacement_and_noop(self) -> None:
         sample_data = {
             "tracking_started_at": "2026-11-26T00:00:00Z",
@@ -386,6 +398,8 @@ class TestSvgGenerationAndValidation(unittest.TestCase):
             self.assertIn("**All Release Assets Total**", updated)
             self.assertIn("`v1.0.0`", updated)
             self.assertIn("Windows | Product | 12", updated)
+            self.assertIn("Other / Auxiliary | Auxiliary | 19 | n/a | 41.3%", updated)
+            self.assertNotIn("\u2014", updated)
             self.assertIn("api_status`: `ok (live GitHub API)`", updated)
 
             # 4. Second call with identical data -> idempotent False

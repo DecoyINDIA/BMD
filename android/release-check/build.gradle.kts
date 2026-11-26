@@ -13,6 +13,11 @@ plugins {
 android {
     namespace = "com.blackmarlin.downloader.releasecheck"
     compileSdk = 36
+    // AndroidJUnitRunner retains compatibility with these platform test classes.
+    // A standalone test-only APK must declare what com.android.test adds for it.
+    // https://developer.android.com/training/testing/instrumented-tests/androidx-test-libraries/test-setup
+    useLibrary("android.test.base")
+    useLibrary("android.test.runner")
     defaultConfig {
         applicationId = "com.blackmarlin.downloader.releasecheck"
         minSdk = 36

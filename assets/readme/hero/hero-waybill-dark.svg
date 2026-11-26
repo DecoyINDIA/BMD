@@ -110,7 +110,7 @@
   <text x="440" y="152" text-anchor="middle" fill="#11151d" font-size="12" font-weight="800" class="t-mono">v1.0.0</text>
 
   <text x="48" y="206" fill="#f2f5fb" font-size="22" font-weight="700" class="t-disp">A download is a delivery.</text>
-  <text x="48" y="232" fill="#c3cde0" font-size="14.5" class="t-body">The desktop workflow you already know — rebuilt in Rust with dynamic re-splitting.</text>
+  <text x="48" y="232" fill="#c3cde0" font-size="14.5" class="t-body">The familiar desktop workflow, rebuilt in Rust with live segments.</text>
 
   <!-- 8-Lane Live Telemetry Panel -->
   <rect x="46" y="256" width="584" height="184" rx="10" fill="#071022" stroke="#1d3158" stroke-width="1.2"/>
@@ -133,7 +133,7 @@
     </g>
 
     <text x="702" y="136" fill="#eef1f6" font-size="27" font-weight="800" letter-spacing="-0.6" class="t-disp">5.41&#215; faster than IDM 6.42</text>
-    <text x="702" y="162" fill="#c3cad6" font-size="13.5" class="t-body">Zero trial. Zero ads. Atomic resume &amp; torrents built in.</text>
+    <text x="702" y="162" fill="#c3cad6" font-size="13.5" class="t-body">No trials or ads. Atomic resume and torrents built right in.</text>
 
     <!-- Ruled 2x2 Fields -->
     <line x1="702" y1="184" x2="1124" y2="184" stroke="#eef1f6" stroke-width="1.5"/>

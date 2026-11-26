@@ -49,7 +49,7 @@
     <g clip-path="url(#close-light-clip)">
       <rect x="44" y="28" width="1032" height="44" fill="#111318"/>
       <text x="68" y="55" fill="#fcfcfb" font-size="14" font-weight="800" letter-spacing="0.9" class="t-disp">SIGN OFF  ·  CARRIER: DECOYINDIA/BMD</text>
-      <text x="1052" y="55" text-anchor="end" fill="#f0f3f7" font-size="12" class="t-mono">GPL-3.0 · RUST · 86 LANGUAGES · ZERO ADS</text>
+      <text x="1052" y="55" text-anchor="end" fill="#f0f3f7" font-size="12" class="t-mono">GPL-3.0 · RUST · 86 LANGUAGES · NO ADS</text>
     </g>
 
       <g transform="translate(62 92) scale(0.2200)">
@@ -64,7 +64,7 @@
   </g>
 
     <text x="186" y="122" fill="#111318" font-size="30" font-weight="800" letter-spacing="-0.6" class="t-disp">Black Marlin Downloader</text>
-    <text x="186" y="148" fill="#434956" font-size="14" class="t-body">Rebuilt from scratch in Rust. Free for everyone, forever — no trials, no telemetry, no ads.</text>
+    <text x="186" y="148" fill="#434956" font-size="14" class="t-body">Built from scratch in Rust. Free to use, with no ads, trials, or tracking.</text>
 
     <!-- Ruled Sign-off Fields -->
     <line x1="186" y1="168" x2="736" y2="168" stroke="#111318" stroke-width="1.5"/>

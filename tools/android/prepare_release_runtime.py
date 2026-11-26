@@ -74,7 +74,7 @@ def main() -> None:
     output.mkdir(parents=True, mode=0o700)
     original_hash = digest(args.release_apk)
     harness_hash = digest(args.test_apk)
-    harness_closure = verify_apks(args.release_apk, args.test_apk, args.android_jar)
+    harness_closure = verify_apks(args.release_apk, args.test_apk, args.android_jar, args.build_tools)
     check_manifest(args.release_apk, args.build_tools, APP_ID)
     check_manifest(args.test_apk, args.build_tools, TEST_ID, APP_ID)
     original_payloads = payloads(args.release_apk)

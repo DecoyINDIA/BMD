@@ -4,7 +4,7 @@ from __future__ import annotations
 import struct
 import unittest
 
-from check_release_harness import REQUIRED_DEFINITIONS, check_class_sets, dex_class_info
+from check_release_harness import REQUIRED_DEFINITIONS, check_class_sets, declared_test_libraries, dex_class_info
 
 
 def tiny_dex(*, define_trace: bool) -> bytes:
@@ -62,6 +62,13 @@ class ReleaseHarnessGateTest(unittest.TestCase):
         struct.pack_into("<I", data, 100, len(data) - 4)
         with self.assertRaisesRegex(ValueError, "table exceeds"):
             dex_class_info(bytes(data))
+
+    def test_optional_sdk_classes_require_real_required_manifest_entries(self):
+        complete = "uses-library:'android.test.base'\nuses-library:'android.test.runner'\n"
+        self.assertEqual({"android.test.base", "android.test.runner"}, declared_test_libraries(complete))
+        for incomplete in ("", complete.replace("uses-library:", "uses-library-not-required:", 1)):
+            with self.assertRaisesRegex(ValueError, "manifest must require"):
+                declared_test_libraries(incomplete)
 
 
 if __name__ == "__main__":

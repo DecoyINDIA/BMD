@@ -15,10 +15,13 @@ import json
 from pathlib import Path
 import re
 import struct
+import subprocess
 import sys
+import tempfile
 from zipfile import BadZipFile, ZipFile
 
 MAX_DEX_BYTES = 64 * 1024 * 1024
+PLATFORM_TEST_LIBRARIES = frozenset({"android.test.base", "android.test.runner"})
 REQUIRED_DEFINITIONS = frozenset({
     "Landroidx/test/runner/AndroidJUnitRunner;",
     "Landroidx/test/ext/junit/runners/AndroidJUnit4;",
@@ -33,7 +36,7 @@ def digest(path: Path) -> str:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def dex_class_info(data: bytes) -> tuple[set[str], set[str]]:
+def dex_class_info(data: bytes, accessed_fields: set[int] | None = None) -> tuple[set[str], set[str]]:
     """Return class definitions and member/supertype owners from a standard DEX."""
     if len(data) < 112 or len(data) > MAX_DEX_BYTES or data[:8] not in {
         b"dex\n035\0", b"dex\n037\0", b"dex\n038\0", b"dex\n039\0", b"dex\n040\0"
@@ -98,13 +101,41 @@ def dex_class_info(data: bytes) -> tuple[set[str], set[str]]:
                 raise ValueError("DEX interface list exceeds file bounds")
             for index in range(count):
                 owners.add(type_at(struct.unpack_from("<H", data, interfaces + 4 + 2 * index)[0]))
-    for header in (80, 88):  # field_ids and method_ids both start with owner type_idx.
-        for offset in table(header, 8):
-            owners.add(type_at(struct.unpack_from("<H", data, offset)[0]))
+    for offset in table(88, 8):  # method_ids start with owner type_idx.
+        owners.add(type_at(struct.unpack_from("<H", data, offset)[0]))
+    fields = list(table(80, 8))
+    for index in accessed_fields or set():
+        if index >= len(fields):
+            raise ValueError("DEX instruction field index is out of range")
+        owners.add(type_at(struct.unpack_from("<H", data, fields[index])[0]))
     return definitions, owners
 
 
-def apk_classes(path: Path) -> tuple[set[str], set[str]]:
+def field_accesses(data: bytes, dexdump: Path) -> set[int]:
+    # Field IDs also describe annotation enum values. Count only actual iget/iput/
+    # sget/sput instructions, using the SDK's DEX disassembler to avoid treating
+    # annotation metadata as an executable dependency (e.g. RestrictTo.Scope).
+    with tempfile.TemporaryDirectory(prefix="bmd-dex-check-") as directory:
+        dex = Path(directory) / "classes.dex"
+        output = Path(directory) / "disassembly.txt"
+        dex.write_bytes(data)
+        with output.open("w") as stream:
+            result = subprocess.run([str(dexdump), "-d", str(dex)], stdout=stream,
+                                    stderr=subprocess.PIPE, text=True, timeout=60)
+        if result.returncode or output.stat().st_size > 128 * 1024 * 1024:
+            raise ValueError("SDK dexdump failed or exceeded its output bound")
+        indices: set[int] = set()
+        with output.open(errors="replace") as stream:
+            for line in stream:
+                if re.search(r"\|[0-9a-f]+:\s+(?:i|s)(?:get|put)(?:-[a-z]+)?\b", line):
+                    match = re.search(r"// field@([0-9a-f]+)\b", line)
+                    if not match:
+                        raise ValueError("Unrecognized SDK field instruction output")
+                    indices.add(int(match.group(1), 16))
+        return indices
+
+
+def apk_classes(path: Path, dexdump: Path | None = None) -> tuple[set[str], set[str]]:
     definitions: set[str] = set()
     owners: set[str] = set()
     with ZipFile(path) as archive:
@@ -117,7 +148,8 @@ def apk_classes(path: Path) -> tuple[set[str], set[str]]:
         for name in dex_names:
             if archive.getinfo(name).file_size > MAX_DEX_BYTES:
                 raise ValueError("APK has an oversized DEX")
-            current, referenced = dex_class_info(archive.read(name))
+            data = archive.read(name)
+            current, referenced = dex_class_info(data, field_accesses(data, dexdump) if dexdump else None)
             if definitions & current:
                 raise ValueError("APK defines a class in multiple DEX files")
             definitions.update(current)
@@ -143,19 +175,37 @@ def check_class_sets(app: set[str], harness: set[str], owners: set[str], framewo
                 "Lcom/blackmarlin/downloader/releasecheck/runtime/") for name in harness)}
 
 
-def verify_apks(release_apk: Path, test_apk: Path, android_jar: Path) -> dict:
+def declared_test_libraries(badging: str) -> set[str]:
+    # aapt2 distinguishes required uses-library from uses-library-not-required.
+    required = set(re.findall(r"^uses-library:'([^']+)'$", badging, re.MULTILINE))
+    if not PLATFORM_TEST_LIBRARIES <= required:
+        raise ValueError("Harness manifest must require the exact SDK base and runner test libraries")
+    return set(PLATFORM_TEST_LIBRARIES)
+
+
+def verify_apks(release_apk: Path, test_apk: Path, android_jar: Path, build_tools: Path) -> dict:
     app, _ = apk_classes(release_apk)
-    harness, owners = apk_classes(test_apk)
+    harness, owners = apk_classes(test_apk, build_tools / "dexdump")
+    badging = subprocess.run([str(build_tools / "aapt2"), "dump", "badging", str(test_apk)],
+                             capture_output=True, text=True, check=True, timeout=60).stdout
+    declared = declared_test_libraries(badging)
+    optional_jars = [android_jar.parent / "optional" / (name + ".jar") for name in sorted(declared)]
     with ZipFile(android_jar) as archive:
         framework = {"L" + name[:-6] + ";" for name in archive.namelist()
                      if name.endswith(".class") and not name.startswith("META-INF/")}
     if "Ljava/lang/Object;" not in framework or "Landroid/app/Instrumentation;" not in framework:
         raise ValueError("Expected the Android SDK platform android.jar")
+    for jar in optional_jars:
+        with ZipFile(jar) as archive:
+            framework.update("L" + name[:-6] + ";" for name in archive.namelist()
+                             if name.endswith(".class") and not name.startswith("META-INF/"))
     result = check_class_sets(app, harness, owners, framework)
     return {"schemaVersion": 1, "status": "passed",
             "scope": "DEX class definitions, member-owner and supertype closure; device execution remains mandatory.",
             "applicationApkSha256": digest(release_apk), "harnessApkSha256": digest(test_apk),
-            "androidJarSha256": digest(android_jar), **result}
+            "androidJarSha256": digest(android_jar),
+            "manifestRequiredTestLibraries": sorted(declared),
+            "optionalSdkJarSha256": {jar.name: digest(jar) for jar in optional_jars}, **result}
 
 
 def main() -> None:
@@ -163,13 +213,14 @@ def main() -> None:
     parser.add_argument("--release-apk", type=Path, required=True)
     parser.add_argument("--test-apk", type=Path, required=True)
     parser.add_argument("--android-jar", type=Path, required=True)
+    parser.add_argument("--build-tools", type=Path, required=True)
     args = parser.parse_args()
-    print(json.dumps(verify_apks(args.release_apk, args.test_apk, args.android_jar), indent=2))
+    print(json.dumps(verify_apks(args.release_apk, args.test_apk, args.android_jar, args.build_tools), indent=2))
 
 
 if __name__ == "__main__":
     try:
         main()
-    except (OSError, ValueError, BadZipFile, struct.error) as error:
+    except (OSError, ValueError, BadZipFile, struct.error, subprocess.SubprocessError) as error:
         print(f"Release harness DEX verification failed: {error}", file=sys.stderr)
         sys.exit(1)

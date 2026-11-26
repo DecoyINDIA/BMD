@@ -2,14 +2,14 @@
   "schema_version": 1,
   "repository": "DecoyINDIA/BMD",
   "tracking_started_at": "2026-11-26T16:20:48Z",
-  "last_updated_at": "2026-11-26T16:50:28Z",
-  "last_successful_api_sync_at": "2026-11-26T16:50:28Z",
+  "last_updated_at": "2026-11-26T17:07:02Z",
+  "last_successful_api_sync_at": "2026-11-26T17:07:02Z",
   "api_status": "ok",
   "api_error": null,
   "rate_limit": {
-    "remaining": 4897,
+    "remaining": 4923,
     "limit": 5000,
-    "reset_at": "2026-11-26T16:51:20Z"
+    "reset_at": "2026-11-26T17:51:34Z"
   },
   "classification_policy": {
     "product_downloads": "Installers, portable archives, Linux packages (.AppImage, .deb, .rpm, .tar.gz), experimental macOS .dmg, and browser extensions (.zip, .xpi). Zero double-counting.",
@@ -22,7 +22,7 @@
     "watchers": 0,
     "contributors_count": 3,
     "default_branch": "main",
-    "pushed_at": "2026-11-26T16:50:00Z"
+    "pushed_at": "2026-11-26T17:06:28Z"
   },
   "summary": {
     "release_count": 1,
@@ -464,6 +464,24 @@
     },
     {
       "timestamp": "2026-11-26T16:50:28Z",
+      "total_product_downloads": 27,
+      "total_all_assets": 46,
+      "stars": 0,
+      "forks": 0,
+      "open_issues": 4,
+      "release_count": 1,
+      "per_release_product": {
+        "v1.0.0": 27
+      },
+      "per_platform_product": {
+        "Windows": 12,
+        "Linux": 8,
+        "macOS (Experimental)": 2,
+        "Browser Extensions": 5
+      }
+    },
+    {
+      "timestamp": "2026-11-26T17:07:02Z",
       "total_product_downloads": 27,
       "total_all_assets": 46,
       "stars": 0,
