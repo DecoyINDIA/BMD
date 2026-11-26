@@ -14,6 +14,8 @@ import subprocess
 import sys
 from zipfile import ZipFile
 
+from check_release_harness import verify_apks
+
 APP_ID = "com.blackmarlin.downloader"
 TEST_ID = "com.blackmarlin.downloader.releasecheck"
 ROOT = Path(__file__).resolve().parents[2]
@@ -60,6 +62,7 @@ def main() -> None:
     parser.add_argument("--release-apk", type=Path, required=True)
     parser.add_argument("--test-apk", type=Path, required=True)
     parser.add_argument("--build-tools", type=Path, required=True)
+    parser.add_argument("--android-jar", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--evidence", type=Path, required=True)
     args = parser.parse_args()
@@ -71,6 +74,7 @@ def main() -> None:
     output.mkdir(parents=True, mode=0o700)
     original_hash = digest(args.release_apk)
     harness_hash = digest(args.test_apk)
+    harness_closure = verify_apks(args.release_apk, args.test_apk, args.android_jar)
     check_manifest(args.release_apk, args.build_tools, APP_ID)
     check_manifest(args.test_apk, args.build_tools, TEST_ID, APP_ID)
     original_payloads = payloads(args.release_apk)
@@ -115,6 +119,7 @@ def main() -> None:
         args.evidence.write_text(json.dumps({"purpose": "Ephemeral runtime test only; not production signing or distribution.",
             "applicationId": APP_ID, "debuggable": False, "sameTestCertificate": True,
             "allNonSignaturePayloadsUnchanged": True, "originalApksUnchanged": True,
+            "harnessDexClosure": harness_closure,
             "certificateSha256": certificate_digests[0], **records}, indent=2) + "\n")
         print(json.dumps({"prepared": True, "evidence": str(args.evidence),
                           "releaseApkSha256": records["release"]["signedApkSha256"]}))
