@@ -348,7 +348,7 @@ Every release artifact ships with a unified SHA-256 manifest and keyless Sigstor
 | **Latest Release** | `v1.0.0` (27 product downloads · 2026-11-19) |
 | **Repository Pulse** | 0 stars · 0 forks · 3 contributors |
 | **Tracking Started** | `2026-11-26 16:20 UTC` |
-| **Last Synced** | `2026-11-26 16:20 UTC` · `api_status`: `ok (live GitHub API)` |
+| **Last Synced** | `2026-11-26 16:50 UTC` · `api_status`: `ok (live GitHub API)` |
 
 | Platform Bucket | Category | Downloads | Share (Product) | Share (All Assets) |
 | :--- | :--- | ---: | ---: | ---: |
