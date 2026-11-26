@@ -1,6 +1,8 @@
 package com.blackmarlin.downloader.storage
 
 import android.content.Context
+import android.system.ErrnoException
+import android.system.OsConstants
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.blackmarlin.downloader.data.BmdDatabase
@@ -62,6 +64,44 @@ class PublicationManagerTest {
         assertArrayEquals(payload, io.documents.values.single())
         assertTrue(stage.exists())
         assertEquals(1, io.creates)
+    }
+
+    @Test fun mediaStoreDoesNotReadBeforeItsBackingFileHasBeenOpenedForWriting() = runBlocking {
+        io.noReadableBackingFileUntilWrite = true
+        assertTrue(save().saved)
+        assertEquals(0, io.prematureReads)
+        assertEquals(1, io.creates)
+        assertEquals(0, io.truncates)
+        assertArrayEquals(payload, io.documents.values.single())
+    }
+
+    @Test fun failedFirstWriteOpenRetriesTheSameRecordedEmptyMediaStoreRow() = runBlocking {
+        io.noReadableBackingFileUntilWrite = true
+        io.failWriteOpenOnce = true
+        assertFalse(save().saved)
+        val retained = db.tasks().publication(task.id)!!
+        assertEquals("URI_RECORDED", retained.phase)
+        assertEquals(0L, retained.copiedBytes)
+        assertNotNull(retained.uri)
+        assertTrue(stage.exists())
+        assertTrue(save().saved)
+        assertEquals(retained.uri, db.tasks().fileForTask(task.id)!!.uri)
+        assertEquals(1, io.creates)
+        assertEquals(0, io.prematureReads)
+        assertEquals(0, io.truncates)
+    }
+
+    @Test fun safeFailureDiagnosticsExcludeProviderMessagesAndPaths() {
+        val failure = IOException("https://private.example/file?token=secret-value",
+            ErrnoException("/private/provider/account-secret", OsConstants.ENOSPC))
+        val diagnostic = publicationFailureDiagnostic(PublicationOperation.OPEN_WRITE, "COPYING", "MEDIASTORE", failure)
+        assertTrue(diagnostic.contains("phase=COPYING"))
+        assertTrue(diagnostic.contains("IOException,ErrnoException"))
+        assertTrue(diagnostic.contains("errno=${OsConstants.ENOSPC}"))
+        assertFalse(diagnostic.contains("secret"))
+        assertFalse(diagnostic.contains("private"))
+        assertFalse(diagnostic.contains("https"))
+        assertFalse(diagnostic.contains("/"))
     }
 
     @Test fun firstSequentialSafWriteCanSucceedWithoutSeekOrRename() = runBlocking {
@@ -349,6 +389,10 @@ private class FakeProvider : PublicationIo {
     var throwAfterCreate = false
     var failFinalizeAfterVisibility = false
     var truncateOnClose = false
+    var noReadableBackingFileUntilWrite = false
+    var failWriteOpenOnce = false
+    var prematureReads = 0
+    private val writeOpened = mutableSetOf<String>()
     var onWrite: suspend () -> Unit = {}
     var onClose: () -> Unit = {}
 
@@ -362,14 +406,18 @@ private class FakeProvider : PublicationIo {
     }
     override suspend fun recoverCreated(attempt: PublicationEntity, stop: () -> Boolean): String? {
         recoveries++
-        return markers[attempt.marker]?.takeIf { documents[it]?.isEmpty() == true }
+        return markers[attempt.marker]
     }
     override fun assertIdentity(attempt: PublicationEntity) { if (attempt.uri !in documents) throw IOException("Identity unavailable") }
     override suspend fun openWrite(attempt: PublicationEntity, requireSafeTruncate: Boolean, stop: () -> Boolean): PublicationWriter {
+        if (failWriteOpenOnce) { failWriteOpenOnce = false; throw IOException("Injected first open failure") }
         if (unsupportedStreamOnWrite) throw UnsupportedProviderStream()
         if (requireSafeTruncate && !seekable) throw IOException("Nonseekable provider")
+        if (attempt.adapter == "MEDIASTORE" && !requireSafeTruncate && documents[attempt.uri]?.isNotEmpty() == true)
+            throw IOException("The same nontruncating descriptor was not empty")
         if (requireSafeTruncate) truncates++
         val uri = attempt.uri!!
+        writeOpened += uri
         val stream = ByteArrayOutputStream()
         documents[uri] = byteArrayOf()
         return object : PublicationWriter {
@@ -388,6 +436,10 @@ private class FakeProvider : PublicationIo {
     }
     override suspend fun openRead(uri: String, stop: () -> Boolean): PublicationReader {
         if (unsupportedStreamOnRead) throw UnsupportedProviderStream()
+        if (noReadableBackingFileUntilWrite && uri !in writeOpened) {
+            prematureReads++
+            throw java.io.FileNotFoundException("Injected lazy backing file")
+        }
         val bytes = documents[uri] ?: throw IOException("Document unavailable")
         var offset = 0
         return object : PublicationReader {
@@ -400,7 +452,7 @@ private class FakeProvider : PublicationIo {
             override fun close() = Unit
         }
     }
-    override fun assertClosedLength(attempt: PublicationEntity) {
+    override suspend fun assertClosedLength(attempt: PublicationEntity, stop: () -> Boolean) {
         if (documents[attempt.uri]!!.size.toLong() != attempt.expectedBytes) throw IOException("Wrong length")
     }
     override fun finalizeDocument(attempt: PublicationEntity) { finalizes++; if (failFinalizeAfterVisibility) throw IOException("Lost acknowledgement after provider commit") }

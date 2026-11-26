@@ -15,6 +15,7 @@ DOWNLOAD = "suppliedDirectLinkDownloadsThroughRustAndPublishesExactBytes"
 SAF = "suppliedDirectLinkSavesThroughRealSafPickerAndVerifiesBytes"
 REGULAR_DESCRIPTOR = "regularDescriptorsRemainUsableOnSupportedAndroidVersions"
 OLD_PIPE_DESCRIPTOR = "olderAndroidRejectsReadAndWritePipeDescriptorsAndClosesThem"
+MEDIASTORE_BOUNDARY = "mediaStoreFreshAndRecoveredRowsPublishWithoutTruncatingUnprovenBytes"
 RELEASE_CASE = "com.blackmarlin.downloader.releasecheck.ReleaseRuntimeTest#pinnedHttpsReviewAndHttpFixturePublishThroughMinifiedApp"
 
 
@@ -48,9 +49,14 @@ def evaluate(output: str, api: int, release_runtime: bool = False) -> dict:
         expected.add(DESCRIPTOR_CLASS + "#" + REGULAR_DESCRIPTOR)
         if api < 30:
             expected.add(DESCRIPTOR_CLASS + "#" + OLD_PIPE_DESCRIPTOR)
+        if api >= 29:
+            expected.add(DESCRIPTOR_CLASS + "#" + MEDIASTORE_BOUNDARY)
     missing = expected - passed
     success = re.search(r"^OK \(\d+ tests?\)", output, re.MULTILINE) is not None
-    aborted = re.search(r"FAILURES!!!|INSTRUMENTATION_FAILED|INSTRUMENTATION_ABORTED", output) is not None
+    aborted = re.search(
+        r"FAILURES!!!|INSTRUMENTATION_FAILED|INSTRUMENTATION_ABORTED|^INSTRUMENTATION_RESULT: shortMsg=Process crashed\.",
+        output, re.MULTILINE,
+    ) is not None
     if missing or failed or not success or aborted:
         raise RuntimeError(f"Instrumented acceptance failed: missing actual passes={sorted(missing)}, failed={sorted(failed)}, summary_success={success}, aborted={aborted}")
     if release_runtime:
@@ -61,6 +67,7 @@ def evaluate(output: str, api: int, release_runtime: bool = False) -> dict:
             "mediaStoreDownloadAndPublicationVerified": api >= 29,
             "safDownloadAndPublicationVerified": True,
             "androidPlatformTrustHttpsProbeVerified": True,
+            "mediaStoreFreshAndRecoveredRowsVerified": api >= 29,
             "regularDescriptorReadWriteVerified": True,
             "olderAndroidPipeRejectionVerified": api < 30}
 
