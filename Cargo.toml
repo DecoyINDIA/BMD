@@ -275,3 +275,12 @@ wgpu-core-deps-windows-linux-android = { git = "https://github.com/anefzaoui/wgp
 wgpu-hal = { git = "https://github.com/anefzaoui/wgpu.git", rev = "1c6f336e239ff7bc46b4dec194f1d96d3d4f8e04" }
 wgpu-naga-bridge = { git = "https://github.com/anefzaoui/wgpu.git", rev = "1c6f336e239ff7bc46b4dec194f1d96d3d4f8e04" }
 wgpu-types = { git = "https://github.com/anefzaoui/wgpu.git", rev = "1c6f336e239ff7bc46b4dec194f1d96d3d4f8e04" }
+
+# Android cross-builds keep optimizations while avoiding desktop whole-program LTO memory use.
+[profile.android]
+inherits = "release"
+lto = "thin"
+codegen-units = 8
+debug = 0
+strip = "debuginfo"
+panic = "unwind"
