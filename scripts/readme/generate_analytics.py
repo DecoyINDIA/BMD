@@ -237,7 +237,7 @@ def _format_delta_line(summary: dict[str, Any], snap_state: dict[str, Any]) -> t
         wk = f" · +{fmt_num(weekly)} / 7d" if weekly is not None else ""
         return (f"0 / 24h{wk}", False)
     count = int(snap_state.get("count") or 0)
-    return (f"Baseline active ({count} {plural_label(count, 'checkpoint')}, < 24h span)", False)
+    return (f"Baseline ({count} chk · < 24h)", False)
 
 
 def _svg_arc_path(cx: float, cy: float, r: float, start_deg: float, span_deg: float) -> str:
@@ -448,7 +448,7 @@ def render_telemetry_dashboard(data: dict[str, Any], theme_name: str, animated: 
     )
 
     # Row 1: 3 KPI columns
-    kx_list = (px + 22, px + 226, px + 422)
+    kx_list = (px + 22, px + 222, px + 414)
     parts.append(f'<text x="{kx_list[0]}" y="{py + 28}" class="t-lbl">PRODUCT &amp; EXT. DOWNLOADS</text>')
     parts.append(
         f'<text x="{kx_list[0]}" y="{py + 62}" class="t-disp" font-size="34" fill="{t["primary"]}">'
