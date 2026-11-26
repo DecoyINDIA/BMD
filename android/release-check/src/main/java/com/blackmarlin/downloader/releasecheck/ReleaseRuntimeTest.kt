@@ -15,7 +15,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.Configurator
-import androidx.test.uiautomator.Direction
+import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
@@ -208,20 +208,37 @@ class ReleaseRuntimeTest {
 
     private fun scrollTo(selector: BySelector, timeout: Long): UiObject2 {
         val end = SystemClock.elapsedRealtime() + remaining(timeout)
-        var direction = Direction.DOWN
-        var traversals = 0
+        val target = selector.pkg(TARGET_PACKAGE)
+        var gestures = 0
         while (SystemClock.elapsedRealtime() < end) {
-            device.findObject(selector)?.takeIf { it.visibleBounds.height() > 0 }?.let { return it }
-            val scrollable = device.findObjects(By.scrollable(true))
-                .filter { it.visibleBounds.height() > 0 }
-                .maxByOrNull { it.visibleBounds.height() }
-            if (scrollable != null) {
-                if (!scrollable.scroll(direction, .65f)) {
-                    direction = if (direction == Direction.DOWN) Direction.UP else Direction.DOWN
-                    traversals++
-                    if (traversals > 2) break
+            try {
+                device.findObject(target)?.takeIf {
+                    it.visibleBounds.height() > 0 && it.visibleBounds.width() > 0
+                }?.let { return it }
+                if (gestures >= 12) break
+                // A Compose scroll can move without the scroll-end event UiObject2.scroll
+                // expects. Reacquire the real app viewport and inspect the exact target after
+                // each overlapping swipe instead of treating that missing event as a boundary.
+                val bounds = device.findObjects(By.pkg(TARGET_PACKAGE).scrollable(true))
+                    .map { it.visibleBounds }
+                    .filter { it.height() >= 8 && it.width() > 0 }
+                    .maxByOrNull { it.height() }
+                if (bounds != null) {
+                    // Fresh bounds also follow the resized viewport when the keyboard is shown.
+                    val upper = bounds.top + bounds.height() / 4
+                    val lower = bounds.bottom - bounds.height() / 4
+                    val down = gestures < 6
+                    assertTrue("The app viewport swipe could not be injected during $phase",
+                        device.swipe(bounds.centerX(), if (down) lower else upper,
+                            bounds.centerX(), if (down) upper else lower, 80))
+                    gestures++
                 }
-            } else SystemClock.sleep(150)
+            } catch (_: StaleObjectException) {
+                // Only a detached accessibility node is retried; reacquire it inside the same
+                // deadline. Other failures retain the original primary-failure diagnostics.
+            }
+            val settle = minOf(200L, end - SystemClock.elapsedRealtime())
+            if (settle > 0) SystemClock.sleep(settle)
         }
         throw AssertionError("UI element $selector was unavailable during $phase")
     }
