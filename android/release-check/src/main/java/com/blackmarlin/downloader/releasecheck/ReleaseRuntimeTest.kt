@@ -4,6 +4,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.os.Process
@@ -95,7 +96,7 @@ class ReleaseRuntimeTest {
             reviewSharedLink(plainHttp = true)
             fixtureName = "bmd-release-test-${UUID.randomUUID()}.bin"
             editField("File name", fixtureName)
-            clickText("Advanced options")
+            openAdvancedOptions()
             editField("Expected SHA-256 (optional)", fixtureSha)
             clickText("Start download")
 
@@ -232,6 +233,59 @@ class ReleaseRuntimeTest {
             if (settle > 0) SystemClock.sleep(settle)
         }
         throw AssertionError("The field $label did not accept the exact confirmed value during $phase")
+    }
+
+    private fun openAdvancedOptions() {
+        val end = SystemClock.elapsedRealtime() + remaining(15_000)
+        scrollTo(By.text("Advanced options"), maxOf(1L, end - SystemClock.elapsedRealtime() - 5_000))
+        val labelSelector = By.pkg(TARGET_PACKAGE).text("Advanced options").enabled(true)
+        var previousBounds: Pair<Rect, Rect>? = null
+        var stableSince = 0L
+        var clicked = false
+        while (SystemClock.elapsedRealtime() < end) {
+            var ready: UiObject2? = null
+            try {
+                val label = device.findObjects(labelSelector).filter {
+                    val bounds = it.visibleBounds
+                    bounds.height() > 0 && bounds.width() > 0
+                }.singleOrNull()
+                // The observed disclosure label is the direct child of its real button.
+                val button = label?.parent
+                if (label != null && button != null &&
+                    button.applicationPackage == TARGET_PACKAGE && button.isEnabled && button.isClickable) {
+                    val labelBounds = label.visibleBounds
+                    val buttonBounds = button.visibleBounds
+                    if (labelBounds.height() > 0 && labelBounds.width() > 0 && buttonBounds.contains(labelBounds)) {
+                        val bounds = labelBounds to buttonBounds
+                        if (bounds == previousBounds) {
+                            // Both nodes are reacquired on each observation. The old helper
+                            // tapped the text child while this post-swipe button still moved.
+                            if (SystemClock.elapsedRealtime() - stableSince >= 500) ready = button
+                        } else {
+                            previousBounds = bounds
+                            stableSince = SystemClock.elapsedRealtime()
+                        }
+                    } else previousBounds = null
+                } else previousBounds = null
+            } catch (_: StaleObjectException) {
+                previousBounds = null
+            }
+            if (ready != null) {
+                remaining(1)
+                // Make one physical activation outside stale-node retry handling. A toggle
+                // must not be repeated merely because its new content starts offscreen.
+                ready.click()
+                clicked = true
+                break
+            }
+            val settle = minOf(200L, end - SystemClock.elapsedRealtime())
+            if (settle > 0) SystemClock.sleep(settle)
+        }
+        assertTrue("The Advanced options button did not settle before activation during $phase", clicked)
+        // Require actual expansion before sending checksum input, including a bounded scroll
+        // to the enabled editor when the newly revealed section exceeds the viewport.
+        scrollTo(By.clazz("android.widget.EditText").enabled(true)
+            .hasChild(By.pkg(TARGET_PACKAGE).text("Expected SHA-256 (optional)")), 10_000)
     }
 
     private fun clickText(text: String, mergedRow: Boolean = false) {
