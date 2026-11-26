@@ -2390,8 +2390,8 @@ mod tests {
             exe: "ffmpeg".into(),
         };
         let open = |page: &str, tick: bool, with_ffmpeg: bool| {
-            let mut d = VideoDialog::for_page(dirs().0, page, Default::default())
-                .with_social_at_once(tick);
+            let mut d =
+                VideoDialog::for_page(dirs().0, page, Default::default()).with_social_at_once(tick);
             d.tools = Some((None, None, with_ffmpeg.then(ffmpeg)));
             d.looked_up = d.page.clone();
             d.set_video(bmd_tools::resolve::parse(POST.as_bytes()).unwrap());
