@@ -483,7 +483,7 @@ HEADER_FIT = """<script>
       }
       fit();
       if (window.ResizeObserver) new ResizeObserver(fit).observe(row);
-      // Archivo may arrive after this runs (or start loading only once laid out): fit again then.
+      // The fonts may arrive after this runs (or start loading only once laid out): fit again then.
       if (document.fonts) { document.fonts.ready.then(fit); document.fonts.addEventListener('loadingdone', fit); }
     })();
   </script>"""
@@ -561,7 +561,8 @@ def footer() -> str:
 
 # In every head (templated pages get it through <!--@theme-->): the font, then the theme before
 # the first paint.
-THEME_SCRIPT = """<link rel="preload" href="/vendor/archivo/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+THEME_SCRIPT = """<link rel="preload" href="/vendor/fonts/SpaceGrotesk-var.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/vendor/fonts/IBMPlexSans-Regular.woff2" as="font" type="font/woff2" crossorigin>
   <script>
     (function () {
       var d = document.documentElement;

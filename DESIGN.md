@@ -33,74 +33,74 @@ colors:
   stamp-dark: "#6bdb6e"
 typography:
   display:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "Space Grotesk, IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "clamp(48px, 8vw, 116px)"
     fontWeight: 900
     lineHeight: 0.92
     letterSpacing: "-0.025em"
     fontVariation: "'wdth' 68"
   headline:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "Space Grotesk, IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "clamp(36px, 4.8vw, 62px)"
     fontWeight: 800
     lineHeight: 1.05
     letterSpacing: "-0.01em"
     fontVariation: "'wdth' 78"
   page-title:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "Space Grotesk, IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "clamp(40px, 5.6vw, 72px)"
     fontWeight: 850
     lineHeight: 1.05
     letterSpacing: "-0.015em"
     fontVariation: "'wdth' 72"
   label-headline:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "Space Grotesk, IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "clamp(30px, 3vw, 40px)"
     fontWeight: 850
     lineHeight: 1
     letterSpacing: "-0.012em"
     fontVariation: "'wdth' 72"
   title:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "Space Grotesk, IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "clamp(26px, 2.6vw, 32px)"
     fontWeight: 800
     lineHeight: 1.05
     fontVariation: "'wdth' 78"
   band:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "Space Grotesk, IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "17px"
     fontWeight: 800
     lineHeight: 1.15
     fontVariation: "'wdth' 80"
   lede:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "19px"
     fontWeight: 400
     lineHeight: 1.5
   body:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "17px"
     fontWeight: 400
     lineHeight: 1.6
   field-value:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "16.5px"
     fontWeight: 650
     lineHeight: 1.35
     fontFeature: "'tnum' 1"
   fine:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "14px"
     fontWeight: 400
     lineHeight: 1.55
   field-name:
-    fontFamily: "Archivo, Segoe UI, system-ui, sans-serif"
+    fontFamily: "Space Grotesk, IBM Plex Sans, Segoe UI, system-ui, sans-serif"
     fontSize: "12px"
     fontWeight: 750
     letterSpacing: "0.045em"
     fontVariation: "'wdth' 74"
   mono:
-    fontFamily: "Cascadia Mono, Consolas, SF Mono, ui-monospace, monospace"
+    fontFamily: "IBM Plex Mono, Cascadia Mono, Consolas, SF Mono, ui-monospace, monospace"
     fontSize: "0.88em"
 rounded:
   hairline: "2px"
@@ -195,7 +195,7 @@ The site ships in 21 languages, Arabic and Persian right to left. Every directio
 
 **Key Characteristics:**
 - Blue board, white label stock, black ink; green only for Download and delivered.
-- One self-hosted face, Archivo, condensed by its width axis for headings and field names.
+- Self-hosted faces: Space Grotesk for headings and field names, IBM Plex Sans for reading, IBM Plex Mono for code.
 - Fields, not cards: name over value, ink rules between.
 - Real artefacts only: the unretouched app, a scannable Code 128 barcode, the benchmark's own times.
 - Motion is mechanical and rare: the label feeds out once, progress moves in real time, a stamp lands.
@@ -229,11 +229,11 @@ Two materials and one law: the board in the logo's blue, label stock in white an
 
 ## Typography
 
-**Display Font:** Archivo, variable width, condensed (with Segoe UI, system-ui)
-**Body Font:** Archivo at normal width (with Segoe UI, system-ui; Tahoma and Noto Sans Arabic for Arabic and Persian)
-**Label/Mono Font:** Cascadia Mono (with Consolas, SF Mono) for code and the barcode's human-readable line
+**Display Font:** Space Grotesk, variable weight (with IBM Plex Sans, Segoe UI, system-ui)
+**Body Font:** IBM Plex Sans (with Segoe UI, system-ui; Tahoma and Noto Sans Arabic for Arabic and Persian)
+**Label/Mono Font:** IBM Plex Mono (with Cascadia Mono, Consolas, SF Mono) for code and the barcode's human-readable line
 
-**Character:** One self-hosted grotesk does everything, by its width axis: narrowed to about 68-80% and heavy for headlines, stamps and field names, normal width for reading. The condensed caps carry the label's voice; the plain body is the fine print you actually read.
+**Character:** Precise and technical, a tool's voice. Space Grotesk's geometric quirks carry headlines, stamps and field names; IBM Plex Sans is the fine print you actually read; IBM Plex Mono is for anything copied or typed. All three are self-hosted (SIL OFL) and the same in the app, the site, the browser extension and the remote page.
 
 ### Hierarchy
 - **Display** (900, clamp(48px, 8vw, 116px), 0.92, width 68%): one word or phrase per section at poster scale: the closing line, the race's ratio (up to 200px, width 70%), the 404 number.
@@ -251,7 +251,7 @@ Two materials and one law: the board in the logo's blue, label stock in white an
 ### Named Rules
 **The Tabular Figures Rule.** Every number that can be compared (times, sizes, ratios, versions, dates) is set in tabular figures.
 
-**The Condense, Don't Swap Rule.** Hierarchy comes from Archivo's width and weight axes, never from a second display face. Scripts Archivo lacks fall back to the system's face, without condensing, tracking or uppercase.
+**The Two Voices Rule.** Display is Space Grotesk, reading is IBM Plex Sans, code is IBM Plex Mono: hierarchy comes from size and weight within these, never a fourth face. Scripts they lack fall back to the system's face, without tracking or uppercase.
 
 ## Layout
 
@@ -362,7 +362,7 @@ The home page's "Signed for" section (`build.py signed_sheet`), between the trac
 ### Don't:
 - **Don't** use green on secondary buttons, tags, links, icons or decoration.
 - **Don't** put ink-coloured reading text directly on the board, or board text on a sheet.
-- **Don't** add a second typeface for display; condense Archivo instead.
+- **Don't** add a typeface beyond Space Grotesk, IBM Plex Sans and IBM Plex Mono.
 - **Don't** set a field name above a section headline as a kicker; field names name fields, table columns and nav groups.
 - **Don't** add elevations beyond Sheet, Lift and the Download sticker edge (screenshots inside prose take a lighter contact shadow), and never a glow.
 - **Don't** draw a mock window, retouch a screenshot or use IDM artwork; IDM appears only as a named, text-marked comparison.

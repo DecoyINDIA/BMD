@@ -30,6 +30,6 @@
   </g>
   <text x="99" y="83" textLength="144" lengthAdjust="spacingAndGlyphs"
         fill="url(#wordmark-face)" stroke="url(#stamp-edge)" stroke-width="1.5"
-        paint-order="stroke" font-family="Segoe UI, system-ui, sans-serif"
+        paint-order="stroke" font-family="Space Grotesk, IBM Plex Sans, system-ui, sans-serif"
         font-size="76" font-weight="700">BMD</text>
 </svg>

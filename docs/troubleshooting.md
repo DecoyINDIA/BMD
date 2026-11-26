@@ -73,7 +73,7 @@ BMD keeps Internet Download Manager's compact sizes. On a large or high-resoluti
 
 A window larger than the screen at that size (Options at 200 % on a 1366 × 768 screen) opens as large as the screen allows, and the rest scrolls: with the scroll bars, the mouse wheel, or **Tab** to the next control.
 
-BMD tells Windows it draws for each monitor's own scale, so Windows never stretches its windows into blur, and it draws Windows' fonts grid-fitted to whole pixels. If the text still looks blurred, tell us your screen's resolution and Windows' display scale when you [report it](https://github.com/DecoyINDIA/BMD/issues).
+BMD tells Windows it draws for each monitor's own scale, so Windows never stretches its windows into blur, and it draws its own fonts (IBM Plex and Space Grotesk) grid-fitted to whole pixels. If the text still looks blurred, tell us your screen's resolution and Windows' display scale when you [report it](https://github.com/DecoyINDIA/BMD/issues).
 
 ## The window freezes or draws wrongly
 

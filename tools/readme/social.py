@@ -3,7 +3,7 @@ the name, the one-line promise and the main window. Built from the repo's own fi
 
     python tools/readme/social.py        # → docs/images/social-preview.png
 
-Fonts are Windows' own Segoe UI (rendered into the picture, not shipped).
+Fonts are BMD's own, IBM Plex Sans and Space Grotesk (crates/app/assets/fonts/).
 """
 
 from pathlib import Path
@@ -11,7 +11,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parents[2]
-FONTS = Path("C:/Windows/Fonts")
+FONTS = ROOT / "crates/app/assets/fonts"
 W, H = 1280, 640
 INK, MUTED, ACCENT = (31, 35, 40), (89, 99, 110), (42, 120, 214)
 
@@ -39,10 +39,10 @@ def main():
     # The words, upper left.
     icon = Image.open(ROOT / "art/Black Marlin Downloader.png").convert("RGBA").resize((112, 112), Image.LANCZOS)
     card.paste(icon, (64, 56), icon)
-    draw.text((196, 58), "Black Marlin Downloader", font=font("segoeuib.ttf", 56), fill=INK)
-    draw.text((198, 132), "Download files, videos, and torrents.", font=font("segoeui.ttf", 34), fill=ACCENT)
+    draw.text((196, 58), "Black Marlin Downloader", font=font("SpaceGrotesk-Bold.ttf", 56), fill=INK)
+    draw.text((198, 132), "Download files, videos, and torrents.", font=font("IBMPlexSans-Regular.ttf", 34), fill=ACCENT)
     draw.text((66, 196), "Windows and Linux  ·  Experimental macOS support",
-              font=font("segoeui.ttf", 24), fill=MUTED)
+              font=font("IBMPlexSans-Regular.ttf", 24), fill=MUTED)
 
     out = ROOT / "docs/images/social-preview.png"
     card.save(out, optimize=True)

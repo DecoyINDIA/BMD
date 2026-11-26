@@ -8064,7 +8064,12 @@ pub fn text_rasterizer(
     rtl: bool,
     smooth: bool,
 ) -> Option<egui::epaint::text::GlyphRasterizer> {
-    let glyphs = classic_text::Glyphs::new(font_dir)
+    let own = bundled_fonts_dir()
+        .map_err(|e| {
+            tracing::warn!("text: the built-in fonts are not on disk, egui draws the text ({e})")
+        })
+        .ok()?;
+    let glyphs = classic_text::Glyphs::new(font_dir, own)
         .map_err(|e| tracing::warn!("text: DirectWrite unavailable, egui draws the text ({e})"))
         .ok()?;
     let glyphs = std::sync::Mutex::new(glyphs);
@@ -8077,6 +8082,24 @@ pub fn text_rasterizer(
         )
         .with_priority(egui::epaint::text::FontPriority::Highest),
     )
+}
+
+/// The built-in fonts ([`crate::winui::BUNDLED_FONTS`]) as files, in BMD's data folder:
+/// DirectWrite opens fonts from files. Written once per version of the fonts (a file already
+/// there with the right size is kept).
+fn bundled_fonts_dir() -> std::io::Result<std::path::PathBuf> {
+    let dir = bmd_ipc::data_dir()
+        .ok_or_else(|| std::io::Error::other("no data folder"))?
+        .join("fonts");
+    std::fs::create_dir_all(&dir)?;
+    for (file, bytes) in crate::winui::BUNDLED_FONTS {
+        let path = dir.join(file);
+        if std::fs::metadata(&path).is_ok_and(|m| m.len() == bytes.len() as u64) {
+            continue;
+        }
+        std::fs::write(&path, bytes)?;
+    }
+    Ok(dir)
 }
 
 /// Does [`text_rasterizer`] draw this character? One code point that needs no shaping: Latin,
@@ -8106,14 +8129,15 @@ fn classic_char(c: char, rtl: bool) -> bool {
     ) || crate::theme::cjk_script(c).is_some()
 }
 
-/// The font file of a family `theme.rs` sets up (Segoe UI leads the two built-in ones).
+/// The font file of a family `theme.rs` sets up: the built-in fonts that lead each family
+/// (`winui::install_fonts`).
 fn classic_font_file(family: &egui::FontFamily) -> Option<&'static str> {
     match family {
-        egui::FontFamily::Proportional | egui::FontFamily::Monospace => Some("segoeui.ttf"),
+        egui::FontFamily::Proportional => Some("IBMPlexSans-Regular.ttf"),
+        egui::FontFamily::Monospace => Some("IBMPlexMono-Regular.ttf"),
         egui::FontFamily::Name(name) => match &**name {
-            "tahoma" => Some("tahoma.ttf"),
-            "tahoma-bold" => Some("tahomabd.ttf"),
-            "arial-bold" => Some("arialbd.ttf"),
+            "tahoma" => Some("IBMPlexSans-Regular.ttf"),
+            "tahoma-bold" | "arial-bold" => Some("SpaceGrotesk-Bold.ttf"),
             _ => None,
         },
     }
@@ -8141,7 +8165,10 @@ mod classic_text {
 
     pub struct Glyphs {
         factory: IDWriteFactory2,
+        /// Windows' fonts folder: the CJK faces.
         dir: PathBuf,
+        /// BMD's own fonts, written to disk ([`super::bundled_fonts_dir`]).
+        own: PathBuf,
         /// The font files opened so far; `None` for one DirectWrite can't use.
         faces: HashMap<&'static str, Option<IDWriteFontFace>>,
     }
@@ -8151,19 +8178,27 @@ mod classic_text {
     unsafe impl Send for Glyphs {}
 
     impl Glyphs {
-        pub fn new(dir: PathBuf) -> windows::core::Result<Glyphs> {
+        pub fn new(dir: PathBuf, own: PathBuf) -> windows::core::Result<Glyphs> {
             // SAFETY: a plain COM call.
             let factory: IDWriteFactory2 =
                 unsafe { DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED)? };
             Ok(Glyphs {
                 factory,
                 dir,
+                own,
                 faces: HashMap::new(),
             })
         }
 
         fn face(&mut self, file: &'static str) -> Option<IDWriteFontFace> {
-            let (factory, dir) = (&self.factory, &self.dir);
+            let (factory, dir) = (
+                &self.factory,
+                if crate::winui::BUNDLED_FONTS.iter().any(|(f, _)| *f == file) {
+                    &self.own
+                } else {
+                    &self.dir
+                },
+            );
             self.faces
                 .entry(file)
                 .or_insert_with(|| {
@@ -8704,7 +8739,7 @@ mod classic_text_tests {
         let dir = std::env::var_os("WINDIR")
             .map(|w| std::path::PathBuf::from(w).join("Fonts"))
             .unwrap();
-        super::classic_text::Glyphs::new(dir).unwrap()
+        super::classic_text::Glyphs::new(dir, super::bundled_fonts_dir().unwrap()).unwrap()
     }
 
     fn req<'a>(cluster: &'a str, family: &'a FontFamily, size: f32) -> GlyphRasterizerRequest<'a> {

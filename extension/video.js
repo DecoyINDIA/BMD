@@ -25,6 +25,21 @@
   for (const old of document.querySelectorAll("bmd-video-button")) old.remove();
   const ext = globalThis.browser ?? globalThis.chrome;
 
+  // BMD's text face (IBM Plex Sans, SIL OFL 1.1) comes with the extension and is handed to the
+  // page as bytes, so the page's own font rules (CSP) can't block it. Under its own name, so it
+  // never replaces a font the page has; without it the button falls back to the system's.
+  if (!globalThis.__bmdFonts && typeof fetch === "function" && typeof FontFace === "function") {
+    globalThis.__bmdFonts = true;
+    for (const [file, weight] of [["IBMPlexSans-Regular", "400"], ["IBMPlexSans-SemiBold", "600"]]) {
+      Promise.resolve()
+        .then(() => fetch(ext.runtime.getURL(`fonts/${file}.woff2`)))
+        .then((r) => r.arrayBuffer())
+        .then((bytes) => new FontFace("BMD Plex Sans", bytes, { weight }).load())
+        .then((face) => document.fonts.add(face))
+        .catch(() => {});
+    }
+  }
+
   // A video worth a button: big enough to be content, not a short muted looping clip (an
   // animated picture or a background). A sound player (<audio> with controls) gets one too.
   const MIN_W = 200;
@@ -895,7 +910,7 @@
   --ok: #1b7a26; --warn: #8a5300; --err: #c42b1c; --warn-dot: #F7B500;
   --bg: #fcfcfb; --bg2: #eef1f5; --bd: #c4ccd8; --tx: #111318; --tx2: #5f6676; --hov: rgba(87, 204, 90, .16);
   --sh: 0 1px 2px rgba(17, 19, 24, .18), 0 6px 14px rgba(17, 19, 24, .18);
-  --font: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, "Noto Sans", sans-serif;
+  --font: "BMD Plex Sans", "IBM Plex Sans", "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, Roboto, "Noto Sans", sans-serif;
 }
 /* Windows (the system) in dark mode, not the page: BMD's navy board; the green stays. */
 @media (prefers-color-scheme: dark) {
@@ -905,7 +920,7 @@
     --sh: 0 2px 4px rgba(0, 0, 0, .45), 0 8px 16px rgba(0, 0, 0, .45);
   }
 }
-[dir="rtl"] { --font: "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Noto Sans Arabic", "Noto Sans", sans-serif; }
+[dir="rtl"] { --font: "BMD Plex Sans", "Segoe UI", "Segoe UI Variable Text", system-ui, -apple-system, Roboto, "Noto Sans Arabic", "Noto Sans", sans-serif; }
 /* The tab: a light raised frame at the video's edge; the Download part in green, the arrow and
    the close (hide on this video) beside it, each its own square button. */
 .pill {

@@ -77,6 +77,22 @@ pub fn router(state: Arc<State>) -> Router {
             get(|| async { ([(header::CONTENT_TYPE, "image/png")], ICON).into_response() }),
         )
         .route(
+            "/fonts/plex-sans.woff2",
+            get(|| async { font(FONT_PLEX_SANS) }),
+        )
+        .route(
+            "/fonts/plex-sans-semibold.woff2",
+            get(|| async { font(FONT_PLEX_SANS_SEMIBOLD) }),
+        )
+        .route(
+            "/fonts/plex-mono.woff2",
+            get(|| async { font(FONT_PLEX_MONO) }),
+        )
+        .route(
+            "/fonts/space-grotesk.woff2",
+            get(|| async { font(FONT_SPACE_GROTESK) }),
+        )
+        .route(
             "/manifest.webmanifest",
             get(|| async { asset("application/manifest+json", MANIFEST) }),
         )
@@ -102,6 +118,16 @@ static STYLE: &str = include_str!("../web/app.css");
 /// The app's icon (art/), for the page's tab and a phone's home screen.
 static ICON: &[u8] = include_bytes!("../../app/assets/icons/app/bmd-256.png");
 static MANIFEST: &str = include_str!("../web/manifest.webmanifest");
+/// The page's fonts (SIL OFL 1.1, `web/fonts/`): IBM Plex Sans for text, IBM Plex Mono for the
+/// sign-in code, Space Grotesk for headlines. Served from here, nothing from another site.
+static FONT_PLEX_SANS: &[u8] = include_bytes!("../web/fonts/IBMPlexSans-Regular.woff2");
+static FONT_PLEX_SANS_SEMIBOLD: &[u8] = include_bytes!("../web/fonts/IBMPlexSans-SemiBold.woff2");
+static FONT_PLEX_MONO: &[u8] = include_bytes!("../web/fonts/IBMPlexMono-Regular.woff2");
+static FONT_SPACE_GROTESK: &[u8] = include_bytes!("../web/fonts/SpaceGrotesk-var.woff2");
+
+fn font(bytes: &'static [u8]) -> Response {
+    ([(header::CONTENT_TYPE, "font/woff2")], bytes).into_response()
+}
 
 fn asset(kind: &'static str, body: &'static str) -> Response {
     ([(header::CONTENT_TYPE, kind)], body).into_response()
@@ -146,7 +172,7 @@ async fn guard(s: S, req: Request, next: Next) -> Response {
     for (name, value) in [
         (
             header::CONTENT_SECURITY_POLICY,
-            "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; \
+            "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; \
              connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; \
              frame-ancestors 'none'",
         ),
