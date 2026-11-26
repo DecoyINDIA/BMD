@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, easeInOutSine, drawRoundedRect
+} from '/velocity/lib/core.mjs';
+
+let ctx, W, H, P;
+const imgs = {};
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const im = new Image();
+    im.onload = () => resolve(im);
+    im.onerror = () => reject(new Error('Failed to load ' + src));
+    im.src = src;
+  });
+}
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width;
+  H = height;
+  P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+
+  const sources = {
+    mainLight: '/repo/docs/images/main-light.webp',
+    mainDark: '/repo/docs/images/main-dark.webp',
+    progress: P.isDark ? '/repo/website/assets/screens/progress-dark.webp' : '/repo/docs/images/progress.webp',
+    torrent: P.isDark ? '/repo/website/assets/screens/torrent-dark.webp' : '/repo/docs/images/progress-torrent-pieces.webp',
+    video: '/repo/docs/images/video-button-youtube.webp',
+    grabber: P.isDark ? '/repo/docs/images/help/link-grabber-dark.webp' : '/repo/docs/images/grabber.webp',
+    phone: '/repo/docs/images/remote-phone.webp',
+  };
+
+  await Promise.all(
+    Object.entries(sources).map(async ([k, url]) => {
+      imgs[k] = await loadImage(url);
+    })
+  );
+
+  const c = document.getElementById('c');
+  c.width = W; c.height = H;
+  ctx = c.getContext('2d');
+};
+
+function drawFramedShot(im, cx, cy, drawW, drawH, alpha = 1, blurPx = 0, label = null) {
+  if (alpha <= 0.01) return;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  if (blurPx > 0.2) ctx.filter = `blur(${blurPx.toFixed(1)}px)`;
+
+  const x = cx - drawW / 2;
+  const y = cy - drawH / 2;
+
+  // Ambient studio shadow
+  ctx.shadowColor = P.cardShadow;
+  ctx.shadowBlur = 32;
+  ctx.shadowOffsetY = 14;
+  drawRoundedRect(ctx, x, y, drawW, drawH, 10);
+  ctx.fillStyle = P.surface;
+  ctx.fill();
+  ctx.shadowColor = 'transparent';
+
+  // Crisp unretouched UI pixels
+  ctx.save();
+  drawRoundedRect(ctx, x, y, drawW, drawH, 10);
+  ctx.clip();
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(im, x, y, drawW, drawH);
+  ctx.restore();
+
+  // Hairline rim
+  ctx.strokeStyle = P.hairlineStrong;
+  ctx.lineWidth = 1.4;
+  drawRoundedRect(ctx, x, y, drawW, drawH, 10);
+  ctx.stroke();
+
+  if (label && blurPx < 0.5) {
+    ctx.filter = 'none';
+    ctx.font = '600 11px "IBM Plex Mono", monospace';
+    const tw = ctx.measureText(label).width;
+    drawRoundedRect(ctx, x + 12, y - 14, tw + 18, 22, 5);
+    ctx.fillStyle = P.isDark ? '#0F1915' : '#091511';
+    ctx.fill();
+    ctx.strokeStyle = P.primary;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = '#ECF7F2';
+    ctx.fillText(label, x + 21, y + 1);
+  }
+  ctx.restore();
+}
+
+window.renderFrame = async (t, progress) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = P.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Soft studio ambient radial behind focal stage
+  const g = ctx.createRadialGradient(W * 0.5, H * 0.52, 40, W * 0.5, H * 0.52, W * 0.65);
+  g.addColorStop(0, P.isDark ? 'rgba(24, 112, 82, 0.22)' : 'rgba(14, 164, 114, 0.08)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  // Header
+  ctx.save();
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+  ctx.fillText('UNRETOUCHED REAL SOFTWARE  ·  EGUI DESKTOP + LAN REMOTE', 44, 38);
+  ctx.fillStyle = P.text;
+  ctx.font = '700 24px "Space Grotesk", sans-serif';
+  ctx.fillText('Product Experience in Motion', 44, 68);
+  ctx.restore();
+
+  // 14.0s choreography (returns cleanly to centered Main Window at progress=0 & 1)
+  // 0.00..0.08: Main window settle
+  // 0.08..0.28: Zoom-in push (1.0x -> 1.32x on HiDPI 1852px source = zero upscaling!) + Light/Dark wipe
+  // 0.28..0.72: Multi-plane glide through Progress -> BitTorrent Pieces -> Video Capture -> Link Grabber
+  // 0.72..0.91: Desktop + Mobile LAN Remote tableau hold
+  // 0.91..1.00: Smooth return to initial Main Window state
+
+  const zoomIn = easeInOutSine(remap(progress, 0.06, 0.16));
+  const zoomOut = 1 - easeInOutSine(remap(progress, 0.25, 0.34));
+  const macroZoom = 1 + 0.16 * (zoomIn * zoomOut);
+
+  // Diagonal Light <-> Dark wipe strictly inside Beat 2 (0.14..0.28), never re-firing at end!
+  const wipeActive = progress >= 0.13 && progress <= 0.30;
+  const wipeP = wipeActive
+    ? smoothstep(0.14, 0.22, progress) * (1 - smoothstep(0.24, 0.295, progress))
+    : 0;
+
+  // Background main window dims/blurs gently when foreground dialogs are active
+  const dialogsActive = smoothstep(0.28, 0.35, progress) * (1 - smoothstep(0.88, 0.96, progress));
+  const tableauMode = smoothstep(0.71, 0.80, progress) * (1 - smoothstep(0.92, 0.99, progress));
+
+  const mainBaseW = 840;
+  const mainBaseH = Math.round(mainBaseW * (988 / 1852)); // 448 px
+  const mainW = mainBaseW * macroZoom * lerp(1, 0.85, tableauMode);
+  const mainH = mainBaseH * macroZoom * lerp(1, 0.85, tableauMode);
+  const mainCx = lerp(W * 0.5, W * 0.43, tableauMode) + (macroZoom - 1) * 60;
+  const mainCy = lerp(H * 0.54, H * 0.55, tableauMode) + (macroZoom - 1) * 18;
+  const mainBlur = dialogsActive * (1 - tableauMode) * 4.0;
+  const mainAlpha = lerp(1, 0.42, dialogsActive * (1 - tableauMode));
+
+  // Render primary Main Window (and diagonal Light/Dark wipe during Beat 2)
+  const baseShot = P.isDark ? imgs.mainDark : imgs.mainLight;
+  const altShot = P.isDark ? imgs.mainLight : imgs.mainDark;
+  drawFramedShot(baseShot, mainCx, mainCy, mainW, mainH, mainAlpha, mainBlur, tableauMode > 0.3 ? 'MAIN WINDOW · EMERALD' : null);
+
+  if (wipeP > 0.01 && wipeP < 0.99 && dialogsActive < 0.3) {
+    ctx.save();
+    const x0 = mainCx - mainW / 2;
+    const y0 = mainCy - mainH / 2;
+    const cutX = lerp(x0 - 80, x0 + mainW + 80, wipeP);
+
+    // Gallery-lit ambient halo during theme sweep so Light-on-Dark feels softly framed
+    if (P.isDark) {
+      ctx.shadowColor = 'rgba(128, 219, 173, 0.32)';
+      ctx.shadowBlur = 42;
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(cutX + 60, y0);
+    ctx.lineTo(cutX - 60, y0 + mainH);
+    ctx.lineTo(x0, y0 + mainH);
+    ctx.closePath();
+    ctx.clip();
+    ctx.drawImage(altShot, x0, y0, mainW, mainH);
+
+    // Specular wipe beam
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = P.specular;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(cutX + 60, y0);
+    ctx.lineTo(cutX - 60, y0 + mainH);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Foreground Dialog Sequence with eased settle into crisp static hold (sharp UI pixels + compact WebP delta!)
+  const cards = [
+    { key: 'progress', label: '8-LANE SEGMENTED PROGRESS', t0: 0.29, t1: 0.47, w: 620, h: 502, xOff: -35 },
+    { key: 'torrent',  label: 'BITTORRENT PIECE-MAP GRID',  t0: 0.43, t1: 0.61, w: 620, h: 509, xOff: 40 },
+    { key: 'video',    label: 'IN-PAGE VIDEO CAPTURE (YT-DLP)', t0: 0.57, t1: 0.74, w: 640, h: 360, xOff: -25 },
+  ];
+
+  for (const card of cards) {
+    const enter = easeOutExpo(remap(progress, card.t0, card.t0 + 0.055));
+    const exit = 1 - easeInOutCubic(remap(progress, card.t1 - 0.045, card.t1 + 0.015));
+    const vis = enter * exit;
+    if (vis <= 0.01) continue;
+    const cx = W * 0.5 + card.xOff + lerp(70, 0, enter) - lerp(0, 70, 1 - exit);
+    const cy = H * 0.55 + lerp(22, 0, enter);
+    drawFramedShot(imgs[card.key], cx, cy, card.w, card.h, vis, 0, card.label);
+  }
+
+  // Beat 5: Desktop + Mobile LAN HTTPS Remote Tableau
+  if (tableauMode > 0.01) {
+    const phoneW = 205;
+    const phoneH = Math.round(phoneW * (1488 / 780)); // 391 px
+    const phoneX = lerp(W + 140, W * 0.81, tableauMode);
+    drawFramedShot(imgs.phone, phoneX, H * 0.55, phoneW, phoneH, tableauMode, 0, 'LAN HTTPS REMOTE');
+  }
+
+  // Bottom progress chapter indicator
+  const chapters = [
+    { name: '01 MAIN WINDOW', a: 0.00, b: 0.29 },
+    { name: '02 SEGMENT PROGRESS', a: 0.29, b: 0.45 },
+    { name: '03 TORRENT PIECES', a: 0.45, b: 0.59 },
+    { name: '04 VIDEO CAPTURE', a: 0.59, b: 0.73 },
+    { name: '05 LAN REMOTE', a: 0.73, b: 1.00 },
+  ];
+  let cx = 44;
+  ctx.font = '600 10.5px "IBM Plex Mono", monospace';
+  for (const ch of chapters) {
+    const active = progress >= ch.a && progress < ch.b;
+    ctx.fillStyle = active ? P.primary : P.textDim;
+    ctx.fillText(ch.name, cx, H - 22);
+    cx += ctx.measureText(ch.name).width + 26;
+  }
+};
+</script>
+</body>
+</html>

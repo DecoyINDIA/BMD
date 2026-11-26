@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-"""Unit tests for BMD README analytics collection, SVG generation, and validation."""
+"""Unit tests for BMD README analytics collection, Pelagic Orbital SVG generation, and asset validation."""
 from __future__ import annotations
 
 import datetime as dt
-import io
 import json
+import struct
 import sys
 import tempfile
 import unittest
-import urllib.error
 from pathlib import Path
 from typing import Any
 
@@ -66,6 +65,66 @@ def _sample_release(
             }
             for name, count, size in assets
         ],
+    }
+
+
+def _write_minimal_png(path: Path, width: int, height: int) -> None:
+    """Write a minimal valid PNG header+IHDR for validator tests."""
+    sig = b"\x89PNG\r\n\x1a\n"
+    ihdr_data = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
+    ihdr = struct.pack(">I", len(ihdr_data)) + b"IHDR" + ihdr_data + b"\x00\x00\x00\x00"
+    path.write_bytes(sig + ihdr)
+
+
+def _sample_analytics_payload(
+    total_prod: int = 27,
+    snapshots: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    if snapshots is None:
+        snapshots = [
+            {"timestamp": "2026-11-26T16:20:48Z", "total_product_downloads": total_prod},
+            {"timestamp": "2026-11-26T16:50:28Z", "total_product_downloads": total_prod},
+            {"timestamp": "2026-11-26T17:07:02Z", "total_product_downloads": total_prod},
+        ]
+    return {
+        "repository": "DecoyINDIA/BMD",
+        "tracking_started_at": "2026-11-26T16:20:48Z",
+        "last_updated_at": "2026-11-26T17:07:02Z",
+        "last_successful_api_sync_at": "2026-11-26T17:07:02Z",
+        "api_status": "ok",
+        "repo": {"stars": 0, "forks": 0, "open_issues": 4, "contributors_count": 3},
+        "summary": {
+            "release_count": 1,
+            "total_product_downloads": total_prod,
+            "total_auxiliary_downloads": 19,
+            "total_all_assets": total_prod + 19,
+            "latest_release_tag": "v1.0.0",
+            "latest_release_published_at": "2026-11-19T16:50:34Z",
+            "latest_release_downloads": total_prod,
+            "daily_delta": None,
+            "weekly_delta": None,
+            "monthly_delta": None,
+        },
+        "platforms": [
+            {"name": "Windows", "downloads": 12, "category": "downloadable", "share_of_product_pct": 44.44, "share_of_all_assets_pct": 26.09},
+            {"name": "Linux", "downloads": 8, "category": "downloadable", "share_of_product_pct": 29.63, "share_of_all_assets_pct": 17.39},
+            {"name": "macOS (Experimental)", "downloads": 2, "category": "downloadable", "share_of_product_pct": 7.41, "share_of_all_assets_pct": 4.35},
+            {"name": "Browser Extensions", "downloads": 5, "category": "downloadable", "share_of_product_pct": 18.52, "share_of_all_assets_pct": 10.87},
+            {"name": "Other / Auxiliary", "downloads": 19, "category": "auxiliary", "share_of_product_pct": 0.0, "share_of_all_assets_pct": 41.30},
+        ],
+        "releases": [
+            {
+                "tag_name": "v1.0.0",
+                "published_at": "2026-11-19T16:50:34Z",
+                "product_downloads": total_prod,
+                "all_assets_downloads": total_prod + 19,
+                "assets": [
+                    {"name": "BMD-1.0.0-portable.zip", "download_count": 3, "size": 24_664_916, "category": "downloadable", "platform": "Windows"},
+                    {"name": "BMD-1.0.0-x64.zip", "download_count": 2, "size": 24_663_928, "category": "downloadable", "platform": "Windows"},
+                ],
+            }
+        ],
+        "snapshots": snapshots,
     }
 
 
@@ -162,7 +221,6 @@ class TestCollectStats(unittest.TestCase):
             self.assertEqual(data["api_status"], "ok")
             self.assertEqual(data["tracking_started_at"], "2026-11-26T00:00:00Z")
             self.assertEqual(data["summary"]["release_count"], 2)
-            # Product: 10 + 5 + 3 + 2 = 20; Auxiliary: 4 + 2 + 1 = 7; All: 27
             self.assertEqual(data["summary"]["total_product_downloads"], 20)
             self.assertEqual(data["summary"]["total_auxiliary_downloads"], 7)
             self.assertEqual(data["summary"]["total_all_assets"], 27)
@@ -178,8 +236,6 @@ class TestCollectStats(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             out_path = Path(tmp) / "downloads.json"
-
-            # Day 0: v0.9.0 has 100 downloads, v1.0.0 has 20 downloads.
             c0 = FakeGitHubClient(
                 responses={
                     repo_url: ({"stargazers_count": 1, "forks_count": 0, "open_issues_count": 0, "subscribers_count": 0}, {}),
@@ -196,7 +252,6 @@ class TestCollectStats(unittest.TestCase):
             t0 = dt.datetime(2026, 11, 20, 0, 0, tzinfo=dt.timezone.utc)
             collect_stats.collect_stats(output_path=out_path, client=c0, now=t0)
 
-            # Day 1 (+24h): v0.9.0 deleted, v1.0.0 asset replaced/dropped from 20 -> 5, plus v1.1.0 gains 12.
             c1 = FakeGitHubClient(
                 responses={
                     repo_url: ({"stargazers_count": 2, "forks_count": 0, "open_issues_count": 0, "subscribers_count": 0}, {}),
@@ -213,7 +268,6 @@ class TestCollectStats(unittest.TestCase):
             t1 = dt.datetime(2026, 11, 21, 0, 0, tzinfo=dt.timezone.utc)
             data = collect_stats.collect_stats(output_path=out_path, client=c1, now=t1)
 
-            # Daily delta must be +12 (new v1.1.0), NOT negative!
             self.assertEqual(data["summary"]["daily_delta"], 12)
             self.assertIsNone(data["summary"]["weekly_delta"])
             self.assertEqual(data["tracking_started_at"], "2026-11-20T00:00:00Z")
@@ -249,47 +303,9 @@ class TestCollectStats(unittest.TestCase):
 
 
 class TestSvgGenerationAndValidation(unittest.TestCase):
-    def test_generate_and_validate_all_svgs(self) -> None:
-        sample_data = {
-            "repository": "DecoyINDIA/BMD",
-            "tracking_started_at": "2026-11-26T00:00:00Z",
-            "last_updated_at": "2026-11-26T06:00:00Z",
-            "last_successful_api_sync_at": "2026-11-26T06:00:00Z",
-            "api_status": "ok",
-            "repo": {"stars": 12, "forks": 3, "open_issues": 4, "contributors_count": 3},
-            "summary": {
-                "release_count": 1,
-                "total_product_downloads": 27,
-                "total_auxiliary_downloads": 19,
-                "total_all_assets": 46,
-                "latest_release_tag": "v1.0.0",
-                "latest_release_published_at": "2026-11-19T16:50:34Z",
-                "latest_release_downloads": 27,
-                "daily_delta": None,
-                "weekly_delta": None,
-                "monthly_delta": None,
-            },
-            "platforms": [
-                {"name": "Windows", "downloads": 12, "category": "downloadable", "share_of_product_pct": 44.44, "share_of_all_assets_pct": 26.09},
-                {"name": "Linux", "downloads": 8, "category": "downloadable", "share_of_product_pct": 29.63, "share_of_all_assets_pct": 17.39},
-                {"name": "macOS (Experimental)", "downloads": 2, "category": "downloadable", "share_of_product_pct": 7.41, "share_of_all_assets_pct": 4.35},
-                {"name": "Browser Extensions", "downloads": 5, "category": "downloadable", "share_of_product_pct": 18.52, "share_of_all_assets_pct": 10.87},
-                {"name": "Other / Auxiliary", "downloads": 19, "category": "auxiliary", "share_of_product_pct": 0.0, "share_of_all_assets_pct": 41.30},
-            ],
-            "releases": [
-                {
-                    "tag_name": "v1.0.0",
-                    "published_at": "2026-11-19T16:50:34Z",
-                    "product_downloads": 27,
-                    "all_assets_downloads": 46,
-                    "assets": [
-                        {"name": "BMD-1.0.0-portable.zip", "download_count": 3, "size": 24_664_916, "category": "downloadable", "platform": "Windows"},
-                        {"name": "BMD-1.0.0-x64.zip", "download_count": 2, "size": 24_663_928, "category": "downloadable", "platform": "Windows"},
-                    ],
-                }
-            ],
-            "snapshots": [{"timestamp": "2026-11-26T06:00:00Z", "total_product_downloads": 27}],
-        }
+    def test_generate_and_validate_pelagic_svgs_sub24h_baseline(self) -> None:
+        # 3 checkpoints on same day with zero variance must show honest baseline mode!
+        sample_data = _sample_analytics_payload(total_prod=27)
 
         with tempfile.TemporaryDirectory() as tmp:
             tmp_dir = Path(tmp)
@@ -316,73 +332,84 @@ class TestSvgGenerationAndValidation(unittest.TestCase):
             self.assertIn('aria-labelledby="svg-title svg-desc"', animated_svg)
             self.assertIn('<title id="svg-title">', animated_svg)
             self.assertIn('<desc id="svg-desc">', animated_svg)
+            self.assertIn("Baseline Recording Active", animated_svg)
+            self.assertIn("3 checkpoints recorded", animated_svg)
             self.assertIn("@keyframes barGrow", animated_svg)
             self.assertIn("@media (prefers-reduced-motion: reduce)", animated_svg)
-            self.assertIn(".bar-grow", animated_svg)
             self.assertNotIn("<animate", animated_svg)
             self.assertNotIn("@keyframes", static_svg)
-            self.assertIn('aria-labelledby="svg-title svg-desc"', static_svg)
+            self.assertNotIn("unique users", animated_svg.lower())
 
-    def test_validator_catches_script_and_external_url(self) -> None:
+    def test_multiday_trajectory_and_high_scale_filaments(self) -> None:
+        snaps = [
+            {"timestamp": "2026-11-26T16:00:00Z", "total_product_downloads": 27},
+            {"timestamp": "2026-11-28T16:00:00Z", "total_product_downloads": 420},
+            {"timestamp": "2026-12-01T16:00:00Z", "total_product_downloads": 1540},
+        ]
+        sample_data = _sample_analytics_payload(total_prod=1540, snapshots=snaps)
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_dir = Path(tmp)
+            in_json = tmp_dir / "downloads.json"
+            in_json.write_text(json.dumps(sample_data), encoding="utf-8")
+            out_dir = tmp_dir / "assets" / "readme" / "analytics"
+            generate_analytics.generate_all(input_path=in_json, out_dir=out_dir, readme_path=None)
+
+            svg_dark = (out_dir / "telemetry-dashboard-dark.svg").read_text(encoding="utf-8")
+            self.assertIn("3 real samples", svg_dark)
+            self.assertIn("2026-12-01", svg_dark)
+            _, errors = validate_assets.validate_all(
+                assets_dir=tmp_dir / "assets" / "readme",
+                readme_path=tmp_dir / "README.md",
+                analytics_only=True,
+            )
+            self.assertEqual(errors, [])
+
+    def test_validator_catches_script_external_url_and_em_dash(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             bad_svg = Path(tmp) / "bad.svg"
             bad_svg.write_text(
                 '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
                 "<style>@import url('https://example.com/font.css');</style>"
-                "<script>alert(1)</script>"
+                "<script>alert(1)</script><text>A \u2014 B</text>"
                 "</svg>",
                 encoding="utf-8",
             )
             errs = validate_assets.validate_svg_file(bad_svg, max_bytes=80 * 1024)
             self.assertTrue(any("<script>" in e for e in errs))
             self.assertTrue(any("@import" in e for e in errs))
-
-    def test_validator_catches_em_dash(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            bad_svg = Path(tmp) / "emdash.svg"
-            bad_svg.write_text(
-                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
-                "<text>A \u2014 B</text>"
-                "</svg>",
-                encoding="utf-8",
-            )
-            errs = validate_assets.validate_svg_file(bad_svg, max_bytes=80 * 1024)
             self.assertTrue(any("\\u2014" in e for e in errs))
 
-    def test_readme_marker_replacement_and_noop(self) -> None:
-        sample_data = {
-            "tracking_started_at": "2026-11-26T00:00:00Z",
-            "last_updated_at": "2026-11-26T06:00:00Z",
-            "last_successful_api_sync_at": "2026-11-26T06:00:00Z",
-            "api_status": "ok",
-            "repo": {"stars": 5, "forks": 1, "open_issues": 4, "contributors_count": 3},
-            "summary": {
-                "total_product_downloads": 27,
-                "total_all_assets": 46,
-                "latest_release_tag": "v1.0.0",
-                "latest_release_published_at": "2026-11-19T16:50:34Z",
-                "latest_release_downloads": 27,
-            },
-            "platforms": [
-                {"name": "Windows", "downloads": 12, "category": "downloadable", "share_of_product_pct": 44.44, "share_of_all_assets_pct": 26.09},
-                {"name": "Other / Auxiliary", "downloads": 19, "category": "auxiliary", "share_of_product_pct": 0.0, "share_of_all_assets_pct": 41.30},
-            ],
-        }
+    def test_validator_enforces_theme_parity_dimensions_and_static_fallback(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             tmp_dir = Path(tmp)
+            assets_dir = tmp_dir / "assets" / "readme"
+            analytics_dir = assets_dir / "analytics"
+            analytics_dir.mkdir(parents=True)
 
-            # 1. Missing README.md -> safe no-op
+            # Create only light PNG without dark counterpart -> parity failure
+            _write_minimal_png(analytics_dir / "hero-light.png", 960, 480)
+            _, errs = validate_assets.validate_all(assets_dir=assets_dir, analytics_only=True)
+            self.assertTrue(any("missing theme counterpart" in e for e in errs))
+            self.assertTrue(any("telemetry-dashboard-static-light.svg" in e for e in errs))
+
+            # Add mismatched dimension dark PNG -> dimension mismatch failure
+            _write_minimal_png(analytics_dir / "hero-dark.png", 800, 400)
+            _, errs2 = validate_assets.validate_all(assets_dir=assets_dir, analytics_only=True)
+            self.assertTrue(any("dimension mismatch" in e for e in errs2))
+
+    def test_readme_marker_replacement_and_noop(self) -> None:
+        sample_data = _sample_analytics_payload(total_prod=27)
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_dir = Path(tmp)
             missing_readme = tmp_dir / "MISSING.md"
             self.assertFalse(generate_analytics.update_readme_telemetry_block(sample_data, missing_readme))
 
-            # 2. README without markers -> safe no-op and content untouched
             no_markers = tmp_dir / "NO_MARKERS.md"
             original_plain = "# Black Marlin Downloader\n\nPlain text.\n"
             no_markers.write_text(original_plain, encoding="utf-8")
             self.assertFalse(generate_analytics.update_readme_telemetry_block(sample_data, no_markers))
             self.assertEqual(no_markers.read_text(encoding="utf-8"), original_plain)
 
-            # 3. README with markers -> updates strictly between markers, preserves surrounding prose
             with_markers = tmp_dir / "README.md"
             with_markers.write_text(
                 "# Header\n\n<!-- BMD:ANALYTICS-TEXT:START -->\nstale\n<!-- BMD:ANALYTICS-TEXT:END -->\n\n# Footer\n",
@@ -400,9 +427,9 @@ class TestSvgGenerationAndValidation(unittest.TestCase):
             self.assertIn("Windows | Product | 12", updated)
             self.assertIn("Other / Auxiliary | Auxiliary | 19 | n/a | 41.3%", updated)
             self.assertNotIn("\u2014", updated)
+            self.assertNotIn("unique users", updated.lower())
             self.assertIn("api_status`: `ok (live GitHub API)`", updated)
 
-            # 4. Second call with identical data -> idempotent False
             self.assertFalse(generate_analytics.update_readme_telemetry_block(sample_data, with_markers))
 
 
