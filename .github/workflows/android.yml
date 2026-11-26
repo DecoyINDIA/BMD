@@ -65,6 +65,12 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - name: Set up Android command-line tools and PATH
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3, resolved 2026-11-26
+        with:
+          cmdline-tools-version: "12266719"
+          packages: "platform-tools"
+          log-accepted-android-sdk-licenses: false
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
@@ -77,7 +83,9 @@ jobs:
       - name: Locked native toolchain and Android SDK
         run: |
           rustup toolchain install 1.98.0 --profile minimal --target aarch64-linux-android --target x86_64-linux-android
+          command -v sdkmanager
           sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;29.0.14206865"
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/29.0.14206865" >> "$GITHUB_ENV"
       - name: Real native libraries, provenance, licenses and ELF verification
         run: python3 tools/android/build_native.py --jobs 4
       - name: Android lint, JVM tests and distributable artifacts
@@ -120,12 +128,24 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5, resolved 2026-11-26
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Android command-line tools and PATH
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3, resolved 2026-11-26
+        with:
+          cmdline-tools-version: "12266719"
+          packages: "platform-tools"
+          log-accepted-android-sdk-licenses: false
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: android-build-${{ github.sha }}
           path: artifacts
       - name: Prepare Android emulator
         run: |
+          command -v sdkmanager
+          command -v avdmanager
           sdkmanager "platform-tools" "emulator" "system-images;android-${{ matrix.api }};google_apis;x86_64"
           echo no | avdmanager create avd --name bmd-ci --package "system-images;android-${{ matrix.api }};google_apis;x86_64" --force
           sudo chmod a+rw /dev/kvm
