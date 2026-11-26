@@ -894,6 +894,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "bmd-android-bridge"
+version = "1.0.0"
+dependencies = [
+ "bmd-engine",
+ "futures",
+ "getrandom 0.4.3",
+ "hex",
+ "jni",
+ "libc",
+ "reqwest 0.13.5",
+ "rustls-platform-verifier",
+ "serde",
+ "serde_json",
+ "socket2",
+ "tempfile",
+ "tokio",
+ "tokio-util",
+ "url",
+]
+
+[[package]]
 name = "bmd-app"
 version = "1.0.0"
 dependencies = [

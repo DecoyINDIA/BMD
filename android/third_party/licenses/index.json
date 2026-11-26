@@ -1,0 +1,56 @@
+[
+  {
+    "name": "jni",
+    "version": "0.22.4",
+    "repo": "jni-rs/jni-rs",
+    "ref": "5ae9458a4ec44c5318f37ddc7569c1d4ae8a69e7",
+    "path": "LICENSE-MIT",
+    "file": "jni-0.22.4/LICENSE-MIT",
+    "url": "https://github.com/jni-rs/jni-rs/blob/5ae9458a4ec44c5318f37ddc7569c1d4ae8a69e7/LICENSE-MIT"
+  },
+  {
+    "name": "jni-macros",
+    "version": "0.22.4",
+    "repo": "jni-rs/jni-rs",
+    "ref": "33045a124105c939d1e2cbdcb5a39e5d868ffa03",
+    "path": "LICENSE-MIT",
+    "file": "jni-macros-0.22.4/LICENSE-MIT",
+    "url": "https://github.com/jni-rs/jni-rs/blob/33045a124105c939d1e2cbdcb5a39e5d868ffa03/LICENSE-MIT"
+  },
+  {
+    "name": "jni-sys-macros",
+    "version": "0.4.1",
+    "repo": "jni-rs/jni-sys",
+    "ref": "64d77b7a5f119d7b55b4e2c169a4668067ff59e6",
+    "path": "LICENSE-MIT",
+    "file": "jni-sys-macros-0.4.1/LICENSE-MIT",
+    "url": "https://github.com/jni-rs/jni-sys/blob/64d77b7a5f119d7b55b4e2c169a4668067ff59e6/LICENSE-MIT"
+  },
+  {
+    "name": "rustls-platform-verifier-android",
+    "version": "0.2.0",
+    "repo": "rustls/rustls-platform-verifier",
+    "ref": "252e25161a91af476cbea620e29d277592d27ec7",
+    "path": "LICENSE-MIT",
+    "file": "rustls-platform-verifier-android-0.2.0/LICENSE-MIT",
+    "url": "https://github.com/rustls/rustls-platform-verifier/blob/252e25161a91af476cbea620e29d277592d27ec7/LICENSE-MIT"
+  },
+  {
+    "name": "suppaftp",
+    "version": "12.2.1",
+    "repo": "veeso/suppaftp",
+    "ref": "18e0a88b0047dcffbf778c59ed5900b7e19251db",
+    "path": "LICENSE-MIT",
+    "file": "suppaftp-12.2.1/LICENSE-MIT",
+    "url": "https://github.com/veeso/suppaftp/blob/18e0a88b0047dcffbf778c59ed5900b7e19251db/LICENSE-MIT"
+  },
+  {
+    "name": "lazy-regex-proc_macros",
+    "version": "3.6.2",
+    "repo": "Canop/lazy-regex",
+    "ref": "3263b3380ef7ca68f134340a44da87b34311edb8",
+    "path": "LICENSE",
+    "file": "lazy-regex-proc_macros-3.6.2/LICENSE",
+    "url": "https://github.com/Canop/lazy-regex/blob/3263b3380ef7ca68f134340a44da87b34311edb8/LICENSE"
+  }
+]

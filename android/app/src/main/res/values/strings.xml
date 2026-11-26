@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Black Marlin</string>
+    <string name="app_full_name">Black Marlin Downloader</string>
+    <string name="nav_transfers">Transfers</string>
+    <string name="nav_files">Files</string>
+    <string name="nav_settings">Settings</string>
+    <string name="title_add_link">Add a download</string>
+    <string name="title_review">Review download</string>
+    <string name="title_destination">Save location</string>
+    <string name="title_transfer">Transfer details</string>
+    <string name="title_file">File details</string>
+    <string name="title_search">Search</string>
+    <string name="title_selection">Select items</string>
+    <string name="title_network">Network and performance</string>
+    <string name="title_storage">Storage and cleanup</string>
+    <string name="title_appearance">Appearance</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_credentials">Source credentials</string>
+    <string name="title_help">Help and diagnostics</string>
+    <string name="title_about">About Black Marlin</string>
+    <string name="action_add_link">Add link</string>
+    <string name="action_back">Back</string>
+    <string name="action_close">Close</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_paste">Paste</string>
+    <string name="action_review">Review download</string>
+    <string name="action_start">Start download</string>
+    <string name="action_pause">Pause</string>
+    <string name="action_resume">Resume</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_save">Save</string>
+    <string name="action_open">Open</string>
+    <string name="action_share">Share</string>
+    <string name="action_retry_save">Retry save</string>
+    <string name="action_change_location">Change location</string>
+    <string name="action_select">Select</string>
+    <string name="action_select_all">Select all visible</string>
+    <string name="action_more">More options</string>
+    <string name="label_direct_link">Direct file link</string>
+    <string name="label_file_name">File name</string>
+    <string name="label_source">Source</string>
+    <string name="label_destination">Save to</string>
+    <string name="label_size">File size</string>
+    <string name="label_unknown">Unknown</string>
+    <string name="label_search_files">Search files on this device</string>
+    <string name="label_search_all">Search transfers and files</string>
+    <string name="label_no_account">No account needed. Your files stay yours.</string>
+    <string name="label_loading">Restoring your transfers…</string>
+    <string name="empty_transfers_title">Your next download,\nhandled.</string>
+    <string name="empty_transfers_body">Paste a direct link. Pause when you need to. Pick up where you left off.</string>
+    <string name="empty_files_title">A place for your files</string>
+    <string name="empty_files_body">Finished downloads appear here after they have been saved to your chosen location.</string>
+    <string name="empty_search_title">Nothing matches yet</string>
+    <string name="empty_search_body">Try a different file name or clear the filters.</string>
+    <string name="action_how_it_works">How it works</string>
+    <string name="content_pause_file">Pause %1$s, %2$s</string>
+    <string name="content_resume_file">Resume %1$s</string>
+    <string name="content_select_file">Select %1$s</string>
+    <string name="content_clear_query">Clear search</string>
+    <plurals name="items_selected">
+        <item quantity="one">%d item selected</item>
+        <item quantity="other">%d items selected</item>
+    </plurals>
+    <plurals name="active_transfers">
+        <item quantity="one">%d active</item>
+        <item quantity="other">%d active</item>
+    </plurals>
+    <plurals name="saved_files">
+        <item quantity="one">%d saved file</item>
+        <item quantity="other">%d saved files</item>
+    </plurals>
+</resources>

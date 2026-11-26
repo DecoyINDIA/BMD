@@ -24,6 +24,7 @@ use base64::Engine;
 use bytes::{Bytes, BytesMut};
 use percent_encoding::percent_decode_str;
 use reqwest::header::{AUTHORIZATION, HeaderMap};
+#[cfg(not(target_os = "android"))]
 use rustls::pki_types::CertificateDer;
 use suppaftp::tokio::{
     AsyncRustlsConnector, AsyncRustlsFtpStream, AsyncRustlsStream, TransferStream,
@@ -480,6 +481,16 @@ pub(crate) fn client_config(extra: &[Vec<u8>]) -> Result<rustls::ClientConfig, r
         return Ok(crate::tls::no_roots_config());
     }
     let provider = crate::tls::provider();
+    #[cfg(target_os = "android")]
+    let verifier = {
+        if !extra.is_empty() {
+            return Err(rustls::Error::General(
+                "additional roots are not supported by the Android platform verifier".into(),
+            ));
+        }
+        Verifier::new(provider.clone())
+    }?;
+    #[cfg(not(target_os = "android"))]
     let verifier = if extra.is_empty() {
         Verifier::new(provider.clone())
     } else {
