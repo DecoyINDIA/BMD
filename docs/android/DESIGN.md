@@ -49,7 +49,7 @@ Pending consent and asynchronous inspection belong to the captured draft. A new 
 
 ### Transfer, verify, save
 
-The UI renders repository state rather than simulated progress. Downloading reports confirmed received bytes. A known total permits a percentage; an unknown total keeps the byte count and uses an indeterminate indicator. Rate and ETA appear only when the state provides meaningful values.
+The UI renders repository state rather than simulated progress. Downloading reports confirmed received bytes. A known total permits a percentage; an unknown total keeps the byte count and uses an indeterminate indicator. A displayed ETA is an estimate from remaining bytes and the currently reported receive rate, not a measured guarantee of completion time.
 
 Verification and saving are separate stages. Saving reports copied bytes from the publication operation, so a network transfer reaching its total does not imply that the file is already available in Files. The Files index is updated with the durable publication result. See [TransferCoordinator](../../android/app/src/main/java/com/blackmarlin/downloader/platform/TransferCoordinator.kt) and [PublicationManager](../../android/app/src/main/java/com/blackmarlin/downloader/storage/PublicationManager.kt).
 
@@ -60,6 +60,8 @@ Android owns execution windows. Waiting for a network, waiting for Android, an i
 ### Recover a local save
 
 An unavailable destination or failed publication can leave valid downloaded bytes in private staging. Retry save works from those bytes; it does not create a second network transfer. A generic document provider may be slow or unseekable, so the application uses a visible Retry save action when local work needs the foreground save service.
+
+On API 26–29, publication supports regular file descriptors from local folders. If a provider instead returns a pipe or another streaming descriptor, Black Marlin closes it before reading or writing and holds the save. The exact known document URI and private downloaded bytes remain available for recovery. The message directs the user to Save a separate copy and a local device folder. API 30+ can admit streaming descriptors with nonblocking I/O; this does not guarantee that every provider will complete a save.
 
 If a provider may already have created or finalized a document, the detail screen offers these distinct decisions:
 

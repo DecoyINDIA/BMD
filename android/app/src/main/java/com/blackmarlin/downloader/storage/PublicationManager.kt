@@ -196,7 +196,7 @@ class PublicationManager internal constructor(
             withContext(NonCancellable) { runCatching { writer?.abort() } }
             if (failure is StaleOwner) return@withContext PublicationOutcome(false, "A newer task action owns this transfer.")
             val message = safeFailure(failure)
-            hold(taskId, generation, owner, message, forceUnresolved = failure is IdentityUncertain || failure is ByteMismatch,
+            hold(taskId, generation, owner, message, forceUnresolved = failure is IdentityUncertain || failure is ByteMismatch || failure is UnsupportedProviderStream,
                 invalidStage = failure is LocalIntegrityFailure)
             PublicationOutcome(false, message)
         } finally {
@@ -242,7 +242,8 @@ class PublicationManager internal constructor(
         } catch (failure: Exception) {
             if (failure is StaleOwner) return@withContext PublicationOutcome(false, "A newer task action owns this transfer.")
             val message = if (failure is ByteMismatch) "The chosen document does not match the retained download. No document was changed or adopted." else safeFailure(failure)
-            hold(taskId, generation, owner, message, invalidStage = failure is LocalIntegrityFailure)
+            hold(taskId, generation, owner, message, forceUnresolved = failure is UnsupportedProviderStream,
+                invalidStage = failure is LocalIntegrityFailure)
             PublicationOutcome(false, message)
         }
     }
@@ -424,6 +425,7 @@ class PublicationManager internal constructor(
     }
 
     private fun safeFailure(error: Exception): String = when (error) {
+        is UnsupportedProviderStream -> error.message!!
         is IdentityUncertain -> error.message ?: "The previous save needs to be resolved. Downloaded data is retained."
         is ByteMismatch -> "The destination contents do not match this download. Nothing was overwritten; downloaded data is retained."
         is SaveFailure -> error.message ?: "Saving could not finish. Downloaded data is retained."
@@ -527,17 +529,17 @@ internal class AndroidPublicationIo(private val context: Context) : PublicationI
         assertIdentity(attempt)
         val descriptor = openDescriptor(Uri.parse(attempt.uri), if (requireSafeTruncate) "rw" else "w", stop)
         try {
+            val regular = admitProviderDescriptor(descriptor)
             if (requireSafeTruncate) {
                 // Do not request 'rwt': prove seeking before the destructive truncate happens.
                 Os.lseek(descriptor.fileDescriptor, 0, OsConstants.SEEK_SET)
                 Os.ftruncate(descriptor.fileDescriptor, 0)
                 if (Os.fstat(descriptor.fileDescriptor).st_size != 0L) throw IOException("Truncate did not clear the document")
             }
-            val regular = OsConstants.S_ISREG(Os.fstat(descriptor.fileDescriptor).st_mode)
-            if (!regular) enableNonBlocking(descriptor)
             return DescriptorWriter(descriptor, regular)
         } catch (error: Exception) {
             runCatching { descriptor.closeWithError("BMD save was not admitted") }
+            if (error is UnsupportedProviderStream) throw error
             throw IdentityUncertain("This provider cannot safely restart the existing document. Locate it or explicitly save a separate copy.")
         }
     }
@@ -545,7 +547,7 @@ internal class AndroidPublicationIo(private val context: Context) : PublicationI
     override suspend fun openRead(uri: String, stop: () -> Boolean): PublicationReader {
         val descriptor = openDescriptor(Uri.parse(uri), "r", stop)
         try {
-            if (!OsConstants.S_ISREG(Os.fstat(descriptor.fileDescriptor).st_mode)) enableNonBlocking(descriptor)
+            admitProviderDescriptor(descriptor)
             return DescriptorReader(descriptor)
         } catch (error: Exception) { runCatching { descriptor.close() }; throw error }
     }
@@ -611,11 +613,32 @@ internal class AndroidPublicationIo(private val context: Context) : PublicationI
         } finally { watcher.cancel() }
     }
 
-    private fun enableNonBlocking(descriptor: ParcelFileDescriptor) {
+}
+
+/**
+ * Returns whether this is a regular file. The caller owns an admitted descriptor; on rejection
+ * this function closes it. Never attempt a potentially unbounded pipe read/write on API 26–29:
+ * the public fcntlInt needed to make it cooperatively cancellable was added in API 30.
+ */
+internal fun admitProviderDescriptor(descriptor: ParcelFileDescriptor): Boolean {
+    try {
+        val regular = OsConstants.S_ISREG(Os.fstat(descriptor.fileDescriptor).st_mode)
+        if (regular) return true
+        if (Build.VERSION.SDK_INT < 30) throw UnsupportedProviderStream()
         val flags = Os.fcntlInt(descriptor.fileDescriptor, OsConstants.F_GETFL, 0)
         Os.fcntlInt(descriptor.fileDescriptor, OsConstants.F_SETFL, flags or OsConstants.O_NONBLOCK)
+        return false
+    } catch (error: Exception) {
+        runCatching { descriptor.closeWithError("BMD could not safely use this provider stream") }
+        throw error
     }
 }
+
+internal class UnsupportedProviderStream : IOException(
+    "This provider uses a streaming document that cannot be safely saved or checked on this Android version. " +
+        "Your downloaded data is retained. Choose Save a separate copy, then select a local device folder. " +
+        "Check any document that may already exist at the provider.",
+)
 
 internal class DescriptorReader(private val descriptor: ParcelFileDescriptor) : PublicationReader {
     override suspend fun read(buffer: ByteArray, stop: () -> Boolean): Int {

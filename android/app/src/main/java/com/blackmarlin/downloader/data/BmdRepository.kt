@@ -17,6 +17,7 @@ import com.blackmarlin.downloader.domain.DownloadPolicy
 import com.blackmarlin.downloader.domain.PublicationRules
 import com.blackmarlin.downloader.platform.TransferCoordinator
 import com.blackmarlin.downloader.platform.TransferNotifications
+import com.blackmarlin.downloader.platform.TaskScheduler
 import com.blackmarlin.downloader.ui.*
 import java.io.File
 import java.net.URI
@@ -165,7 +166,8 @@ class BmdRepository(private val graph: BmdGraph) : BmdUiStore {
             dao.submitted(request.submissionId)?.let { return@withLock it }
             if (!request.saveAnotherCopy) dao.duplicate(source.url)?.let { throw BmdUiException("This link already has a transfer. Open it or explicitly choose another copy.") }
             val used = dao.tasks().map { it.jobId }.toSet()
-            val jobId = (10_000..899_000).firstOrNull { it !in used } ?: throw BmdUiException("There are too many stored transfers. Clear completed history first.")
+            val jobId = (TaskScheduler.FIRST_TRANSFER_JOB_ID..TaskScheduler.LAST_TRANSFER_JOB_ID).firstOrNull { it !in used }
+                ?: throw BmdUiException("There are too many stored transfers. Clear completed history first.")
             val id = UUID.randomUUID().toString()
             credential?.let { graph.credentials.saveTask(id, it); if (it.rememberForOrigin) graph.credentials.remember(it) }
             val mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(name.substringAfterLast('.', "").lowercase()) ?: "application/octet-stream"

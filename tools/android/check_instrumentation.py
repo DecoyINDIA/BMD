@@ -8,10 +8,13 @@ import re
 import sys
 
 TEST_CLASS = "com.blackmarlin.downloader.ui.NativeAppSmokeTest"
+DESCRIPTOR_CLASS = "com.blackmarlin.downloader.storage.PublicationDescriptorDeviceTest"
 BASIC = {"realDatabaseAndNativeEngineInitialize", "nativeNavigationPersistsAppearanceThroughRealRepository",
-         "sharedUnsupportedLinkStaysInEditorAndNeverCreatesATask"}
+         "sharedUnsupportedLinkStaysInEditorAndNeverCreatesATask", "pinnedHttpsSourceUsesAndroidPlatformTrust"}
 DOWNLOAD = "suppliedDirectLinkDownloadsThroughRustAndPublishesExactBytes"
 SAF = "suppliedDirectLinkSavesThroughRealSafPickerAndVerifiesBytes"
+REGULAR_DESCRIPTOR = "regularDescriptorsRemainUsableOnSupportedAndroidVersions"
+OLD_PIPE_DESCRIPTOR = "olderAndroidRejectsReadAndWritePipeDescriptorsAndClosesThem"
 
 
 def evaluate(output: str, api: int) -> dict:
@@ -36,6 +39,9 @@ def evaluate(output: str, api: int) -> dict:
             current = {}
     required = BASIC | {SAF} | ({DOWNLOAD} if api >= 29 else set())
     expected = {TEST_CLASS + "#" + test for test in required}
+    expected.add(DESCRIPTOR_CLASS + "#" + REGULAR_DESCRIPTOR)
+    if api < 30:
+        expected.add(DESCRIPTOR_CLASS + "#" + OLD_PIPE_DESCRIPTOR)
     missing = expected - passed
     success = re.search(r"^OK \(\d+ tests?\)", output, re.MULTILINE) is not None
     aborted = re.search(r"FAILURES!!!|INSTRUMENTATION_FAILED|INSTRUMENTATION_ABORTED", output) is not None
@@ -43,7 +49,10 @@ def evaluate(output: str, api: int) -> dict:
         raise RuntimeError(f"Instrumented acceptance failed: missing actual passes={sorted(missing)}, failed={sorted(failed)}, summary_success={success}, aborted={aborted}")
     return {"api": api, "passed": sorted(passed), "skipped": sorted(skipped),
             "mediaStoreDownloadAndPublicationVerified": api >= 29,
-            "safDownloadAndPublicationVerified": True}
+            "safDownloadAndPublicationVerified": True,
+            "androidPlatformTrustHttpsProbeVerified": True,
+            "regularDescriptorReadWriteVerified": True,
+            "olderAndroidPipeRejectionVerified": api < 30}
 
 
 def main() -> None:

@@ -72,6 +72,39 @@ class PublicationManagerTest {
         assertArrayEquals(payload, io.documents.values.single())
     }
 
+    @Test fun unsupportedProviderReadKeepsCreatedUriAndPrivateBytesForExplicitRecovery() = runBlocking {
+        setTask(task.copy(destinationKind = "DOCUMENT_TREE", destinationUri = "content://provider/tree/downloads"))
+        io.unsupportedStreamOnRead = true
+        val outcome = save()
+        assertFalse(outcome.saved)
+        assertTrue(outcome.message.orEmpty().contains("local device folder"))
+        val attempt = db.tasks().publication(task.id)!!
+        assertEquals(io.documents.keys.single(), attempt.uri)
+        assertEquals("UNRESOLVED", attempt.phase)
+        assertEquals("WAITING_SAVE", db.tasks().task(task.id)!!.stage)
+        assertEquals(1, io.creates)
+        assertEquals(0, io.truncates)
+        assertEquals(0, io.finalizes)
+        assertTrue(db.tasks().files().isEmpty())
+        assertArrayEquals(payload, stage.readBytes())
+        assertFalse(save().saved)
+        assertEquals("A retry must not create another provider document", 1, io.creates)
+    }
+
+    @Test fun unsupportedProviderWriteKeepsKnownUriWithoutCopyOrPublication() = runBlocking {
+        setTask(task.copy(destinationKind = "DOCUMENT_TREE", destinationUri = "content://provider/tree/downloads"))
+        io.unsupportedStreamOnWrite = true
+        assertFalse(save().saved)
+        val attempt = db.tasks().publication(task.id)!!
+        assertEquals(io.documents.keys.single(), attempt.uri)
+        assertEquals("UNRESOLVED", attempt.phase)
+        assertFalse(attempt.commitPlanned)
+        assertEquals(0L, attempt.copiedBytes)
+        assertTrue(io.documents.values.single().isEmpty())
+        assertTrue(db.tasks().files().isEmpty())
+        assertArrayEquals(payload, stage.readBytes())
+    }
+
     @Test fun safLostCreateResultDoesNotCreateAgainOnRetry() = runBlocking {
         setTask(task.copy(destinationKind = "DOCUMENT_TREE", destinationUri = "content://provider/tree/downloads"))
         io.throwAfterCreate = true
@@ -311,6 +344,8 @@ private class FakeProvider : PublicationIo {
     var truncates = 0
     var aborts = 0
     var seekable = true
+    var unsupportedStreamOnRead = false
+    var unsupportedStreamOnWrite = false
     var throwAfterCreate = false
     var failFinalizeAfterVisibility = false
     var truncateOnClose = false
@@ -331,6 +366,7 @@ private class FakeProvider : PublicationIo {
     }
     override fun assertIdentity(attempt: PublicationEntity) { if (attempt.uri !in documents) throw IOException("Identity unavailable") }
     override suspend fun openWrite(attempt: PublicationEntity, requireSafeTruncate: Boolean, stop: () -> Boolean): PublicationWriter {
+        if (unsupportedStreamOnWrite) throw UnsupportedProviderStream()
         if (requireSafeTruncate && !seekable) throw IOException("Nonseekable provider")
         if (requireSafeTruncate) truncates++
         val uri = attempt.uri!!
@@ -351,6 +387,7 @@ private class FakeProvider : PublicationIo {
         }
     }
     override suspend fun openRead(uri: String, stop: () -> Boolean): PublicationReader {
+        if (unsupportedStreamOnRead) throw UnsupportedProviderStream()
         val bytes = documents[uri] ?: throw IOException("Document unavailable")
         var offset = 0
         return object : PublicationReader {

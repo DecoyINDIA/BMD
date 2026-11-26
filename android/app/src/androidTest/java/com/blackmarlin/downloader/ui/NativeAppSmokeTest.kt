@@ -22,8 +22,10 @@ import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
+import androidx.work.WorkManager
 import com.blackmarlin.downloader.BmdApplication
 import com.blackmarlin.downloader.MainActivity
+import com.blackmarlin.downloader.platform.TaskScheduler
 import java.io.File
 import java.security.MessageDigest
 import java.util.UUID
@@ -51,7 +53,36 @@ class NativeAppSmokeTest {
             }
         }
         compose.waitUntil(15_000) { !graph.repository.state.value.loading }
+        val workConfiguration = WorkManager.getInstance(compose.activity).configuration
+        assertEquals(TaskScheduler.FIRST_WORK_JOB_ID, workConfiguration.minJobSchedulerId)
+        assertEquals(TaskScheduler.LAST_WORK_JOB_ID, workConfiguration.maxJobSchedulerId)
+        assertTrue("WorkManager and user-initiated transfers must use disjoint JobScheduler IDs",
+            workConfiguration.minJobSchedulerId > TaskScheduler.LAST_TRANSFER_JOB_ID)
         compose.onNodeWithTag("screen-transfers").assertExists()
+    }
+
+    /** Exercises JNI plus Android platform certificate verification; this is a metadata probe. */
+    @Test fun pinnedHttpsSourceUsesAndroidPlatformTrust() {
+        val origin = "https://raw.githubusercontent.com"
+        val pinnedUrl = "$origin/DecoyINDIA/BMD/6b4038a7691bea096d7f035475ebc277db23c11a/LICENSE"
+        val review = runBlocking {
+            withTimeout(90_000) {
+                graph.ensureReady()
+                graph.repository.inspectLink(InspectLinkRequest(
+                    url = pinnedUrl,
+                    networkPolicy = NetworkPolicy.ANY,
+                    allowPlainHttp = false,
+                    credential = UiCredentialInput(origin, CredentialKind.NONE),
+                ))
+            }
+        }
+        assertEquals("The pinned HTTPS resource must be probed through the actual native backend", pinnedUrl, review.url)
+        assertEquals(origin, review.origin)
+        assertEquals("The pinned Git blob has 35,149 bytes; offline/failed metadata cannot satisfy the TLS gate",
+            35_149L, review.totalBytes)
+        assertFalse("The public pinned fixture must not require source authentication", review.requiresCredentials)
+        assertFalse("The source must be the pinned license file, not an HTML error page", review.possibleHtmlPage)
+        assertNull("Offline or warning fallback cannot satisfy the real HTTPS gate", review.warning)
     }
 
     @Test fun nativeNavigationPersistsAppearanceThroughRealRepository() {
