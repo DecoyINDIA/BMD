@@ -3625,7 +3625,7 @@ mod tests {
     fn a11y_ctx() -> egui::Context {
         let ctx = egui::Context::default();
         let mut defs = egui::FontDefinitions::default();
-        crate::winui::install_fonts(&mut defs, None);
+        crate::winui::install_fonts(&mut defs);
         ctx.set_fonts(defs);
         ctx.enable_accesskit();
         ctx

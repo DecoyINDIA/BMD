@@ -71,13 +71,16 @@ One egui window painted to fixed pixel coordinates, plus one immediate viewport 
 toolbar, key and IPC commands into actions. Each dialog is its own module and returns an
 `Outcome` (open, closed, done with a value). Windows-only calls are confined to `win32.rs` and
 their Linux and macOS counterparts to `unix.rs` (starting with the session, the browsers' host,
-sounds, show in folder, the crash handler); every other file is safe, portable Rust. Fonts come from the system:
-Windows' Fonts folder, macOS's system fonts, fontconfig on Linux (`theme.rs`). The interface language's
+sounds, show in folder, the crash handler); every other file is safe, portable Rust. The interface is set
+in IBM Plex Sans (text), IBM Plex Mono (code) and Space Grotesk Bold (titles), built in
+(`crates/app/assets/fonts/`, `winui::install_fonts`), the same on every system. The scripts they don't draw
+come from the system: Windows' Fonts folder, macOS's system fonts, fontconfig on Linux (`theme.rs`). The interface language's
 script fonts load at start; text in another script gets its font the first time it shows: from BMD's
 lists of the system's fonts for each script, then, on Windows and macOS, from the system's own fallback
 (DirectWrite's, CoreText's, through fontique: `egui_system_font_provider`) for what the lists don't
 name; Linux asks fontconfig for any letter. On Windows, Latin,
-Greek, Cyrillic and single-codepoint CJK text is drawn by DirectWrite (`win32.rs`, through egui's glyph rasterizer hook):
+Greek, Cyrillic and single-codepoint CJK text is drawn by DirectWrite (`win32.rs`, through egui's glyph rasterizer hook;
+the built-in fonts are written to files in the data folder for it, CJK uses the system's):
 View → Text → Smooth in its natural mode, anti-aliased at the size asked for and placed at quarter
 pixels with the font's own advances; Classic (the default) in GDI-classic mode, so each letter's
 hinted shape and whole-pixel width come together. CJK uses the interface language's system face;

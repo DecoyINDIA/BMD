@@ -933,7 +933,7 @@ fn add_script_fallback(ctx: &egui::Context) {
     });
 }
 
-/// The interface font: Segoe UI as IDM has it on Windows, the system's own elsewhere.
+/// The system's interface font (Segoe UI on Windows): the fallback for what IBM Plex Sans lacks.
 fn ui_font() -> Option<Vec<u8>> {
     #[cfg(windows)]
     return read_font(&font_dir().join("segoeui.ttf"));
@@ -1080,29 +1080,13 @@ fn load_fonts(ctx: &egui::Context, all: bool) {
     *loaded = Some((code, all));
 }
 
-/// IDM draws with Segoe UI 9 pt (12 px at 100 %): the system's own copy, nothing bundled
-/// (elsewhere the system's interface font, [`ui_font`]; else egui's default font). Every family
-/// falls back to it (Tahoma has no Armenian or Georgian), then to the script fonts for `code`
+/// BMD draws with IBM Plex Sans (text), IBM Plex Mono (code) and Space Grotesk (headlines), built
+/// in ([`crate::winui::install_fonts`]). Every family falls back to the system's interface font
+/// ([`ui_font`], for what Plex lacks: Armenian, Georgian), then to the script fonts for `code`
 /// (all with `all`).
 fn fonts(ctx: &egui::Context, code: &str, all: bool) {
     let mut defs = egui::FontDefinitions::default();
-    let ui = ui_font();
-    if let Some(bytes) = &ui {
-        defs.font_data.insert(
-            "segoe-ui".into(),
-            std::sync::Arc::new(egui::FontData::from_owned(bytes.clone())),
-        );
-        for fam in [egui::FontFamily::Proportional, egui::FontFamily::Monospace] {
-            defs.families
-                .entry(fam)
-                .or_default()
-                .insert(0, "segoe-ui".into());
-        }
-    }
-    #[cfg(windows)]
-    crate::winui::install_fonts(&mut defs, Some(&font_dir()));
-    #[cfg(not(windows))]
-    crate::winui::install_fonts(&mut defs, None);
+    crate::winui::install_fonts(&mut defs);
     // A fallback's glyphs sit on the baseline of the family's first font (Japanese next to
     // Latin digits, Georgian in a Tahoma line), not centred in its row.
     let on_baseline = |bytes: Vec<u8>| {
@@ -1111,10 +1095,10 @@ fn fonts(ctx: &egui::Context, code: &str, all: bool) {
         std::sync::Arc::new(egui::FontData::from_owned(bytes).tweak(tweak))
     };
     let mut fallbacks: Vec<String> = Vec::new();
-    if let Some(bytes) = ui {
+    if let Some(bytes) = ui_font() {
         defs.font_data
-            .insert("segoe-ui-fallback".into(), on_baseline(bytes));
-        fallbacks.push("segoe-ui-fallback".into());
+            .insert("system-ui-fallback".into(), on_baseline(bytes));
+        fallbacks.push("system-ui-fallback".into());
     }
     for (key, bytes) in script_fonts(code, all) {
         defs.font_data.insert(key.clone(), on_baseline(bytes));
@@ -1127,10 +1111,6 @@ fn fonts(ctx: &egui::Context, code: &str, all: bool) {
     }
     for list in defs.families.values_mut() {
         for f in &fallbacks {
-            // Segoe UI already leads the two built-in families (as itself, not a fallback).
-            if f == "segoe-ui-fallback" && list.first().is_some_and(|l| l == "segoe-ui") {
-                continue;
-            }
             if !list.contains(f) {
                 list.push(f.clone());
             }
@@ -1235,7 +1215,10 @@ fn text_styles(ctx: &egui::Context) {
             ),
             (
                 TextStyle::Heading,
-                FontId::proportional(font_size(m.font_heading)),
+                FontId::new(
+                    font_size(m.font_heading),
+                    egui::FontFamily::Name("tahoma-bold".into()),
+                ),
             ),
         ]
         .into();
@@ -1923,10 +1906,9 @@ mod status_width_tests {
     /// known included. "63% merged" was cut to "63% me..." at 65 px, and a torrent's "Wird
     /// überprüft 45 %" in German.
     ///
-    /// In the list's font as this system draws it: Segoe UI on Windows, the system font on
-    /// macOS, fontconfig's interface font on Linux (DejaVu Sans on a bare Ubuntu, where German
-    /// needs 147 px). The default grows with the font there ([`crate::list::status_width`]); on
-    /// Windows it stays 132 px, so the list's other columns keep their room.
+    /// In the list's font: IBM Plex Sans, built in, the same on every system. The default grows
+    /// with the font ([`crate::list::status_width`]); here it stays 136 px, so the list's other
+    /// columns keep their room.
     #[test]
     fn finishing_fits_the_status_column() {
         let i18n = crate::i18n::i18n();
@@ -1960,7 +1942,7 @@ mod status_width_tests {
                 assert_eq!(
                     column,
                     crate::list::DEFAULT_WIDTHS[crate::list::STATUS],
-                    "{code} at {zoom}: Segoe UI fits in the default"
+                    "{code} at {zoom}: IBM Plex Sans fits in the default"
                 );
                 for source in ["Checking {percent}", "Merging {percent}"] {
                     for percent in [full.as_str(), "100%", "..."] {

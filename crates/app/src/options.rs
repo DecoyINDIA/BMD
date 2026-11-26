@@ -5318,7 +5318,7 @@ mod tests {
     fn context() -> egui::Context {
         let ctx = egui::Context::default();
         let mut defs = egui::FontDefinitions::default();
-        winui::install_fonts(&mut defs, None);
+        winui::install_fonts(&mut defs);
         ctx.set_fonts(defs);
         ctx
     }

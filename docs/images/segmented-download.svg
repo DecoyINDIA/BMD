@@ -8,7 +8,7 @@
     </linearGradient>
   </defs>
   <style>
-    text { font-family: "Segoe UI", sans-serif; fill: #f3faf8; }
+    text { font-family: "IBM Plex Sans", "Segoe UI", sans-serif; fill: #f3faf8; }
     .caption { fill: #b8ced1; font-size: 19px; }
     .part { transform-box: fill-box; transform-origin: left center; }
     .step { opacity: 0; }

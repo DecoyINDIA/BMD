@@ -67,7 +67,7 @@ Draw with → Vulkan** is a choice, OpenGL stays the default.
 
 In a Wayland session, BMD chooses its windows' system as it starts, the same way however it was started (its menu entry, the browser's helper, the session's autostart). Its windows run through XWayland where X11 programs look right: only X11 lets BMD open its menus and drop-down lists right under what you clicked (on Wayland they open where the compositor puts new windows, often the middle of the screen) and hide its window in the notification area. That is GNOME and KDE Plasma, which tell X11 programs the screen's scale, and any desktop whose screens aren't scaled. On a scaled screen where nothing tells X11 programs the scale (Hyprland, labwc, sway and other wlroots compositors), the compositor would scale BMD's windows up, blurry, so BMD uses Wayland's own windows there. **View → Window system** picks **X11 (XWayland)** or **Wayland** instead, from the next start, for every way BMD starts (**Automatic** goes back to BMD's choice); `BMD_WAYLAND=1` or `BMD_WAYLAND=0` decides for one start. If the system lacks a library X11 windows need (such as libxkbcommon-x11, which the .deb and .rpm bring but the AppImage and the tar.gz can't), BMD opens on Wayland instead; with no window system it can use, it names what's missing and the command that installs it.
 
-The windows are the ones described in this help, with the desktop's fonts, file icons and title
+The windows are the ones described in this help, with BMD's built-in fonts (IBM Plex and Space Grotesk), the desktop's file icons and title
 bars:
 
 <!-- pictures -->
