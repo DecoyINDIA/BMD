@@ -236,30 +236,39 @@ class ReleaseRuntimeTest {
     }
 
     private fun openAdvancedOptions() {
+        clickText("Advanced options")
+        // Require actual expansion before sending checksum input, including a bounded scroll
+        // to the enabled editor when the newly revealed section exceeds the viewport.
+        scrollTo(By.clazz("android.widget.EditText").enabled(true)
+            .hasChild(By.pkg(TARGET_PACKAGE).text("Expected SHA-256 (optional)")), 10_000)
+    }
+
+    private fun clickText(text: String, mergedRow: Boolean = false) {
         val end = SystemClock.elapsedRealtime() + remaining(15_000)
-        scrollTo(By.text("Advanced options"), maxOf(1L, end - SystemClock.elapsedRealtime() - 5_000))
-        val labelSelector = By.pkg(TARGET_PACKAGE).text("Advanced options").enabled(true)
+        // Clickable Compose rows can expose their title and subtitle as one accessibility text.
+        scrollTo(if (mergedRow) By.textContains(text) else By.text(text),
+            maxOf(1L, end - SystemClock.elapsedRealtime() - 5_000))
+        val labelSelector = (if (mergedRow) By.textContains(text) else By.text(text)).pkg(TARGET_PACKAGE)
         var previousBounds: Pair<Rect, Rect>? = null
         var stableSince = 0L
-        var clicked = false
         while (SystemClock.elapsedRealtime() < end) {
             var ready: UiObject2? = null
             try {
-                val label = device.findObjects(labelSelector).filter {
+                // Preserve the original first-visible-match order. A merged row and its
+                // child may both match; they must not create a new uniqueness failure.
+                val label = device.findObjects(labelSelector).firstOrNull {
                     val bounds = it.visibleBounds
                     bounds.height() > 0 && bounds.width() > 0
-                }.singleOrNull()
-                // The observed disclosure label is the direct child of its real button.
-                val button = label?.parent
-                if (label != null && button != null &&
-                    button.applicationPackage == TARGET_PACKAGE && button.isEnabled && button.isClickable) {
+                }
+                val button = label?.let(::visibleClickableControl)
+                if (label != null && button != null) {
                     val labelBounds = label.visibleBounds
                     val buttonBounds = button.visibleBounds
                     if (labelBounds.height() > 0 && labelBounds.width() > 0 && buttonBounds.contains(labelBounds)) {
                         val bounds = labelBounds to buttonBounds
                         if (bounds == previousBounds) {
-                            // Both nodes are reacquired on each observation. The old helper
-                            // tapped the text child while this post-swipe button still moved.
+                            // Reacquire the label and its actual clickable control until both
+                            // stop moving after a scroll; do not tap a cached text child.
                             if (SystemClock.elapsedRealtime() - stableSince >= 500) ready = button
                         } else {
                             previousBounds = bounds
@@ -270,27 +279,29 @@ class ReleaseRuntimeTest {
             } catch (_: StaleObjectException) {
                 previousBounds = null
             }
-            if (ready != null) {
+            if (ready != null && SystemClock.elapsedRealtime() < end) {
                 remaining(1)
-                // Make one physical activation outside stale-node retry handling. A toggle
-                // must not be repeated merely because its new content starts offscreen.
+                // Exactly one physical activation, outside stale-node retry handling.
+                // Existing callers still require their real dialog/state acknowledgements.
                 ready.click()
-                clicked = true
-                break
+                return
             }
             val settle = minOf(200L, end - SystemClock.elapsedRealtime())
             if (settle > 0) SystemClock.sleep(settle)
         }
-        assertTrue("The Advanced options button did not settle before activation during $phase", clicked)
-        // Require actual expansion before sending checksum input, including a bounded scroll
-        // to the enabled editor when the newly revealed section exceeds the viewport.
-        scrollTo(By.clazz("android.widget.EditText").enabled(true)
-            .hasChild(By.pkg(TARGET_PACKAGE).text("Expected SHA-256 (optional)")), 10_000)
+        throw AssertionError("The enabled control $text did not settle before activation during $phase")
     }
 
-    private fun clickText(text: String, mergedRow: Boolean = false) {
-        // Clickable Compose rows can expose their title and subtitle as one accessibility text.
-        scrollTo(if (mergedRow) By.textContains(text) else By.text(text), 15_000).click()
+    private fun visibleClickableControl(label: UiObject2): UiObject2? {
+        var node: UiObject2? = label
+        while (node != null) {
+            val bounds = node.visibleBounds
+            if (node.applicationPackage != TARGET_PACKAGE || !node.isEnabled ||
+                bounds.height() <= 0 || bounds.width() <= 0) return null
+            if (node.isClickable) return node
+            node = node.parent
+        }
+        return null
     }
 
     private fun scrollTo(selector: BySelector, timeout: Long): UiObject2 {
