@@ -1291,6 +1291,12 @@ These ship in a later version, when they're ready.
 
 ### Being built
 
+- 🔄 **Social posts start at once** in their best quality (TikTok, X, Instagram, Facebook, Threads,
+  their Share buttons' short links too), with **Social posts: start at once** in the Download
+  video window to choose a quality again: checked end to end from Add URL on live X, Facebook and
+  Instagram posts (YouTube still shows its qualities); still to check TikTok (unreachable from the
+  test network), Instagram reels' sound for a visitor not signed in, and Threads, which yt-dlp has
+  no reader for
 - 🔄 **Add torrent**: a **Rename** row (main name and extension) to rename a single-file torrent or a multi-file torrent's folder before the download starts: in review
 - 🔄 Linux, what's left:
   screen readers (Orca) reading BMD's windows; browsers installed as a Flatpak (Firefox from
