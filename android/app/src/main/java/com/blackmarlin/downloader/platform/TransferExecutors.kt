@@ -26,7 +26,9 @@ class TransferJobService : JobService() {
         val id = params.extras.getString(TaskScheduler.TASK) ?: return false
         val epoch = params.extras.getLong(TaskScheduler.EPOCH)
         val stop = AtomicBoolean(false)
-        val key = "${params.jobId}:$epoch"
+        // Android may reuse a numeric job ID after its old task history is removed.
+        // A delayed callback must still identify the original durable task.
+        val key = "$id:${params.jobId}:$epoch"
         stopped[key] = stop
         if (Build.VERSION.SDK_INT >= 34) setNotification(params, params.jobId, graph.notifications.active(), JOB_END_NOTIFICATION_POLICY_REMOVE)
         graph.scope.launch {
@@ -47,8 +49,8 @@ class TransferJobService : JobService() {
         return true
     }
     override fun onStopJob(params: JobParameters): Boolean {
-        stopped["${params.jobId}:${params.extras.getLong(TaskScheduler.EPOCH)}"]?.set(true)
         val id = params.extras.getString(TaskScheduler.TASK) ?: return false
+        stopped["$id:${params.jobId}:${params.extras.getLong(TaskScheduler.EPOCH)}"]?.set(true)
         val reason = if (Build.VERSION.SDK_INT >= 31 && params.stopReason == JobParameters.STOP_REASON_USER) "USER_STOP" else "NETWORK_CHANGED"
         bmdGraph().coordinator.stopFromAndroid(id, params.extras.getLong(TaskScheduler.EPOCH), reason)
         return reason != "USER_STOP"
