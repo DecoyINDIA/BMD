@@ -315,7 +315,7 @@ class TransferCoordinator(private val graph: BmdGraph) {
         val joined = runCatching { releaseNative(run) }.isSuccess
         if (!joined) {
             graph.gate.withLock { owned(run)?.let { dao.update(it.copy(stage = "INTERRUPTED", userResumeRequired = true,
-                detail = "The engine has not confirmed that it stopped. Close and reopen Black Marlin before retrying.", errorCode = "WRITER_NOT_RELEASED")) } }
+                detail = "The engine has not confirmed that this transfer stopped. Open Android App info for Black Marlin, choose Force stop, then reopen it and retry. This interrupts all active transfers. Retained data will be checked when you retry.", errorCode = "WRITER_NOT_RELEASED")) } }
             return@withContext
         }
         run.lease?.let(graph.networks::release)

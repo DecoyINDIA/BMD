@@ -3,6 +3,7 @@ package com.blackmarlin.downloader
 import android.app.Application
 import android.content.Context
 import androidx.room.withTransaction
+import androidx.work.Configuration
 import com.blackmarlin.downloader.bridge.EngineBridge
 import com.blackmarlin.downloader.data.*
 import com.blackmarlin.downloader.domain.DownloadPolicy
@@ -16,10 +17,16 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-class BmdApplication : Application(), BmdUiStoreOwner {
+class BmdApplication : Application(), BmdUiStoreOwner, Configuration.Provider {
     lateinit var graph: BmdGraph
         private set
     override val uiStore: BmdUiStore get() = graph.repository
+    // WorkManager and direct user-initiated jobs share Android's job-ID namespace.
+    // The manifest removes only WorkManager's default initializer so this range is used.
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setJobSchedulerJobIdRange(TaskScheduler.FIRST_WORK_JOB_ID, TaskScheduler.LAST_WORK_JOB_ID)
+            .build()
     override fun onCreate() {
         super.onCreate()
         graph = BmdGraph(this)

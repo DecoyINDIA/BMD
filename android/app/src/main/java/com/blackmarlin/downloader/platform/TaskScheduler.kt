@@ -100,6 +100,10 @@ class TaskScheduler(private val graph: BmdGraph) {
         }
     }
     companion object {
+        const val FIRST_TRANSFER_JOB_ID = 10_000
+        const val LAST_TRANSFER_JOB_ID = 899_000
+        const val FIRST_WORK_JOB_ID = 1_000_000
+        const val LAST_WORK_JOB_ID = 1_999_999
         const val TASK = "task_id"
         const val EPOCH = "schedule_epoch"
         const val SMALL_LOCAL_BYTES = 64L * 1024 * 1024
