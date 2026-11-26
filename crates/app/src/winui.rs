@@ -6830,7 +6830,7 @@ pub mod caption {
             } else {
                 pos2(rect.left() + 16.0, rect.center().y)
             };
-            egui::Image::new(egui::include_image!("../assets/icons/app/bmd-32.png"))
+            egui::Image::from_bytes("bytes://bmd/window-icon.png", crate::WINDOW_ICON_PNG)
                 .paint_at(ui, Rect::from_center_size(icon_c.round(), vec2(16.0, 16.0)));
         }
         let font = if st.bold {

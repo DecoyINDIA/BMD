@@ -2,9 +2,8 @@
 
 [← Back to docs index](README.md)
 
-A theme changes how BMD looks and keeps everything where it was: the same windows, menus and
-buttons in the same places, drawn in other colours, shapes and icons. Each theme has a light and
-a dark side.
+A theme sets the colours, controls and icons for BMD's light and dark modes. Emerald also styles
+the main workspace with a grouped toolbar, a tinted category sidebar and a roomier download list.
 
 ## Pick one
 
@@ -12,12 +11,11 @@ Open **View → Theme** and click a theme: the whole window changes at once, not
 **View → Dark Mode support** and **View → Always dark** then choose its light or dark side, as
 for the classic look ([Dark mode](getting-started.md#dark-mode)).
 
-The built-in themes are **Classic** (BMD's own look, the default), **Native** (your system's
-accent colour and contrast), **High contrast**, and the style themes **Metro**, **Adwaita**,
-**Breeze**, **Luna**, **Aero**, **Aqua** and **Emerald**, each with its own control shapes and
-icons, and on Windows its own title bar. [Getting started](getting-started.md#themes) describes
-each one; the website's [Themes page](https://bmd.example.com/themes.html) shows them
-all, light and dark.
+The built-in themes are **Emerald** (the default for new installations), **Classic** (BMD's
+original look), **Native** (your system's accent colour and contrast), **High contrast**,
+**Metro**, **Adwaita**, **Breeze**, **Luna**, **Aero** and **Aqua**. See the
+[theme descriptions](getting-started.md#themes) and the
+[light and dark previews](https://bmd.example.com/themes.html).
 
 ## Where theme files go
 

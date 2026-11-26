@@ -20,7 +20,7 @@ priority: 0.4
 
 This summary is not the licence. The full text is in the [LICENSE file]({{REPO}}/blob/main/LICENSE) and at [gnu.org/licenses/gpl-3.0](https://www.gnu.org/licenses/gpl-3.0.html).
 
-Copyright © 2026 Ahmed Nefzaoui and contributors.
+Copyright © 2026 DecoyINDIA and contributors.
 
 > BMD is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 >
@@ -30,7 +30,7 @@ Copyright © 2026 Ahmed Nefzaoui and contributors.
 
 | Component | By | Licence |
 |---|---|---|
-| The BMD logo and app icon | Ahmed Nefzaoui, made with ChatGPT image generation | Part of BMD |
+| The BMD logo and app icon | DecoyINDIA | Part of BMD |
 | Lucide icons 1.63 (toolbar, dialogs) | Lucide Icons and contributors | ISC |
 | Tango Icon Theme 0.8.90 (file icons where the system has none) | The Tango Desktop Project | Public domain |
 | flag-icons 7.6 (language flags, and the country flags where a download's server is) | Panayiotis Lipiridis and contributors | MIT |

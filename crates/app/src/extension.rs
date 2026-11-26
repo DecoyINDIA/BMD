@@ -1,10 +1,8 @@
 //! The browser extension's offer: at each start, until a browser's extension has reached the
 //! app (the native host notes it: bmd_ipc::extension::seen), a window lists the browsers
-//! installed and opens the extension's page in the one picked (addons.mozilla.org for Firefox
-//! and its family, the Chrome Web Store for Chrome, Edge, Brave, Opera and Vivaldi), with the
-//! tutorial that adds it by hand as the fallback. Chrome may ask by itself too: registering the
-//! host also names the store's extension to it (crates/nmhost). "Don't ask again" stops the
-//! offer; `/show extension` brings it back.
+//! installed. It opens the add-on page for Firefox, or the local setup guide and bundled
+//! extension path for Chromium browsers. "Don't ask again" stops the offer; `/show extension`
+//! brings it back.
 //!
 //! Safari (macOS) has its extension in the app already (tools/safari): its row says "How to
 //! Add", which opens the steps that turn on an extension Apple hasn't notarized.
@@ -41,6 +39,8 @@ pub fn worth_asking(settings: &crate::settings::Settings) -> bool {
 pub struct Extension {
     /// The browsers installed: name and program. Empty: one row for the system's browser.
     browsers: Vec<(String, Option<PathBuf>)>,
+    /// The unpacked extension included with this BMD install.
+    bundled: Option<PathBuf>,
     /// Where it stands, read beside the window (once a second, and again once a Set it up
     /// finished: its key is [`set_up_runs`]), and what was read last. None before the first
     /// answer ("Checking...").
@@ -104,10 +104,38 @@ fn is_seen(seen: &[String], row: &str) -> bool {
     seen.iter().any(|b| b == named)
 }
 
-/// A row for a browser of Firefox's family (Firefox, Zen, LibreWolf …): it gets the add-on's
-/// page on addons.mozilla.org, not the Chrome Web Store.
+/// A row for a browser of Firefox's family (Firefox, Zen, LibreWolf …) opens addons.mozilla.org.
 fn is_gecko(row: &str) -> bool {
     bmd_ipc::browsers::named(row).is_some_and(|b| b.family == bmd_ipc::browsers::Family::Gecko)
+}
+
+fn bundled_chromium() -> Option<PathBuf> {
+    // An AppImage's mount disappears when BMD closes. Browsers need a permanent folder.
+    #[cfg(target_os = "linux")]
+    if std::env::var_os("APPIMAGE").is_some_and(|image| !image.is_empty()) {
+        return None;
+    }
+    let exe = std::env::current_exe().ok()?;
+    let bin = exe.parent()?;
+    let beside = bin.join("extension").join("chromium");
+    #[cfg(target_os = "linux")]
+    let candidates = [
+        beside,
+        bin.join("extension-chromium"),
+        bin.parent()?.join("share/bmd/extension-chromium"),
+    ];
+    #[cfg(target_os = "macos")]
+    let candidates = [beside, bin.parent()?.join("Resources/extension-chromium")];
+    #[cfg(not(any(target_os = "linux", target_os = "macos")))]
+    let candidates = [beside];
+    candidates
+        .into_iter()
+        .find(|path| path.join("manifest.json").is_file() && path.join("setup.html").is_file())
+}
+
+fn is_chromium(name: &str) -> bool {
+    use bmd_ipc::browsers::{Family, named};
+    named(name).is_some_and(|browser| browser.family == Family::Chromium)
 }
 
 impl Extension {
@@ -131,13 +159,16 @@ impl Extension {
         if browsers.is_empty() {
             browsers.push((String::new(), None));
         }
-        Self::with_reader(browsers, Status::read)
+        let mut extension = Self::with_reader(browsers, Status::read);
+        extension.bundled = bundled_chromium();
+        extension
     }
 
     /// The window for `browsers`, where it stands read by `read`.
     fn with_reader(browsers: Vec<(String, Option<PathBuf>)>, read: fn() -> Status) -> Self {
         Extension {
             browsers,
+            bundled: None,
             status: crate::launch::Asked::default(),
             shown: None,
             read,
@@ -250,17 +281,11 @@ impl Extension {
             ..Status::default()
         });
 
-        // One row per browser: its name, and the button that opens the extension's page in it:
-        // Firefox's on addons.mozilla.org, the Chrome Web Store's for the others (the tutorial
-        // while STORE_ID is a placeholder, as in a build of its own).
-        let store = bmd_ipc::extension::store_page();
+        let mut offers_bundled = false;
+        // One row per browser, with its add-on page or installation instructions.
         for (k, (name, program)) in self.browsers.iter().enumerate() {
             let y = BANNER + 16.0 + k as f32 * ROW;
-            let page = if is_gecko(name) {
-                Some(bmd_ipc::extension::FIREFOX_PAGE.to_owned())
-            } else {
-                store.clone()
-            };
+            let firefox = is_gecko(name);
             winui::text_font(
                 &p,
                 winui::tahoma_bold(),
@@ -275,10 +300,14 @@ impl Extension {
                 ink,
             );
             let safari = name == SAFARI;
+            let local = program
+                .as_ref()
+                .zip(self.bundled.as_ref().filter(|_| is_chromium(name)));
+            offers_bundled |= local.is_some();
             let label = if safari {
                 // i18n: button in the browser extension's window, on Safari's row: open the steps that turn the extension on
                 "How to Add"
-            } else if page.is_none() {
+            } else if !firefox && local.is_none() {
                 // i18n: button in the browser extension's window: open the tutorial that adds the extension
                 "Show me how"
             } else {
@@ -316,12 +345,22 @@ impl Extension {
             );
             if add.clicked() && safari {
                 *open_steps = true;
+            } else if add.clicked()
+                && let Some((program, folder)) = local
+                && let Ok(url) = url::Url::from_file_path(folder.join("setup.html"))
+            {
+                crate::copy_text(ui.ctx(), folder.to_string_lossy().into_owned());
+                #[cfg(windows)]
+                crate::win32::open_in(program, url.as_str());
+                #[cfg(unix)]
+                crate::unix::open_in(program, url.as_str());
             } else if add.clicked() {
-                // No store page: the tutorial on the website, in the interface language.
-                let url = page.clone().unwrap_or_else(|| {
-                    crate::help::page_url(bmd_ipc::extension::GUIDE_DOC, crate::i18n::code())
-                });
-                let url = url.as_str();
+                let guide = format!(
+                    "{}/blob/main/docs/{}",
+                    crate::help::REPO,
+                    bmd_ipc::extension::GUIDE_DOC
+                );
+                let url = guide.as_str();
                 match program {
                     #[cfg(windows)]
                     Some(program) => crate::win32::open_in(program, url),
@@ -380,6 +419,15 @@ impl Extension {
         } else if !known {
             // i18n: in the browser extension's window, while it reads whether the browsers can reach BMD (a moment, usually)
             (crate::i18n::t("Checking...").to_owned(), muted)
+        } else if offers_bundled {
+            (
+                // i18n: Chromium setup instructions shown below the browser buttons
+                crate::i18n::t(
+                    "Add the extension copies the folder path and opens the setup guide. In your browser, open Extensions, turn on Developer mode, choose Load unpacked, and paste the path.",
+                )
+                .to_owned(),
+                muted,
+            )
         } else if connected {
             (
                 crate::i18n::t("Connected: downloads from your browser now come here.").to_owned(),
@@ -387,10 +435,7 @@ impl Extension {
             )
         } else {
             (
-                crate::i18n::t(
-                    "Once it is added, this window says so. Chrome may also ask by itself at its next start.",
-                )
-                .to_owned(),
+                crate::i18n::t("Once it is added, this window says so.").to_owned(),
                 muted,
             )
         };
@@ -404,21 +449,6 @@ impl Extension {
         );
         winui::etched_h(&p, o.x + 16.0, o.y + h - 46.0, W - 32.0);
         let y = h - 36.0;
-        // The fallback, when a store can't be used (a managed browser, a store turned off): the
-        // tutorial, which adds it by hand.
-        if store.is_some()
-            && winui::link(
-                ui,
-                &p,
-                o.x + 18.0,
-                o.y + y + 17.0,
-                // i18n: link in the browser extension's window: the tutorial that adds it without the browser's store
-                "Install it by hand",
-                "by-hand",
-            )
-        {
-            crate::help::open_page(bmd_ipc::extension::GUIDE_DOC);
-        }
         // As wide as their labels in this language (#192), Don't ask again only while no
         // extension has reached BMD.
         let row: Vec<(&str, f32)> = if connected {

@@ -57,13 +57,11 @@ mod win32;
 use bmd_ipc::browsers::HOST_NAME;
 #[cfg(windows)]
 use bmd_ipc::browsers::{Family, Holder, Repair, WINDOWS_HOST_KEYS};
-use bmd_ipc::extension::{FIREFOX_ID, STORE_ID, chromium_ids, store_id};
+#[cfg(not(windows))]
+use bmd_ipc::extension::store_id;
+use bmd_ipc::extension::{FIREFOX_ID, STORE_ID, chromium_ids};
 
-/// Chrome's external extensions: an entry naming the store's extension makes Chrome offer it at
-/// its next start ("New extension added"), the user turning it on there. HKLM's is read from the
-/// 32-bit view on 64-bit Windows, hence /reg:32 (HKCU has one view). Helium reads it too, but
-/// asks Google's address without the browser's version, and Google answers "no update": nothing
-/// is offered there (#685), the app's window opens the store's page in Helium instead.
+/// Older Windows installers wrote a Chrome store offer here. Uninstall still cleans it up.
 #[cfg(windows)]
 const CHROME_EXTERNAL_KEY: &str = r"Software\Google\Chrome\Extensions";
 
@@ -1293,23 +1291,8 @@ fn register(all_users: bool) -> Result<(), String> {
     for (key, family) in WINDOWS_HOST_KEYS {
         reg_point(root, key, &own_manifest(family)?)?;
     }
-    // Chrome offers the store's extension once it is listed (never a placeholder ID).
-    if let Some(id) = store_id() {
-        reg(&[
-            "add",
-            &format!(r"{root}\{CHROME_EXTERNAL_KEY}\{id}"),
-            "/v",
-            "update_url",
-            "/t",
-            "REG_SZ",
-            "/d",
-            bmd_ipc::extension::STORE_UPDATE_URL,
-            "/f",
-            "/reg:32",
-        ])?;
-    }
     println!(
-        "registered {HOST_NAME} for Chrome, Edge, Brave, Helium and the other Chromium browsers \
+        "registered {HOST_NAME} for Chrome, Edge, Brave, Comet, Helium and the other Chromium browsers \
          ({}), and for Firefox, Zen and its other forks ({})",
         own_manifest(Family::Chromium)?.display(),
         own_manifest(Family::Gecko)?.display()

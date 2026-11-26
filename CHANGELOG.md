@@ -834,7 +834,6 @@ This release tightens what BMD accepts from torrents.
   [BMD](https://addons.mozilla.org/firefox/addon/mister-download-manager/),
   installed with one click and kept up to date by Firefox (and by Zen and LibreWolf); the
   Chromium one is in the Chrome Web Store,
-  [BMD](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp),
   for Chrome, Edge, Brave, Opera and Vivaldi, installed with one click and kept up to date.
   Chrome offers it by itself once BMD is installed, and the website, the help and the README
   offer **Add to Firefox** and **Add to Chrome** first. The store's copy needs this release of

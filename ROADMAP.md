@@ -35,6 +35,13 @@ Everything below ships together, in version 0.5.0.
   or drift apart
 - ✅ Linux: Update now asks the package manager which package BMD is; a copy installed by
   another package manager (pacman) is left to the system's updates, with a plain message
+- ✅ The README opens with **Try our application**, a link straight to the Windows setup file, and the website's Download button links to it before any script runs (the README's link names the version: update it with each release)
+- ✅ Publisher and copyright read DecoyINDIA everywhere BMD shows them (the setup, the program's
+  file properties, the website, the code signing policy, the winget ID `DecoyINDIA.BMD`); the
+  previous owner's Firefox add-on link, quotes and press page are gone
+- ✅ Windows: a copy the Microsoft Store installed (the setup run with `/store=1`) is left to the
+  Store's updates, with a plain message, as another package manager's is; the notes for submitting
+  it are in `tools/installer/store-notes.md`
 - ✅ Linux: the .deb and .rpm install the browsers' host files for everyone and remove them on
   uninstall, so nothing is left in the home folders for Chrome, Chromium, Edge, Brave, Vivaldi and
   Firefox (the Snap too); the guide says what the AppImage and the tar.gz leave, and how to remove
@@ -171,7 +178,7 @@ Everything below ships together, in version 0.5.0.
   its bypass list, or an auto-config script
 - ✅ Streams whose address doesn't end in .m3u8 or .mpd, served as plain text, are found too: by
   the button over the video, the right-click menu and the media list, read only when asked
-- ✅ The extension in the [Chrome Web Store](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp): **Add to Chrome** beside **Add to Firefox**
+- ✅ The extension was published in the Chrome Web Store during this release.
   on the website, in the help, the FAQ and the README; BMD's **Add BMD to
   your browser** window opens the store in Chrome, Edge, Brave, Opera and Vivaldi, with the
   manual install as the fallback
@@ -212,10 +219,10 @@ Everything below ships together, in version 0.5.0.
 - ✅ A smaller download: the installer 15 % and the zips 19 % smaller, nothing removed
 - ✅ Linux: BMD's first window opens seconds sooner; the system's fonts are looked up all at once
   while it starts, not one by one in the window (on a busy computer that froze it)
-- ✅ Firefox's add-on offered from [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/)
-  first: **Add to Firefox** on the website, in the help, the FAQ and the README, and in BMD's
-  **Add BMD to your browser** window (for Zen and LibreWolf too)
-- ✅ Support BMD: a way to support its creator on [GitHub Sponsors](https://github.com/sponsors/anefzaoui),
+- ✅ Firefox's add-on will be offered from addons.mozilla.org once BMD's own listing exists; until
+  then the website, the help and BMD's **Add BMD to your browser** window say it isn't there yet
+  and point Firefox users to the setup guide
+- ✅ Support BMD: a way to support its creator on [GitHub Sponsors](https://github.com/sponsors/DecoyINDIA),
   asked for only (**Help → Support BMD**, a line in About, the website, the README, the
   extension's popup and GitHub's Sponsor button); BMD stays free, nothing changes or unlocks
 - ✅ A server that can't resume a download no longer gets the file downloaded twice on a busy
@@ -962,7 +969,7 @@ Everything below ships together, in version 1.0.0, the first release as BMD.
   30 minutes, 1 hour, 8 hours or until BMD restarts, and Options → Downloads says until when, with
   Resume now
 - ✅ WinGet in the install steps: the README, the help and the website's download page give
-  `winget install AhmedNefzaoui.BMD` and `winget upgrade`
+  `winget install DecoyINDIA.BMD` and `winget upgrade`
 - ✅ The Download video button, redesigned: BMD looks the video up as the
   button appears and the button names the best quality, which one click downloads; a plain file
   downloads as a file; its menu lists every quality; after a click it says what happened in its
@@ -1267,10 +1274,8 @@ Everything below ships together, in version 1.0.0, the first release as BMD.
 - ✅ Website: Linux is called supported everywhere (no longer "experimental" or "to try"; macOS
   still is); the download page's **Get it safely** lists the official places to get BMD, how to
   check a download's checksum and signature, and why Windows or an antivirus may warn; the home
-  page shows the browser stores' and GitHub's figures and what reviewers wrote, quoted exactly;
-  a new [Press and mentions](https://bmd.example.com/press.html) page lists articles and
-  videos by language, the fair criticism of the benchmark, and where BMD is available (official
-  first, community packages labelled); the benchmark's figures say they come from a test server
+  page no longer shows store figures, quotes or a press page (they described another project, so
+  they were removed until real ones about BMD exist); the benchmark's figures say they come from a test server
   on the same PC
 - ✅ CI's Linux libraries step retries a slow package mirror instead of timing out
 - ✅ Website: a [code signing policy](https://bmd.example.com/code-signing-policy.html)

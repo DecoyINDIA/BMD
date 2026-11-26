@@ -56,6 +56,11 @@ pub fn metrics() -> &'static Metrics {
     &current().metrics
 }
 
+/// Emerald uses its own desktop workspace layout alongside the shared control theme.
+pub fn emerald_workspace() -> bool {
+    current().id == "emerald"
+}
+
 /// Is what is drawn now a dark surface (light text on dark)? The classic look's dark variant
 /// is; a theme says for each of its variants. Glyph rendering and the window captions follow it.
 pub fn dark_surface() -> bool {

@@ -100,8 +100,8 @@ light and a dark palette, metrics, control styles and an icon style (`palette.rs
   accent).
 - **Control styles.** `palette::Controls` names each control's shape (text boxes, check boxes,
   buttons, progress bars, scroll bars, the focus mark, the title bar); the style themes (Metro,
-  Adwaita, Breeze, Luna, Aero, Aqua, Emerald) pick theirs, and on Windows BMD then draws the
-  title bar itself (the `caption.*` roles).
+  Adwaita, Breeze, Luna, Aero, Aqua, Emerald) pick theirs. On Windows BMD draws custom title bars
+  for themes that select one (the `caption.*` roles).
 - **Theme files.** `themefile.rs` reads TOML or JSON from the data folder's `themes` (one file,
   or `<id>/theme.toml` with icons beside it). A file names only what it changes; the rest comes
   from the theme it `inherits` (a built-in's id or another file, the classic look by default),
@@ -111,8 +111,8 @@ light and a dark palette, metrics, control styles and an icon style (`palette.rs
   `cat-music`…, SVG or PNG at 16, 24, 32 and 48 px, `-symbolic` ones inked in the text colour)
   where the classic look draws its own; a need the set lacks keeps the classic icon.
 
-Where a window puts its controls stays its layout. So do the icons
-before file names (`fileicons.rs`): the Windows shell's system image lists, macOS Finder's
+Emerald uses its own spacing and presentation in the main toolbar, categories and download list.
+Themes share the platform icons before file names (`fileicons.rs`): the Windows shell's system image lists, macOS Finder's
 (NSWorkspace), the Linux desktop's icon theme (`xdgicons.rs`, shared-mime-info and the Icon
 Theme Specification). Each type is looked up once per pixel size, on a background thread. Tango's
 icons (bundled) stand in until the system's icon is ready, and wherever the system has none.
@@ -174,8 +174,9 @@ The host serves only BMD's own extension. Its IDs are in one place, `bmd_ipc::ex
 key), the Chrome Web Store's (`STORE_ID`, signed with the store's own key: `pack.ps1` leaves the
 manifest's key out of the store's copy), the Firefox add-on's (`FIREFOX_ID`) and its
 addons.mozilla.org page; the Edge and Opera stores' are placeholders, never served, until the
-extension is listed there. The host writes each browser's manifest with those IDs, and the app
-offers the store's copy (Add to Chrome, Add to Firefox) before the unpacked one.
+extension is listed there. The host writes each browser's manifest with those IDs. The app opens
+the Firefox add-on listing or the local Chromium setup guide and copies the bundled extension
+folder path. The manual installation guide covers builds without the bundled folder.
 
 ## Remote control
 

@@ -44,7 +44,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = "DecoyINDIA/BMD"
-MAINTAINER = "anefzaoui"
+MAINTAINER = "DecoyINDIA"
 API = "https://api.github.com"
 # The README's round avatars (`readme`), committed: GitHub can't round an image in a README.
 README_AVATARS = ROOT / "art" / "contributors"
