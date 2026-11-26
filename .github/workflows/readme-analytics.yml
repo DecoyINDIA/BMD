@@ -1,5 +1,6 @@
-# Refreshes DecoyINDIA/BMD's live GitHub release & repository telemetry (data/analytics/downloads.json)
-# and regenerates the Waybill-styled analytics SVGs (assets/readme/analytics/*.svg) every 6 hours.
+# Refreshes DecoyINDIA/BMD's live GitHub release & repository telemetry (data/analytics/downloads.json),
+# regenerates the Pelagic Orbital analytics SVGs (and Living Adoption WebPs when Velocity deps exist),
+# and updates README.md's plain-text telemetry table every 6 hours.
 name: README Analytics
 
 on:
@@ -31,13 +32,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python scripts/readme/collect_stats.py
 
-      - name: Generate Waybill analytics SVGs
-        run: python scripts/readme/generate_analytics.py
+      - name: Generate Pelagic Orbital analytics SVGs & telemetry table
+        run: python scripts/readme/generate_analytics.py --with-webp-if-available
 
       - name: Run analytics unit tests
         run: python -m unittest scripts/readme/test_analytics.py
 
-      - name: Validate SVG assets and budgets
+      - name: Validate analytics SVG & WebP assets and budgets
         run: python scripts/readme/validate_assets.py --analytics-only
 
       - name: Commit updated telemetry if changed

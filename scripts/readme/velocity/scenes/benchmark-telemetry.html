@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, drawRoundedRect
+} from '/velocity/lib/core.mjs';
+
+let ctx, W, H, P, benchData;
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width;
+  H = height;
+  P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+
+  const res = await fetch('/repo/website/bench/results.json');
+  benchData = await res.json();
+
+  const c = document.getElementById('c');
+  c.width = W; c.height = H;
+  ctx = c.getContext('2d');
+};
+
+window.renderFrame = async (t, progress) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = P.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const byId = Object.fromEntries(benchData.scenarios.map((s) => [s.id, s]));
+  const fast = byId['fast-1g'];
+  const bmd = fast.clients.BMD.stats;
+  const idm = fast.clients.IDM.stats;
+
+  // Seamless loop fade
+  const loopVis = smoothstep(0.0, 0.04, progress) * (1 - smoothstep(0.92, 0.995, progress));
+
+  // Header
+  ctx.save();
+  ctx.globalAlpha = 0.35 + 0.65 * loopVis;
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 12px "IBM Plex Mono", monospace';
+  ctx.fillText('LOCALHOST LABSERVER (127.0.0.1:8097)  ·  BMD caa200c vs IDM 6.42.25.3  ·  0 FAILURES', 44, 36);
+  ctx.fillStyle = P.text;
+  ctx.font = '700 25px "Space Grotesk", sans-serif';
+  ctx.fillText('Performance Measured: Startup Delay vs. Sustained Transfer', 44, 68);
+  ctx.restore();
+
+  // ---------------- UPPER STAGE: 3-PHASE TEMPORAL TOPOGRAPHY (fast-1g, 1 GiB) ----------------
+  const stageX = 44, stageY = 88, stageW = W - 88, stageH = 226;
+  ctx.save();
+  ctx.globalAlpha = loopVis;
+  drawRoundedRect(ctx, stageX, stageY, stageW, stageH, 10);
+  ctx.fillStyle = P.surface;
+  ctx.fill();
+  ctx.strokeStyle = P.hairlineStrong;
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  ctx.fillStyle = P.text;
+  ctx.font = '700 16px "Space Grotesk", sans-serif';
+  ctx.fillText('1 GiB Fast Local Link (fast-1g · 7-run medians)', stageX + 20, stageY + 30);
+
+  ctx.fillStyle = P.primary;
+  ctx.font = '700 18px "IBM Plex Mono", monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('5.41× FASTER END-TO-END', stageX + stageW - 20, stageY + 30);
+  ctx.textAlign = 'left';
+
+  // Axis 0..6000 ms mapped cleanly
+  const ax0 = stageX + 165, axW = stageW - 295, maxMs = 6000;
+  const pxPerMs = axW / maxMs;
+
+  // Vertical time ticks + phase boundaries
+  for (let s = 0; s <= 6; s++) {
+    const tx = ax0 + s * 1000 * pxPerMs;
+    ctx.strokeStyle = P.hairline;
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(tx, stageY + 52); ctx.lineTo(tx, stageY + 194); ctx.stroke();
+    ctx.fillStyle = P.textDim;
+    ctx.font = '500 12px "IBM Plex Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(`${s} s`, tx, stageY + 210);
+  }
+  ctx.textAlign = 'left';
+
+  // Time sweep across 0..6000 ms during progress 0.08..0.72
+  const sweepMs = easeInOutCubic(remap(progress, 0.08, 0.72)) * 6000;
+  const sweepX = ax0 + sweepMs * pxPerMs;
+
+  // BMD Phase breakdown (13.7 ms start + 438.0 ms transfer + 555.6 ms finish = 1009.35 ms)
+  const bStart = bmd.startup_ms.median;
+  const bXfer = bmd.transfer_ms.median;
+  const bFin = bmd.finish_ms.median;
+  const bTotal = bmd.e2e_ms.median;
+
+  // IDM Phase breakdown (3075.7 ms start + 1831.0 ms transfer + 545.1 ms finish = 5456.38 ms)
+  const iStart = idm.startup_ms.median;
+  const iXfer = idm.transfer_ms.median;
+  const iFin = idm.finish_ms.median;
+  const iTotal = idm.e2e_ms.median;
+
+  // Draw Hydrodynamic Velocity Waveforms (3-Phase Topography)
+  function drawPhaseRibbon(yCenter, totalMs, startMs, xferMs, isBmd) {
+    const curMs = Math.min(totalMs, sweepMs);
+    if (curMs <= 0) return;
+
+    const endX = ax0 + curMs * pxPerMs;
+    // Startup region
+    const sEndMs = Math.min(curMs, startMs);
+    const sEndX = ax0 + sEndMs * pxPerMs;
+
+    if (sEndMs > 0) {
+      ctx.save();
+      if (isBmd) {
+        ctx.fillStyle = P.specular;
+        ctx.fillRect(ax0, yCenter - 14, Math.max(4, sEndX - ax0), 28);
+      } else {
+        // IDM 3.08s cold-start churn zone (visualized as agitated amber/slate wave)
+        ctx.beginPath();
+        ctx.moveTo(ax0, yCenter);
+        for (let x = ax0; x <= sEndX; x += 6) {
+          const amp = 8 + 4 * Math.sin(x * 0.14 - progress * Math.PI * 16);
+          ctx.lineTo(x, yCenter - amp);
+        }
+        for (let x = sEndX; x >= ax0; x -= 6) {
+          const amp = 8 + 4 * Math.sin(x * 0.14 - progress * Math.PI * 16);
+          ctx.lineTo(x, yCenter + amp);
+        }
+        ctx.closePath();
+        ctx.fillStyle = P.isDark ? 'rgba(245, 158, 11, 0.32)' : 'rgba(217, 119, 6, 0.25)';
+        ctx.fill();
+        ctx.strokeStyle = P.amber;
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    // Transfer + Finish hydrodynamic ribbon
+    if (curMs > startMs) {
+      const x0 = ax0 + startMs * pxPerMs;
+      const xferEndX = ax0 + Math.min(curMs, startMs + xferMs) * pxPerMs;
+
+      // Transfer phase
+      ctx.beginPath();
+      const h = isBmd ? 16 : 12;
+      ctx.moveTo(x0, yCenter - h);
+      for (let x = x0; x <= xferEndX; x += 6) {
+        const wave = Math.sin((x - x0) * 0.08 - progress * Math.PI * 12) * (isBmd ? 2.5 : 1.5);
+        ctx.lineTo(x, yCenter - h + wave);
+      }
+      for (let x = xferEndX; x >= x0; x -= 6) {
+        const wave = Math.sin((x - x0) * 0.08 - progress * Math.PI * 12) * (isBmd ? 2.5 : 1.5);
+        ctx.lineTo(x, yCenter + h - wave);
+      }
+      ctx.closePath();
+      ctx.fillStyle = isBmd ? P.primary : (P.isDark ? 'rgba(148, 179, 166, 0.38)' : 'rgba(43, 66, 57, 0.35)');
+      ctx.fill();
+
+      // Finish phase
+      if (curMs > startMs + xferMs) {
+        const finStart = xferEndX;
+        drawRoundedRect(ctx, finStart, yCenter - (isBmd ? 14 : 10), Math.max(2, endX - finStart), isBmd ? 28 : 20, 4);
+        ctx.fillStyle = isBmd ? P.glow : P.textDim;
+        ctx.fill();
+      }
+    }
+
+    // Readout label
+    const done = sweepMs >= totalMs;
+    ctx.fillStyle = isBmd ? (done ? P.primary : P.text) : P.textMuted;
+    ctx.font = '700 14px "IBM Plex Mono", monospace';
+    const msShown = Math.round(curMs);
+    ctx.fillText(`${msShown.toLocaleString('en-US')} ms`, endX + 12, yCenter + 5);
+  }
+
+  // Labels left column
+  ctx.fillStyle = P.text;
+  ctx.font = '700 16px "Space Grotesk", sans-serif';
+  ctx.fillText('BMD (8 conns)', stageX + 20, stageY + 86);
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 12.5px "IBM Plex Mono", monospace';
+  ctx.fillText('13.7 ms startup', stageX + 20, stageY + 106);
+
+  ctx.fillStyle = P.textMuted;
+  ctx.font = '700 16px "Space Grotesk", sans-serif';
+  ctx.fillText('IDM 6.42.25.3', stageX + 20, stageY + 150);
+  ctx.fillStyle = P.amber;
+  ctx.font = '600 12.5px "IBM Plex Mono", monospace';
+  ctx.fillText('3,075.7 ms wait', stageX + 20, stageY + 170);
+
+  drawPhaseRibbon(stageY + 90, bTotal, bStart, bXfer, true);
+  drawPhaseRibbon(stageY + 154, iTotal, iStart, iXfer, false);
+
+  // Callout annotation pointing out IDM's 3.08s startup gap while BMD already finishes
+  const calloutAlpha = smoothstep(0.18, 0.28, progress) * (1 - smoothstep(0.90, 0.98, progress));
+  if (calloutAlpha > 0.02) {
+    ctx.save();
+    ctx.globalAlpha = loopVis * calloutAlpha;
+    const midStartX = ax0 + 1540 * pxPerMs;
+    ctx.fillStyle = P.amber;
+    ctx.font = '600 12.5px "IBM Plex Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('IDM STALLS 3.08 s BEFORE TRANSFER', midStartX, stageY + 128);
+    ctx.textAlign = 'left';
+    ctx.restore();
+  }
+
+  // Playhead cursor during sweep
+  if (progress > 0.08 && progress < 0.74) {
+    ctx.strokeStyle = P.specular;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(sweepX, stageY + 52); ctx.lineTo(sweepX, stageY + 194); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.restore();
+
+  // ---------------- LOWER STAGE: CRISP 6-SCENARIO PHASED MATRIX (>=15px MOBILE-SAFE) ----------------
+  const scenarios = [
+    { id: 'small-256k',   title: '256 KiB Small File',       note: '15 runs · startup dominates' },
+    { id: 'drops-50m',    title: '50 MiB · Drop Every 2M',   note: '4 MB/s · fault recovery' },
+    { id: 'slowconn-32m', title: '32 MiB · 1/3 @ 128 KB/s',  note: 'slow-worker shed + re-split' },
+    { id: 'latency-100m', title: '100 MiB · 150 ms RTT',     note: '4 MB/s per conn' },
+    { id: 'capped-100m',  title: '100 MiB · 2 MB/s Cap',     note: 'bandwidth-saturated' },
+    { id: 'maxconns-50m', title: '50 MiB · Max 2 Conns',     note: 'BMD 2 vs IDM 480 conns' },
+  ];
+
+  const cardW = (W - 88 - 20) / 2;
+  const cardH = 74;
+  scenarios.forEach((meta, idx) => {
+    const col = idx % 2;
+    const row = Math.floor(idx / 2);
+    const cx = 44 + col * (cardW + 20);
+    const cy = 330 + row * (cardH + 12);
+
+    const reveal = easeOutExpo(remap(progress, 0.32 + idx * 0.055, 0.50 + idx * 0.055));
+    const sc = byId[meta.id];
+    const bMs = sc.clients.BMD.stats.e2e_ms.median;
+    const iMs = sc.clients.IDM.stats.e2e_ms.median;
+    const ratio = sc.compare.ratio_idm_over_bmd;
+
+    ctx.save();
+    ctx.globalAlpha = loopVis * (0.35 + 0.65 * reveal);
+    drawRoundedRect(ctx, cx, cy, cardW, cardH, 8);
+    ctx.fillStyle = P.surface;
+    ctx.fill();
+    ctx.strokeStyle = reveal > 0.85 ? P.hairlineStrong : P.hairline;
+    ctx.stroke();
+
+    // Title & Ratio (>= 15.5px for crisp mobile read!)
+    ctx.fillStyle = P.text;
+    ctx.font = '700 16px "Space Grotesk", sans-serif';
+    ctx.fillText(meta.title, cx + 16, cy + 23);
+
+    ctx.fillStyle = P.primary;
+    ctx.font = '700 17.5px "IBM Plex Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(`${ratio.toFixed(2)}×`, cx + cardW - 16, cy + 24);
+    ctx.textAlign = 'left';
+
+    ctx.fillStyle = P.textMuted;
+    ctx.font = '500 13px "IBM Plex Mono", monospace';
+    ctx.fillText(meta.note, cx + 16, cy + 43);
+
+    // Split IDM's mini bar into Amber Cold-Start + Slate Transfer (matching the upper 3-phase topography!)
+    const barX = cx + 16, barW = cardW - 220;
+    const bRatioW = Math.max(5, barW * (bMs / iMs) * reveal);
+    const iStartFrac = sc.clients.IDM.stats.startup_ms.median / iMs;
+    const iStartW = barW * iStartFrac * reveal;
+    const iRunW = barW * (1 - iStartFrac) * reveal;
+
+    // BMD bar
+    drawRoundedRect(ctx, barX, cy + 52, bRatioW, 6, 2);
+    ctx.fillStyle = P.primary;
+    ctx.fill();
+
+    // IDM bar: Amber startup stall + Slate transfer
+    if (iStartW > 1) {
+      drawRoundedRect(ctx, barX, cy + 61, iStartW, 5, 2);
+      ctx.fillStyle = P.amber;
+      ctx.fill();
+    }
+    if (iRunW > 1) {
+      drawRoundedRect(ctx, barX + iStartW, cy + 61, iRunW, 5, 2);
+      ctx.fillStyle = P.isDark ? 'rgba(148, 179, 166, 0.45)' : 'rgba(43, 66, 57, 0.38)';
+      ctx.fill();
+    }
+
+    // Exact numeric medians
+    ctx.fillStyle = P.text;
+    ctx.font = '600 13.5px "IBM Plex Mono", monospace';
+    ctx.textAlign = 'right';
+    const bStr = bMs < 1000 ? `${bMs.toFixed(1)}ms` : `${(bMs / 1000).toFixed(2)}s`;
+    const iStr = `${(iMs / 1000).toFixed(2)}s`;
+    ctx.fillText(`${bStr} vs ${iStr}`, cx + cardW - 16, cy + 65);
+    ctx.textAlign = 'left';
+
+    ctx.restore();
+  });
+
+  // Honest Caveat & Tradeoff Footer (>= 13.5px for crisp 380w mobile read!)
+  ctx.save();
+  ctx.globalAlpha = loopVis;
+  ctx.fillStyle = P.textMuted;
+  ctx.font = '500 13.5px "IBM Plex Mono", monospace';
+  ctx.fillText('Scope: localhost labserver (no WAN loss/TLS) · Peak RAM: BMD 96–106 MB vs IDM 43–48 MB · p < 0.001', 44, H - 15);
+  ctx.restore();
+};
+</script>
+</body>
+</html>

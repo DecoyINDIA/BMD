@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, drawRoundedRect
+} from '/velocity/lib/core.mjs';
+
+let ctx, W, H, P;
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width; H = height; P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+  const c = document.getElementById('c');
+  c.width = W; c.height = H;
+  ctx = c.getContext('2d');
+};
+
+window.renderFrame = async (t, progress) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = P.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const loopFade = smoothstep(0.0, 0.04, progress) * (1 - smoothstep(0.92, 0.995, progress));
+
+  // Header
+  ctx.save();
+  ctx.globalAlpha = 0.35 + 0.65 * loopFade;
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+  ctx.fillText('CARGO WORKSPACE  ·  15 RUST CRATES + EXTENSION/  ·  UNSAFE_CODE = "DENY"', 44, 36);
+  ctx.fillStyle = P.text;
+  ctx.font = '700 24px "Space Grotesk", sans-serif';
+  ctx.fillText('Architecture in Motion: Strictly Inward Dependency Spine', 44, 66);
+  ctx.restore();
+
+  const strataIn1 = easeOutExpo(remap(progress, 0.06, 0.22));
+  const strataIn2 = easeOutExpo(remap(progress, 0.22, 0.40));
+  const strataIn3 = easeOutExpo(remap(progress, 0.36, 0.56));
+  const strataIn4 = easeOutExpo(remap(progress, 0.48, 0.68));
+  const unsafePulse = smoothstep(0.64, 0.78, progress) * (1 - smoothstep(0.88, 0.96, progress));
+
+  ctx.save();
+  ctx.globalAlpha = loopFade;
+
+  // Stratum 1: 6 Entry Surfaces
+  const t1 = [
+    ['extension/', 'Browser Ext', 'MV3 / Firefox / Safari'],
+    ['bmd-nmhost', 'Native Host', '1 MiB LinksPart'],
+    ['bmd-app',    'egui Desktop', 'D3D12 / GL / Vulkan'],
+    ['bmd-cli',    'Headless CLI', 'Scriptable JSON'],
+    ['bmd-mcp',    'AI MCP Server', '7 stdio tools'],
+    ['bmd-remote', 'LAN HTTPS',     'QR + Token :8463'],
+  ];
+  t1.forEach(([pathLbl, name, sub], i) => {
+    const bw = 172, bx = 44 + i * 188, by = lerp(110, 96, strataIn1);
+    ctx.globalAlpha = loopFade * (0.25 + 0.75 * strataIn1);
+    drawRoundedRect(ctx, bx, by, bw, 74, 8);
+    ctx.fillStyle = P.surface;
+    ctx.fill();
+    ctx.strokeStyle = strataIn1 > 0.7 ? P.hairlineStrong : P.hairline;
+    ctx.stroke();
+
+    ctx.fillStyle = P.textDim;
+    ctx.font = '500 10px "IBM Plex Mono", monospace';
+    ctx.fillText(pathLbl, bx + 12, by + 20);
+    ctx.fillStyle = P.text;
+    ctx.font = '700 14.5px "Space Grotesk", sans-serif';
+    ctx.fillText(name, bx + 12, by + 42);
+    ctx.fillStyle = P.textMuted;
+    ctx.font = '400 11px "IBM Plex Sans", sans-serif';
+    ctx.fillText(sub, bx + 12, by + 60);
+
+    // Inward dependency pulse arrow down to Tier 2
+    const ax = bx + bw / 2;
+    ctx.strokeStyle = P.primary;
+    ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(ax, by + 74); ctx.lineTo(ax, 206); ctx.stroke();
+
+    const pktY = lerp(by + 74, 206, (progress * 3 + i * 0.14) % 1);
+    ctx.fillStyle = P.specular;
+    ctx.beginPath(); ctx.arc(ax, pktY, 2.5, 0, Math.PI * 2); ctx.fill();
+  });
+
+  // Stratum 2: bmd-ipc + bmd-cnl
+  ctx.globalAlpha = loopFade * (0.25 + 0.75 * strataIn2);
+  drawRoundedRect(ctx, 44, 206, 860, 58, 9);
+  ctx.fillStyle = P.isDark ? 'rgba(85,201,157,0.10)' : 'rgba(19,111,80,0.07)';
+  ctx.fill();
+  ctx.strokeStyle = P.primary;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.fillStyle = P.primary;
+  ctx.font = '700 14px "IBM Plex Mono", monospace';
+  ctx.fillText('bmd-ipc  ·  Single-Instance Automation Bus (bmd_deps: [])', 64, 232);
+  ctx.fillStyle = P.textMuted;
+  ctx.font = '400 12px "IBM Plex Sans", sans-serif';
+  ctx.fillText('Token-protected 127.0.0.1 socket · Shared capture rules · Zero UI coupling', 64, 252);
+
+  drawRoundedRect(ctx, 922, 206, 234, 58, 9);
+  ctx.fillStyle = P.surface;
+  ctx.fill();
+  ctx.strokeStyle = P.hairlineStrong;
+  ctx.stroke();
+  ctx.fillStyle = P.text;
+  ctx.font = '700 13.5px "IBM Plex Mono", monospace';
+  ctx.fillText('bmd-cnl (:9666)', 940, 232);
+  ctx.fillStyle = P.textMuted;
+  ctx.font = '400 11.5px "IBM Plex Sans", sans-serif';
+  ctx.fillText("Click'n'Load 2 listener", 940, 252);
+
+  // Bus to Engine arrow
+  ctx.strokeStyle = P.primary;
+  ctx.lineWidth = 2.4;
+  ctx.beginPath(); ctx.moveTo(W * 0.5, 264); ctx.lineTo(W * 0.5, 296); ctx.stroke();
+
+  // Stratum 3: bmd-engine Core Spine
+  ctx.globalAlpha = loopFade * (0.25 + 0.75 * strataIn3);
+  drawRoundedRect(ctx, 44, 296, W - 88, 86, 10);
+  ctx.fillStyle = P.surface;
+  ctx.fill();
+  ctx.strokeStyle = P.primary;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  drawRoundedRect(ctx, 44, 296, 8, 86, 3);
+  ctx.fillStyle = P.primary;
+  ctx.fill();
+
+  ctx.fillStyle = P.text;
+  ctx.font = '700 18px "Space Grotesk", sans-serif';
+  ctx.fillText('bmd-engine  ·  Core Segmented Transfer Engine (bmd_deps: [])', 68, 326);
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 12px "IBM Plex Mono", monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('HTTP/1.1 · HTTPS · FTP/FTPS · BoringSSL', W - 64, 326);
+  ctx.textAlign = 'left';
+
+  ctx.fillStyle = P.textMuted;
+  ctx.font = '500 12.5px "IBM Plex Mono", monospace';
+  ctx.fillText('probe() -> Planner (midpoint re-split) -> Worker x N -> HostLimits -> Sparse .bmd.part + atomic .bmd.json', 68, 352);
+  ctx.fillStyle = P.textDim;
+  ctx.fillText('Engine knows NOTHING of UI, CLI, or extensions — every dependency points strictly inward', 68, 370);
+
+  // Stratum 4: 7 Specialist Crates
+  const t4 = [
+    ['bmd-torrent', 'librqbit + uTP'],
+    ['bmd-tools',   'yt-dlp / ffmpeg'],
+    ['bmd-debrid',  '5 Debrid APIs'],
+    ['bmd-extract', 'zip / 7z / Hatch'],
+    ['bmd-geo',     'DB-IP + 250 flags'],
+    ['bmd-crash',   'Watchdog + dump'],
+    ['bmd-labserver', 'Fault bench'],
+  ];
+  t4.forEach(([name, sub], i) => {
+    const bw = 148, bx = 44 + i * 160, by = lerp(426, 412, strataIn4);
+    ctx.globalAlpha = loopFade * (0.25 + 0.75 * strataIn4);
+    ctx.strokeStyle = P.hairlineStrong;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(bx + bw / 2, 382); ctx.lineTo(bx + bw / 2, by); ctx.stroke();
+
+    drawRoundedRect(ctx, bx, by, bw, 68, 8);
+    ctx.fillStyle = P.surface;
+    ctx.fill();
+    ctx.strokeStyle = P.hairline;
+    ctx.stroke();
+
+    ctx.fillStyle = P.text;
+    ctx.font = '700 13px "IBM Plex Mono", monospace';
+    ctx.fillText(name, bx + 12, by + 28);
+    ctx.fillStyle = P.textMuted;
+    ctx.font = '400 11.5px "IBM Plex Sans", sans-serif';
+    ctx.fillText(sub, bx + 12, by + 50);
+  });
+
+  // Verified unsafe_code="deny" footer pill
+  ctx.globalAlpha = loopFade * (0.55 + 0.45 * unsafePulse);
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+  ctx.fillText('Safety boundary: unsafe_code = "deny" workspace-wide · allow(unsafe_code) isolated to 5 OS/sparse files (app/win32, app/unix, engine/disk, engine/sparse, nmhost/win32)', 44, H - 20);
+
+  ctx.restore();
+};
+</script>
+</body>
+</html>

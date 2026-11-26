@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, drawRoundedRect
+} from '/velocity/lib/core.mjs';
+
+let ctx, W, H, P;
+
+const PEERS = Array.from({ length: 16 }, (_, i) => {
+  const angle = (i / 16) * Math.PI * 2;
+  const blocked = i === 2 || i === 9 || i === 13;
+  const utp = i % 2 === 0;
+  return { id: i, angle, blocked, utp };
+});
+
+// Deterministic piece activation order (out-of-order swarm arrival)
+const COLS = 20, ROWS = 10;
+const PIECE_ORDER = Array.from({ length: COLS * ROWS }, (_, idx) => {
+  const hash = ((idx * 73 + 19) % (COLS * ROWS)) / (COLS * ROWS);
+  return { idx, col: idx % COLS, row: Math.floor(idx / COLS), arrival: 0.14 + hash * 0.54 };
+});
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width; H = height; P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+  const c = document.getElementById('c');
+  c.width = W; c.height = H;
+  ctx = c.getContext('2d');
+};
+
+window.renderFrame = async (t, progress) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = P.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const loopFade = smoothstep(0.0, 0.04, progress) * (1 - smoothstep(0.91, 0.995, progress));
+
+  // Header
+  ctx.save();
+  ctx.globalAlpha = 0.35 + 0.65 * loopFade;
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+  ctx.fillText('CRATES/TORRENT  ·  LIBRQBIT + LIBRQBIT-UTP  ·  DHT + IP BLOCKLIST', 44, 36);
+  ctx.fillStyle = P.text;
+  ctx.font = '700 24px "Space Grotesk", sans-serif';
+  ctx.fillText('Distributed Intelligence: Swarm Filtering & Piece Convergence', 44, 66);
+  ctx.restore();
+
+  // Left: Swarm Field & Blocklist Ring (cx=310, cy=264)
+  const cx = 310, cy = 264, blockR = 128, peerR = 166;
+  ctx.save();
+  ctx.globalAlpha = loopFade;
+
+  // Magnet origin pulse
+  const magR = 26 + ((progress * 2) % 1) * 95;
+  ctx.strokeStyle = P.primary;
+  ctx.globalAlpha = loopFade * (1 - ((progress * 2) % 1)) * 0.35;
+  ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.arc(cx, cy, magR, 0, Math.PI * 2); ctx.stroke();
+
+  // IP Blocklist / Peer Filter Perimeter Ring
+  ctx.globalAlpha = loopFade;
+  ctx.strokeStyle = P.hairlineStrong;
+  ctx.setLineDash([5, 4]);
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(cx, cy, blockR, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = P.textDim;
+  ctx.font = '600 9.5px "IBM Plex Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('PEER FILTER + IP BLOCKLIST', cx, cy - blockR - 8);
+  ctx.textAlign = 'left';
+
+  // Central Swarm Core
+  drawRoundedRect(ctx, cx - 34, cy - 22, 68, 44, 8);
+  ctx.fillStyle = P.surface;
+  ctx.fill();
+  ctx.strokeStyle = P.primary;
+  ctx.lineWidth = 1.6;
+  ctx.stroke();
+  ctx.fillStyle = P.text;
+  ctx.font = '700 11.5px "IBM Plex Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('uTP / TCP', cx, cy + 4);
+  ctx.textAlign = 'left';
+
+  // Orbiting peers + Bezier data tethers
+  const swarmConnect = easeOutExpo(remap(progress, 0.08, 0.32));
+  PEERS.forEach((peer) => {
+    const a = peer.angle + progress * Math.PI * 2 / 4; // quarter-turn symmetry? No, 16 peers -> 1/16 turn is 2*PI/16!
+    // Wait: 16 peers evenly spaced around circle! Advancing by 2*PI/8 makes every peer land cleanly on another peer of same type?
+    // Wait: blocked peers are at 2,9,13 (not symmetric!), so use exact full 2*PI orbit for 100% seamless loop!
+    const exactA = peer.angle + progress * Math.PI * 2;
+    const px = cx + Math.cos(exactA) * peerR;
+    const py = cy + Math.sin(exactA) * peerR;
+
+    if (peer.blocked) {
+      // Blocked peer bounces off the outer blocklist ring!
+      const bounce = Math.abs(Math.sin(progress * Math.PI * 4 + peer.id));
+      const bx = cx + Math.cos(exactA) * lerp(blockR + 6, peerR + 12, bounce);
+      const by = cy + Math.sin(exactA) * lerp(blockR + 6, peerR + 12, bounce);
+      ctx.strokeStyle = P.crimson;
+      ctx.globalAlpha = loopFade * 0.45;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(cx + Math.cos(exactA) * blockR, cy + Math.sin(exactA) * blockR); ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.globalAlpha = loopFade;
+      ctx.fillStyle = P.crimson;
+      ctx.beginPath(); ctx.arc(bx, by, 5.5, 0, Math.PI * 2); ctx.fill();
+    } else {
+      // Valid TCP / uTP peer tether
+      ctx.globalAlpha = loopFade * 0.5 * swarmConnect;
+      ctx.strokeStyle = peer.utp ? P.primary : P.cyan;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(px, py);
+      ctx.quadraticCurveTo(cx + Math.cos(exactA + 0.35) * 70, cy + Math.sin(exactA + 0.35) * 70, cx, cy);
+      ctx.stroke();
+
+      // Traveling packet along curve
+      const pktT = (progress * 3 + peer.id * 0.13) % 1;
+      const cpx = cx + Math.cos(exactA + 0.35) * 70;
+      const cpy = cy + Math.sin(exactA + 0.35) * 70;
+      const qx = (1 - pktT) * (1 - pktT) * px + 2 * (1 - pktT) * pktT * cpx + pktT * pktT * cx;
+      const qy = (1 - pktT) * (1 - pktT) * py + 2 * (1 - pktT) * pktT * cpy + pktT * pktT * cy;
+      ctx.globalAlpha = loopFade * swarmConnect;
+      ctx.fillStyle = P.specular;
+      ctx.beginPath(); ctx.arc(qx, qy, 2.5, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = peer.utp ? P.primary : P.cyan;
+      ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2); ctx.fill();
+    }
+  });
+  ctx.restore();
+
+  // Right: 20x10 Piece-Map Matrix + Selective File Picker
+  const rx = 560, ry = 92, rw = W - rx - 44, rh = 332;
+  ctx.save();
+  ctx.globalAlpha = loopFade;
+  drawRoundedRect(ctx, rx, ry, rw, rh, 12);
+  ctx.fillStyle = P.surface;
+  ctx.fill();
+  ctx.strokeStyle = P.hairlineStrong;
+  ctx.stroke();
+
+  ctx.fillStyle = P.textDim;
+  ctx.font = '600 10.5px "IBM Plex Mono", monospace';
+  ctx.fillText('LIVE PIECE-MAP MATRIX (200 PIECES · HAVE / SOME / MISSING)', rx + 20, ry + 26);
+
+  const gx0 = rx + 20, gy0 = ry + 42, gw = rw - 40, cellGap = 3;
+  const cellW = (gw - (COLS - 1) * cellGap) / COLS;
+  const cellH = 14;
+  let haveCount = 0;
+
+  for (const pc of PIECE_ORDER) {
+    const px = gx0 + pc.col * (cellW + cellGap);
+    const py = gy0 + pc.row * (cellH + cellGap);
+    drawRoundedRect(ctx, px, py, cellW, cellH, 2.5);
+    if (progress >= pc.arrival + 0.08) {
+      ctx.fillStyle = P.primary; // Have
+      haveCount++;
+    } else if (progress >= pc.arrival) {
+      ctx.fillStyle = P.specular; // Some (in-flight)
+    } else {
+      ctx.fillStyle = P.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(9,21,17,0.07)';
+    }
+    ctx.fill();
+  }
+
+  // Selective File Picker Bar below piece grid
+  const fy = gy0 + ROWS * (cellH + cellGap) + 18;
+  ctx.fillStyle = P.textDim;
+  ctx.font = '600 10.5px "IBM Plex Mono", monospace';
+  ctx.fillText('SELECTIVE MAGNET PICKER (3 OF 4 SELECTED)', rx + 20, fy);
+
+  const files = [
+    { name: 'ubuntu-26.04-desktop-amd64.iso', size: '4.7 GiB', sel: true },
+    { name: 'SHA256SUMS', size: '1.2 KiB', sel: true },
+    { name: 'SHA256SUMS.gpg', size: '833 B', sel: true },
+    { name: 'ubuntu-26.04-debug-symbols.tar', size: '1.8 GiB', sel: false },
+  ];
+  files.forEach((f, i) => {
+    const lineY = fy + 22 + i * 20;
+    ctx.fillStyle = f.sel ? P.primary : P.textDim;
+    ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+    ctx.fillText(f.sel ? '[✓]' : '[ ]', rx + 20, lineY);
+    ctx.fillStyle = f.sel ? P.text : P.textDim;
+    ctx.font = '400 12px "IBM Plex Mono", monospace';
+    ctx.fillText(f.name, rx + 52, lineY);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = f.sel ? P.textMuted : P.textDim;
+    ctx.fillText(f.sel ? f.size : 'SKIPPED', rx + rw - 20, lineY);
+    ctx.textAlign = 'left';
+  });
+
+  // Verification badge
+  const pct = Math.round((haveCount / (COLS * ROWS)) * 100);
+  ctx.fillStyle = pct === 100 ? P.primary : P.textMuted;
+  ctx.font = '700 12.5px "IBM Plex Mono", monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText(pct === 100 ? '100% VERIFIED · SEEDING' : `${pct}% PIECES COMMITTED`, rx + rw - 20, ry + 26);
+  ctx.textAlign = 'left';
+  ctx.restore();
+};
+</script>
+</body>
+</html>
