@@ -111,6 +111,12 @@ fun TransferDetailScreen(state: BmdAppState, session: BmdSession, model: BmdView
             if (TaskOperation.RESUME in task.permittedActions) Button({ model.taskAction(task.id, TaskOperation.RESUME) }, Modifier.fillMaxWidth().heightIn(min = 52.dp), enabled = !session.busy) {
                 Text(if (task.stage == TransferStage.WAITING_VERIFY) "Continue verification" else stringResource(R.string.action_resume))
             }
+            if (TaskOperation.STOP_SAVING_KEEP_DATA in task.permittedActions &&
+                task.stage in setOf(TransferStage.SAVING, TransferStage.VERIFYING, TransferStage.PAUSING, TransferStage.CANCELING)) {
+                OutlinedButton({ model.taskAction(task.id, TaskOperation.STOP_SAVING_KEEP_DATA) }, Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled = !session.busy) {
+                    Text("Stop saving, keep data")
+                }
+            }
             if (task.stage == TransferStage.COMPLETE) {
                 val file = state.files.find { it.id == task.publishedFileId || it.taskId == task.id }
                 if (file != null) {
@@ -148,6 +154,10 @@ private fun TaskRecoveryPanel(task: UiTask, busy: Boolean, model: BmdViewModel) 
     when {
         task.publicationUncertain -> ContentCard {
             InfoBanner("The save needs to be checked", task.detail ?: "The destination may already contain your file. Downloaded data is kept until the save is resolved.", warning = true)
+            if (TaskOperation.RETRY_SAVE in task.permittedActions) {
+                Button({ model.taskAction(task.id, TaskOperation.RETRY_SAVE) }, Modifier.fillMaxWidth().heightIn(min = 52.dp), enabled = !busy) { Text("Retry save") }
+                Text("Retry checks the existing save attempt and reuses its recorded destination when safe. It does not download the file again.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
             Button({ model.locateSavedFile(task.id) }, Modifier.fillMaxWidth().heightIn(min = 52.dp), enabled = !busy) { Text("Locate the saved file") }
             Text("Choose the exact document. Black Marlin compares its contents with the retained download; its name and size alone are not enough.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (TaskOperation.SAVE_SEPARATE_COPY in task.permittedActions) OutlinedButton({ model.taskAction(task.id, TaskOperation.SAVE_SEPARATE_COPY) }, Modifier.fillMaxWidth(), enabled = !busy) { Text("Save a separate copy") }

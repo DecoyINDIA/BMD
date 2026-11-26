@@ -213,7 +213,8 @@ jobs:
           timeout 20 bash -c 'until test -f fixture.json; do sleep 1; done'
           curl --fail --silent http://127.0.0.1:8088/bmd-native-fixture.bin -o fixture-body.bin
           python3 -c 'import hashlib,json,pathlib; m=json.loads(pathlib.Path("fixture.json").read_text()); assert hashlib.sha256(pathlib.Path("fixture-body.bin").read_bytes()).hexdigest()==m["sha256"]'
-      - name: Run actual instrumented tests
+      - name: Observe Android runtime and install test APKs
+        id: device-ready
         run: |
           timeout 240 adb wait-for-device
           timeout 240 bash -c 'until adb shell getprop sys.boot_completed | tr -d "\r" | grep -q "^1$"; do sleep 2; done'
@@ -221,16 +222,19 @@ jobs:
           adb shell input keyevent 82
           adb install -r artifacts/outputs/apk/debug/app-debug.apk
           adb install -r artifacts/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+      - name: Run actual instrumented tests
+        run: |
           fixture_url=$(python3 -c 'import json; print(json.load(open("fixture.json"))["fixtureUrl"])')
           fixture_sha256=$(python3 -c 'import json; print(json.load(open("fixture.json"))["sha256"])')
           timeout 900 adb shell am instrument -w -r -e fixtureUrl "$fixture_url" -e fixtureSha256 "$fixture_sha256" com.blackmarlin.downloader.debug.test/androidx.test.runner.AndroidJUnitRunner | tee instrumentation.txt
           python3 tools/android/check_instrumentation.py instrumentation.txt --api "${{ matrix.api }}" > acceptance.json
       - name: Prepare ephemeral signed copies of the exact minified release payload
-        if: matrix.api == 36
+        id: release-signing
+        if: ${{ !cancelled() && matrix.api == 36 && steps.device-ready.conclusion == 'success' }}
         run: |
           python3 tools/android/prepare_release_runtime.py --release-apk artifacts/outputs/apk/release/app-release-unsigned.apk --test-apk artifacts/outputs/release-runtime-harness/release-check-release.apk --build-tools "$ANDROID_HOME/build-tools/36.0.0" --output-dir "$RUNNER_TEMP/bmd-release-runtime" --evidence release-runtime-signing.json
       - name: Run actual minified release HTTPS and publication acceptance
-        if: matrix.api == 36
+        if: ${{ !cancelled() && matrix.api == 36 && steps.device-ready.conclusion == 'success' && steps.release-signing.conclusion == 'success' }}
         run: |
           adb install -r "$RUNNER_TEMP/bmd-release-runtime/release-test-signed.apk"
           adb install -t -r "$RUNNER_TEMP/bmd-release-runtime/harness-test-signed.apk"

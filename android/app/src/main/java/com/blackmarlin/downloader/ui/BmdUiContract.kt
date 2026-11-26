@@ -71,6 +71,7 @@ data class UiTask(
     val errorCode: String? = null,
     val permittedActions: Set<TaskOperation> = emptySet(),
     val publishedFileId: String? = null,
+    /** A verified, ownerless WAITING_SAVE hold with an unfinished publication journal. */
     val publicationUncertain: Boolean = false,
     val expectedSha256: String? = null,
     val sha256Verified: Boolean = false,
