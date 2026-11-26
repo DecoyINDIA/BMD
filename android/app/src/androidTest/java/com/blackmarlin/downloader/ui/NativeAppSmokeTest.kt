@@ -333,8 +333,9 @@ class NativeAppSmokeTest {
     }
 
     private fun chooseRealSafTestFolder(device: UiDevice) {
+        val documentsUi = Pattern.compile(".*documentsui.*")
         assertTrue("Android DocumentsUI did not open",
-            device.wait(Until.hasObject(By.pkg(Pattern.compile(".*documentsui.*"))), 15_000))
+            device.wait(Until.hasObject(By.pkg(documentsUi)), 15_000))
         device.waitForIdle(1_500)
         // API 26 can hide the external-storage root until the user chooses this menu option.
         device.findObject(By.desc("More options"))?.let { overflow ->
@@ -345,15 +346,19 @@ class NativeAppSmokeTest {
         // The observed API 36 picker opens directly at the internal-storage root and omits
         // its drawer button. Use the visible root children there; other versions need the drawer.
         // The returned grant is still checked against primary:Download/BmdDeviceTest below.
-        if (device.findObject(By.text("Download")) == null) {
-            val showRoots = device.findObject(By.desc("Show roots"))
-                ?: device.findObject(By.res(Pattern.compile(".*:id/toolbar")))
+        if (device.findObject(By.pkg(documentsUi).text("Download")) == null) {
+            val showRoots = device.findObject(By.pkg(documentsUi).desc("Show roots"))
+                ?: device.findObject(By.pkg(documentsUi).res(Pattern.compile(".*:id/toolbar")))
                     ?.findObject(By.clazz("android.widget.ImageButton").clickable(true))
                 ?: error("The system folder picker has neither the Download directory nor a storage navigation control")
             showRoots.click()
-            device.waitForIdle(1_500)
-            val internalStorage = device.findObject(By.text(Build.MODEL))
-                ?: device.findObject(By.text(Pattern.compile("(?i)Internal (shared )?storage")))
+            // API 26 diagnostic XML contains this drawer and title, but root loading can outlive UI idle.
+            assertTrue("The DocumentsUI storage roots did not become available",
+                device.wait(Until.hasObject(By.pkg(documentsUi).res(Pattern.compile(".*:id/roots_list")).enabled(true)), 10_000))
+            val storageLabels = Pattern.compile("(?i)(?:" + Pattern.quote(Build.MODEL) +
+                "|Android SDK built for x86_64|Internal (?:shared )?storage)")
+            val internalStorage = device.wait(Until.findObject(
+                By.pkg(documentsUi).res("android:id/title").text(storageLabels).enabled(true)), 15_000)
                 ?: error("The real internal-storage root was not available in DocumentsUI")
             internalStorage.click()
         }

@@ -35,94 +35,6 @@ env:
   RUSTUP_TOOLCHAIN: "1.98.0"
 
 jobs:
-  prior-runtime-diagnostics:
-    name: PRIOR 24e runtime diagnostics (not acceptance)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 5
-    permissions:
-      actions: read
-    steps:
-      - name: Download exact prior device evidence
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
-        with:
-          artifact-ids: "15138915672,15138158077,15138752357"
-          run-id: 45859282531
-          repository: ${{ github.repository }}
-          github-token: ${{ github.token }}
-          merge-multiple: false
-          path: prior-device-evidence
-      - name: Print bounded PRIOR 24e primary evidence
-        run: |
-          python3 - <<'PY'
-          import hashlib, json, re, uuid
-          from pathlib import Path
-          import xml.etree.ElementTree as ET
-          root = Path("prior-device-evidence")
-          expected = {
-              "android-device-api26-24e133e341b31dde48766e2a5703ccada7fd1706",
-              "android-device-api36-24e133e341b31dde48766e2a5703ccada7fd1706",
-              "android-device-api36-16k-24e133e341b31dde48766e2a5703ccada7fd1706",
-          }
-          actual = {p.name for p in root.iterdir() if p.is_dir()}
-          if actual != expected:
-              raise SystemExit("Prior artifact directory set differs: " + repr(actual))
-          def emit(label, text, limit=30000):
-              marker = uuid.uuid4().hex
-              print("::group::PRIOR 24e / run 45859282531 / " + label)
-              print("::stop-commands::" + marker)
-              print(text[:limit])
-              if len(text) > limit:
-                  print("[bounded output truncated]")
-              print("::" + marker + "::")
-              print("::endgroup::")
-          def read(path):
-              if path.stat().st_size > 64 * 1024 * 1024:
-                  raise RuntimeError("Diagnostic file exceeds 64 MiB: " + str(path))
-              raw = path.read_bytes()
-              return "fileSha256=" + hashlib.sha256(raw).hexdigest() + "\n", raw.decode("utf-8", errors="replace")
-          for directory in sorted(root.iterdir()):
-              if not directory.is_dir():
-                  continue
-              patterns = ["device-runtime.json", "acceptance.json", "release-acceptance.json", "device-test-evidence/*.txt", "release-test-evidence/*.txt", "release-test-evidence/*.json"]
-              for pattern in patterns:
-                  for path in sorted(directory.glob(pattern)):
-                      digest, text = read(path)
-                      emit(directory.name + "/" + str(path.relative_to(directory)), digest + text)
-              for folder in ["device-test-evidence", "release-test-evidence", "native-ui-evidence"]:
-                  for path in sorted((directory / folder).glob("*.xml")):
-                      digest, text = read(path)
-                      try:
-                          nodes = []
-                          for node in ET.fromstring(text).iter("node"):
-                              fields = {key: node.get(key) for key in ["package", "class", "resource-id", "text", "content-desc", "clickable", "enabled", "scrollable", "checked", "bounds"] if node.get(key)}
-                              nodes.append(json.dumps(fields, ensure_ascii=False))
-                          body = "\n".join(nodes[:250])
-                          if len(nodes) > 250:
-                              body += "\n[node limit reached]"
-                      except ET.ParseError:
-                          body = "XML parse failed; bounded original follows:\n" + text
-                      emit(directory.name + "/" + str(path.relative_to(directory)), digest + body, 48000)
-              path = directory / "logcat.txt"
-              if path.exists():
-                  digest, text = read(path)
-                  lines = text.splitlines()
-                  chosen = set()
-                  fatal = re.compile(r"FATAL EXCEPTION|Fatal signal|Abort message|NoClassDefFoundError|ClassNotFoundException|VerifyError|Unable to instantiate|Crash of app|lowmemorykiller.*blackmarlin|Process.*blackmarlin.*has died", re.I)
-                  relevant = re.compile(r"blackmarlin|releasecheck|AndroidJUnitRunner|InstrumentationTestRunner", re.I)
-                  for index, line in enumerate(lines):
-                      if fatal.search(line):
-                          start, end = max(0, index - 5), min(len(lines), index + 85)
-                          if relevant.search("\n".join(lines[start:end])):
-                              chosen.update(range(start, end))
-                  selected = sorted(chosen)[-600:]
-                  if selected:
-                      body = "\n".join(str(index + 1) + ": " + lines[index] for index in selected)
-                  else:
-                      body = "No matched fatal window. Last package/runner lines:\n" + "\n".join(line for line in lines if relevant.search(line))[-30000:]
-                  emit(directory.name + "/logcat-primary-windows", digest + body, 60000)
-          print("PRIOR evidence retrieval only. No current test acceptance is inferred.")
-          PY
-
   rust-contracts:
     runs-on: ubuntu-24.04
     timeout-minutes: 25
@@ -180,6 +92,7 @@ jobs:
         run: |
           python3 -m unittest discover -s tools/android -p test_dependency_resolution.py -v
           python3 -m unittest discover -s tools/android -p test_device_runtime.py -v
+          python3 -m unittest discover -s tools/android -p test_release_harness.py -v
           python3 tools/android/run_dependency_resolution.py
       - name: Android lint, JVM tests and distributable artifacts
         working-directory: android
@@ -193,14 +106,15 @@ jobs:
         run: |
           sha256sum android/app/build/outputs/apk/release/app-release-unsigned.apk > verified-release-before-harness.sha256
           cd android
-          # AGP's separate-test plugin exposes assembleRelease, not lintRelease.
-          # The production application's debug/release lint gates ran above.
+          # This disposable test-only APK owns its runtime and cannot change app R8 inputs.
+          # The production application lint gates ran above.
           ./gradlew --no-daemon --no-parallel --max-workers=2 -PskipNativeBuild=true :release-check:assembleRelease
           cd ..
           sha256sum --check verified-release-before-harness.sha256
           python3 tools/android/verify_native.py --apk android/app/build/outputs/apk/release/app-release-unsigned.apk --bundle android/app/build/outputs/bundle/release/app-release.aab
           mkdir -p android/app/build/outputs/release-runtime-harness
-          cp android/release-check/build/outputs/apk/release/release-check-release.apk android/app/build/outputs/release-runtime-harness/
+          cp android/release-check/build/outputs/apk/release/release-check-release-unsigned.apk android/app/build/outputs/release-runtime-harness/release-check-release.apk
+          python3 tools/android/check_release_harness.py --release-apk android/app/build/outputs/apk/release/app-release-unsigned.apk --test-apk android/app/build/outputs/release-runtime-harness/release-check-release.apk --android-jar "$ANDROID_HOME/platforms/android-36/android.jar" > android/app/build/outputs/release-runtime-harness/dex-closure.json
       - name: Preserve build identity
         run: |
           mkdir -p android/app/build/outputs/native
@@ -320,7 +234,8 @@ jobs:
         id: release-signing
         if: ${{ !cancelled() && matrix.api == 36 && steps.device-ready.conclusion == 'success' }}
         run: |
-          python3 tools/android/prepare_release_runtime.py --release-apk artifacts/outputs/apk/release/app-release-unsigned.apk --test-apk artifacts/outputs/release-runtime-harness/release-check-release.apk --build-tools "$ANDROID_HOME/build-tools/36.0.0" --output-dir "$RUNNER_TEMP/bmd-release-runtime" --evidence release-runtime-signing.json
+          sdkmanager "platforms;android-36"
+          python3 tools/android/prepare_release_runtime.py --release-apk artifacts/outputs/apk/release/app-release-unsigned.apk --test-apk artifacts/outputs/release-runtime-harness/release-check-release.apk --build-tools "$ANDROID_HOME/build-tools/36.0.0" --android-jar "$ANDROID_HOME/platforms/android-36/android.jar" --output-dir "$RUNNER_TEMP/bmd-release-runtime" --evidence release-runtime-signing.json
       - name: Run actual minified release HTTPS and publication acceptance
         if: ${{ !cancelled() && matrix.api == 36 && steps.device-ready.conclusion == 'success' && steps.release-signing.conclusion == 'success' }}
         run: |
@@ -335,10 +250,13 @@ jobs:
         if: always()
         run: |
           timeout 20 adb logcat -d -v threadtime > logcat.txt 2>&1 || true
+          timeout 20 adb shell dumpsys activity exit-info com.blackmarlin.downloader.debug > debug-exit-info.txt 2>&1 || true
+          timeout 20 adb shell dumpsys activity exit-info com.blackmarlin.downloader > release-exit-info.txt 2>&1 || true
           timeout 20 adb pull /sdcard/Android/data/com.blackmarlin.downloader.debug/files/device-test-evidence device-test-evidence 2> evidence-pull.txt || true
           if [ "${{ matrix.api }}" = "36" ]; then
             timeout 20 adb pull /sdcard/Android/data/com.blackmarlin.downloader/files/release-test-evidence release-test-evidence 2> release-evidence-pull.txt || true
           fi
+          python3 tools/android/print_device_diagnostics.py
       - name: Remove ephemeral runtime copies and keys
         if: always() && matrix.api == 36
         run: rm -rf "$RUNNER_TEMP/bmd-release-runtime"
@@ -392,6 +310,8 @@ jobs:
             fixture.log
             device-runtime.json
             logcat.txt
+            debug-exit-info.txt
+            release-exit-info.txt
             device-test-evidence
             evidence-pull.txt
             native-ui-evidence

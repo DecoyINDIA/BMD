@@ -1,27 +1,27 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    id("com.android.test")
+    id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
-// A separate instrumentation APK exercises the unchanged, minified production APK.
-// No implementation dependency on app classes and no application keep rules.
-// https://developer.android.com/studio/test/advanced-test-setup#use-separate-test-modules
+// This test-only application owns its entire runner runtime. AGP's com.android.test
+// subtracts dependencies packaged by the target and reuses the target's R8 mapping;
+// that is unsafe when the target has already removed runner-only library methods.
+// The explicit instrumentation manifest targets the unchanged production APK.
+// There is deliberately no project dependency, target mapping, or app keep rule.
 android {
     namespace = "com.blackmarlin.downloader.releasecheck"
     compileSdk = 36
-    targetProjectPath = ":app"
     defaultConfig {
+        applicationId = "com.blackmarlin.downloader.releasecheck"
         minSdk = 36
         targetSdk = 36
-        testApplicationId = "com.blackmarlin.downloader.releasecheck"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-        create("release") {
+        getByName("release") {
             isDebuggable = false
-            // AGP requires matching test shrinking when the tested APK has a mapping file.
+            // Only this disposable harness's classes use these R8 rules.
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = null
