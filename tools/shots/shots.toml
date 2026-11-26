@@ -156,8 +156,8 @@ id = "browser-offer"
 page = "browser-integration.md"
 under = "Set it up"
 take = "extension"
-alt = "Add BMD to your browser: each browser found, with a button to its store page"
-caption = "BMD's own window opens each browser's store page for you."
+alt = "Add BMD to your browser: each browser found, with a button to set up its extension"
+caption = "BMD's own window offers the setup for each browser it finds."
 
 [[shot]]
 id = "catch-file-info"

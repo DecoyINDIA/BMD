@@ -15,6 +15,9 @@ Browser integration has two parts: a small helper program that the browser talks
 1. Install BMD with the setup and keep **Set up browser integration (Chrome, Edge, Brave, Firefox)** ticked. This registers the helper. (The portable copy can't do this; see [Portable mode](portable.md).) On Linux and macOS BMD registers it itself, each time it starts, for the browsers installed then.
 2. Add the extension to each browser you use. Until a browser's extension has reached BMD, the **Add BMD to your browser** window opens at each start. **Add the extension** opens the Firefox add-on page or opens a local setup guide in the selected Chromium browser and copies the bundled extension's folder path. **Show me how** opens the online guide when the bundled setup files are unavailable. **Don't ask again** stops the window.
 
+![Add BMD to your browser: each browser found, with a button to set up its extension](images/help/browser-offer.webp)
+*BMD's own window offers the setup for each browser it finds.*
+
 ### Firefox
 
 Firefox 140 or later is needed. BMD's Firefox add-on is not on addons.mozilla.org yet: Firefox only keeps add-ons that Mozilla has signed, so until BMD's listing is published, use the Chromium-based browsers below, or the browser's own download handling with BMD's clipboard watcher. This page will link the listing once it exists.
