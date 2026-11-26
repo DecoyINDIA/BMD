@@ -449,6 +449,9 @@ Bug fixes from the first days of 0.5.0, a Safari extension, and more file types.
 
 Everything below ships together, in version 1.0.0, the first release as BMD.
 
+- ✅ One type system everywhere: the app, website, browser extension and remote page are set in IBM
+  Plex Sans (text), IBM Plex Mono (code) and Space Grotesk (titles), built in (SIL OFL 1.1); the
+  system's fonts remain only for scripts these don't draw
 - ✅ Windows: Options → Launch on startup and the installer's Start when Windows starts keep one
   startup entry again (they had used two names since the rename to BMD)
 - ✅ Adding a video again with overwrite removes the part files of BMD's own downloader too

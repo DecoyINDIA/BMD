@@ -2,7 +2,7 @@ name: Android
 
 on:
   push:
-    branches: [main, "android/**"]
+    branches: [main]
     paths:
       - "android/**"
       - "crates/engine/**"
@@ -88,14 +88,30 @@ jobs:
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/29.0.14206865" >> "$GITHUB_ENV"
       - name: Real native libraries, provenance, licenses and ELF verification
         run: python3 tools/android/build_native.py --jobs 4
+      - name: Check transport classifier and resolve external dependencies
+        run: |
+          python3 -m unittest discover -s tools/android -p test_dependency_resolution.py -v
+          python3 tools/android/run_dependency_resolution.py
       - name: Android lint, JVM tests and distributable artifacts
         working-directory: android
-        run: ./gradlew --no-daemon -PskipNativeBuild=true lintDebug lintRelease testDebugUnitTest assembleDebug assembleDebugAndroidTest assembleRelease bundleRelease
+        run: ./gradlew --no-daemon --no-parallel --max-workers=2 -PskipNativeBuild=true :app:lintDebug :app:lintRelease :app:testDebugUnitTest :app:assembleDebug :app:assembleDebugAndroidTest :app:assembleRelease :app:bundleRelease
       - name: Verify packaged JNI and 16 KiB ZIP alignment
         run: |
           python3 tools/android/verify_native.py --apk android/app/build/outputs/apk/debug/app-debug.apk --apk android/app/build/outputs/apk/release/app-release-unsigned.apk --bundle android/app/build/outputs/bundle/release/app-release.aab
           "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 -v 4 android/app/build/outputs/apk/debug/app-debug.apk
           "$ANDROID_HOME/build-tools/36.0.0/zipalign" -c -P 16 -v 4 android/app/build/outputs/apk/release/app-release-unsigned.apk
+      - name: Build isolated release runtime harness without changing the verified APK
+        run: |
+          sha256sum android/app/build/outputs/apk/release/app-release-unsigned.apk > verified-release-before-harness.sha256
+          cd android
+          # AGP's separate-test plugin exposes assembleRelease, not lintRelease.
+          # The production application's debug/release lint gates ran above.
+          ./gradlew --no-daemon --no-parallel --max-workers=2 -PskipNativeBuild=true :release-check:assembleRelease
+          cd ..
+          sha256sum --check verified-release-before-harness.sha256
+          python3 tools/android/verify_native.py --apk android/app/build/outputs/apk/release/app-release-unsigned.apk --bundle android/app/build/outputs/bundle/release/app-release.aab
+          mkdir -p android/app/build/outputs/release-runtime-harness
+          cp android/release-check/build/outputs/apk/release/release-check-release.apk android/app/build/outputs/release-runtime-harness/
       - name: Preserve build identity
         run: |
           mkdir -p android/app/build/outputs/native
@@ -113,17 +129,31 @@ jobs:
             android/app/build/outputs/apk
             android/app/build/outputs/bundle
             android/app/build/outputs/native
+            android/app/build/outputs/release-runtime-harness
             android/app/build/reports
             android/app/build/test-results
 
   device-smoke:
+    name: device-smoke (${{ matrix.name }})
     needs: build
     runs-on: ubuntu-24.04
     timeout-minutes: 35
     strategy:
       fail-fast: false
       matrix:
-        api: [26, 36]
+        include:
+          - name: api26
+            api: 26
+            image: google_apis
+            page_size: 4096
+          - name: api36
+            api: 36
+            image: google_apis
+            page_size: 4096
+          - name: api36-16k
+            api: 36
+            image: google_apis_ps16k
+            page_size: 16384
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
@@ -146,7 +176,7 @@ jobs:
         run: |
           command -v sdkmanager
           command -v avdmanager
-          sdkmanager "platform-tools" "emulator" "system-images;android-${{ matrix.api }};google_apis;x86_64"
+          sdkmanager "platform-tools" "emulator" "build-tools;36.0.0" "system-images;android-${{ matrix.api }};${{ matrix.image }};x86_64"
           # avdmanager and emulator must use the same explicit preferences/AVD roots.
           # https://developer.android.com/tools/variables
           export ANDROID_USER_HOME="$RUNNER_TEMP/bmd-android-user"
@@ -156,7 +186,7 @@ jobs:
           echo "ANDROID_USER_HOME=$ANDROID_USER_HOME" >> "$GITHUB_ENV"
           echo "ANDROID_EMULATOR_HOME=$ANDROID_EMULATOR_HOME" >> "$GITHUB_ENV"
           echo "ANDROID_AVD_HOME=$ANDROID_AVD_HOME" >> "$GITHUB_ENV"
-          avdmanager create avd --name bmd-ci --package "system-images;android-${{ matrix.api }};google_apis;x86_64" --device pixel_2 --path "$ANDROID_AVD_HOME/bmd-ci.avd" --force
+          avdmanager create avd --name bmd-ci --package "system-images;android-${{ matrix.api }};${{ matrix.image }};x86_64" --device pixel_2 --path "$ANDROID_AVD_HOME/bmd-ci.avd" --force
           test -s "$ANDROID_AVD_HOME/bmd-ci.ini"
           test -s "$ANDROID_AVD_HOME/bmd-ci.avd/config.ini"
           "$ANDROID_HOME/emulator/emulator" -list-avds | tee available-avds.txt
@@ -173,18 +203,45 @@ jobs:
         run: |
           timeout 240 adb wait-for-device
           timeout 240 bash -c 'until adb shell getprop sys.boot_completed | tr -d "\r" | grep -q "^1$"; do sleep 2; done'
+          observed_api=$(adb shell getprop ro.build.version.sdk | tr -d '\r')
+          observed_page_size=$(adb shell getconf PAGE_SIZE | tr -d '\r')
+          observed_abi=$(adb shell getprop ro.product.cpu.abi | tr -d '\r')
+          test "$observed_api" = "${{ matrix.api }}"
+          test "$observed_page_size" = "${{ matrix.page_size }}"
+          test "$observed_abi" = "x86_64"
+          python3 -c 'import json,sys; print(json.dumps({"observedApi":int(sys.argv[1]),"observedPageSizeBytes":int(sys.argv[2]),"systemImageTag":sys.argv[3],"observedAbi":sys.argv[4]}))' "$observed_api" "$observed_page_size" "${{ matrix.image }}" "$observed_abi" > device-runtime.json
           adb shell input keyevent 82
           adb install -r artifacts/outputs/apk/debug/app-debug.apk
           adb install -r artifacts/outputs/apk/androidTest/debug/app-debug-androidTest.apk
           fixture_url=$(python3 -c 'import json; print(json.load(open("fixture.json"))["fixtureUrl"])')
           fixture_sha256=$(python3 -c 'import json; print(json.load(open("fixture.json"))["sha256"])')
-          adb shell am instrument -w -r -e fixtureUrl "$fixture_url" -e fixtureSha256 "$fixture_sha256" com.blackmarlin.downloader.debug.test/androidx.test.runner.AndroidJUnitRunner | tee instrumentation.txt
+          timeout 900 adb shell am instrument -w -r -e fixtureUrl "$fixture_url" -e fixtureSha256 "$fixture_sha256" com.blackmarlin.downloader.debug.test/androidx.test.runner.AndroidJUnitRunner | tee instrumentation.txt
           python3 tools/android/check_instrumentation.py instrumentation.txt --api "${{ matrix.api }}" > acceptance.json
+      - name: Prepare ephemeral signed copies of the exact minified release payload
+        if: matrix.api == 36
+        run: |
+          python3 tools/android/prepare_release_runtime.py --release-apk artifacts/outputs/apk/release/app-release-unsigned.apk --test-apk artifacts/outputs/release-runtime-harness/release-check-release.apk --build-tools "$ANDROID_HOME/build-tools/36.0.0" --output-dir "$RUNNER_TEMP/bmd-release-runtime" --evidence release-runtime-signing.json
+      - name: Run actual minified release HTTPS and publication acceptance
+        if: matrix.api == 36
+        run: |
+          adb install -r "$RUNNER_TEMP/bmd-release-runtime/release-test-signed.apk"
+          adb install -t -r "$RUNNER_TEMP/bmd-release-runtime/harness-test-signed.apk"
+          fixture_url=$(python3 -c 'import json; print(json.load(open("fixture.json"))["fixtureUrl"])')
+          fixture_sha256=$(python3 -c 'import json; print(json.load(open("fixture.json"))["sha256"])')
+          release_sha256=$(python3 -c 'import json; print(json.load(open("release-runtime-signing.json"))["release"]["signedApkSha256"])')
+          timeout 900 adb shell am instrument -w -r -e fixtureUrl "$fixture_url" -e fixtureSha256 "$fixture_sha256" -e releaseApkSha256 "$release_sha256" com.blackmarlin.downloader.releasecheck/androidx.test.runner.AndroidJUnitRunner | tee release-instrumentation.txt
+          python3 tools/android/check_instrumentation.py release-instrumentation.txt --api 36 --release-runtime > release-acceptance.json
       - name: Preserve actual device diagnostics
         if: always()
         run: |
           timeout 20 adb logcat -d -v threadtime > logcat.txt 2>&1 || true
           timeout 20 adb pull /sdcard/Android/data/com.blackmarlin.downloader.debug/files/device-test-evidence device-test-evidence 2> evidence-pull.txt || true
+          if [ "${{ matrix.api }}" = "36" ]; then
+            timeout 20 adb pull /sdcard/Android/data/com.blackmarlin.downloader/files/release-test-evidence release-test-evidence 2> release-evidence-pull.txt || true
+          fi
+      - name: Remove ephemeral runtime copies and keys
+        if: always() && matrix.api == 36
+        run: rm -rf "$RUNNER_TEMP/bmd-release-runtime"
       - name: Capture actual native UI evidence
         if: always()
         timeout-minutes: 3
@@ -223,7 +280,7 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
-          name: android-device-api${{ matrix.api }}-${{ github.sha }}
+          name: android-device-${{ matrix.name }}-${{ github.sha }}
           path: |
             emulator.log
             available-avds.txt
@@ -231,7 +288,13 @@ jobs:
             acceptance.json
             fixture.json
             fixture.log
+            device-runtime.json
             logcat.txt
             device-test-evidence
             evidence-pull.txt
             native-ui-evidence
+            release-runtime-signing.json
+            release-instrumentation.txt
+            release-acceptance.json
+            release-test-evidence
+            release-evidence-pull.txt

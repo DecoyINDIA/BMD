@@ -1,3 +1,7 @@
+@font-face { font-family: "IBM Plex Sans"; src: url("/fonts/plex-sans.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "IBM Plex Sans"; src: url("/fonts/plex-sans-semibold.woff2") format("woff2"); font-weight: 600 700; font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; src: url("/fonts/plex-mono.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Space Grotesk"; src: url("/fonts/space-grotesk.woff2") format("woff2"); font-weight: 300 700; font-display: swap; }
 /* BMD's remote control page: Windows 11's controls, one blue. */
 :root {
   --bg: #f3f3f3;
@@ -44,7 +48,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font: 15px/1.4 "Segoe UI", system-ui, -apple-system, Roboto, "Noto Sans", sans-serif;
+  font: 15px/1.4 "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, Roboto, "Noto Sans", sans-serif;
   padding-bottom: env(safe-area-inset-bottom);
 }
 [hidden] { display: none !important; }
@@ -75,7 +79,7 @@ main { max-width: 720px; margin: 0 auto; padding: 12px 16px 24px; }
   padding: 16px;
   margin-bottom: 12px;
 }
-h1 { font-size: 20px; font-weight: 600; margin: 0 0 8px; }
+h1 { font-family: "Space Grotesk", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif; font-size: 20px; font-weight: 700; margin: 0 0 8px; }
 p { margin: 0 0 12px; }
 
 label { display: block; font-size: 13px; color: var(--muted); margin: 0 0 4px; }
@@ -97,7 +101,7 @@ input:focus-visible, select:focus-visible {
   outline: none;
   border-bottom: 2px solid var(--accent);
 }
-#code { font-size: 22px; letter-spacing: 0.15em; font-variant-numeric: tabular-nums; text-align: center; }
+#code { font-family: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 22px; letter-spacing: 0.15em; font-variant-numeric: tabular-nums; text-align: center; }
 
 button, .button {
   display: inline-flex;

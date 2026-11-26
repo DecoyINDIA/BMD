@@ -9,6 +9,10 @@ Each release's notes on GitHub come from its section here (`## [X.Y.Z]`, see
 
 - **Social posts start at once, in their best quality:** a TikTok, X (Twitter), Instagram, Facebook or Threads post's address given to **Add URL** (typed or pasted), or sent by the browser's **Download video** button, no longer waits in the Download video window for a choice. Once yt-dlp has looked it up, it downloads the best quality the post has: its best video joined with its best sound, as the window's first line. The short links the apps' Share buttons copy are recognised too (`vm.tiktok.com`, `tiktok.com/t/…`, `facebook.com/share/v/…`, `fb.watch`, `instagram.com/<name>/reel/…`, `threads.net/@name/post/…`). Without ffmpeg, the window stays open and offers it, since the best quality needs it, and the download starts once it is installed. A private or deleted post, or one the site refuses, stays in the window with the reason. **Social posts: start at once** in the Download video window turns it off, to choose a quality again; other video sites (YouTube, Vimeo…) still show their qualities.
 
+### Changed
+
+- **A new typeface, everywhere:** BMD, its website, the browser extension's popup and video button, and the remote control page are now set in IBM Plex Sans (text), IBM Plex Mono (code) and Space Grotesk (titles), built in and the same on every system. Scripts these fonts don't draw (Arabic, Indic, Chinese, Japanese, Korean and others) still use your system's fonts. The Status column is a little wider by default (136 px) for the new font.
+
 ## [1.0.0] - 2026-11-19
 
 The first release as BMD (Black Marlin Downloader).

@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.gradle.api.tasks.testing.Test
 
 val nativeOutput = layout.buildDirectory.dir("generated/native")
 val nativeRevision = providers.exec {
@@ -69,6 +70,29 @@ android {
 kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
 kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas"); arg("room.incremental", "true") } }
 
+// PublicationManagerTest pins API 34. Resolve its runtime through Gradle's cache
+// before testing instead of Robolectric's separate, uncached Maven downloader.
+val robolectricSdk by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    isTransitive = false
+}
+val robolectricSdkDirectory = layout.buildDirectory.dir("robolectric-sdk")
+val prepareRobolectricSdk by tasks.registering(Sync::class) {
+    group = "verification"
+    description = "Stage the pinned Android runtime for offline Robolectric tests."
+    from(robolectricSdk)
+    into(robolectricSdkDirectory)
+}
+tasks.withType<Test>().configureEach {
+    dependsOn(prepareRobolectricSdk)
+    inputs.dir(robolectricSdkDirectory)
+        .withPropertyName("robolectricSdk")
+        .withPathSensitivity(PathSensitivity.RELATIVE)
+    systemProperty("robolectric.offline", "true")
+    systemProperty("robolectric.dependency.dir", robolectricSdkDirectory.get().asFile.absolutePath)
+}
+
 val buildNative by tasks.registering(Exec::class) {
     group = "build"
     description = "Build the real Rust engine for arm64-v8a and x86_64 with locked dependencies."
@@ -109,6 +133,7 @@ tasks.configureEach {
 apply(from = "android-notices.gradle.kts")
 
 dependencies {
+    add(robolectricSdk.name, "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7")
     val composeBom = platform("androidx.compose:compose-bom:2025.10.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)

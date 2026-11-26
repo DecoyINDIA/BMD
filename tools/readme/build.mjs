@@ -35,7 +35,7 @@ const THEMES = {
   dark: { surface: "#0d1117", tile: "#151b23", border: "#3d444d", text: "#f0f6fc", muted: "#9198a1",
           grid: "#2a313c", bmd: "#3987e5", idm: "#d95926" },
 };
-const FONT = "-apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif";
+const FONT = "'IBM Plex Sans', -apple-system, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif";
 
 const SHORT = {
   "fast-1g": "1 GiB, fast link",

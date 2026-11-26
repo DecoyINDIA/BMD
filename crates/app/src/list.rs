@@ -128,12 +128,12 @@ pub const UPLOAD: usize = 12;
 /// IDM's default column widths (and ours for Added, room for a 12-hour clock's
 /// `Oct 28 9:05:01 AM 2026`, Source, Peers, Share ratio and Upload speed). Status is wider than
 /// IDM's 65 px (#736): one word and a percentage while a file is checked or a video joined
-/// ("Checking 45%", German's "Zusammenführen 100 %"). 132 px is the least it has: while nobody
+/// ("Checking 45%", German's "Zusammenführen 100 %"). 136 px is the least it has: while nobody
 /// resized it, it grows to what the list's font needs in the interface language
 /// ([`status_width`]). Linux draws with fontconfig's interface font, often DejaVu Sans, wider
-/// than Windows' Segoe UI.
+/// than IBM Plex Sans.
 pub const DEFAULT_WIDTHS: [f32; COLS] = [
-    150.0, 20.0, 75.0, 132.0, 75.0, 95.0, 65.0, 200.0, 145.0, 62.0, 64.0, 92.0, 100.0,
+    150.0, 20.0, 75.0, 136.0, 75.0, 95.0, 65.0, 200.0, 145.0, 62.0, 64.0, 92.0, 100.0,
 ];
 /// Default display order: Source first, then IDM's, a torrent's three columns after its rate, and
 /// Added after Last Try Date.
@@ -2010,7 +2010,7 @@ mod tests {
         assert!(st.status_fits);
     }
 
-    /// #736: Status's default is 132 px, or what the font needs where that is more.
+    /// #736: Status's default is 136 px, or what the font needs where that is more.
     #[test]
     fn status_width_grows_with_the_font() {
         let texts = finishing_texts("de", "100\u{a0}%");
@@ -2109,7 +2109,7 @@ mod tests {
         use egui::accesskit::{Action, ActionRequest, NodeId, Role, TreeId, TreeUpdate};
         let ctx = egui::Context::default();
         let mut defs = egui::FontDefinitions::default();
-        winui::install_fonts(&mut defs, None);
+        winui::install_fonts(&mut defs);
         ctx.set_fonts(defs);
         ctx.enable_accesskit();
         let rows: Vec<Row> = (0..3)

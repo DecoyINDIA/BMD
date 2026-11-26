@@ -12,3 +12,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "BlackMarlinAndroid"
 include(":app")
+include(":release-check")

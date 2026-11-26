@@ -15,9 +15,10 @@ DOWNLOAD = "suppliedDirectLinkDownloadsThroughRustAndPublishesExactBytes"
 SAF = "suppliedDirectLinkSavesThroughRealSafPickerAndVerifiesBytes"
 REGULAR_DESCRIPTOR = "regularDescriptorsRemainUsableOnSupportedAndroidVersions"
 OLD_PIPE_DESCRIPTOR = "olderAndroidRejectsReadAndWritePipeDescriptorsAndClosesThem"
+RELEASE_CASE = "com.blackmarlin.downloader.releasecheck.ReleaseRuntimeTest#pinnedHttpsReviewAndHttpFixturePublishThroughMinifiedApp"
 
 
-def evaluate(output: str, api: int) -> dict:
+def evaluate(output: str, api: int, release_runtime: bool = False) -> dict:
     current: dict[str, str] = {}
     passed: set[str] = set()
     skipped: set[str] = set()
@@ -37,16 +38,25 @@ def evaluate(output: str, api: int) -> dict:
             elif code < 0:
                 failed.add(name)
             current = {}
-    required = BASIC | {SAF} | ({DOWNLOAD} if api >= 29 else set())
-    expected = {TEST_CLASS + "#" + test for test in required}
-    expected.add(DESCRIPTOR_CLASS + "#" + REGULAR_DESCRIPTOR)
-    if api < 30:
-        expected.add(DESCRIPTOR_CLASS + "#" + OLD_PIPE_DESCRIPTOR)
+    if release_runtime:
+        if api != 36:
+            raise RuntimeError("The minified release runtime gate requires API 36")
+        expected = {RELEASE_CASE}
+    else:
+        required = BASIC | {SAF} | ({DOWNLOAD} if api >= 29 else set())
+        expected = {TEST_CLASS + "#" + test for test in required}
+        expected.add(DESCRIPTOR_CLASS + "#" + REGULAR_DESCRIPTOR)
+        if api < 30:
+            expected.add(DESCRIPTOR_CLASS + "#" + OLD_PIPE_DESCRIPTOR)
     missing = expected - passed
     success = re.search(r"^OK \(\d+ tests?\)", output, re.MULTILINE) is not None
     aborted = re.search(r"FAILURES!!!|INSTRUMENTATION_FAILED|INSTRUMENTATION_ABORTED", output) is not None
     if missing or failed or not success or aborted:
         raise RuntimeError(f"Instrumented acceptance failed: missing actual passes={sorted(missing)}, failed={sorted(failed)}, summary_success={success}, aborted={aborted}")
+    if release_runtime:
+        return {"api": api, "passed": sorted(passed), "skipped": sorted(skipped),
+                "minifiedReleaseRuntimeVerified": True, "pinnedHttpsReviewVerified": True,
+                "mediaStorePublicationSha256Verified": True}
     return {"api": api, "passed": sorted(passed), "skipped": sorted(skipped),
             "mediaStoreDownloadAndPublicationVerified": api >= 29,
             "safDownloadAndPublicationVerified": True,
@@ -59,8 +69,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output", type=Path)
     parser.add_argument("--api", type=int, required=True)
+    parser.add_argument("--release-runtime", action="store_true")
     args = parser.parse_args()
-    print(json.dumps(evaluate(args.output.read_text(errors="replace"), args.api), indent=2))
+    print(json.dumps(evaluate(args.output.read_text(errors="replace"), args.api, args.release_runtime), indent=2))
 
 
 if __name__ == "__main__":
