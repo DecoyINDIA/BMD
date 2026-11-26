@@ -28,7 +28,7 @@ crate::theme::themed! {
     pub SELECTION_TEXT => selection_text;
 }
 
-/// Tahoma −11 ("MS Shell Dlg 2", 8 pt): every dialog body text.
+/// IBM Plex Sans −11: every dialog body text.
 pub fn tahoma() -> FontId {
     FontId::new(
         crate::theme::font_size(crate::theme::metrics().font_dialog),
@@ -36,7 +36,7 @@ pub fn tahoma() -> FontId {
     )
 }
 
-/// Tahoma Bold −13: the Options pages' header titles.
+/// Space Grotesk Bold −13: the Options pages' header titles.
 pub fn tahoma_bold() -> FontId {
     FontId::new(
         crate::theme::font_size(crate::theme::metrics().font_dialog_bold),
@@ -44,7 +44,7 @@ pub fn tahoma_bold() -> FontId {
     )
 }
 
-/// Tahoma Bold −16: a window's headline (the browser extension's, the helpers').
+/// Space Grotesk Bold −16: a window's headline (the browser extension's, the helpers').
 pub fn tahoma_title() -> FontId {
     FontId::new(
         crate::theme::font_size(crate::theme::metrics().font_title),
@@ -52,32 +52,59 @@ pub fn tahoma_title() -> FontId {
     )
 }
 
-/// Tahoma (IDM's dialogs), Tahoma Bold and Arial Bold from Windows' fonts folder. A family
-/// whose file isn't there (macOS, Linux) is the interface font's, so drawing with it never fails.
-pub fn install_fonts(defs: &mut egui::FontDefinitions, font_dir: Option<&std::path::Path>) {
-    let ui = defs
+/// IBM Plex Sans (regular text), IBM Plex Mono (code) and Space Grotesk Bold (headlines), SIL OFL
+/// 1.1, built into BMD (`assets/fonts/`): the same on every system, nothing read from the
+/// computer. Plex Sans and Plex Mono lead the two built-in families; the families the dialogs
+/// name (`tahoma` is the dialogs' text, `tahoma-bold` and `arial-bold` their titles) keep
+/// their names and take these faces. Every family still ends in the system's fonts
+/// ([`crate::theme`] adds them), for the scripts these three don't draw.
+pub fn install_fonts(defs: &mut egui::FontDefinitions) {
+    for (key, bytes) in [
+        ("plex-sans", PLEX_SANS),
+        ("plex-mono", PLEX_MONO),
+        ("space-grotesk-bold", SPACE_GROTESK_BOLD),
+    ] {
+        defs.font_data.insert(
+            key.into(),
+            std::sync::Arc::new(egui::FontData::from_static(bytes)),
+        );
+    }
+    for (family, key) in [
+        (FontFamily::Proportional, "plex-sans"),
+        (FontFamily::Monospace, "plex-mono"),
+    ] {
+        defs.families
+            .entry(family)
+            .or_default()
+            .insert(0, key.into());
+    }
+    let rest: Vec<String> = defs
         .families
         .get(&FontFamily::Proportional)
-        .cloned()
+        .map(|f| f.iter().skip(1).cloned().collect())
         .unwrap_or_default();
-    for (family, file) in [
-        ("tahoma", "tahoma.ttf"),
-        ("tahoma-bold", "tahomabd.ttf"),
-        ("arial-bold", "arialbd.ttf"),
+    for (family, key) in [
+        ("tahoma", "plex-sans"),
+        ("tahoma-bold", "space-grotesk-bold"),
+        ("arial-bold", "space-grotesk-bold"),
     ] {
-        let fonts = match font_dir.and_then(|d| crate::theme::read_font(&d.join(file))) {
-            Some(bytes) => {
-                defs.font_data.insert(
-                    family.into(),
-                    std::sync::Arc::new(egui::FontData::from_owned(bytes)),
-                );
-                vec![family.to_owned()]
-            }
-            _ => ui.clone(),
-        };
+        let mut fonts = vec![key.to_owned()];
+        fonts.extend(rest.iter().cloned());
         defs.families.insert(FontFamily::Name(family.into()), fonts);
     }
 }
+
+const PLEX_SANS: &[u8] = include_bytes!("../assets/fonts/IBMPlexSans-Regular.ttf");
+const PLEX_MONO: &[u8] = include_bytes!("../assets/fonts/IBMPlexMono-Regular.ttf");
+const SPACE_GROTESK_BOLD: &[u8] = include_bytes!("../assets/fonts/SpaceGrotesk-Bold.ttf");
+
+/// The built-in fonts by file name (Windows: DirectWrite draws from files, `win32.rs`).
+#[cfg(windows)]
+pub const BUNDLED_FONTS: [(&str, &[u8]); 3] = [
+    ("IBMPlexSans-Regular.ttf", PLEX_SANS),
+    ("IBMPlexMono-Regular.ttf", PLEX_MONO),
+    ("SpaceGrotesk-Bold.ttf", SPACE_GROTESK_BOLD),
+];
 
 // ---- right to left (D-019) -----------------------------------------------------------------
 //
@@ -336,12 +363,12 @@ fn name_from_caption(resp: &Response) {
     }
 }
 
-/// Segoe UI −12: menu bar, toolbar labels.
+/// IBM Plex Sans −12: menu bar, toolbar labels.
 pub fn segoe() -> FontId {
     FontId::proportional(crate::theme::font_size(crate::theme::metrics().font_ui))
 }
 
-/// Arial Bold −13: the Categories close "x".
+/// Space Grotesk Bold −13: the Categories close "x".
 pub fn arial_bold() -> FontId {
     FontId::new(
         crate::theme::font_size(crate::theme::metrics().font_ui_bold),
@@ -7063,7 +7090,7 @@ mod tests {
     fn with_painter(f: impl FnOnce(&Painter)) {
         let ctx = egui::Context::default();
         let mut defs = egui::FontDefinitions::default();
-        install_fonts(&mut defs, None);
+        install_fonts(&mut defs);
         ctx.set_fonts(defs);
         let mut f = Some(f);
         let mut out = ctx.run_ui(egui::RawInput::default(), |ui| {
@@ -7863,7 +7890,7 @@ mod tests {
         fn with(value: &str, lines: bool) -> Self {
             let ctx = egui::Context::default();
             let mut defs = egui::FontDefinitions::default();
-            install_fonts(&mut defs, None);
+            install_fonts(&mut defs);
             ctx.set_fonts(defs);
             let mut run = Self {
                 ctx,
@@ -8248,7 +8275,7 @@ example.org"; // values typed in, not texts to translate
     ) -> (bool, bool) {
         let ctx = egui::Context::default();
         let mut defs = egui::FontDefinitions::default();
-        install_fonts(&mut defs, None);
+        install_fonts(&mut defs);
         ctx.set_fonts(defs);
         let rc = Rect::from_min_size(pos2(20.0, 20.0), egui::vec2(73.0, 21.0));
         let mut clicked = false;

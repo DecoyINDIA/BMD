@@ -372,12 +372,12 @@ metrics! {
     border: "border", "Width of a control's border" = 1.0;
     focus_line: "focus-line", "Height of a focused text box's accent line" = 2.0;
     chevron_width: "chevron.width", "Stroke width of a drop-down's chevron" = 1.2;
-    font_dialog: "font.dialog", "Dialog text (Tahoma in IDM's dialogs)" = 11.0;
+    font_dialog: "font.dialog", "Dialog text (IBM Plex Sans)" = 11.0;
     font_dialog_bold: "font.dialog.bold", "Options pages' titles" = 13.0;
     font_cjk: "font.cjk", "The smallest text in a Chinese, Japanese or Korean interface (their glyphs are denser than Latin's)" = 12.0;
-    font_title: "font.title", "A window's headline (Tahoma Bold): the browser extension's, the helpers'" = 16.0;
+    font_title: "font.title", "A window's headline (Space Grotesk Bold): the browser extension's, the helpers'" = 16.0;
     font_code: "font.code", "A sign-in code to type at a service's page" = 22.0;
-    font_ui: "font.ui", "Menus and the main window's text (Segoe UI)" = 12.0;
+    font_ui: "font.ui", "Menus and the main window's text (IBM Plex Sans)" = 12.0;
     font_ui_bold: "font.ui.bold", "Bold headings in the main window" = 13.0;
     font_small: "font.small", "egui's small text" = 11.0;
     font_body: "font.body", "egui's body text: tooltips, multi-line boxes" = 12.0;

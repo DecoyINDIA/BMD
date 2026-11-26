@@ -32,7 +32,7 @@
     if (v >= 1000) return (v / 1000).toFixed(2) + " s";
     return (v >= 100 ? v.toFixed(0) : v.toFixed(1)) + " ms";
   }
-  var FONT = "Inter, ui-sans-serif, system-ui, sans-serif";
+  var FONT = "\"IBM Plex Sans\", ui-sans-serif, system-ui, sans-serif";
   var SHORT = { "fast-1g": "1 GiB", "capped-100m": "2 MB/s per connection", "latency-100m": "150 ms latency",
                 "slowconn-32m": "A crawling connection", "maxconns-50m": "2 connections allowed",
                 "drops-50m": "Cut connections", "small-256k": "A small file" };

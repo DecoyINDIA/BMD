@@ -32,6 +32,8 @@ foreach ($kind in "chromium", "firefox", "safari") {
     Copy-Item (Join-Path $PSScriptRoot "setup.html") $dir
   }
   Copy-Item (Join-Path $src "icons") (Join-Path $dir "icons") -Recurse
+  # IBM Plex Sans and Space Grotesk (SIL OFL 1.1): the popup's and the video button's text.
+  Copy-Item (Join-Path $src "fonts") (Join-Path $dir "fonts") -Recurse
   # Its texts in the browser's language (tools/extension/locales.py).
   Copy-Item (Join-Path $src "_locales") (Join-Path $dir "_locales") -Recurse
   # Norwegian: Chrome takes only "no", Firefox looks for "nb" (Bokmål) as its users' browsers say.

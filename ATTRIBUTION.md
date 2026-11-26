@@ -7,6 +7,7 @@
 | flag-icons 7.6.0 (language flags: picker, View → Language, README) | Panayiotis Lipiridis and contributors, <https://github.com/lipis/flag-icons> | MIT — `crates/app/assets/flags/LICENSE` | `crates/app/assets/flags/` |
 | flag-icons 7.6.0, all 250 country flags in one picture (where a download's server is: Download File Info, the progress window, Properties), drawn by `crates/geo/examples/flag_atlas.rs` | Panayiotis Lipiridis and contributors, <https://github.com/lipis/flag-icons> | MIT — `crates/geo/data/LICENSE-flag-icons` | `crates/geo/data/flags.png` |
 | DB-IP IP to Country Lite, a monthly edition (which country a download's server is in, looked up on the computer, never sent anywhere), packed by `tools/geo/build.py` | DB-IP, <https://db-ip.com>: IP Geolocation by DB-IP | Creative Commons Attribution 4.0 International, <https://creativecommons.org/licenses/by/4.0/>; the edition used is in `crates/geo/data/SOURCE.txt` | `crates/geo/data/ipcountry.bin.xz` |
+| IBM Plex Sans Regular and IBM Plex Mono Regular (the interface's text and code), Space Grotesk Bold (titles); the website and browser extension add the other weights | IBM Corp., <https://github.com/IBM/plex>; Florian Karsten, <https://github.com/floriankarsten/space-grotesk> | SIL Open Font License 1.1 — `crates/app/assets/fonts/OFL-IBMPlex.txt`, `OFL-SpaceGrotesk.txt` | `crates/app/assets/fonts/`, `website/vendor/fonts/`, `extension/fonts/` |
 | Patrick Hand (the README's hand-drawn pictures, as outlines; not in the app) | Patrick Wagesreiter | SIL Open Font License 1.1 — `tools/readme/node_modules/@fontsource/patrick-hand/LICENSE` | `docs/images/races-*.svg` |
 | *Big Buck Bunny* (the film in the README's pictures of the download button over a video; not in the app) | Blender Foundation, <https://peach.blender.org> | Creative Commons Attribution 3.0 | `docs/images/video-button-*.png` |
 | Silk icon set 1.3 (Categories tree) | Mark James, <http://www.famfamfam.com/lab/icons/silk/> | Creative Commons Attribution 2.5 — `crates/app/assets/icons/silk/readme.txt` | `crates/app/assets/icons/silk/` |
@@ -41,8 +42,8 @@ unRAR restriction for its RAR code), run as a separate program when the user has
 It is neither bundled nor linked: UnRAR's licence doesn't allow its code in a GPL program, and a
 built-in 7z decoder made BMD about 1 MB larger.
 
-System resources used at run time and **not** bundled: Windows fonts (Segoe UI, Tahoma,
-Arial) and each system's own file-type icons (the Windows shell's, macOS Finder's, the Linux
+System resources used at run time and **not** bundled: the system's own fonts, for the scripts
+IBM Plex and Space Grotesk don't draw (Arabic, Indic, CJK and others, Armenian, Georgian), and each system's own file-type icons (the Windows shell's, macOS Finder's, the Linux
 desktop's icon theme).
 
 BMD contains no artwork, text or code from Internet Download Manager (see the README).
