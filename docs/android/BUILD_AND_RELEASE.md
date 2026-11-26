@@ -22,6 +22,8 @@ Set `ANDROID_HOME` or `ANDROID_SDK_ROOT` to the SDK. `ANDROID_NDK_HOME` may expl
 
 No source file uses a developer machine's absolute toolchain path. Do not commit `local.properties`, build output, native libraries or signing keys.
 
+For the pinned AGP 8.13.2, `android.lint.useK2Uast=false` selects its supported legacy UAST frontend. Its K2 frontend crashed inside Gradle-script analysis (`KaFirScriptSymbol` / `findFirCompiledSymbol`), before producing application findings. The option is declared and honored in the [exact AGP 8.13.2 sources](https://dl.google.com/dl/android/maven2/com/android/tools/build/gradle/8.13.2/gradle-8.13.2-sources.jar). Lint remains enabled for both variants, with `abortOnError=true`; no detector is disabled and no baseline hides findings. Revisit this frontend selection when upgrading AGP.
+
 ## Artifact and source identity
 
 `tools/android/build_native.py` writes these generated build inputs:

@@ -247,7 +247,7 @@ class TransferCoordinator(private val graph: BmdGraph) {
     private suspend fun poll(run: Run, stop: () -> Boolean = { run.stop.get() }): NativeSnapshot {
         var stopSent = false
         var stopAt: Long? = null
-        var previousBytes = 0L
+        var previousBytes: Long? = null
         var previousTime = SystemClock.elapsedRealtime()
         var lastWrite = 0L
         while (true) {
@@ -268,18 +268,26 @@ class TransferCoordinator(private val graph: BmdGraph) {
                     graph.engine.stop(run.native.get())
                     stopSent = true; stopAt = now
                 }
-                val speed = ((snapshot.receivedBytes - previousBytes).coerceAtLeast(0) * 1000 / (now - previousTime).coerceAtLeast(1))
+                val receiving = !run.local && snapshot.phase == "downloading"
+                // The first downloading snapshot includes any resumed bytes. It establishes
+                // the rate baseline; queued/probing and local verification have no such rate.
+                val speed = if (receiving) previousBytes?.let { baseline ->
+                    ((snapshot.receivedBytes - baseline).coerceAtLeast(0).toDouble() * 1000 /
+                        (now - previousTime).coerceAtLeast(1)).toLong()
+                } ?: 0 else 0
                 graph.gate.withLock {
                     val task = owned(run)
                     if (task != null && task.userIntent == "RUN" && !snapshot.terminal) {
-                        val stage = if (run.local) "VERIFYING" else "DOWNLOADING"
-                        dao.update(task.copy(receivedBytes = snapshot.receivedBytes, checkpointBytes = snapshot.checkpointBytes,
+                        val stage = if (run.local) "VERIFYING" else if (receiving) "DOWNLOADING" else "CONNECTING"
+                        val updated = task.copy(receivedBytes = if (receiving) snapshot.receivedBytes else task.receivedBytes,
+                            checkpointBytes = if (receiving) snapshot.checkpointBytes else task.checkpointBytes,
                             totalBytes = snapshot.totalBytes ?: task.totalBytes, speed = if (run.local) 0 else speed,
-                            stage = stage, detail = if (run.local) "Checking downloaded bytes." else "Downloading from ${task.origin}", updatedAt = System.currentTimeMillis()))
-                        graph.notifications.update(task, graph.preferences.state.value.privateNotifications, run.local, run.serviceOwnedNotification)
+                            stage = stage, detail = if (run.local) "Checking downloaded bytes." else if (receiving) "Downloading from ${task.origin}" else "Connecting to the source.", updatedAt = System.currentTimeMillis())
+                        dao.update(updated)
+                        graph.notifications.update(updated, graph.preferences.state.value.privateNotifications, run.local, run.serviceOwnedNotification)
                     }
                 }
-                previousBytes = snapshot.receivedBytes; previousTime = now; lastWrite = now
+                previousBytes = snapshot.receivedBytes.takeIf { receiving }; previousTime = now; lastWrite = now
             }
             if (snapshot.terminal && snapshot.writerReleased) return snapshot
             delay(if (graph.visibility.visible) 250 else 1000)
