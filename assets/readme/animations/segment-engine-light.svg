@@ -100,7 +100,7 @@
   <text x="854" y="120" fill="#5f6676" font-size="11" font-weight="700" letter-spacing="0.9" class="t-disp">STAGE 03  ·  ATOMIC COMMIT</text>
   <line x1="854" y1="130" x2="1056" y2="130" stroke="#111318" stroke-width="1.5"/>
   <text x="854" y="156" fill="#111318" font-size="12.5" font-weight="700" class="t-mono">sparse .bmd.part</text>
-  <text x="854" y="178" fill="#434956" font-size="12" class="t-body">Direct offset pwrite, zero</text>
+  <text x="854" y="178" fill="#434956" font-size="12" class="t-body">Direct offset pwrite, no</text>
   <text x="854" y="196" fill="#434956" font-size="12" class="t-body">post-download file merge.</text>
   <text x="854" y="224" fill="#111318" font-size="12.5" font-weight="700" class="t-mono">craft-atomic .bmd.json</text>
   <text x="854" y="244" fill="#434956" font-size="12" class="t-body">Crash-safe resume table.</text>

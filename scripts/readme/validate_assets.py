@@ -8,7 +8,8 @@ Checks:
    ``url(...)``), ``href``, ``xlink:href``, or ``src`` attributes, and zero ``<foreignObject>``.
 4. File size budgets: ``<= 80 KiB`` for ``assets/readme/analytics/*.svg``,
    ``<= 120 KiB`` for all other ``assets/readme/**/*.svg``.
-5. When ``README.md`` exists, verifies all local relative image/link paths resolve on disk.
+5. Zero em dash (``\\u2014``) characters in any SVG under ``assets/readme/``.
+6. When ``README.md`` exists, verifies all local relative image/link paths resolve on disk.
 """
 from __future__ import annotations
 
@@ -54,6 +55,9 @@ def validate_svg_file(path: Path, max_bytes: int) -> list[str]:
     except (OSError, UnicodeDecodeError, ET.ParseError) as exc:
         errors.append(f"{path}: invalid XML ({exc})")
         return errors
+
+    if "\u2014" in raw:
+        errors.append(f"{path}: forbidden em dash (\\u2014) found in SVG")
 
     if _local_tag(root.tag) != "svg":
         errors.append(f"{path}: root element must be <svg>, got <{root.tag}>")

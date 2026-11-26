@@ -2,7 +2,7 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/hero/hero-waybill-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/readme/hero/hero-waybill-light.svg">
-    <img src="assets/readme/hero/hero-waybill-light.svg" alt="Black Marlin Downloader v1.0.0 Hero Waybill featuring the Black Marlin crest, 8-lane live segment dispatch telemetry, and a tilted thermal waybill with a Code 128 barcode.">
+    <img src="assets/readme/hero/hero-waybill-light.svg" alt="Black Marlin Downloader v1.0.0 header showing the marlin emblem, an 8-lane segment progress strip, and a shipping-style summary card with a Code 128 barcode.">
   </picture>
 </p>
 
@@ -10,7 +10,7 @@
 
 <p align="center">
   <b>A download is a delivery.</b><br>
-  The desktop download manager you already know — rebuilt from scratch in Rust with dynamic midpoint re-splitting, BitTorrent &amp; uTP, video &amp; gallery relay, and 86 interface languages. Free and open source under GPL-3.0, with zero ads, trials, or telemetry.
+  The desktop download manager you already know, rebuilt from scratch in Rust with dynamic midpoint re-splitting, BitTorrent &amp; uTP, video &amp; gallery capture, and 86 interface languages. Free and open source under GPL-3.0, with no ads, trials, or telemetry.
 </p>
 
 <p align="center">
@@ -39,38 +39,38 @@
   </picture>
 </p>
 
-## IDM's Window. Rebuilt in Rust.
+## IDM's Window, Rebuilt in Rust
 
-Losing a connection halfway through a large file shouldn't cost you the first half. **Black Marlin Downloader (`BMD`)** is designed around a straightforward premise from [PRODUCT.md](PRODUCT.md) and [DESIGN.md](DESIGN.md): keep the familiar desktop layout, category tree, queues, Scheduler, Speed Limiter, and progress window that millions of download-manager users already navigate by muscle memory — and replace the entire engine underneath with clean-room Rust (`1.98`, edition `2024`).
+Losing a connection halfway through a large file shouldn't cost you the first half. **Black Marlin Downloader (`BMD`)** starts from a simple goal described in [PRODUCT.md](PRODUCT.md) and [DESIGN.md](DESIGN.md): keep the desktop layout, category tree, queues, Scheduler, Speed Limiter, and progress window that download-manager users already know by heart, and build a new engine underneath from scratch in Rust (`1.98`, edition `2024`).
 
 | Principle | What It Means in Practice |
 | :--- | :--- |
-| **Familiar first** | Categories on the left, toolbar across the top, queue and progress windows where you expect them — zero forced learning curve. |
-| **Measured, not claimed** | Every speed figure cites reproducible local [`labserver`](crates/labserver) runs against IDM `6.42.25.3` ([`website/bench/results.json`](website/bench/results.json)). |
-| **Free means free** | Licensed under [`GPL-3.0-or-later`](LICENSE). No nag screens, no trial countdowns, no sign-up walls, no ads, and no phone-home telemetry. |
-| **Honest about limits** | Windows 10/11 and Linux desktop (`x86_64` / `arm64`) are supported and tested; macOS `.dmg` builds are explicitly marked `-experimental`; open gaps stay public on the [Roadmap](ROADMAP.md). |
+| **Familiar first** | Categories on the left, toolbar across the top, and queue and progress windows right where you expect them, so there is nothing new to relearn. |
+| **Measured, not claimed** | Every speed number comes from reproducible local [`labserver`](crates/labserver) runs against IDM `6.42.25.3` ([`website/bench/results.json`](website/bench/results.json)). |
+| **Free means free** | Licensed under [`GPL-3.0-or-later`](LICENSE). No nag screens, trial countdowns, sign-up prompts, ads, or phone-home telemetry. |
+| **Honest about limits** | Windows 10/11 and Linux desktop (`x86_64` / `arm64`) are supported and tested. The macOS `.dmg` builds are explicitly marked `-experimental`, and known gaps stay public on the [Roadmap](ROADMAP.md). |
 
 ### Not a reverse-engineering project
 
-BMD is a **clean-room implementation** written from scratch. It contains **zero** code, binaries, artwork, icons, sounds, or text from Internet Download Manager (Tonec) or any other download manager, and never patches or bypasses anyone's licensing. IDM is named strictly as a functional workflow reference and reproducible benchmark baseline. See [ATTRIBUTION.md](ATTRIBUTION.md) for every third-party icon set, font, and dataset bundled or referenced.
+BMD is written completely from scratch. It contains no code, binaries, artwork, icons, sounds, or text from Internet Download Manager (Tonec) or any other download manager, and it never patches or bypasses anyone's licensing. IDM is mentioned only as a workflow reference and a benchmark baseline. See [ATTRIBUTION.md](ATTRIBUTION.md) for every third-party icon set, font, and dataset bundled or referenced.
 
 ---
 
-## Live Product Tour & Interface Gallery
+## Screenshots & Product Tour
 
-Every screenshot below is captured directly from the unretouched BMD application — no synthetic mockups or painted chrome.
+Every screenshot below comes straight from the real app, with nothing painted on or faked.
 
 <p align="center">
   <img src="assets/readme/screenshots/bmd-tour.gif" alt="Animated 6-frame tour of Black Marlin Downloader showing Main Window (Light), Main Window (Dark), Active Segmented Progress, BitTorrent Pieces, Video Download, and Link Grabber">
 </p>
 
 <p align="center">
-  <sub><b>6-Frame Product Tour</b> — Main Window (Light) → Main Window (Dark) → Active Segmented Progress → BitTorrent Pieces → Video Download → Link Grabber</sub>
+  <sub><b>6-Frame Tour:</b> Main Window (Light) → Main Window (Dark) → Active Segmented Progress → BitTorrent Pieces → Video Download → Link Grabber</sub>
 </p>
 
-### Main Window — Light & Dark Themes
+### Main Window in Light & Dark Themes
 
-BMD follows your operating system's light or dark preference automatically and ships 10 built-in themes (`Emerald`, `Classic`, `Native`, `High contrast`, `Metro`, `Adwaita`, `Breeze`, `Luna`, `Aero`, `Aqua`) plus custom TOML/Base16/`pywal` palettes.
+BMD follows your system's light or dark setting automatically and includes 10 built-in themes (`Emerald`, `Classic`, `Native`, `High contrast`, `Metro`, `Adwaita`, `Breeze`, `Luna`, `Aero`, `Aqua`), plus support for custom TOML, Base16, and `pywal` palettes.
 
 <p align="center">
   <picture>
@@ -81,7 +81,7 @@ BMD follows your operating system's light or dark preference automatically and s
 </p>
 
 <details>
-<summary><b>Inspect the Dialog Suite (Progress, BitTorrent Pieces, Video Download, Link Grabber / Add Torrent)</b></summary>
+<summary><b>More Screenshots: Progress, BitTorrent Pieces, Video Download, and Link Grabber / Add Torrent Dialogs</b></summary>
 
 <p align="center">
   <picture>
@@ -93,27 +93,27 @@ BMD follows your operating system's light or dark preference automatically and s
 
 </details>
 
-### Real Feature Surfaces
+### Closer Look at Key Features
 
 <table>
   <tr>
     <td width="52%" valign="top">
       <a href="docs/video.md"><img src="docs/images/video-button-youtube.webp" alt="Floating Download video button and quality selector over an embedded YouTube player"></a><br>
-      <sub><b>In-Page Video Capture</b> — Pre-fetches stream formats via <code>yt-dlp</code> on hover, offering up to 4K 60fps HDR or <code>Most compatible (H.264 + AAC)</code> with chapter embedding and parallel HLS/DASH chunking.</sub>
+      <sub><b>In-Page Video Capture:</b> Hovering fetches stream formats via <code>yt-dlp</code>, from 4K 60fps HDR down to a <code>Most compatible (H.264 + AAC)</code> preset, with chapter embedding and parallel HLS/DASH chunking.</sub>
     </td>
     <td width="48%" valign="top">
       <a href="docs/torrents.md"><img src="docs/images/progress-torrent-pieces.webp" alt="BitTorrent download progress dialog displaying the live piece-map grid and peer metrics"></a><br>
-      <sub><b>BitTorrent &amp; uTP Swarm Grid</b> — Built on <code>librqbit</code> + <code>librqbit-utp</code> with selective magnet file picking, pre-start rename, DHT, peer filtering, IP blocklists, and live piece-map telemetry.</sub>
+      <sub><b>BitTorrent &amp; uTP Downloads:</b> Built on <code>librqbit</code> and <code>librqbit-utp</code> with selective magnet file picking, pre-start rename, DHT, peer filtering, IP blocklists, and a live piece-map grid.</sub>
     </td>
   </tr>
   <tr>
     <td width="52%" valign="top">
       <a href="docs/languages.md"><img src="docs/images/arabic-main.webp" alt="Black Marlin Downloader main window mirrored right-to-left in Arabic"></a><br>
-      <sub><b>First-Class RTL &amp; 86 Languages</b> — Full right-to-left mirroring for Arabic, Hebrew, Persian, Urdu, and Uyghur, while keeping URLs, file paths, and numeric fields readable via Unicode isolation.</sub>
+      <sub><b>Right-to-Left Layouts &amp; 86 Languages:</b> Full RTL mirroring for Arabic, Hebrew, Persian, Urdu, and Uyghur, with Unicode isolation so URLs, file paths, and numbers stay readable.</sub>
     </td>
     <td width="48%" valign="top" align="center">
       <a href="docs/remote-control.md"><img src="docs/images/remote-phone.webp" alt="BMD local-network HTTPS remote control interface on a smartphone screen" width="240"></a><br>
-      <sub><b>LAN HTTPS Remote Control</b> — Pair phones or browsers via QR code and 8-digit pairing token over local HTTPS (<code>crates/remote</code>) to add links, magnets, or torrents and manage queues without cloud relays.</sub>
+      <sub><b>LAN HTTPS Remote Control:</b> Pair a phone or another browser over local HTTPS (<code>crates/remote</code>) using a QR code and an 8-digit token to add links, magnets, or torrents and manage queues without any cloud relay.</sub>
     </td>
   </tr>
 </table>
@@ -126,7 +126,7 @@ BMD follows your operating system's light or dark preference automatically and s
   </picture>
 </p>
 
-## How the Adaptive Segment Engine Works
+## How the Segment Engine Works
 
 <p align="center">
   <picture>
@@ -136,17 +136,17 @@ BMD follows your operating system's light or dark preference automatically and s
   </picture>
 </p>
 
-Inside [`crates/engine`](crates/engine), every HTTP(S) and FTP(S) transfer moves through a deterministic, crash-safe pipeline decoupled completely from the UI:
+Inside [`crates/engine`](crates/engine), every HTTP(S) and FTP(S) transfer runs independently of the UI through a five-step, crash-safe pipeline:
 
-1. **`probe()` & Site Resolvers:** Inspects `Content-Length`, `Accept-Ranges: bytes`, `ETag`, `Last-Modified`, and redirect chains (`sites/gdrive.rs`, `sites/mediafire.rs`, `sites/rapidgator.rs`, plus expired-link refresh), while `HostLimits` records per-host concurrency ceilings.
-2. **Dynamic Midpoint Re-Splitting (`planner.rs`):** Launches parallel HTTP/1.1 connections (up to 128 configured, 8 by default) or pooled FTP/FTPS (`REST` + `RETR`) sessions. Whenever a worker finishes its byte range, the planner splits the **largest remaining active segment in half** so fast lanes help slower ones reach the tail together.
-3. **Slow-Worker Drop & Reclaim:** Each worker's rate is compared against the active line share; stalled or crawling connections are dropped cleanly and their remaining range is re-split across healthy workers.
-4. **Sparse `.bmd.part` + `craft-atomic` Resume:** Workers write directly at their byte offsets into `<filename>.bmd.part` (allocated sparse) while the segment table is committed atomically to `.bmd.json` via `craft-atomic`. Interrupted transfers survive crashes or power cuts without re-downloading completed bytes.
-5. **Browser-Grade TLS Fallback:** When strict servers or anti-bot checks reject standard client handshakes (such as `412` or TLS/HTTP2 fingerprinting), the engine retries via **BoringSSL** using your browser's TLS handshake, HTTP/2 settings, header order, and site cookies (without solving CAPTCHAs).
+1. **`probe()` & Site Resolvers:** Checks `Content-Length`, `Accept-Ranges: bytes`, `ETag`, `Last-Modified`, and redirect chains (`sites/gdrive.rs`, `sites/mediafire.rs`, `sites/rapidgator.rs`, plus expired-link refresh), while `HostLimits` tracks per-host connection limits.
+2. **Dynamic Midpoint Re-Splitting (`planner.rs`):** Opens parallel HTTP/1.1 connections (8 by default, up to 128 configurable) or pooled FTP/FTPS (`REST` + `RETR`) sessions. Whenever a worker finishes its byte range, the planner cuts the **largest remaining active segment in half** so faster lanes help slower ones reach the finish together.
+3. **Slow-Worker Drop & Reclaim:** Compares each worker's speed against the active average; stalled or crawling connections are dropped cleanly and their remaining bytes get split across healthy workers.
+4. **Sparse `.bmd.part` + `craft-atomic` Resume:** Workers write directly at their byte offsets into a sparse `<filename>.bmd.part` file while the segment table is saved atomically to `.bmd.json` via `craft-atomic`. If the app crashes or power goes out, completed bytes stay on disk.
+5. **Browser-Grade TLS Fallback:** When strict servers or anti-bot checks reject a standard client handshake (such as `412` or TLS/HTTP2 fingerprinting), the engine retries through **BoringSSL** using your browser's TLS handshake, HTTP/2 settings, header order, and site cookies (without solving CAPTCHAs).
 
 ---
 
-## Measured Performance (Not Claimed)
+## Measured Speed vs. IDM
 
 <p align="center">
   <picture>
@@ -156,7 +156,7 @@ Inside [`crates/engine`](crates/engine), every HTTP(S) and FTP(S) transfer moves
   </picture>
 </p>
 
-### Reproducible Benchmark Matrix (`labserver` vs IDM 6.42.25.3)
+### Benchmark Matrix (`labserver` vs IDM 6.42.25.3)
 
 Recorded on **2026-10-29** (`website/bench/results.json`, status `final`) on Windows 11 (`10.0.26200`), Intel Core i5-13400F, 63.8 GiB RAM, destination on local `C:`, against BMD's built-in fault-injecting [`bmd-labserver`](crates/labserver) (`127.0.0.1:8097`). Both clients ran at **default settings (8 connections)** across **7 alternating runs per scenario** (0 failures); values below are end-to-end medians (`e2e_ms`) from commit `caa200c`.
 
@@ -170,7 +170,7 @@ Recorded on **2026-10-29** (`website/bench/results.json`, status `final`) on Win
 | `capped-100m` | 100 MiB, `2 MB/s` per connection | `10,234.05 ms` | `6,319.47 ms` | **1.62×** |
 | `maxconns-50m` | 50 MiB, server allows 2 connections (`2 MB/s` each) | `15,864.21 ms` | `12,567.65 ms` | **1.26×** |
 
-Reproduce fault-injection scenarios locally with `cargo run -p bmd-labserver -- --faults "rate=2M"`.
+You can reproduce the fault-injection scenarios locally with `cargo run -p bmd-labserver -- --faults "rate=2M"`.
 
 <p align="center">
   <picture>
@@ -180,26 +180,26 @@ Reproduce fault-injection scenarios locally with `cargo run -p bmd-labserver -- 
   </picture>
 </p>
 
-## Capability Packing List
+## What's Included
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/features/feature-matrix-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/readme/features/feature-matrix-light.svg">
-    <img src="assets/readme/features/feature-matrix-light.svg" alt="Six-panel capability packing list covering Segmented HTTP/FTP, BitTorrent & Magnets, Video & Gallery Relay, Headless & HTTPS Remote, MCP Server & CLI, and 86 Languages & Themes">
+    <img src="assets/readme/features/feature-matrix-light.svg" alt="Six-panel overview covering Segmented HTTP/FTP, BitTorrent & Magnets, Video & Gallery Relay, Headless & HTTPS Remote, MCP Server & CLI, and 86 Languages & Themes">
   </picture>
 </p>
 
-- **Segmented HTTP/HTTPS & FTP/FTPS (`bmd-engine`):** Dynamic midpoint re-splitting, per-download and global token-bucket speed limiters, PAC proxy scripts, SOCKS/HTTP proxies, offline server geolocation via DB-IP Lite + 250-flag atlas (`bmd-geo`), and SHA/MD5/CRC32 verification.
-- **BitTorrent & Magnets (`bmd-torrent`):** Built-in `librqbit` + `librqbit-utp` (TCP & UDP/uTP), selective file downloads, pre-start single-file or folder rename, DHT, peer filtering, IP blocklists, upload speed & share ratio columns.
-- **Video & Gallery Relay (`bmd-tools`):** Verified `yt-dlp`, `ffmpeg`, and `gallery-dl` integration across 1,000+ sites, up to 4K 60fps HDR, `Most compatible (H.264 + AAC)` MP4 preset, embedded chapters, subtitles, playlists, and multi-connection HLS/DASH chunk downloading.
-- **Debrid, Link Grabber & Archives (`bmd-debrid`, `bmd-cnl`, `bmd-extract`):** Experimental Real-Debrid, AllDebrid, Premiumize, TorBox, and Mega-Debrid resolvers; Click'n'Load 2 listener (`127.0.0.1:9666`); clipboard batch extraction; keychain-saved archive passwords; in-process `zip`/`tar`/`gz`/`xz`, external 7-Zip (`7z`/`RAR`), and [HatchZip](https://hatchzip.dev) extract-in-place.
-- **Headless Server & Local HTTPS Remote (`bmd-remote`):** Run `bmd --headless` on Linux, NAS, Docker, or Unraid (`docker/compose.yml`, `docker/unraid.xml`) and pair any phone or browser via QR code + self-signed cert fingerprint.
-- **CLI & AI Assistant MCP (`bmd-cli`, `bmd-mcp`):** Familiar IDM switches (`/d /p /f /a /n /s`), scriptable `bmd-cli` (`add`, `video-get`, `playlist-get`, `start-queue`, `stop-queue`, `pair`), and an official stdio MCP server exposing `list_downloads`, `add_download`, `pause_downloads`, `resume_downloads`, `remove_downloads`, `start_queue`, and `stop_queue`.
+- **Segmented HTTP/HTTPS & FTP/FTPS (`bmd-engine`):** Dynamic midpoint re-splitting, per-download and global token-bucket speed limiters, PAC proxy scripts, SOCKS/HTTP proxies, offline server country lookups via DB-IP Lite and a 250-flag atlas (`bmd-geo`), and SHA/MD5/CRC32 verification.
+- **BitTorrent & Magnets (`bmd-torrent`):** Built-in `librqbit` and `librqbit-utp` (TCP and UDP/uTP), selective file picking, pre-start single-file or folder rename, DHT, peer filtering, IP blocklists, and upload speed and share ratio columns.
+- **Video & Gallery Capture (`bmd-tools`):** Verified `yt-dlp`, `ffmpeg`, and `gallery-dl` integration across 1,000+ sites, up to 4K 60fps HDR, a `Most compatible (H.264 + AAC)` MP4 preset, embedded chapters, subtitles, playlists, and multi-connection HLS/DASH chunk downloading.
+- **Debrid, Link Grabber & Archives (`bmd-debrid`, `bmd-cnl`, `bmd-extract`):** Experimental Real-Debrid, AllDebrid, Premiumize, TorBox, and Mega-Debrid resolvers; a Click'n'Load 2 listener (`127.0.0.1:9666`); clipboard batch extraction; keychain-saved archive passwords; and extraction via in-process `zip`/`tar`/`gz`/`xz`, external 7-Zip (`7z`/`RAR`), and [HatchZip](https://hatchzip.dev) extract-in-place.
+- **Headless Server & Local HTTPS Remote (`bmd-remote`):** Run `bmd --headless` on Linux, a NAS, Docker, or Unraid (`docker/compose.yml`, `docker/unraid.xml`) and pair any phone or browser using a QR code and self-signed cert fingerprint.
+- **CLI & AI Assistant MCP (`bmd-cli`, `bmd-mcp`):** Familiar IDM switches (`/d /p /f /a /n /s`), scriptable `bmd-cli` (`add`, `video-get`, `playlist-get`, `start-queue`, `stop-queue`, `pair`), and a stdio MCP server exposing `list_downloads`, `add_download`, `pause_downloads`, `resume_downloads`, `remove_downloads`, `start_queue`, and `stop_queue`.
 
 ---
 
-## Browser-to-Engine Capture Workflow
+## How Browser Capture Works
 
 <p align="center">
   <picture>
@@ -209,10 +209,10 @@ Reproduce fault-injection scenarios locally with `cargo run -p bmd-labserver -- 
   </picture>
 </p>
 
-1. **`extension/` (Chromium MV3 & Firefox):** Works in Chrome, Edge, Brave, Opera, Vivaldi, Helium, Comet, Firefox 140+, Zen, LibreWolf, Floorp, Waterfox, and Safari 17+ (macOS experimental). Hands off download URLs along with referrer, User-Agent, site cookies, and optional browser-proxy/VPN routing — plus **Media on this page** and the draggable **Download video** button.
-2. **`bmd-nmhost` (`crates/nmhost`):** Native messaging host (`com.blackmarlindownloader.host`) that validates capture rules and streams bulk link grabs in 1 MiB `LinksPart` frames.
-3. **`bmd-ipc` (`crates/ipc`):** Token-protected local socket (`127.0.0.1`) ensuring single-instance dispatch with zero duplicate window launches.
-4. **Dispatch Target (`bmd-app` / `bmd-remote` / `bmd-mcp`):** Queues jobs into the desktop window or headless server, or lets the browser keep any download you `Alt`-click or decline. See [Browser integration](docs/browser-integration.md).
+1. **`extension/` (Chromium MV3 & Firefox):** Works in Chrome, Edge, Brave, Opera, Vivaldi, Helium, Comet, Firefox 140+, Zen, LibreWolf, Floorp, Waterfox, and Safari 17+ (macOS experimental). Hands off download URLs with their referrer, User-Agent, site cookies, and optional browser-proxy/VPN routing, and also provides **Media on this page** and the draggable **Download video** button.
+2. **`bmd-nmhost` (`crates/nmhost`):** Native messaging host (`com.blackmarlindownloader.host`) that checks capture rules and streams bulk link grabs in 1 MiB `LinksPart` frames.
+3. **`bmd-ipc` (`crates/ipc`):** Token-protected local socket (`127.0.0.1`) that routes requests to the running instance without opening duplicate windows.
+4. **Dispatch Target (`bmd-app` / `bmd-remote` / `bmd-mcp`):** Queues jobs into the desktop window or headless server, or lets the browser handle any download you `Alt`-click or decline. See [Browser integration](docs/browser-integration.md).
 
 <p align="center">
   <picture>
@@ -222,28 +222,28 @@ Reproduce fault-injection scenarios locally with `cargo run -p bmd-labserver -- 
   </picture>
 </p>
 
-## 15-Crate Workspace Architecture
+## Workspace Architecture (15 Crates)
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/illustrations/architecture-map-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/readme/illustrations/architecture-map-light.svg">
-    <img src="assets/readme/illustrations/architecture-map-light.svg" alt="Blueprint of BMD's 15-crate Rust workspace and browser extension showing dependencies pointing inward toward bmd-ipc and bmd-engine">
+    <img src="assets/readme/illustrations/architecture-map-light.svg" alt="Diagram of BMD's 15-crate Rust workspace and browser extension showing dependencies pointing inward toward bmd-ipc and bmd-engine">
   </picture>
 </p>
 
-Dependencies point inward: entry surfaces (`bmd-app`, `bmd-cli`, `bmd-mcp`, `bmd-nmhost`, `bmd-remote`) talk through `bmd-ipc` to `bmd-engine`, which knows nothing about the GUI. Portable crates enforce `unsafe_code = "deny"`, isolating OS integration to `crates/app/src/win32.rs` and `unix.rs`. Full design notes live in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Dependencies point inward: the frontends (`bmd-app`, `bmd-cli`, `bmd-mcp`, `bmd-nmhost`, `bmd-remote`) talk to `bmd-engine` over `bmd-ipc`, and the engine has no dependency on the UI. Portable crates enforce `unsafe_code = "deny"`, keeping OS-specific code isolated to `crates/app/src/win32.rs` and `unix.rs`. Full design notes live in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 <details>
 <summary><b>Complete 15-Crate Workspace Manifest</b></summary>
 
 | Crate | Path | Binary / Role |
 | :--- | :--- | :--- |
-| `bmd-app` | [`crates/app`](crates/app) | `bmd` — `egui` desktop UI, main list, categories, queues, Scheduler, themes, tray |
+| `bmd-app` | [`crates/app`](crates/app) | `bmd`: `egui` desktop UI, main list, categories, queues, Scheduler, themes, tray |
 | `bmd-engine` | [`crates/engine`](crates/engine) | Core segmented HTTP(S)/FTP(S) engine, planner, BoringSSL browser TLS, resume |
-| `bmd-cli` | [`crates/cli`](crates/cli) | `bmd-cli` — headless `get`/`resume`/`video-get` and automation API commands |
-| `bmd-mcp` | [`crates/mcp`](crates/mcp) | `bmd-mcp` — stdio Model Context Protocol server for AI assistants |
-| `bmd-nmhost` | [`crates/nmhost`](crates/nmhost) | `bmd-nmhost` — browser native messaging host (`com.blackmarlindownloader.host`) |
+| `bmd-cli` | [`crates/cli`](crates/cli) | `bmd-cli`: headless `get`/`resume`/`video-get` and automation API commands |
+| `bmd-mcp` | [`crates/mcp`](crates/mcp) | `bmd-mcp`: stdio Model Context Protocol server for AI assistants |
+| `bmd-nmhost` | [`crates/nmhost`](crates/nmhost) | `bmd-nmhost`: browser native messaging host (`com.blackmarlindownloader.host`) |
 | `bmd-ipc` | [`crates/ipc`](crates/ipc) | Token-protected `127.0.0.1` single-instance channel and shared capture rules |
 | `bmd-remote` | [`crates/remote`](crates/remote) | Local-network HTTPS server, QR pairing, device tokens, and mobile web UI |
 | `bmd-torrent` | [`crates/torrent`](crates/torrent) | BitTorrent & magnet downloads via `librqbit` + `librqbit-utp` |
@@ -253,7 +253,7 @@ Dependencies point inward: entry surfaces (`bmd-app`, `bmd-cli`, `bmd-mcp`, `bmd
 | `bmd-extract` | [`crates/extract`](crates/extract) | In-process `zip`/`tar`/`gz`/`xz`; external 7-Zip (`7z`/`RAR`) & HatchZip |
 | `bmd-geo` | [`crates/geo`](crates/geo) | Offline DB-IP IP-to-Country Lite lookup + 250-flag atlas |
 | `bmd-crash` | [`crates/crash`](crates/crash) | Out-of-process crash/freeze watchdog, minidumps, and symbolicated stack traces |
-| `bmd-labserver` | [`crates/labserver`](crates/labserver) | `labserver` — HTTP Range & FTP/FTPS fault-injection test/benchmark server |
+| `bmd-labserver` | [`crates/labserver`](crates/labserver) | `labserver`: HTTP Range and FTP/FTPS fault-injection test and benchmark server |
 
 </details>
 
@@ -292,28 +292,28 @@ Tested on Ubuntu 24.04, Debian 12, and Fedora (GNOME, KDE Plasma, Xfce, Cinnamon
 
 | Target | Package | Size | Notes |
 | :--- | :--- | ---: | :--- |
-| **macOS Apple Silicon (`arm64`)** | [`BMD-1.0.0-macos-arm64-experimental.dmg`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-macos-arm64-experimental.dmg) | `17.3 MiB` | Experimental, unnotarized — see [On a Mac](docs/getting-started.md#on-a-mac) |
-| **macOS Intel (`x86_64`)** | [`BMD-1.0.0-macos-x86_64-experimental.dmg`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-macos-x86_64-experimental.dmg) | `19.0 MiB` | Experimental, unnotarized — right-click → **Open** on first run |
+| **macOS Apple Silicon (`arm64`)** | [`BMD-1.0.0-macos-arm64-experimental.dmg`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-macos-arm64-experimental.dmg) | `17.3 MiB` | Experimental, unnotarized; see [On a Mac](docs/getting-started.md#on-a-mac) |
+| **macOS Intel (`x86_64`)** | [`BMD-1.0.0-macos-x86_64-experimental.dmg`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-macos-x86_64-experimental.dmg) | `19.0 MiB` | Experimental, unnotarized; right-click → **Open** on first run |
 | **Chromium MV3 (Unpacked)** | [`BMD-1.0.0-extension-chromium.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-extension-chromium.zip) | `260.9 KiB` | Chrome, Edge, Brave, Opera, Vivaldi, Helium, Comet |
 | **Chrome Web Store Bundle** | [`BMD-1.0.0-chrome-web-store.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-chrome-web-store.zip) | `260.6 KiB` | Store-packaged Chromium MV3 archive |
 | **Firefox (`140+`) Add-on** | [`BMD-1.0.0-extension-firefox.xpi`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-extension-firefox.xpi) | `263.1 KiB` | Firefox, Zen, LibreWolf, Floorp, Waterfox |
 
 ### Verification & Provenance
 
-Every release artifact ships with a unified SHA-256 manifest and keyless Sigstore GitHub build provenance attestation:
+Every release ships with a SHA-256 manifest and keyless Sigstore GitHub build provenance attestation:
 
 - **Checksums:** [`SHA256SUMS.txt`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/SHA256SUMS.txt) (`3.3 KiB`)
 - **Sigstore Provenance:** `gh attestation verify <downloaded-file> --repo DecoyINDIA/BMD`
 
 ---
 
-## Live Download Telemetry & Repository Pulse
+## Release & Repository Stats
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/analytics/telemetry-dashboard-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/readme/analytics/telemetry-dashboard-light.svg">
-    <img src="assets/readme/analytics/telemetry-dashboard-light.svg" alt="Live BMD release telemetry dashboard showing 27 product and extension downloads, 46 total release assets, v1.0.0 breakdown, and baseline recording status">
+    <img src="assets/readme/analytics/telemetry-dashboard-light.svg" alt="BMD release download stats showing 27 product and extension downloads, 46 total release assets, v1.0.0 breakdown, and baseline recording status">
   </picture>
 </p>
 
@@ -325,18 +325,18 @@ Every release artifact ships with a unified SHA-256 manifest and keyless Sigstor
   </picture>
 </p>
 
-- **Update Cadence:** Periodically refreshed every **6 hours** via [`.github/workflows/readme-analytics.yml`](.github/workflows/readme-analytics.yml) against the GitHub Releases & Repository API, stored in [`data/analytics/downloads.json`](data/analytics/downloads.json).
-- **Zero Double-Counting Policy:** **27 product & extension downloads** (installers, portable archives, Linux packages, experimental macOS `.dmg`, browser extensions) are tracked separately from **19 auxiliary assets** (debug symbols, `.zsync` delta files, `SHA256SUMS.txt`, license/geo data) = **46 total release assets**.
-- **Tracking Start Date:** Historical snapshot tracking began on **`2026-11-26`** — no synthetic or backfilled history is generated prior to that date, and `24h` / `7d` / `30d` deltas appear only once real snapshots span those windows.
+- **Update Cadence:** Refreshed every **6 hours** via [`.github/workflows/readme-analytics.yml`](.github/workflows/readme-analytics.yml) from the GitHub Releases and Repository API, and saved in [`data/analytics/downloads.json`](data/analytics/downloads.json).
+- **Separate Product & Auxiliary Counts:** **27 product & extension downloads** (installers, portable archives, Linux packages, experimental macOS `.dmg` builds, and browser extensions) are counted separately from **19 auxiliary assets** (debug symbols, `.zsync` delta files, `SHA256SUMS.txt`, license and geo data), for **46 total release assets** with no double-counting.
+- **Tracking Start Date:** Snapshot history started on **`2026-11-26`**. Nothing is backfilled before that date, and `24h` / `7d` / `30d` deltas appear only once real snapshots cover those windows.
 
 <details>
-<summary><b>Static Fallback Chart &amp; Accessible Telemetry Table</b></summary>
+<summary><b>Static Fallback Chart &amp; Plain-Text Breakdown</b></summary>
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/analytics/telemetry-dashboard-static-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/readme/analytics/telemetry-dashboard-static-light.svg">
-    <img src="assets/readme/analytics/telemetry-dashboard-static-light.svg" alt="Static accessible version of the BMD release telemetry dashboard">
+    <img src="assets/readme/analytics/telemetry-dashboard-static-light.svg" alt="Static accessible version of the BMD release download stats">
   </picture>
 </p>
 
@@ -356,7 +356,7 @@ Every release artifact ships with a unified SHA-256 manifest and keyless Sigstor
 | Linux | Product | 8 | 29.6% | 17.4% |
 | macOS (Experimental) | Product | 2 | 7.4% | 4.3% |
 | Browser Extensions | Product | 5 | 18.5% | 10.9% |
-| Other / Auxiliary | Auxiliary | 19 | — | 41.3% |
+| Other / Auxiliary | Auxiliary | 19 | n/a | 41.3% |
 <!-- BMD:ANALYTICS-TEXT:END -->
 
 </details>
@@ -369,16 +369,16 @@ Every release artifact ships with a unified SHA-256 manifest and keyless Sigstor
   </picture>
 </p>
 
-## Platform & Language Matrix
+## Supported Platforms & Languages
 
 ### Target Environments
 
 | Platform | Architectures & Packaging | Status & Requirements |
 | :--- | :--- | :--- |
-| **Windows 10 / 11** | `x64`, `arm64` (Snapdragon), 32-bit `x86` (`setup.exe`, `portable.zip`, raw `.zip`) | **Supported** — Direct3D 12 default (OpenGL/WARP fallback on older GPUs); 32-bit uses OpenGL + user-supplied `ffmpeg` |
-| **Linux Desktop** | `x86_64`, `arm64` (`.deb`, `.rpm`, `AppImage`, `.tar.gz`) | **Supported** — `glibc >= 2.35`; tested on GNOME, KDE Plasma, Xfce, and Cinnamon (X11 & Wayland/XWayland) |
-| **Docker / Headless** | `ghcr.io/decoyindia/bmd:latest` (`--headless`, Compose, Unraid) | **Supported** — ~175 MiB slim Debian runtime, zero desktop libraries, LAN HTTPS remote (`:8463`) |
-| **macOS** | `arm64` (Apple Silicon), `x86_64` (Intel) `.dmg` | **Experimental** — unnotarized builds with bundled Safari 17+ extension; feedback welcome in Issues |
+| **Windows 10 / 11** | `x64`, `arm64` (Snapdragon), 32-bit `x86` (`setup.exe`, `portable.zip`, raw `.zip`) | **Supported:** Direct3D 12 by default (OpenGL/WARP fallback on older GPUs); 32-bit uses OpenGL and a user-supplied `ffmpeg` |
+| **Linux Desktop** | `x86_64`, `arm64` (`.deb`, `.rpm`, `AppImage`, `.tar.gz`) | **Supported:** `glibc >= 2.35`; tested on GNOME, KDE Plasma, Xfce, and Cinnamon (X11 and Wayland/XWayland) |
+| **Docker / Headless** | `ghcr.io/decoyindia/bmd:latest` (`--headless`, Compose, Unraid) | **Supported:** ~175 MiB slim Debian image without desktop libraries, with LAN HTTPS remote on `:8463` |
+| **macOS** | `arm64` (Apple Silicon), `x86_64` (Intel) `.dmg` | **Experimental:** unnotarized builds with the Safari 17+ extension bundled; feedback is welcome in Issues |
 
 ### 86 Interface Languages & Custom Themes
 
@@ -386,10 +386,10 @@ Every release artifact ships with a unified SHA-256 manifest and keyless Sigstor
   <tr>
     <td width="64%" valign="top">
       <ul>
-        <li><b>86 UI Languages (<a href="i18n/languages.tsv"><code>i18n/languages.tsv</code></a>):</b> Every Windows 11 display language — Afrikaans to Vietnamese, including Simplified/Traditional Chinese, regional Spanish/French/Portuguese, and Serbian Cyrillic/Latin.</li>
-        <li><b>Right-to-Left Layouts:</b> Complete mirroring in Arabic, Hebrew, Persian, Urdu, and Uyghur with proper bidi isolation for URLs and file paths (<a href="docs/languages.md">Languages guide</a>).</li>
-        <li><b>Locale-Aware Formatting:</b> Regional digit grouping, decimal marks, and 12/24-hour clocks via <b>Options → Regional</b>.</li>
-        <li><b>OKLab &amp; TOML Theme Engine:</b> 10 built-in looks plus drop-in <code>theme.toml</code> / <code>.json</code>, Base16 YAML, and live <code>pywal</code> wallust schemes verified to WCAG AA contrast (<a href="docs/themes.md">Themes guide</a>).</li>
+        <li><b>86 UI Languages (<a href="i18n/languages.tsv"><code>i18n/languages.tsv</code></a>):</b> Every Windows 11 display language from Afrikaans to Vietnamese, including Simplified/Traditional Chinese, regional Spanish/French/Portuguese, and Serbian Cyrillic/Latin.</li>
+        <li><b>Right-to-Left Layouts:</b> Full mirroring in Arabic, Hebrew, Persian, Urdu, and Uyghur with bidi isolation for URLs and file paths (<a href="docs/languages.md">Languages guide</a>).</li>
+        <li><b>Locale-Aware Formatting:</b> Regional digit grouping, decimal marks, and 12/24-hour clocks under <b>Options → Regional</b>.</li>
+        <li><b>OKLab &amp; TOML Theme Engine:</b> 10 built-in looks plus drop-in <code>theme.toml</code> / <code>.json</code>, Base16 YAML, and live <code>pywal</code> / wallust schemes checked for WCAG AA contrast (<a href="docs/themes.md">Themes guide</a>).</li>
       </ul>
     </td>
     <td width="36%" align="center" valign="middle">
@@ -400,20 +400,20 @@ Every release artifact ships with a unified SHA-256 manifest and keyless Sigstor
 
 ---
 
-## Release Timeline & Roadmap
+## Release History & Roadmap
 
 | Release | Date | Key Milestones |
 | :--- | :--- | :--- |
-| **`0.1.0`** | `2026-10-30` | Initial clean-room Rust release — 32-connection adaptive engine, FTP/FTPS, queues & Scheduler, 86 languages, BitTorrent (`librqbit`), `yt-dlp` video capture, `bmd-cli`. |
-| **`0.5.0` → `0.5.2`** | `2026-11-08` – `2026-11-09` | Theme engine (TOML/JSON, Base16, `pywal`), `--headless` server & LAN HTTPS remote, store-ready browser extensions (Chrome Web Store, Firefox, Safari), `gallery-dl` & playlists, selective torrent files & ratio columns. |
-| **`1.0.0`** | `2026-11-19` | First release as **Black Marlin Downloader (`BMD`)** — Windows ARM64 & x86, Linux ARM64, H.264+AAC preset, `bmd-mcp` AI server, `bmd-cli add` & queue control, BoringSSL browser TLS & parallel HLS/DASH, Click'n'Load 2, TorBox & Mega-Debrid, Windows drag-out, Sigstore provenance. |
+| **`0.1.0`** | `2026-10-30` | Initial Rust release built from scratch: 32-connection adaptive engine, FTP/FTPS, queues and Scheduler, 86 languages, BitTorrent (`librqbit`), `yt-dlp` video capture, and `bmd-cli`. |
+| **`0.5.0` → `0.5.2`** | `2026-11-08` – `2026-11-09` | Theme engine (TOML/JSON, Base16, `pywal`), `--headless` server and LAN HTTPS remote, store-ready browser extensions (Chrome Web Store, Firefox, Safari), `gallery-dl` and playlists, selective torrent files and ratio columns. |
+| **`1.0.0`** | `2026-11-19` | First release under **Black Marlin Downloader (`BMD`)**: Windows ARM64 and x86, Linux ARM64, H.264+AAC preset, `bmd-mcp` AI server, `bmd-cli add` and queue control, BoringSSL browser TLS and parallel HLS/DASH, Click'n'Load 2, TorBox and Mega-Debrid, Windows drag-out, and Sigstore provenance. |
 | **`[Unreleased]`** | Active | Built-in **IBM Plex Sans**, **IBM Plex Mono**, and **Space Grotesk** typography across desktop, extension, and remote UI. |
 
-### Upcoming Focus ([`ROADMAP.md`](ROADMAP.md))
+### What's Next ([`ROADMAP.md`](ROADMAP.md))
 
-- **Linux Desktop Polish:** Orca screen-reader accessibility, Flatpak browser integration checks, native Wayland popup placement (`eframe`), and Vulkan GPU renderer promotion.
-- **macOS & Safari:** Developer ID signing for the Safari extension and Metal renderer validation.
-- **Additional Benchmarks:** Expanded reproducible comparisons against other download managers ([`CHANGELOG.md`](CHANGELOG.md) · [`ROADMAP.md`](ROADMAP.md)).
+- **Linux Desktop Polish:** Orca screen-reader support, Flatpak browser integration checks, native Wayland popup placement (`eframe`), and promoting the Vulkan GPU renderer.
+- **macOS & Safari:** Developer ID signing for the Safari extension and Metal renderer testing.
+- **More Benchmarks:** Reproducible comparisons against other download managers ([`CHANGELOG.md`](CHANGELOG.md) · [`ROADMAP.md`](ROADMAP.md)).
 
 <p align="center">
   <picture>
@@ -423,9 +423,9 @@ Every release artifact ships with a unified SHA-256 manifest and keyless Sigstor
   </picture>
 </p>
 
-## Community, Contributors & Documentation
+## Contributors & Documentation
 
-BMD credits everyone who contributes code, native translation reviews, bug reports, and ideas.
+Thanks to everyone who has contributed code, translation reviews, bug reports, and ideas.
 
 <p align="center">
   <a href="https://github.com/adixxdev"><img src="art/contributors/adixxdev.png" alt="adixxdev" width="44" height="44"></a>
@@ -461,23 +461,23 @@ BMD credits everyone who contributes code, native translation reviews, bug repor
 | Guide & Reference | Purpose |
 | :--- | :--- |
 | [**User Guide Index**](docs/README.md) | Tutorials, [Getting Started](docs/getting-started.md), [Browser Integration](docs/browser-integration.md), [Command Line](docs/command-line.md), [MCP AI Assistants](docs/ai-assistants.md) |
-| [**Architecture & Design**](docs/ARCHITECTURE.md) | Crate boundaries, engine planner, font & theme system ([PRODUCT.md](PRODUCT.md) · [DESIGN.md](DESIGN.md)) |
-| [**Contributing**](CONTRIBUTING.md) | Clean-room rules, local test harness, translation workflow, and fuzzing targets |
+| [**Architecture & Design**](docs/ARCHITECTURE.md) | Crate boundaries, engine planner, font and theme system ([PRODUCT.md](PRODUCT.md) · [DESIGN.md](DESIGN.md)) |
+| [**Contributing**](CONTRIBUTING.md) | Rules for original code written from scratch, local test harness, translation workflow, and fuzzing targets |
 | [**Security Policy**](SECURITY.md) | Private vulnerability advisories, `bmd-nmhost` / `bmd-ipc` trust boundaries, helper signature checks |
 | [**Attribution & License**](ATTRIBUTION.md) | Third-party icons, DB-IP Lite dataset, SIL OFL fonts, and [`GPL-3.0-or-later`](LICENSE) terms |
 
 ---
 
-## Build from Source & Quality Gates
+## Building from Source
 
-Requires **Rust `1.98+`** (edition `2024`), **CMake**, **LLVM (`libclang`)**, and **NASM** on Windows (for BoringSSL):
+You will need **Rust `1.98+`** (edition `2024`), **CMake**, **LLVM (`libclang`)**, and **NASM** on Windows (for BoringSSL):
 
 ```sh
 cargo build
 cargo run -p bmd-app
 ```
 
-Before opening a pull request, run the full workspace verification suite (plus optional libFuzzer parser targets in `fuzz/`):
+Before opening a pull request, run the workspace checks (plus the optional libFuzzer parser targets in `fuzz/`):
 
 ```sh
 cargo fmt --all --check
@@ -493,6 +493,6 @@ node tools/extension/test.mjs
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/branding/closing-waybill-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="assets/readme/branding/closing-waybill-light.svg">
-    <img src="assets/readme/branding/closing-waybill-light.svg" alt="Black Marlin Downloader closing waybill — GNU GPL-3.0, 86 languages including RTL, 15 crates + browser extension, Signed For Free">
+    <img src="assets/readme/branding/closing-waybill-light.svg" alt="Black Marlin Downloader closing card: GNU GPL-3.0, 86 languages including RTL, 15 crates plus browser extension, free and open source">
   </picture>
 </p>
