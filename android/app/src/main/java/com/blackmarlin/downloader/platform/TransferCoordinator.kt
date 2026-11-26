@@ -12,6 +12,7 @@ import com.blackmarlin.downloader.bridge.NativeSnapshot
 import com.blackmarlin.downloader.data.TaskEntity
 import com.blackmarlin.downloader.domain.DownloadPolicy
 import com.blackmarlin.downloader.domain.StorageBudget
+import com.blackmarlin.downloader.storage.deletePrivateTransferDirectory
 import com.blackmarlin.downloader.ui.NetworkPolicy
 import com.blackmarlin.downloader.ui.BmdUiException
 import java.io.File
@@ -395,12 +396,7 @@ class TransferCoordinator(private val graph: BmdGraph) {
 
     /** Caller holds gate and has proved no live writer / unresolved publication. */
     fun cleanPrivateDirectory(taskId: String) {
-        val root = graph.directory(taskId).toPath()
-        if (!java.nio.file.Files.exists(root, java.nio.file.LinkOption.NOFOLLOW_LINKS)) return
-        require(!java.nio.file.Files.isSymbolicLink(root.parent))
-        require(root.parent.toRealPath() == File(graph.context.noBackupFilesDir, "transfers").toPath().toAbsolutePath().normalize())
-        require(!java.nio.file.Files.isSymbolicLink(root))
-        java.nio.file.Files.walk(root).use { paths -> paths.sorted(Comparator.reverseOrder()).forEach(java.nio.file.Files::delete) }
+        deletePrivateTransferDirectory(graph.context.noBackupFilesDir, taskId)
     }
 
     companion object {

@@ -437,7 +437,12 @@ class BmdRepository(private val graph: BmdGraph) : BmdUiStore {
 
     private fun present(task: TaskEntity, publication: PublicationEntity?, file: SavedFileEntity?): UiTask {
         val stage = runCatching { TransferStage.valueOf(task.stage) }.getOrDefault(TransferStage.INTERRUPTED)
-        val local = task.verified || task.stage in BmdGraph.LOCAL_STAGES || publication != null && publication.phase !in setOf("PUBLISHED", "CLEANED")
+        val unfinishedPublication = publication != null && publication.phase !in setOf("PUBLISHED", "CLEANED")
+        val local = task.verified || task.stage in BmdGraph.LOCAL_STAGES || unfinishedPublication
+        // A journal is also present during a healthy save. Recovery controls belong
+        // to a settled hold, after its writer has released the retained download.
+        val publicationNeedsRecovery = stage == TransferStage.WAITING_SAVE &&
+            task.ownerSession == null && task.verified && unfinishedPublication
         val actions = mutableSetOf<TaskOperation>()
         if (!DownloadPolicy.isFinal(task.stage)) {
             if (task.ownerSession != null) {
@@ -460,7 +465,7 @@ class BmdRepository(private val graph: BmdGraph) : BmdUiStore {
             task.saveBytes.takeIf { local || stage == TransferStage.COMPLETE }, task.totalBytes, task.mimeType,
             UiDestination(DestinationKind.valueOf(task.destinationKind), task.destinationLabel, task.destinationUri), NetworkPolicy.valueOf(task.networkPolicy),
             task.createdAt, task.updatedAt, task.detail, task.errorCode, actions, file?.id,
-            publication != null && publication.phase !in setOf("PUBLISHED", "CLEANED"), task.expectedSha256, task.sha256Verified,
+            publicationNeedsRecovery, task.expectedSha256, task.sha256Verified,
             task.savedBeforeCancellation, runGeneration = task.runGeneration)
     }
     private fun present(file: SavedFileEntity) = UiFile(file.id, file.taskId, file.name, file.mimeType, file.bytes, file.savedAt,

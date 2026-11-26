@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.provider.DocumentsContract
 import android.util.Log
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -152,13 +154,28 @@ class NativeAppSmokeTest {
 
     @Test fun sharedUnsupportedLinkStaysInEditorAndNeverCreatesATask() {
         compose.waitUntil(15_000) { !graph.repository.state.value.loading }
-        val before = graph.repository.state.value.tasks.map { it.id }.toSet()
-        share("ftp://example.invalid/archive.zip")
-        compose.waitUntil(10_000) { compose.onAllNodesWithText("Start with a link").fetchSemanticsNodes().isNotEmpty() }
-        compose.onNodeWithTag("download-url").performTextReplacement("ftp://example.invalid/archive.zip")
-        compose.onNodeWithTag("download-review").performScrollTo().performClick()
-        compose.onNodeWithText("Enter a complete HTTP or HTTPS link", substring = true).assertExists()
+        val before = runBlocking { graph.db.tasks().tasks().map { it.id }.toSet() }
+        compose.waitUntil(10_000) { graph.repository.state.value.tasks.map { it.id }.toSet() == before }
+        val unsupportedUrl = "ftp://example.invalid/archive.zip"
+        share(unsupportedUrl)
+        // The real SEND entry rejects unsupported schemes before Review is requested.
+        // Do not rewrite the same URL: that opens the IME and obscures the button below it.
+        compose.waitUntil(10_000) { hasText("Share a direct HTTP or HTTPS file link.") }
+        compose.onNodeWithTag("screen-add_link").assertExists()
+        compose.onNodeWithTag("download-url").assertTextContains(unsupportedUrl)
         assertEquals(before, graph.repository.state.value.tasks.map { it.id }.toSet())
+
+        // Explicit Review remains a separate validation path with its own user-facing copy.
+        compose.onNodeWithTag("download-review").performScrollTo().assertIsEnabled().performClick()
+        compose.waitUntil(10_000) {
+            compose.onAllNodesWithText("Enter a complete HTTP or HTTPS link", substring = true).fetchSemanticsNodes().isNotEmpty()
+        }
+        compose.onNodeWithText("Enter a complete HTTP or HTTPS link", substring = true).assertExists()
+        compose.onNodeWithTag("screen-add_link").assertExists()
+        compose.onNodeWithTag("download-url").assertTextContains(unsupportedUrl)
+        assertEquals(before, graph.repository.state.value.tasks.map { it.id }.toSet())
+        assertEquals("Unsupported input must not be persisted as a task", before,
+            runBlocking { graph.db.tasks().tasks().map { it.id }.toSet() })
     }
 
     /**
@@ -216,11 +233,7 @@ class NativeAppSmokeTest {
         assertEquals(saved.bytes, task.totalBytes)
         assertTrue(runBlocking { graph.db.tasks().publication(id)!!.phase } in setOf("PUBLISHED", "CLEANED"))
         // Cleanup only this test-created file and task through the actual user-command boundary.
-        runBlocking {
-            val deleted = graph.repository.execute(BmdCommand.RemoveFiles(setOf(saved.id), deleteFromDevice = true))
-            assertTrue(deleted.failedItems.toString(), deleted.failedItems.isEmpty())
-            graph.repository.execute(BmdCommand.RemoveTransfers(setOf(id)))
-        }
+        removeSavedFixture(saved.id, id)
     }
 
     /**
@@ -289,9 +302,14 @@ class NativeAppSmokeTest {
                 })
             compose.onNodeWithText("Retry save", substring = false).performScrollTo().performClick()
             compose.waitUntil(120_000) {
-                graph.repository.state.value.tasks.find { it.id == id }?.stage in setOf(
+                // Retry admission and saving are asynchronous. Await the real terminal result;
+                // only a settled error hold can end this wait before completion.
+                val task = graph.repository.state.value.tasks.find { it.id == id }
+                task?.stage in setOf(
                     TransferStage.COMPLETE, TransferStage.FAILED, TransferStage.FILE_CHANGED,
-                ) || graph.repository.state.value.tasks.find { it.id == id }?.publicationUncertain == true
+                    TransferStage.NEEDS_LINK, TransferStage.NEEDS_CREDENTIALS,
+                ) || (task?.stage == TransferStage.WAITING_SAVE && task.errorCode != null &&
+                    TaskOperation.RETRY_SAVE in task.permittedActions)
             }
             val task = graph.repository.state.value.tasks.first { it.id == id }
             assertEquals("Actual SAF state: ${task.stage}; ${task.detail}; ${task.errorCode}", TransferStage.COMPLETE, task.stage)
@@ -307,11 +325,7 @@ class NativeAppSmokeTest {
             assertTrue(publication.phase in setOf("PUBLISHED", "CLEANED"))
 
             // Delete only the document and history that this successful test created.
-            runBlocking {
-                val deleted = graph.repository.execute(BmdCommand.RemoveFiles(setOf(saved.id), deleteFromDevice = true))
-                assertTrue(deleted.failedItems.toString(), deleted.failedItems.isEmpty())
-                graph.repository.execute(BmdCommand.RemoveTransfers(setOf(id)))
-            }
+            removeSavedFixture(saved.id, id)
         } catch (failure: Throwable) {
             runCatching { recordDeviceFailure(device, "saf-picker", failure) }
             throw failure
@@ -372,6 +386,27 @@ class NativeAppSmokeTest {
     }
 
     private fun hasText(text: String) = compose.onAllNodesWithText(text, substring = false).fetchSemanticsNodes().isNotEmpty()
+
+    private fun removeSavedFixture(fileId: String, taskId: String) {
+        // Published/Complete becomes visible before the executor finishes private cleanup.
+        // Wait for its actual durable ownership release before requesting history deletion.
+        compose.waitUntil(15_000) {
+            runBlocking { requireNotNull(graph.db.tasks().task(taskId)).ownerSession == null }
+        }
+        runBlocking {
+            assertEquals("The actual save must finish private cleanup before fixture removal", "CLEANED",
+                requireNotNull(graph.db.tasks().publication(taskId)).phase)
+            assertFalse("The saved transfer's private staging directory must be removed", graph.directory(taskId).exists())
+            assertTrue("Automatic completion cleanup must remove the task's source URL",
+                requireNotNull(graph.db.tasks().task(taskId)).sourceUrl.isEmpty())
+            val deleted = graph.repository.execute(BmdCommand.RemoveFiles(setOf(fileId), deleteFromDevice = true))
+            assertTrue(deleted.failedItems.toString(), deleted.failedItems.isEmpty())
+            val removed = graph.repository.execute(BmdCommand.RemoveTransfers(setOf(taskId)))
+            assertTrue(removed.failedItems.toString(), removed.failedItems.isEmpty())
+            assertNull("Fixture task history must be removed", graph.db.tasks().task(taskId))
+            assertNull("Fixture file index must be removed", graph.db.tasks().fileForTask(taskId))
+        }
+    }
 
     private fun sha256(uri: Uri): String = compose.activity.contentResolver.openInputStream(uri)!!.use { input ->
         val digest = MessageDigest.getInstance("SHA-256")
