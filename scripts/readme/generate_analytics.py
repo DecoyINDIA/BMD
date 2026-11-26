@@ -1,23 +1,35 @@
 #!/usr/bin/env python3
-"""Generate BMD Waybill-styled SVG analytics dashboards from ``data/analytics/downloads.json``.
+"""Generate BMD Pelagic Orbital analytics SVGs (and optional Living Adoption WebPs) from ``data/analytics/downloads.json``.
 
 Produces GitHub-compatible animated and static SVG assets in ``assets/readme/analytics/``:
   - ``telemetry-dashboard-light.svg`` & ``telemetry-dashboard-dark.svg``
   - ``telemetry-dashboard-static-light.svg`` & ``telemetry-dashboard-static-dark.svg``
   - ``platform-breakdown-light.svg`` & ``platform-breakdown-dark.svg``
 
-Strictly adheres to BMD's ``DESIGN.md`` ("The Waybill on the Parcel"):
-  - Blue Board (``#1f63d6``) / Navy Depot (``#0c1a33``) backdrop with Thermal Paper sheets
-  - Green-by-Law: Dispatch Green (``#57cc5a``) and Stamp Ink (``#1b7a26`` / ``#6bdb6e``)
-    used exclusively for download totals, delivery progress, and positive growth
-  - Pure SVG + SMIL + inline CSS ``@keyframes`` (zero ``<script>``, zero external URLs)
+Also updates the plain-text Markdown telemetry table between
+``<!-- BMD:ANALYTICS-TEXT:START -->`` and ``<!-- BMD:ANALYTICS-TEXT:END -->`` in ``README.md``,
+and optionally invokes ``scripts/readme/velocity/build.mjs --only living-adoption`` when
+``--with-webp`` or ``--with-webp-if-available`` is requested.
+
+Design & Data Integrity Rules:
+  - Hydrodynamic Velocity / Pelagic Orbital palette harmonizing with ``art/BMD Black Marlin.svg``
+    and BMD's default ``Emerald`` theme on GitHub Light (``#F5F9F7``) and Dark (``#090E0C``).
+  - Pure SVG + inline CSS ``@keyframes`` + ``prefers-reduced-motion`` (zero ``<script>``,
+    zero ``<foreignObject>``, zero external URLs, zero em-dashes).
+  - Strict separation of product & extension downloads vs. auxiliary assets (zero double-counting).
+  - Never labels download counts as unique users, and never fabricates pre-tracking history.
 """
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import html
 import json
 import math
+import os
+import shutil
+import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -25,69 +37,54 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_INPUT = ROOT / "data" / "analytics" / "downloads.json"
 DEFAULT_OUT_DIR = ROOT / "assets" / "readme" / "analytics"
 DEFAULT_README = ROOT / "README.md"
+VELOCITY_DIR = ROOT / "scripts" / "readme" / "velocity"
 ANALYTICS_START_MARKER = "<!-- BMD:ANALYTICS-TEXT:START -->"
 ANALYTICS_END_MARKER = "<!-- BMD:ANALYTICS-TEXT:END -->"
 
-FONT_DISPLAY = "'Space Grotesk', 'Segoe UI', system-ui, sans-serif"
-FONT_BODY = "'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif"
-FONT_MONO = "'IBM Plex Mono', 'Cascadia Mono', Consolas, monospace"
-
-MILESTONES = (100, 500, 1_000, 2_500, 5_000, 10_000, 25_000, 50_000, 100_000, 250_000, 500_000, 1_000_000)
+FONT_DISPLAY = "'Space Grotesk', 'Segoe UI', system-ui, -apple-system, sans-serif"
+FONT_BODY = "'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif"
+FONT_MONO = "'IBM Plex Mono', 'Cascadia Mono', Consolas, ui-monospace, monospace"
 
 THEMES: dict[str, dict[str, str]] = {
     "light": {
         "name": "light",
-        "board": "#1f63d6",
-        "board_deep": "#1854bb",
-        "board_edge": "#3b78e0",
-        "on_board": "#ffffff",
-        "on_board_2": "#e6eefd",
-        "paper": "#fcfcfb",
-        "paper_2": "#f0f3f7",
-        "ink": "#111318",
-        "ink_2": "#434956",
-        "ink_3": "#5f6676",
-        "line": "#dde1e8",
-        "go": "#57cc5a",
-        "go_ink": "#08200b",
-        "stamp": "#1b7a26",
-        "link": "#0d58c9",
-        "band_bg": "#111318",
-        "band_fg": "#fcfcfb",
-        "band_sub": "#c3cad6",
-        "shadow": "#091f4d",
-        "bar_muted": "#1f63d6",
-        "bar_alt": "#434956",
-        "bar_soft": "#5f6676",
-        "grid_alpha": "0.24",
-        "shadow_alpha": "0.34",
+        "bg": "#F5F9F7",
+        "surface": "#FFFFFF",
+        "surface_elev": "#EAF3EF",
+        "text": "#091511",
+        "text_muted": "#2B4239",
+        "text_dim": "#5A756A",
+        "primary": "#136F50",
+        "glow": "#0EA472",
+        "deep": "#0D5C43",
+        "spec": "#5AE0AC",
+        "cyan": "#0284C7",
+        "amber": "#D97706",
+        "hairline": "#CBE2D8",
+        "hairline_strong": "#9AC8B5",
+        "track": "#E4EFEA",
+        "badge_bg": "#136F50",
+        "badge_fg": "#FFFFFF",
     },
     "dark": {
         "name": "dark",
-        "board": "#0c1a33",
-        "board_deep": "#081226",
-        "board_edge": "#1c2e52",
-        "on_board": "#f2f5fb",
-        "on_board_2": "#c3cde0",
-        "paper": "#11151d",
-        "paper_2": "#192030",
-        "ink": "#eef1f6",
-        "ink_2": "#c3cad6",
-        "ink_3": "#98a1b1",
-        "line": "#2a3242",
-        "go": "#57cc5a",
-        "go_ink": "#08200b",
-        "stamp": "#6bdb6e",
-        "link": "#86b6ff",
-        "band_bg": "#192030",
-        "band_fg": "#eef1f6",
-        "band_sub": "#98a1b1",
-        "shadow": "#000000",
-        "bar_muted": "#86b6ff",
-        "bar_alt": "#c3cad6",
-        "bar_soft": "#6f7a8f",
-        "grid_alpha": "0.42",
-        "shadow_alpha": "0.55",
+        "bg": "#090E0C",
+        "surface": "#0F1915",
+        "surface_elev": "#14221C",
+        "text": "#ECF7F2",
+        "text_muted": "#94B3A6",
+        "text_dim": "#5B7A6D",
+        "primary": "#55C99D",
+        "glow": "#80DBAD",
+        "deep": "#187052",
+        "spec": "#C1F0D6",
+        "cyan": "#38BDF8",
+        "amber": "#F59E0B",
+        "hairline": "#1F3A30",
+        "hairline_strong": "#2E5848",
+        "track": "#172721",
+        "badge_bg": "#55C99D",
+        "badge_fg": "#06150E",
     },
 }
 
@@ -110,11 +107,11 @@ def plural_label(count: int, singular: str, plural: str | None = None) -> str:
 
 
 def fmt_bytes(size: int) -> str:
-    """Format byte size cleanly."""
+    """Format byte size cleanly in binary MiB/KiB units."""
     if size >= 1024 * 1024:
         return f"{size / (1024 * 1024):.1f} MiB"
     if size >= 1024:
-        return f"{size / 1024:.0f} KiB"
+        return f"{size / 1024:.1f} KiB"
     return f"{size} B"
 
 
@@ -127,122 +124,86 @@ def fmt_timestamp(iso_str: str | None) -> str:
     return iso_str
 
 
-def next_milestone(total: int) -> int:
-    """Return the next milestone strictly above ``total`` (or next 500k step)."""
-    for m in MILESTONES:
-        if total < m:
-            return m
-    step = 500_000
-    return ((total // step) + 1) * step
+def _parse_iso(value: str) -> dt.datetime | None:
+    if not value:
+        return None
+    try:
+        normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+        parsed = dt.datetime.fromisoformat(normalized)
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=dt.timezone.utc)
+        return parsed.astimezone(dt.timezone.utc)
+    except ValueError:
+        return None
 
 
-def barcode_bars(seed_text: str, x_start: float, y: float, height: float, target_width: float) -> str:
-    """Generate deterministic Code-128-style vector barcode bars."""
-    acc = 2166136261
-    for ch in seed_text:
-        acc ^= ord(ch)
-        acc = (acc * 16777619) & 0xFFFFFFFF
+def _snapshot_series_state(snapshots: list[dict[str, Any]]) -> dict[str, Any]:
+    """Classify snapshot history honestly, handling sub-24h and zero-variance baselines."""
+    ordered = sorted(
+        (s for s in snapshots if isinstance(s, dict) and s.get("timestamp")),
+        key=lambda s: str(s["timestamp"]),
+    )
+    count = len(ordered)
+    if count < 2:
+        return {"has_trajectory": False, "span_hours": 0.0, "count": count, "series": ordered}
 
-    bars: list[str] = []
-    x = x_start
-    # Start guard
-    for w in (2.0, 1.5, 2.5):
-        bars.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{height:.1f}"/>')
-        x += w + 2.0
-
-    idx = 0
-    while x < x_start + target_width - 10:
-        acc = (acc * 1664525 + 1013904223 + idx * 17) & 0xFFFFFFFF
-        bar_w = 1.4 + ((acc >> 3) % 3) * 1.1
-        gap_w = 1.4 + ((acc >> 7) % 3) * 1.1
-        if x + bar_w > x_start + target_width - 8:
-            break
-        bars.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bar_w:.1f}" height="{height:.1f}"/>')
-        x += bar_w + gap_w
-        idx += 1
-
-    # End guard
-    for w in (2.5, 1.5):
-        if x + w <= x_start + target_width:
-            bars.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{height:.1f}"/>')
-            x += w + 2.0
-    return "".join(bars)
+    t0 = _parse_iso(str(ordered[0]["timestamp"]))
+    t1 = _parse_iso(str(ordered[-1]["timestamp"]))
+    span_hours = ((t1 - t0).total_seconds() / 3600.0) if (t0 and t1) else 0.0
+    vals = [int(s.get("total_product_downloads") or 0) for s in ordered]
+    has_variance = max(vals) > min(vals)
+    has_trajectory = span_hours >= 24.0 and has_variance
+    return {
+        "has_trajectory": has_trajectory,
+        "span_hours": span_hours,
+        "count": count,
+        "series": ordered[-60:],
+    }
 
 
 def _common_style(t: dict[str, str], animated: bool) -> str:
     anim_css = ""
     if animated:
         anim_css = """
-    @keyframes pulseDot {
+    @keyframes pulseBeacon {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.45; transform: scale(0.84); }
+      50% { opacity: 0.45; transform: scale(0.82); }
     }
-    @keyframes scanSweep {
-      0% { transform: translateX(0px); opacity: 0.25; }
-      50% { opacity: 0.9; }
-      100% { transform: translateX(350px); opacity: 0.25; }
+    @keyframes radarSweep {
+      0% { transform: scale(0.28); opacity: 0.55; }
+      100% { transform: scale(1.0); opacity: 0; }
+    }
+    @keyframes orbitSlow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes scanTick {
+      0% { transform: translateX(0px); opacity: 0.35; }
+      50% { opacity: 0.95; }
+      100% { transform: translateX(340px); opacity: 0.35; }
     }
     @keyframes barGrow {
       0% { transform: scaleX(0.01); }
       100% { transform: scaleX(1); }
     }
-    .pulse-dot { transform-box: fill-box; transform-origin: center; animation: pulseDot 2.8s ease-in-out infinite; }
-    .scan-tick { animation: scanSweep 4.2s ease-in-out infinite alternate; }
+    .pulse-dot { transform-box: fill-box; transform-origin: center; animation: pulseBeacon 2.8s ease-in-out infinite; }
+    .radar-ring { transform-box: fill-box; transform-origin: center; animation: radarSweep 4.8s ease-out infinite; }
+    .orbit-spin { animation: orbitSlow 28s linear infinite; }
+    .scan-tick { animation: scanTick 4.5s ease-in-out infinite alternate; }
     .bar-grow { transform-box: fill-box; transform-origin: left center; animation: barGrow 0.85s cubic-bezier(0.16, 1, 0.3, 1) backwards; }
     @media (prefers-reduced-motion: reduce) {
-      .pulse-dot, .scan-tick, .bar-grow { animation: none !important; transform: none !important; }
+      .pulse-dot, .radar-ring, .orbit-spin, .scan-tick, .bar-grow { animation: none !important; transform: none !important; }
     }"""
 
     return f"""<style>
-    .t-disp {{ font-family: {FONT_DISPLAY}; font-weight: 800; font-variant-numeric: tabular-nums; }}
-    .t-band {{ font-family: {FONT_DISPLAY}; font-weight: 800; letter-spacing: 0.03em; }}
-    .t-lbl {{ font-family: {FONT_DISPLAY}; font-weight: 700; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; fill: {t['ink_3']}; }}
-    .t-val {{ font-family: {FONT_DISPLAY}; font-weight: 800; font-variant-numeric: tabular-nums; fill: {t['ink']}; }}
-    .t-body {{ font-family: {FONT_BODY}; font-weight: 400; font-variant-numeric: tabular-nums; fill: {t['ink_2']}; }}
-    .t-strong {{ font-family: {FONT_BODY}; font-weight: 600; font-variant-numeric: tabular-nums; fill: {t['ink']}; }}
+    .t-disp {{ font-family: {FONT_DISPLAY}; font-weight: 700; font-variant-numeric: tabular-nums; }}
+    .t-lbl {{ font-family: {FONT_MONO}; font-weight: 600; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; fill: {t['text_dim']}; }}
+    .t-val {{ font-family: {FONT_DISPLAY}; font-weight: 700; font-variant-numeric: tabular-nums; fill: {t['text']}; }}
+    .t-body {{ font-family: {FONT_BODY}; font-weight: 400; font-variant-numeric: tabular-nums; fill: {t['text_muted']}; }}
+    .t-strong {{ font-family: {FONT_BODY}; font-weight: 600; font-variant-numeric: tabular-nums; fill: {t['text']}; }}
     .t-mono {{ font-family: {FONT_MONO}; font-variant-numeric: tabular-nums; }}
-    .t-stamp {{ font-family: {FONT_DISPLAY}; font-weight: 800; letter-spacing: 0.08em; }}
     {anim_css}
   </style>"""
-
-
-def _board_backdrop(w: int, h: int, t: dict[str, str]) -> str:
-    grid_lines: list[str] = []
-    for gx in range(40, w, 40):
-        grid_lines.append(f'<line x1="{gx}" y1="0" x2="{gx}" y2="{h}"/>')
-    for gy in range(40, h, 40):
-        grid_lines.append(f'<line x1="0" y1="{gy}" x2="{w}" y2="{gy}"/>')
-    return (
-        f'<rect width="{w}" height="{h}" fill="{t["board"]}"/>'
-        f'<rect width="{w}" height="{h}" fill="url(#boardGrad)" opacity="0.55"/>'
-        f'<g stroke="{t["board_edge"]}" stroke-width="1" opacity="{t["grid_alpha"]}">'
-        + "".join(grid_lines)
-        + "</g>"
-    )
-
-
-def _waybill_shell(
-    w: int,
-    h: int,
-    t: dict[str, str],
-    band_left: str,
-    band_right: str,
-    band_x_offset: int = 22,
-) -> str:
-    sx, sy, sw, sh = 24, 22, w - 48, h - 44
-    return (
-        f'<rect x="{sx + 3}" y="{sy + 7}" width="{sw}" height="{sh}" rx="12" '
-        f'fill="{t["shadow"]}" opacity="{t["shadow_alpha"]}"/>'
-        f'<rect x="{sx}" y="{sy}" width="{sw}" height="{sh}" rx="12" '
-        f'fill="{t["paper"]}" stroke="{t["line"]}" stroke-width="1"/>'
-        f'<path d="M{sx},{sy + 12} a12,12 0 0 1 12,-12 h{sw - 24} a12,12 0 0 1 12,12 '
-        f'v34 h-{sw} z" fill="{t["band_bg"]}"/>'
-        f'<line x1="{sx}" y1="{sy + 46}" x2="{sx + sw}" y2="{sy + 46}" '
-        f'stroke="{t["line"]}" stroke-width="1.5"/>'
-        f'<text x="{sx + band_x_offset}" y="{sy + 29}" class="t-band" font-size="14" fill="{t["band_fg"]}">{esc(band_left)}</text>'
-        f'<text x="{sx + sw - 22}" y="{sy + 28}" class="t-mono" font-size="11.5" '
-        f'text-anchor="end" fill="{t["band_sub"]}">{esc(band_right)}</text>'
-    )
 
 
 def _animated_bar(
@@ -266,7 +227,7 @@ def _animated_bar(
     )
 
 
-def _format_delta_line(summary: dict[str, Any]) -> tuple[str, bool]:
+def _format_delta_line(summary: dict[str, Any], snap_state: dict[str, Any]) -> tuple[str, bool]:
     daily = summary.get("daily_delta")
     weekly = summary.get("weekly_delta")
     if daily is not None and daily > 0:
@@ -275,11 +236,143 @@ def _format_delta_line(summary: dict[str, Any]) -> tuple[str, bool]:
     if daily == 0:
         wk = f" · +{fmt_num(weekly)} / 7d" if weekly is not None else ""
         return (f"0 / 24h{wk}", False)
-    return ("Baseline active (< 24h sample window)", False)
+    count = int(snap_state.get("count") or 0)
+    return (f"Baseline ({count} chk · < 24h)", False)
+
+
+def _svg_arc_path(cx: float, cy: float, r: float, start_deg: float, span_deg: float) -> str:
+    """Build an SVG arc path from ``start_deg`` covering ``span_deg`` (< 360)."""
+    clamped = max(1.0, min(359.5, span_deg))
+    a0 = math.radians(start_deg - 90.0)
+    a1 = math.radians(start_deg + clamped - 90.0)
+    x0, y0 = cx + r * math.cos(a0), cy + r * math.sin(a0)
+    x1, y1 = cx + r * math.cos(a1), cy + r * math.sin(a1)
+    large_arc = 1 if clamped > 180.0 else 0
+    return f"M {x0:.2f} {y0:.2f} A {r:.2f} {r:.2f} 0 {large_arc} 1 {x1:.2f} {y1:.2f}"
+
+
+def _platform_style_map(t: dict[str, str]) -> dict[str, dict[str, Any]]:
+    return {
+        "Windows": {"r": 146.0, "color": t["primary"], "start": -24.0},
+        "Linux": {"r": 115.0, "color": t["cyan"], "start": 35.0},
+        "Browser Extensions": {"r": 85.0, "color": t["glow"], "start": 105.0},
+        "macOS (Experimental)": {"r": 56.0, "color": t["amber"], "start": 185.0},
+        "Other / Auxiliary": {"r": 176.0, "color": t["text_dim"], "start": 0.0},
+    }
+
+
+def _render_pelagic_orbital(
+    ox: float,
+    oy: float,
+    t: dict[str, str],
+    platforms: list[dict[str, Any]],
+    total_product: int,
+    total_aux: int,
+    animated: bool,
+) -> list[str]:
+    """Render the Pelagic Orbital adoption sculpture (discrete nodes <= 120, filaments > 120)."""
+    parts: list[str] = []
+    styles = _platform_style_map(t)
+
+    # Soft pelagic radial aura behind sculpture
+    parts.append(f'<circle cx="{ox}" cy="{oy}" r="196" fill="url(#pelagicAura)"/>')
+
+    # Harmonic radar pulse ring
+    radar_cls = ' class="radar-ring"' if animated else ""
+    parts.append(
+        f'<circle cx="{ox}" cy="{oy}" r="172" fill="none" stroke="{t["glow"]}" '
+        f'stroke-width="1.2" opacity="0.28"{radar_cls}/>'
+    )
+
+    # Outer auxiliary calibration perimeter (representing excluded aux assets)
+    aux_r = 176.0
+    parts.append(
+        f'<circle cx="{ox}" cy="{oy}" r="{aux_r:.0f}" fill="none" stroke="{t["hairline"]}" '
+        f'stroke-width="1.2" stroke-dasharray="3 5"/>'
+    )
+    aux_ticks = min(72, max(0, total_aux))
+    if aux_ticks > 0:
+        tick_lines: list[str] = []
+        for i in range(aux_ticks):
+            ang = (i / aux_ticks) * math.tau
+            x1 = ox + math.cos(ang) * (aux_r - 4.0)
+            y1 = oy + math.sin(ang) * (aux_r - 4.0)
+            x2 = ox + math.cos(ang) * (aux_r + 4.0)
+            y2 = oy + math.sin(ang) * (aux_r + 4.0)
+            tick_lines.append(f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}"/>')
+        parts.append(
+            f'<g stroke="{t["text_dim"]}" stroke-width="1.4" opacity="0.65">'
+            + "".join(tick_lines)
+            + "</g>"
+        )
+
+    # Rotating orbital group
+    orbit_open = f'<g class="orbit-spin" style="transform-origin: {ox}px {oy}px;">' if animated else "<g>"
+    parts.append(orbit_open)
+
+    product_plats = [p for p in platforms if p.get("category") != "auxiliary"]
+    for plat in product_plats:
+        pname = str(plat.get("name") or "")
+        pdls = max(0, int(plat.get("downloads") or 0))
+        pct = float(plat.get("share_of_product_pct") or 0.0)
+        st = styles.get(pname, {"r": 100.0, "color": t["primary"], "start": 0.0})
+        r = float(st["r"])
+        color = str(st["color"])
+        start_deg = float(st["start"])
+
+        parts.append(
+            f'<circle cx="{ox}" cy="{oy}" r="{r:.0f}" fill="none" stroke="{t["hairline"]}" stroke-width="1.2"/>'
+        )
+        if pdls > 0:
+            arc_d = _svg_arc_path(ox, oy, r, start_deg, max(12.0, (pct / 100.0) * 360.0))
+            parts.append(
+                f'<path d="{arc_d}" fill="none" stroke="{color}" stroke-width="4.5" '
+                f'stroke-linecap="round" opacity="0.34"/>'
+            )
+
+        if total_product <= 120:
+            # Individual countable jewel-nodes (every single real download rendered!)
+            for i in range(pdls):
+                theta = math.radians(start_deg - 90.0) + (i / max(1, pdls)) * math.tau
+                nx = ox + math.cos(theta) * r
+                ny = oy + math.sin(theta) * r
+                parts.append(f'<circle cx="{nx:.1f}" cy="{ny:.1f}" r="4.2" fill="{color}"/>')
+                parts.append(f'<circle cx="{nx:.1f}" cy="{ny:.1f}" r="1.4" fill="{t["bg"]}"/>')
+        elif pdls > 0:
+            # Density-modulated hydrodynamic filament segments for scale > 120
+            bands = 18
+            for i in range(bands):
+                seg_deg = start_deg + (i / bands) * 360.0
+                seg_d = _svg_arc_path(ox, oy, r, seg_deg, 10.0)
+                alpha = 0.45 + 0.4 * math.sin(i * 1.1)
+                parts.append(
+                    f'<path d="{seg_d}" fill="none" stroke="{color}" stroke-width="3.2" '
+                    f'stroke-linecap="round" opacity="{alpha:.2f}"/>'
+                )
+
+    parts.append("</g>")
+
+    # Central Release Core Beacon (stays upright & stationary)
+    parts.append(
+        f'<circle cx="{ox}" cy="{oy}" r="32" fill="{t["surface"]}" stroke="{t["primary"]}" stroke-width="2"/>'
+    )
+    parts.append(
+        f'<text x="{ox}" y="{oy + 5}" class="t-mono" font-size="19" font-weight="700" '
+        f'text-anchor="middle" fill="{t["text"]}">{esc(fmt_num(total_product))}</text>'
+    )
+    parts.append(
+        f'<text x="{ox}" y="{oy + 18}" class="t-mono" font-size="8.5" font-weight="600" '
+        f'letter-spacing="0.08em" text-anchor="middle" fill="{t["text_dim"]}">PRODUCT</text>'
+    )
+    parts.append(
+        f'<text x="{ox}" y="{oy + 206}" class="t-mono" font-size="10" text-anchor="middle" '
+        f'fill="{t["text_dim"]}">OUTER TICKS = {esc(fmt_num(total_aux))} AUX EXCLUDED</text>'
+    )
+    return parts
 
 
 def render_telemetry_dashboard(data: dict[str, Any], theme_name: str, animated: bool) -> str:
-    """Render the main telemetry dashboard SVG (animated or static)."""
+    """Render the Pelagic Orbital telemetry dashboard SVG (animated or static)."""
     t = THEMES[theme_name]
     w, h = 1120, 478
     summary = data.get("summary") or {}
@@ -304,272 +397,215 @@ def render_telemetry_dashboard(data: dict[str, Any], theme_name: str, animated: 
     started_str = (data.get("tracking_started_at") or "")[:10] or "-"
     status_label = "API VERIFIED" if api_status == "ok" else "CACHED FALLBACK"
 
-    milestone = next_milestone(total_product)
-    milestone_pct = min(100.0, (total_product / milestone) * 100.0) if milestone > 0 else 0.0
-    delta_text, is_positive_delta = _format_delta_line(summary)
+    snap_state = _snapshot_series_state(snapshots)
+    delta_text, is_positive_delta = _format_delta_line(summary, snap_state)
 
-    band_right = f"TRACKING SINCE {started_str}  ·  SYNCED {synced_str}  ·  {status_label}"
-    svg_title = f"Black Marlin Downloader Release Telemetry Dashboard ({theme_name.title()} Theme)"
+    svg_title = f"Black Marlin Downloader Living Adoption Telemetry ({theme_name.title()} Theme)"
     svg_desc = (
         f"Live GitHub telemetry for DecoyINDIA/BMD: {fmt_num(total_product)} product and extension downloads, "
-        f"{fmt_num(total_all)} total release assets, latest release {latest_tag} ({fmt_num(latest_dl)} downloads), "
+        f"{fmt_num(total_all)} total release assets ({fmt_num(total_aux)} auxiliary excluded), "
+        f"latest release {latest_tag} ({fmt_num(latest_dl)} downloads), "
         f"{fmt_num(stars)} stars, {fmt_num(forks)} forks, and {fmt_num(contributors)} contributors."
     )
+
     parts: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
         f'viewBox="0 0 {w} {h}" role="img" aria-labelledby="svg-title svg-desc">',
         f'<title id="svg-title">{esc(svg_title)}</title>',
         f'<desc id="svg-desc">{esc(svg_desc)}</desc>',
         "<defs>",
-        f'<linearGradient id="boardGrad" x1="0" y1="0" x2="1" y2="1">'
-        f'<stop offset="0%" stop-color="{t["board"]}"/>'
-        f'<stop offset="100%" stop-color="{t["board_deep"]}"/>'
-        f"</linearGradient>",
+        f'<radialGradient id="pelagicAura" cx="50%" cy="50%" r="50%">'
+        f'<stop offset="0%" stop-color="{t["glow"]}" stop-opacity="0.18"/>'
+        f'<stop offset="100%" stop-color="{t["bg"]}" stop-opacity="0"/>'
+        f"</radialGradient>",
         "</defs>",
         _common_style(t, animated),
-        _board_backdrop(w, h, t),
-        _waybill_shell(w, h, t, "BMD · DISPATCH TELEMETRY SHEET", band_right, band_x_offset=32),
+        f'<rect width="{w}" height="{h}" rx="14" fill="{t["bg"]}"/>',
     ]
 
-    # Live status pulse indicator in the header band
-    dot_class = ' class="pulse-dot"' if animated else ""
-    dot_fill = t["go"] if api_status == "ok" else t["link"]
-    parts.append(f'<circle cx="42" cy="45" r="4.5" fill="{dot_fill}"{dot_class}/>')
-
-    # Row 1: 4-column metric fields (x=46..1074, y=68..184)
-    col_x = (46, 336, 566, 826)
-    col_w = (268, 208, 238, 248)
-    for idx, (cx, cw) in enumerate(zip(col_x, col_w)):
-        parts.append(f'<line x1="{cx}" y1="82" x2="{cx + cw}" y2="82" stroke="{t["ink"]}" stroke-width="1.5"/>')
-        if idx > 0:
-            parts.append(f'<line x1="{cx - 12}" y1="82" x2="{cx - 12}" y2="176" stroke="{t["line"]}" stroke-width="1"/>')
-
-    # Col 1: Product & Extension Downloads (Green-by-Law highlight)
-    parts.append(f'<text x="{col_x[0]}" y="100" class="t-lbl">PRODUCT &amp; EXT. DOWNLOADS</text>')
+    # Header bar (clean editorial typography on canvas)
+    dot_cls = ' class="pulse-dot"' if animated else ""
+    dot_fill = t["glow"] if api_status == "ok" else t["amber"]
+    parts.append(f'<circle cx="42" cy="34" r="4.5" fill="{dot_fill}"{dot_cls}/>')
     parts.append(
-        f'<text x="{col_x[0]}" y="138" class="t-disp" font-size="38" fill="{t["stamp"]}">'
+        f'<text x="56" y="38" class="t-mono" font-size="11" font-weight="600" letter-spacing="0.06em" '
+        f'fill="{t["primary"]}">LIVING ADOPTION  ·  LIVE GITHUB RELEASE TELEMETRY ({esc(latest_tag)})</text>'
+    )
+    parts.append(
+        f'<text x="1084" y="38" class="t-mono" font-size="10.5" text-anchor="end" fill="{t["text_dim"]}">'
+        f'TRACKING SINCE {esc(started_str)}  ·  {esc(status_label)}</text>'
+    )
+    parts.append(f'<line x1="36" y1="54" x2="1084" y2="54" stroke="{t["hairline"]}" stroke-width="1"/>')
+
+    # Left: Pelagic Orbital Sculpture
+    parts.extend(_render_pelagic_orbital(236.0, 246.0, t, platforms, total_product, total_aux, animated))
+
+    # Right: Surface Panel for KPIs, Platform Share Bars, and Honest Snapshot History
+    px, py, pw, ph = 460, 74, 624, 362
+    parts.append(
+        f'<rect x="{px}" y="{py}" width="{pw}" height="{ph}" rx="12" '
+        f'fill="{t["surface"]}" stroke="{t["hairline_strong"]}" stroke-width="1.2"/>'
+    )
+
+    # Row 1: 3 KPI columns
+    kx_list = (px + 22, px + 222, px + 414)
+    parts.append(f'<text x="{kx_list[0]}" y="{py + 28}" class="t-lbl">PRODUCT &amp; EXT. DOWNLOADS</text>')
+    parts.append(
+        f'<text x="{kx_list[0]}" y="{py + 62}" class="t-disp" font-size="34" fill="{t["primary"]}">'
         f'{esc(fmt_num(total_product))}</text>'
     )
-    delta_fill = t["stamp"] if is_positive_delta else t["ink_3"]
+    delta_fill = t["primary"] if is_positive_delta else t["text_dim"]
     parts.append(
-        f'<text x="{col_x[0]}" y="157" class="t-mono" font-size="11" fill="{delta_fill}">{esc(delta_text)}</text>'
-    )
-    parts.append(
-        f'<text x="{col_x[0]}" y="173" class="t-body" font-size="11.5">All release assets (incl. aux): '
-        f'<tspan class="t-strong">{esc(fmt_num(total_all))}</tspan></text>'
+        f'<text x="{kx_list[0]}" y="{py + 80}" class="t-mono" font-size="10.5" fill="{delta_fill}">'
+        f'{esc(delta_text)}</text>'
     )
 
-    # Col 2: Latest Release
-    parts.append(f'<text x="{col_x[1]}" y="100" class="t-lbl">LATEST RELEASE</text>')
+    parts.append(f'<text x="{kx_list[1]}" y="{py + 28}" class="t-lbl">ALL RELEASE ASSETS</text>')
     parts.append(
-        f'<text x="{col_x[1]}" y="136" class="t-val" font-size="30">{esc(latest_tag)}</text>'
+        f'<text x="{kx_list[1]}" y="{py + 62}" class="t-val" font-size="30">{esc(fmt_num(total_all))}</text>'
     )
     parts.append(
-        f'<text x="{col_x[1]}" y="157" class="t-body" font-size="12">'
-        f'<tspan class="t-strong">{esc(fmt_num(latest_dl))}</tspan> product downloads</text>'
-    )
-    parts.append(
-        f'<text x="{col_x[1]}" y="173" class="t-mono" font-size="11" fill="{t["ink_3"]}">'
-        f'Published {esc(latest_pub)}</text>'
+        f'<text x="{kx_list[1]}" y="{py + 80}" class="t-body" font-size="11.5">'
+        f'+{esc(fmt_num(total_aux))} aux · {esc(latest_tag)} ({esc(latest_pub)})</text>'
     )
 
-    # Col 3: Repository Pulse
-    parts.append(f'<text x="{col_x[2]}" y="100" class="t-lbl">REPOSITORY PULSE</text>')
+    parts.append(f'<text x="{kx_list[2]}" y="{py + 28}" class="t-lbl">REPOSITORY PULSE</text>')
     parts.append(
-        f'<text x="{col_x[2]}" y="128" class="t-val" font-size="21">{esc(fmt_num(stars))} '
-        f'<tspan font-size="12" font-weight="600" fill="{t["ink_2"]}">{plural_label(stars, "star")}</tspan>  ·  '
-        f'{esc(fmt_num(forks))} <tspan font-size="12" font-weight="600" fill="{t["ink_2"]}">{plural_label(forks, "fork")}</tspan></text>'
+        f'<text x="{kx_list[2]}" y="{py + 56}" class="t-val" font-size="20">{esc(fmt_num(stars))} '
+        f'<tspan font-size="12" font-weight="500" fill="{t["text_muted"]}">{plural_label(stars, "star")}</tspan> · '
+        f'{esc(fmt_num(forks))} <tspan font-size="12" font-weight="500" fill="{t["text_muted"]}">{plural_label(forks, "fork")}</tspan></text>'
     )
     parts.append(
-        f'<text x="{col_x[2]}" y="154" class="t-body" font-size="12">'
-        f'<tspan class="t-strong">{esc(fmt_num(release_count))}</tspan> {plural_label(release_count, "release")}  ·  '
-        f'<tspan class="t-strong">{esc(fmt_num(contributors))}</tspan> {plural_label(contributors, "contributor")}</text>'
-    )
-    parts.append(
-        f'<text x="{col_x[2]}" y="173" class="t-mono" font-size="11" fill="{t["ink_3"]}">'
-        f'{esc(fmt_num(issues))} open {plural_label(issues, "issue")}</text>'
+        f'<text x="{kx_list[2]}" y="{py + 80}" class="t-body" font-size="11.5">'
+        f'<tspan class="t-strong">{esc(fmt_num(contributors))}</tspan> {plural_label(contributors, "contributor")} · '
+        f'{esc(fmt_num(release_count))} {plural_label(release_count, "release")} · {esc(fmt_num(issues))} issues</text>'
     )
 
-    # Col 4: Next Milestone (Green-by-Law delivered progress)
-    parts.append(f'<text x="{col_x[3]}" y="100" class="t-lbl">DELIVERY MILESTONE</text>')
-    parts.append(
-        f'<text x="{col_x[3]}" y="130" class="t-val" font-size="22">'
-        f'{esc(fmt_num(total_product))} <tspan font-size="13" fill="{t["ink_3"]}">/ {esc(fmt_num(milestone))}</tspan></text>'
-    )
-    m_track_w = 248.0
-    m_fill_w = max(4.0, (milestone_pct / 100.0) * m_track_w) if total_product > 0 else 0.0
-    parts.append(f'<rect x="{col_x[3]}" y="143" width="{m_track_w:.0f}" height="8" rx="4" fill="{t["paper_2"]}" stroke="{t["line"]}" stroke-width="1"/>')
-    parts.append(_animated_bar(col_x[3], 143, m_fill_w, 8, 4, t["go"], animated, delay_s=0.1))
-    parts.append(
-        f'<text x="{col_x[3]}" y="171" class="t-mono" font-size="11" fill="{t["ink_3"]}">'
-        f'{milestone_pct:.1f}% to {esc(fmt_num(milestone))} product downloads</text>'
-    )
+    parts.append(f'<line x1="{px + 20}" y1="{py + 96}" x2="{px + pw - 20}" y2="{py + 96}" stroke="{t["hairline"]}" stroke-width="1"/>')
 
-    # Mid horizontal divider
-    parts.append(f'<line x1="46" y1="192" x2="1074" y2="192" stroke="{t["ink"]}" stroke-width="1.5"/>')
-
-    # Row 2 Left: Platform Distribution (x=46..560)
-    parts.append(f'<text x="46" y="214" class="t-lbl">PLATFORM DISTRIBUTION (PRODUCT &amp; EXTENSIONS)</text>')
+    # Row 2: Platform Breakdown Bars
+    parts.append(f'<text x="{px + 22}" y="{py + 116}" class="t-lbl">PLATFORM DISTRIBUTION (ZERO DOUBLE-COUNTING)</text>')
+    styles = _platform_style_map(t)
     product_rows = [p for p in platforms if p.get("category") != "auxiliary"]
-    bar_colors = {
-        "Windows": t["go"],
-        "Linux": t["bar_muted"],
-        "Browser Extensions": t["bar_alt"],
-        "macOS (Experimental)": t["bar_soft"],
-    }
     max_plat = max((int(p.get("downloads") or 0) for p in product_rows), default=1) or 1
-    row_y = 236
-    bar_x = 224.0
-    bar_max_w = 240.0
 
+    ry = py + 136
+    bar_x = px + 196.0
+    bar_max_w = 278.0
     for idx, plat in enumerate(product_rows[:4]):
         pname = str(plat.get("name") or "")
         pdls = int(plat.get("downloads") or 0)
         ppct = float(plat.get("share_of_product_pct") or 0.0)
+        color = str(styles.get(pname, {"color": t["primary"]})["color"])
         bw = (pdls / max_plat) * bar_max_w if pdls > 0 else 0.0
-        parts.append(
-            f'<text x="46" y="{row_y + 13}" class="t-strong" font-size="13">{esc(pname)}</text>'
-        )
-        parts.append(
-            f'<rect x="{bar_x:.0f}" y="{row_y + 2}" width="{bar_max_w:.0f}" height="13" rx="4" '
-            f'fill="{t["paper_2"]}" stroke="{t["line"]}" stroke-width="1"/>'
-        )
-        parts.append(
-            _animated_bar(
-                bar_x,
-                row_y + 2,
-                bw,
-                13,
-                4,
-                bar_colors.get(pname, t["bar_muted"]),
-                animated,
-                delay_s=0.12 * idx,
-            )
-        )
-        parts.append(
-            f'<text x="556" y="{row_y + 13}" class="t-mono" font-size="12" text-anchor="end" '
-            f'fill="{t["ink"]}">{esc(fmt_num(pdls))} <tspan fill="{t["ink_3"]}">({ppct:.1f}%)</tspan></text>'
-        )
-        row_y += 33
 
+        parts.append(f'<circle cx="{px + 28}" cy="{ry + 6}" r="4.5" fill="{color}"/>')
+        parts.append(f'<text x="{px + 42}" y="{ry + 10}" class="t-strong" font-size="12.5">{esc(pname)}</text>')
+        parts.append(
+            f'<rect x="{bar_x:.0f}" y="{ry}" width="{bar_max_w:.0f}" height="10" rx="4" '
+            f'fill="{t["track"]}" stroke="{t["hairline"]}" stroke-width="1"/>'
+        )
+        parts.append(_animated_bar(bar_x, ry, bw, 10, 4, color, animated, delay_s=0.1 * idx))
+        parts.append(
+            f'<text x="{px + pw - 22}" y="{ry + 10}" class="t-mono" font-size="11.5" text-anchor="end" fill="{t["text"]}">'
+            f'{esc(fmt_num(pdls))} <tspan fill="{t["text_dim"]}">({ppct:.1f}%)</tspan></text>'
+        )
+        ry += 28
+
+    # Row 3: Honest Snapshot History Box
+    bx, by, bw, bh = px + 20, py + 256, pw - 40, 88
     parts.append(
-        f'<text x="46" y="376" class="t-body" font-size="11.5">'
-        f'Auxiliary assets excluded from above: <tspan class="t-strong">{esc(fmt_num(total_aux))}</tspan> '
-        f'(symbols, .zsync, checksums, geo)</text>'
+        f'<rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="8" '
+        f'fill="{t["surface_elev"]}" stroke="{t["hairline"]}" stroke-width="1"/>'
     )
 
-    # Vertical split between Platform Distribution and Snapshot Timeline
-    parts.append(f'<line x1="578" y1="202" x2="578" y2="382" stroke="{t["line"]}" stroke-width="1"/>')
-
-    # Row 2 Right: Snapshot History / Honest Baseline Panel (x=598..1074)
-    parts.append(f'<text x="598" y="214" class="t-lbl">TELEMETRY HISTORY (REAL SNAPSHOTS ONLY)</text>')
-    panel_x, panel_y, panel_w, panel_h = 598, 228, 476, 150
-    parts.append(
-        f'<rect x="{panel_x}" y="{panel_y}" width="{panel_w}" height="{panel_h}" rx="8" '
-        f'fill="{t["paper_2"]}" stroke="{t["line"]}" stroke-width="1"/>'
-    )
-
-    if len(snapshots) < 2:
-        # Honest baseline indicator (never fabricates pre-tracking history!)
+    if not snap_state["has_trajectory"]:
+        # Honest baseline display (covers <2 snapshots OR <24h / zero-variance checkpoints)
+        n_snaps = snap_state["count"]
         parts.append(
-            f'<text x="{panel_x + 18}" y="{panel_y + 30}" class="t-val" font-size="15">'
+            f'<text x="{bx + 16}" y="{by + 24}" class="t-val" font-size="13.5" fill="{t["primary"]}">'
             f'Baseline Recording Active</text>'
         )
         parts.append(
-            f'<text x="{panel_x + 18}" y="{panel_y + 51}" class="t-body" font-size="12">'
-            f'Tracking started {esc(started_str)}. Real 6-hour GitHub API snapshots</text>'
+            f'<text x="{bx + 16}" y="{by + 42}" class="t-body" font-size="11.5">'
+            f'Tracking started {esc(started_str)} ({n_snaps} {plural_label(n_snaps, "checkpoint")} recorded). '
+            f'24h / 7d / 30d deltas appear once real span covers >= 24h.</text>'
         )
-        parts.append(
-            f'<text x="{panel_x + 18}" y="{panel_y + 68}" class="t-body" font-size="12">'
-            f'accumulate over time, with no synthetic or backfilled history.</text>'
-        )
-        # Baseline track with moving scanner tick
-        track_x, track_y, track_w = panel_x + 18, panel_y + 92, panel_w - 36
+        track_x, track_y, track_w = bx + 16, by + 62, bw - 32
         parts.append(
             f'<line x1="{track_x}" y1="{track_y}" x2="{track_x + track_w}" y2="{track_y}" '
-            f'stroke="{t["line"]}" stroke-width="2" stroke-dasharray="5 4"/>'
+            f'stroke="{t["hairline_strong"]}" stroke-width="1.5" stroke-dasharray="4 4"/>'
         )
-        parts.append(f'<circle cx="{track_x + 4}" cy="{track_y}" r="5" fill="{t["go"]}"/>')
-        tick_class = ' class="scan-tick"' if animated else ""
+        parts.append(f'<circle cx="{track_x + 4}" cy="{track_y}" r="4.5" fill="{t["primary"]}"/>')
+        tick_cls = ' class="scan-tick"' if animated else ""
         parts.append(
-            f'<rect x="{track_x + 28}" y="{track_y - 4}" width="36" height="8" rx="4" '
-            f'fill="{t["link"]}" opacity="0.85"{tick_class}/>'
+            f'<rect x="{track_x + 26}" y="{track_y - 3.5}" width="32" height="7" rx="3.5" '
+            f'fill="{t["glow"]}" opacity="0.85"{tick_cls}/>'
         )
         parts.append(
-            f'<text x="{track_x}" y="{panel_y + 124}" class="t-mono" font-size="10" fill="{t["ink_3"]}">'
-            f'SAMPLE #1: {esc(fmt_num(total_product))} PROD  ·  {esc(fmt_num(total_all))} ALL  ·  DELTAS PENDING</text>'
+            f'<text x="{track_x + track_w}" y="{by + 78}" class="t-mono" font-size="9.5" '
+            f'text-anchor="end" fill="{t["text_dim"]}">NO SYNTHETIC HISTORY</text>'
         )
     else:
-        # Plot real snapshot series (last up to 60 points)
-        series = sorted(snapshots, key=lambda s: s["timestamp"])[-60:]
+        series = snap_state["series"]
         vals = [int(s.get("total_product_downloads") or 0) for s in series]
-        v_min = min(vals)
-        v_max = max(vals)
+        v_min, v_max = min(vals), max(vals)
         span = max(1, v_max - v_min)
-        pad_l, pad_r, pad_t, pad_b = 52, 18, 22, 34
-        cx0 = panel_x + pad_l
-        cy0 = panel_y + pad_t
-        cw = panel_w - pad_l - pad_r
-        ch = panel_h - pad_t - pad_b
+        pad_l, pad_r, pad_t, pad_b = 48, 16, 18, 22
+        cx0, cy0 = bx + pad_l, by + pad_t
+        cw, ch = bw - pad_l - pad_r, bh - pad_t - pad_b
 
-        for frac in (0.0, 0.5, 1.0):
+        for frac in (0.0, 1.0):
             gy = cy0 + ch * (1.0 - frac)
             gv = int(round(v_min + span * frac))
-            parts.append(f'<line x1="{cx0}" y1="{gy:.1f}" x2="{cx0 + cw}" y2="{gy:.1f}" stroke="{t["line"]}" stroke-width="1"/>')
+            parts.append(f'<line x1="{cx0}" y1="{gy:.1f}" x2="{cx0 + cw}" y2="{gy:.1f}" stroke="{t["hairline"]}" stroke-width="1"/>')
             parts.append(
-                f'<text x="{cx0 - 8}" y="{gy + 3.5:.1f}" class="t-mono" font-size="10" '
-                f'text-anchor="end" fill="{t["ink_3"]}">{esc(fmt_num(gv))}</text>'
+                f'<text x="{cx0 - 6}" y="{gy + 3.5:.1f}" class="t-mono" font-size="9.5" '
+                f'text-anchor="end" fill="{t["text_dim"]}">{esc(fmt_num(gv))}</text>'
             )
 
         coords: list[tuple[float, float]] = []
         n_pts = len(series)
         for i, val in enumerate(vals):
-            px = cx0 + (cw * i / max(1, n_pts - 1))
-            py = cy0 + ch - ((val - v_min) / span) * ch
-            coords.append((px, py))
+            px_i = cx0 + (cw * i / max(1, n_pts - 1))
+            py_i = cy0 + ch - ((val - v_min) / span) * ch
+            coords.append((px_i, py_i))
 
         line_d = "M" + " L".join(f"{x:.1f},{y:.1f}" for x, y in coords)
         area_d = f"{line_d} L{coords[-1][0]:.1f},{cy0 + ch:.1f} L{coords[0][0]:.1f},{cy0 + ch:.1f} Z"
-        parts.append(f'<path d="{area_d}" fill="{t["go"]}" opacity="0.16"/>')
+        parts.append(f'<path d="{area_d}" fill="{t["glow"]}" opacity="0.18"/>')
         parts.append(
-            f'<path d="{line_d}" fill="none" stroke="{t["stamp"]}" stroke-width="2.5" '
+            f'<path d="{line_d}" fill="none" stroke="{t["primary"]}" stroke-width="2.4" '
             f'stroke-linecap="round" stroke-linejoin="round"/>'
         )
         lx, ly = coords[-1]
-        parts.append(f'<circle cx="{lx:.1f}" cy="{ly:.1f}" r="4.5" fill="{t["go"]}" stroke="{t["paper"]}" stroke-width="1.5"/>')
-        first_lbl = series[0]["timestamp"][:10]
-        last_lbl = series[-1]["timestamp"][:10]
+        parts.append(f'<circle cx="{lx:.1f}" cy="{ly:.1f}" r="4" fill="{t["glow"]}" stroke="{t["surface"]}" stroke-width="1.5"/>')
+        first_lbl = str(series[0]["timestamp"])[:10]
+        last_lbl = str(series[-1]["timestamp"])[:10]
         parts.append(
-            f'<text x="{cx0}" y="{panel_y + panel_h - 10}" class="t-mono" font-size="10" fill="{t["ink_3"]}">'
-            f'{esc(first_lbl)} ({len(series)} samples)</text>'
+            f'<text x="{cx0}" y="{by + bh - 6}" class="t-mono" font-size="9.5" fill="{t["text_dim"]}">'
+            f'{esc(first_lbl)} ({n_pts} real samples)</text>'
         )
         parts.append(
-            f'<text x="{cx0 + cw}" y="{panel_y + panel_h - 10}" class="t-mono" font-size="10" '
-            f'text-anchor="end" fill="{t["ink_3"]}">{esc(last_lbl)}</text>'
+            f'<text x="{cx0 + cw}" y="{by + bh - 6}" class="t-mono" font-size="9.5" text-anchor="end" '
+            f'fill="{t["text_dim"]}">{esc(last_lbl)}</text>'
         )
 
-    # Dashed thermal tear line + barcode footer
+    # Footer
     parts.append(
-        f'<line x1="46" y1="394" x2="1074" y2="394" stroke="{t["ink_3"]}" '
-        f'stroke-width="1.5" stroke-dasharray="6 4" opacity="0.65"/>'
-    )
-    bars_svg = barcode_bars(f"{latest_tag}-{total_product}-{synced_str}", 46, 405, 24, 196)
-    parts.append(f'<g fill="{t["ink"]}">{bars_svg}</g>')
-    parts.append(
-        f'<text x="256" y="421" class="t-mono" font-size="11" fill="{t["ink_2"]}">'
-        f'REPO DecoyINDIA/BMD  ·  GPL-3.0</text>'
+        f'<text x="36" y="{h - 14}" class="t-mono" font-size="10.5" fill="{t["text_dim"]}">'
+        f'Source: data/analytics/downloads.json  ·  GPL-3.0</text>'
     )
     parts.append(
-        f'<text x="1074" y="421" class="t-mono" font-size="11" text-anchor="end" fill="{t["ink_3"]}">'
+        f'<text x="{w - 36}" y="{h - 14}" class="t-mono" font-size="10.5" text-anchor="end" fill="{t["text_dim"]}">'
         f'Updated every 6h  ·  Last synced {esc(synced_str)}</text>'
     )
-
     parts.append("</svg>")
     return "\n".join(parts) + "\n"
 
 
 def render_platform_breakdown(data: dict[str, Any], theme_name: str, animated: bool = True) -> str:
-    """Render the platform & release breakdown SVG."""
+    """Render the Pelagic Velocity platform & release manifest SVG."""
     t = THEMES[theme_name]
     w, h = 1120, 444
     summary = data.get("summary") or {}
@@ -579,7 +615,6 @@ def render_platform_breakdown(data: dict[str, Any], theme_name: str, animated: b
     total_all = int(summary.get("total_all_assets") or 0)
     total_product = int(summary.get("total_product_downloads") or 0)
 
-    # Flatten all downloadable assets from latest release (or all releases) for top-packages column
     top_assets: list[dict[str, Any]] = []
     for rel in releases[:3]:
         tag = rel.get("tag_name") or ""
@@ -599,28 +634,22 @@ def render_platform_breakdown(data: dict[str, Any], theme_name: str, animated: b
         f'viewBox="0 0 {w} {h}" role="img" aria-labelledby="svg-title svg-desc">',
         f'<title id="svg-title">{esc(svg_title)}</title>',
         f'<desc id="svg-desc">{esc(svg_desc)}</desc>',
-        "<defs>",
-        f'<linearGradient id="boardGrad" x1="0" y1="0" x2="1" y2="1">'
-        f'<stop offset="0%" stop-color="{t["board"]}"/>'
-        f'<stop offset="100%" stop-color="{t["board_deep"]}"/>'
-        f"</linearGradient>",
-        "</defs>",
         _common_style(t, animated),
-        _board_backdrop(w, h, t),
-        _waybill_shell(
-            w,
-            h,
-            t,
-            "BMD · PLATFORM & RELEASE MANIFEST",
-            f"PRODUCT {fmt_num(total_product)}  ·  ALL ASSETS {fmt_num(total_all)}  ·  NO DOUBLE-COUNTING",
-        ),
+        f'<rect width="{w}" height="{h}" rx="14" fill="{t["bg"]}"/>',
+        f'<text x="36" y="34" class="t-mono" font-size="11.5" font-weight="600" letter-spacing="0.06em" '
+        f'fill="{t["primary"]}">PLATFORM &amp; RELEASE MANIFEST</text>',
+        f'<text x="{w - 36}" y="34" class="t-mono" font-size="10.5" text-anchor="end" fill="{t["text_dim"]}">'
+        f'PRODUCT {fmt_num(total_product)}  ·  ALL ASSETS {fmt_num(total_all)}  ·  ZERO DOUBLE-COUNTING</text>',
+        f'<line x1="36" y1="50" x2="{w - 36}" y2="50" stroke="{t["hairline"]}" stroke-width="1"/>',
     ]
 
-    # Left panel: All 5 Platform Buckets with explicit asset counts
-    parts.append(f'<text x="46" y="96" class="t-lbl">DOWNLOADS BY TARGET BUCKET</text>')
-    parts.append(f'<line x1="46" y1="104" x2="544" y2="104" stroke="{t["ink"]}" stroke-width="1.5"/>')
+    # Left panel: All 5 Platform Buckets
+    parts.append(
+        f'<rect x="36" y="68" width="516" height="332" rx="12" fill="{t["surface"]}" '
+        f'stroke="{t["hairline_strong"]}" stroke-width="1.2"/>'
+    )
+    parts.append(f'<text x="58" y="96" class="t-lbl">DOWNLOADS BY TARGET BUCKET</text>')
 
-    # Count assets per bucket across all releases
     bucket_file_counts: dict[str, int] = {}
     for rel in releases:
         for asset in rel.get("assets") or []:
@@ -628,13 +657,7 @@ def render_platform_breakdown(data: dict[str, Any], theme_name: str, animated: b
             bucket_file_counts[plat] = bucket_file_counts.get(plat, 0) + 1
 
     max_bucket = max((int(p.get("downloads") or 0) for p in platforms), default=1) or 1
-    bucket_colors = {
-        "Windows": t["go"],
-        "Linux": t["bar_muted"],
-        "Browser Extensions": t["bar_alt"],
-        "macOS (Experimental)": t["bar_soft"],
-        "Other / Auxiliary": t["ink_3"],
-    }
+    styles = _platform_style_map(t)
 
     by = 122
     for idx, plat in enumerate(platforms):
@@ -642,109 +665,93 @@ def render_platform_breakdown(data: dict[str, Any], theme_name: str, animated: b
         pdls = int(plat.get("downloads") or 0)
         share_all = float(plat.get("share_of_all_assets_pct") or 0.0)
         nfiles = bucket_file_counts.get(pname, 0)
-        bw = (pdls / max_bucket) * 320.0 if pdls > 0 else 0.0
+        bw = (pdls / max_bucket) * 472.0 if pdls > 0 else 0.0
         tag_txt = "AUX" if plat.get("category") == "auxiliary" else "PROD"
+        color = str(styles.get(pname, {"color": t["primary"]})["color"])
 
+        parts.append(f'<text x="58" y="{by + 12}" class="t-strong" font-size="13">{esc(pname)}</text>')
         parts.append(
-            f'<text x="46" y="{by + 13}" class="t-strong" font-size="13">{esc(pname)}</text>'
+            f'<text x="242" y="{by + 12}" class="t-mono" font-size="10.5" fill="{t["text_dim"]}">'
+            f'[{tag_txt} · {nfiles} {plural_label(nfiles, "file")}]</text>'
         )
         parts.append(
-            f'<text x="240" y="{by + 13}" class="t-mono" font-size="10.5" fill="{t["ink_3"]}">'
-            f'[{tag_txt} · {nfiles} files]</text>'
+            f'<text x="530" y="{by + 12}" class="t-mono" font-size="12" text-anchor="end" fill="{t["text"]}">'
+            f'{esc(fmt_num(pdls))} <tspan fill="{t["text_dim"]}">({share_all:.1f}%)</tspan></text>'
         )
         parts.append(
-            f'<text x="544" y="{by + 13}" class="t-mono" font-size="12.5" text-anchor="end" fill="{t["ink"]}">'
-            f'{esc(fmt_num(pdls))} <tspan fill="{t["ink_3"]}">({share_all:.1f}%)</tspan></text>'
+            f'<rect x="58" y="{by + 20}" width="472" height="10" rx="4" '
+            f'fill="{t["track"]}" stroke="{t["hairline"]}" stroke-width="1"/>'
         )
-        parts.append(
-            f'<rect x="46" y="{by + 21}" width="498" height="11" rx="4" '
-            f'fill="{t["paper_2"]}" stroke="{t["line"]}" stroke-width="1"/>'
-        )
-        parts.append(
-            _animated_bar(
-                46,
-                by + 21,
-                bw * (498.0 / 320.0),
-                11,
-                4,
-                bucket_colors.get(pname, t["bar_muted"]),
-                animated,
-                delay_s=0.1 * idx,
-            )
-        )
-        by += 49
+        parts.append(_animated_bar(58, by + 20, bw, 10, 4, color, animated, delay_s=0.1 * idx))
+        by += 52
 
-    # Vertical separator
-    parts.append(f'<line x1="572" y1="88" x2="572" y2="352" stroke="{t["line"]}" stroke-width="1"/>')
+    # Right panel: Releases Ledger + Top Packages
+    parts.append(
+        f'<rect x="572" y="68" width="512" height="332" rx="12" fill="{t["surface"]}" '
+        f'stroke="{t["hairline_strong"]}" stroke-width="1.2"/>'
+    )
+    parts.append(f'<text x="594" y="96" class="t-lbl">RELEASES LEDGER &amp; TOP PACKAGES</text>')
 
-    # Right panel Top: Releases Ledger (up to 3 recent) + Top Packages
-    parts.append(f'<text x="598" y="96" class="t-lbl">RELEASES LEDGER &amp; TOP PACKAGES</text>')
-    parts.append(f'<line x1="598" y1="104" x2="1074" y2="104" stroke="{t["ink"]}" stroke-width="1.5"/>')
-
-    ry = 124
+    ry = 122
     for idx, rel in enumerate(releases[:3]):
         rtag = str(rel.get("tag_name") or "")
         rdate = str(rel.get("published_at") or "")[:10]
         rprod = int(rel.get("product_downloads") or 0)
         rall = int(rel.get("all_assets_downloads") or 0)
         badge = "LATEST" if idx == 0 else "RELEASE"
-        badge_bg = t["ink"] if idx == 0 else t["paper_2"]
-        badge_fg = t["paper"] if idx == 0 else t["ink_2"]
+        badge_bg = t["badge_bg"] if idx == 0 else t["surface_elev"]
+        badge_fg = t["badge_fg"] if idx == 0 else t["text_muted"]
 
         parts.append(
-            f'<rect x="598" y="{ry - 11}" width="58" height="17" rx="4" fill="{badge_bg}" '
-            f'stroke="{t["line"]}" stroke-width="1"/>'
+            f'<rect x="594" y="{ry - 11}" width="58" height="17" rx="4" fill="{badge_bg}" '
+            f'stroke="{t["hairline"]}" stroke-width="1"/>'
         )
         parts.append(
-            f'<text x="627" y="{ry + 1}" class="t-mono" font-size="9.5" text-anchor="middle" '
-            f'fill="{badge_fg}">{badge}</text>'
+            f'<text x="623" y="{ry + 1}" class="t-mono" font-size="9.5" font-weight="600" '
+            f'text-anchor="middle" fill="{badge_fg}">{badge}</text>'
         )
-        parts.append(f'<text x="666" y="{ry + 2}" class="t-val" font-size="14">{esc(rtag)}</text>')
-        parts.append(f'<text x="742" y="{ry + 2}" class="t-mono" font-size="11" fill="{t["ink_3"]}">{esc(rdate)}</text>')
+        parts.append(f'<text x="664" y="{ry + 2}" class="t-val" font-size="14">{esc(rtag)}</text>')
+        parts.append(f'<text x="738" y="{ry + 2}" class="t-mono" font-size="11" fill="{t["text_dim"]}">{esc(rdate)}</text>')
         parts.append(
-            f'<text x="1074" y="{ry + 2}" class="t-mono" font-size="12" text-anchor="end" fill="{t["stamp"]}">'
-            f'{esc(fmt_num(rprod))} prod <tspan fill="{t["ink_3"]}">/ {esc(fmt_num(rall))} total</tspan></text>'
+            f'<text x="1062" y="{ry + 2}" class="t-mono" font-size="12" text-anchor="end" fill="{t["primary"]}">'
+            f'{esc(fmt_num(rprod))} prod <tspan fill="{t["text_dim"]}">/ {esc(fmt_num(rall))} total</tspan></text>'
         )
-        ry += 25
+        ry += 26
 
-    parts.append(f'<line x1="598" y1="{ry + 2}" x2="1074" y2="{ry + 2}" stroke="{t["line"]}" stroke-width="1"/>')
-    parts.append(f'<text x="598" y="{ry + 22}" class="t-lbl">TOP DOWNLOADED PACKAGES</text>')
+    parts.append(f'<line x1="594" y1="{ry + 2}" x2="1062" y2="{ry + 2}" stroke="{t["hairline"]}" stroke-width="1"/>')
+    parts.append(f'<text x="594" y="{ry + 22}" class="t-lbl">TOP DOWNLOADED PRODUCT PACKAGES</text>')
 
-    ay = ry + 40
+    ay = ry + 42
     max_asset_dl = max((int(a.get("download_count") or 0) for a in top_assets), default=1) or 1
     for idx, asset in enumerate(top_assets):
         aname = str(asset.get("name") or "")
-        if len(aname) > 34:
-            aname = aname[:31] + "..."
+        if len(aname) > 33:
+            aname = aname[:30] + "..."
         adl = int(asset.get("download_count") or 0)
         asize = fmt_bytes(int(asset.get("size") or 0))
-        aw = (adl / max_asset_dl) * 120.0 if adl > 0 else 0.0
+        aw = (adl / max_asset_dl) * 108.0 if adl > 0 else 0.0
 
-        parts.append(f'<text x="598" y="{ay}" class="t-mono" font-size="11.5" fill="{t["ink"]}">{esc(aname)}</text>')
-        parts.append(f'<text x="860" y="{ay}" class="t-mono" font-size="10.5" fill="{t["ink_3"]}">{esc(asize)}</text>')
+        parts.append(f'<text x="594" y="{ay}" class="t-mono" font-size="11" fill="{t["text"]}">{esc(aname)}</text>')
+        parts.append(f'<text x="854" y="{ay}" class="t-mono" font-size="10.5" fill="{t["text_dim"]}">{esc(asize)}</text>')
         parts.append(
-            f'<rect x="916" y="{ay - 9}" width="110" height="9" rx="3" '
-            f'fill="{t["paper_2"]}" stroke="{t["line"]}" stroke-width="1"/>'
+            f'<rect x="916" y="{ay - 8.5}" width="108" height="9" rx="3" '
+            f'fill="{t["track"]}" stroke="{t["hairline"]}" stroke-width="1"/>'
         )
-        parts.append(_animated_bar(916, ay - 9, aw * (110.0 / 120.0), 9, 3, t["go"], animated, delay_s=0.08 * idx))
+        parts.append(_animated_bar(916, ay - 8.5, aw, 9, 3, t["primary"], animated, delay_s=0.08 * idx))
         parts.append(
-            f'<text x="1074" y="{ay}" class="t-mono" font-size="11.5" text-anchor="end" fill="{t["ink"]}">'
+            f'<text x="1062" y="{ay}" class="t-mono" font-size="11.5" text-anchor="end" fill="{t["text"]}">'
             f'{esc(fmt_num(adl))}</text>'
         )
         ay += 24
 
-    # Footer tear line
+    # Footer
     parts.append(
-        f'<line x1="46" y1="364" x2="1074" y2="364" stroke="{t["ink_3"]}" '
-        f'stroke-width="1.5" stroke-dasharray="6 4" opacity="0.65"/>'
-    )
-    parts.append(
-        f'<text x="46" y="388" class="t-body" font-size="11.5">'
+        f'<text x="36" y="{h - 16}" class="t-body" font-size="11">'
         f'Product = installers, portable archives, Linux packages, experimental macOS .dmg, browser extensions. '
         f'Auxiliary = symbols, .zsync, checksums, geo.</text>'
     )
     parts.append(
-        f'<text x="1074" y="406" class="t-mono" font-size="11" text-anchor="end" fill="{t["ink_3"]}">'
+        f'<text x="{w - 36}" y="{h - 16}" class="t-mono" font-size="10.5" text-anchor="end" fill="{t["text_dim"]}">'
         f'Last synced {esc(synced_str)}  ·  Source: GitHub Releases API</text>'
     )
     parts.append("</svg>")
@@ -759,6 +766,7 @@ def render_markdown_telemetry(data: dict[str, Any]) -> str:
 
     total_product = int(summary.get("total_product_downloads") or 0)
     total_all = int(summary.get("total_all_assets") or 0)
+    total_aux = int(summary.get("total_auxiliary_downloads") or (total_all - total_product))
     latest_tag = summary.get("latest_release_tag") or "-"
     latest_dl = int(summary.get("latest_release_downloads") or 0)
     latest_pub = (summary.get("latest_release_published_at") or "")[:10] or "-"
@@ -774,12 +782,24 @@ def render_markdown_telemetry(data: dict[str, Any]) -> str:
         else f"cached_fallback (last successful sync: {last_synced})"
     )
 
+    daily = summary.get("daily_delta")
+    weekly = summary.get("weekly_delta")
+    monthly = summary.get("monthly_delta")
+    if daily is None and weekly is None and monthly is None:
+        delta_summary = "Baseline recording active (awaiting >= 24h real snapshot span)"
+    else:
+        d_txt = f"+{fmt_num(daily)}" if daily is not None else "pending"
+        w_txt = f"+{fmt_num(weekly)}" if weekly is not None else "pending"
+        m_txt = f"+{fmt_num(monthly)}" if monthly is not None else "pending"
+        delta_summary = f"24h: {d_txt} · 7d: {w_txt} · 30d: {m_txt}"
+
     lines = [
         "| Metric | Value |",
         "| :--- | :--- |",
-        f"| **Product & Extension Downloads** | **{fmt_num(total_product)}** |",
+        f"| **Product & Extension Downloads** | **{fmt_num(total_product)}** (excludes {fmt_num(total_aux)} auxiliary files; zero double-counting) |",
         f"| **All Release Assets Total** (incl. symbols, `.zsync`, checksums, geo) | {fmt_num(total_all)} |",
         f"| **Latest Release** | `{latest_tag}` ({fmt_num(latest_dl)} product downloads · {latest_pub}) |",
+        f"| **Growth Windows** | {delta_summary} |",
         f"| **Repository Pulse** | {fmt_num(stars)} {plural_label(stars, 'star')} · {fmt_num(forks)} {plural_label(forks, 'fork')} · {fmt_num(contributors)} {plural_label(contributors, 'contributor')} |",
         f"| **Tracking Started** | `{tracking_started}` |",
         f"| **Last Synced** | `{last_synced}` · `api_status`: `{status_note}` |",
@@ -836,12 +856,84 @@ def update_readme_telemetry_block(
     return True
 
 
+def _find_browser_bin() -> str | None:
+    env_bin = (os.environ.get("CHROME_BIN") or os.environ.get("PUPPETEER_EXECUTABLE_PATH") or "").strip()
+    if env_bin and Path(env_bin).exists():
+        return env_bin
+    candidates = [
+        r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+        r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
+        "/usr/bin/google-chrome",
+        "/usr/bin/google-chrome-stable",
+        "/usr/bin/chromium",
+        "/usr/bin/chromium-browser",
+    ]
+    for cand in candidates:
+        if Path(cand).exists():
+            return cand
+    for cmd in ("google-chrome", "chromium", "chromium-browser"):
+        found = shutil.which(cmd)
+        if found:
+            return found
+    return None
+
+
+def velocity_webp_ready(velocity_dir: Path = VELOCITY_DIR) -> bool:
+    """Return True if Node, FFmpeg, Browser, and ``velocity/build.mjs`` are available."""
+    return bool(
+        shutil.which("node")
+        and shutil.which("ffmpeg")
+        and _find_browser_bin()
+        and (velocity_dir / "build.mjs").is_file()
+        and (velocity_dir / "node_modules").is_dir()
+    )
+
+
+def rebuild_living_adoption_webp(
+    out_dir: Path = DEFAULT_OUT_DIR,
+    velocity_dir: Path = VELOCITY_DIR,
+    strict: bool = False,
+) -> bool:
+    """Rebuild ``assets/readme/analytics/living-adoption-{light,dark}.webp`` (and static PNGs) via Velocity."""
+    if not velocity_webp_ready(velocity_dir):
+        if strict:
+            raise RuntimeError(
+                "Velocity WebP dependencies missing (requires node, ffmpeg, Chrome/Chromium, and velocity/node_modules)"
+            )
+        return False
+
+    env = dict(os.environ)
+    browser_bin = _find_browser_bin()
+    if browser_bin:
+        env.setdefault("CHROME_BIN", browser_bin)
+
+    subprocess.run(
+        ["node", "build.mjs", "--only", "living-adoption"],
+        cwd=velocity_dir,
+        env=env,
+        check=True,
+    )
+    # Keep static PNG fallbacks synchronized when Velocity emits keyframes.
+    review_dir = (
+        Path(r"C:\Users\subha\.gemini\antigravity\brain\22023cbd-5916-4595-8b3f-30b158a4c07c\scratch\review\living-adoption")
+    )
+    for theme in ("light", "dark"):
+        keyframe = review_dir / f"living-adoption-{theme}-keyframe.png"
+        static_dst = out_dir / f"living-adoption-static-{theme}.png"
+        if keyframe.is_file():
+            shutil.copy2(keyframe, static_dst)
+    return True
+
+
 def generate_all(
     input_path: Path = DEFAULT_INPUT,
     out_dir: Path = DEFAULT_OUT_DIR,
     readme_path: Path | None = DEFAULT_README,
+    with_webp: bool = False,
+    with_webp_if_available: bool = False,
 ) -> list[Path]:
-    """Read ``input_path``, write all 6 analytics SVGs into ``out_dir``, and update README markers if present."""
+    """Read ``input_path``, write all 6 analytics SVGs into ``out_dir``, and update README markers."""
     with input_path.open("r", encoding="utf-8") as fh:
         data = json.load(fh)
 
@@ -861,6 +953,14 @@ def generate_all(
     if readme_path is not None:
         update_readme_telemetry_block(data, readme_path=readme_path)
 
+    if with_webp or with_webp_if_available:
+        if rebuild_living_adoption_webp(out_dir=out_dir, strict=with_webp):
+            for theme in ("light", "dark"):
+                for name in (f"living-adoption-{theme}.webp", f"living-adoption-static-{theme}.png"):
+                    p = out_dir / name
+                    if p.is_file():
+                        written.append(p)
+
     return written
 
 
@@ -870,12 +970,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR, help="Output directory for SVGs")
     parser.add_argument("--readme", type=Path, default=DEFAULT_README, help="Optional README.md to update between markers")
     parser.add_argument("--skip-readme", action="store_true", help="Do not update README.md marker block")
+    parser.add_argument("--with-webp", action="store_true", help="Require and rebuild living-adoption-{light,dark}.webp via Velocity")
+    parser.add_argument(
+        "--with-webp-if-available",
+        action="store_true",
+        help="Rebuild living-adoption-{light,dark}.webp if Node, Chrome/Chromium, and FFmpeg are available",
+    )
     args = parser.parse_args(argv)
 
     written = generate_all(
         input_path=args.input,
         out_dir=args.out_dir,
         readme_path=None if args.skip_readme else args.readme,
+        with_webp=args.with_webp,
+        with_webp_if_available=args.with_webp_if_available,
     )
     for path in written:
         print(f"generated {path} ({path.stat().st_size} bytes)")

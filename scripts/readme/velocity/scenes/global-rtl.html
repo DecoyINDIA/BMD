@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, drawRoundedRect
+} from '/velocity/lib/core.mjs';
+
+let ctx, W, H, P;
+
+const SCRIPTS = [
+  'English', '日本語', 'Deutsch', 'हिन्दी', '한국어', '简体中文',
+  'বাংলা', 'Українська', 'Español', 'Français', 'Polski', 'Türkçe'
+];
+
+const RTL_LANGS = ['العربية', 'فارسی', 'עברית', 'اردو', 'ئۇيغۇرچە'];
+
+const THEMES_SWATCH = [
+  { name: 'Emerald', c: '#187052' },
+  { name: 'Luna',    c: '#2563EB' },
+  { name: 'Aero',    c: '#0EA5E9' },
+  { name: 'Adwaita', c: '#3584E4' },
+  { name: 'Breeze',  c: '#1D99F3' },
+  { name: 'Native',  c: '#55C99D' },
+];
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width; H = height; P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+  const c = document.getElementById('c');
+  c.width = W; c.height = H;
+  ctx = c.getContext('2d');
+};
+
+window.renderFrame = async (t, progress) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = P.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const loopFade = smoothstep(0.0, 0.04, progress) * (1 - smoothstep(0.92, 0.995, progress));
+
+  // Mirror phase: 0 (LTR) -> 1 (RTL) -> 0 (LTR) seamlessly!
+  const rtlMix = easeInOutCubic(remap(progress, 0.30, 0.48)) * (1 - easeInOutCubic(remap(progress, 0.80, 0.94)));
+
+  ctx.save();
+  ctx.globalAlpha = 0.35 + 0.65 * loopFade;
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+  ctx.fillText('I18N/LANGUAGES.TSV  ·  86 DISPLAY LANGUAGES  ·  5 RTL + UNICODE BIDI ISOLATION', 44, 36);
+  ctx.fillStyle = P.text;
+  ctx.font = '700 24px "Space Grotesk", sans-serif';
+  ctx.fillText('Built for the World: Spatial LTR <-> RTL Mirroring & OKLab Themes', 44, 66);
+  ctx.restore();
+
+  // Left: Interactive Wireframe UI Skeleton demonstrating real LTR <-> RTL horizontal mirror!
+  const uiX = 44, uiY = 92, uiW = 680, uiH = 294;
+  ctx.save();
+  ctx.globalAlpha = loopFade;
+  drawRoundedRect(ctx, uiX, uiY, uiW, uiH, 12);
+  ctx.fillStyle = P.surface;
+  ctx.fill();
+  ctx.strokeStyle = P.hairlineStrong;
+  ctx.lineWidth = 1.3;
+  ctx.stroke();
+
+  // Toolbar strip
+  drawRoundedRect(ctx, uiX + 14, uiY + 14, uiW - 28, 36, 7);
+  ctx.fillStyle = P.surfaceElev;
+  ctx.fill();
+
+  const btnCount = 5;
+  for (let b = 0; b < btnCount; b++) {
+    const ltrX = uiX + 26 + b * 54;
+    const rtlX = uiX + uiW - 26 - 44 - b * 54;
+    const bx = lerp(ltrX, rtlX, rtlMix);
+    drawRoundedRect(ctx, bx, uiY + 22, 44, 20, 4);
+    ctx.fillStyle = b === 0 ? P.primary : P.hairlineStrong;
+    ctx.fill();
+  }
+
+  // Direction Pill in toolbar
+  const pillLtrX = uiX + uiW - 146;
+  const pillRtlX = uiX + 26;
+  const pillX = lerp(pillLtrX, pillRtlX, rtlMix);
+  drawRoundedRect(ctx, pillX, uiY + 21, 120, 22, 5);
+  ctx.fillStyle = P.isDark ? 'rgba(85,201,157,0.18)' : 'rgba(19,111,80,0.12)';
+  ctx.fill();
+  ctx.fillStyle = P.primary;
+  ctx.font = '700 11px "IBM Plex Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(rtlMix > 0.5 ? 'DIR: RTL (AR/FA/HE)' : 'DIR: LTR (EN)', pillX + 60, uiY + 36);
+  ctx.textAlign = 'left';
+
+  // Sidebar glides from Left -> Right smoothly!
+  const sbW = 160;
+  const sbX = lerp(uiX + 14, uiX + uiW - 14 - sbW, rtlMix);
+  drawRoundedRect(ctx, sbX, uiY + 62, sbW, 218, 8);
+  ctx.fillStyle = P.surfaceElev;
+  ctx.fill();
+  ctx.strokeStyle = P.hairline;
+  ctx.stroke();
+
+  const cats = rtlMix > 0.5
+    ? ['الكل (٢٧)', 'مقاطع الفيديو', 'الموسيقى', 'المستندات', 'الأرشيف']
+    : ['All (27)', 'Video', 'Audio', 'Documents', 'Archives'];
+  cats.forEach((cLbl, i) => {
+    const cy = uiY + 90 + i * 32;
+    ctx.fillStyle = i === 0 ? P.primary : P.textMuted;
+    ctx.font = i === 0 ? '700 12.5px "IBM Plex Sans", sans-serif' : '400 12.5px "IBM Plex Sans", sans-serif';
+    if (rtlMix > 0.5) {
+      ctx.textAlign = 'right';
+      ctx.fillText(cLbl, sbX + sbW - 16, cy);
+    } else {
+      ctx.textAlign = 'left';
+      ctx.fillText(cLbl, sbX + 16, cy);
+    }
+  });
+  ctx.textAlign = 'left';
+
+  // Download rows panel (glides opposite sidebar!)
+  const listW = uiW - sbW - 40;
+  const listX = lerp(uiX + 14 + sbW + 12, uiX + 14, rtlMix);
+  drawRoundedRect(ctx, listX, uiY + 62, listW, 218, 8);
+  ctx.fillStyle = P.bg;
+  ctx.fill();
+  ctx.strokeStyle = P.hairline;
+  ctx.stroke();
+
+  // Bidi-isolated URLs stay LTR even when UI mirrors to RTL!
+  const rows = [
+    { name: 'ubuntu-26.04-desktop.iso', url: 'https://releases.ubuntu.com/26.04/', pct: '100% · 4.7 GiB' },
+    { name: 'BMD-1.0.0-setup.exe',      url: 'https://github.com/DecoyINDIA/BMD', pct: '19.0 MiB · Done' },
+    { name: 'rust-1.98.0-x86_64.tar.xz', url: 'https://static.rust-lang.org/dist/', pct: '82% · 12.4 MB/s' },
+  ];
+  rows.forEach((r, i) => {
+    const ry = uiY + 86 + i * 64;
+    drawRoundedRect(ctx, listX + 12, ry, listW - 24, 52, 6);
+    ctx.fillStyle = P.surface;
+    ctx.fill();
+    ctx.strokeStyle = P.hairline;
+    ctx.stroke();
+
+    ctx.fillStyle = P.text;
+    ctx.font = '600 12.5px "IBM Plex Sans", sans-serif';
+    ctx.fillText(r.name, listX + 24, ry + 21);
+
+    // Explicit Unicode LTR isolation badge for URLs/numbers
+    ctx.fillStyle = P.primary;
+    ctx.font = '500 10.5px "IBM Plex Mono", monospace';
+    ctx.fillText(r.url, listX + 24, ry + 40);
+
+    ctx.fillStyle = P.textMuted;
+    ctx.textAlign = 'right';
+    ctx.fillText(r.pct, listX + listW - 24, ry + 21);
+    ctx.textAlign = 'left';
+  });
+
+  // Right Panel: 86 Languages Typography Field & OKLab Theme Swatches
+  const rx = 746, rw = W - rx - 44;
+  drawRoundedRect(ctx, rx, uiY, rw, uiH, 12);
+  ctx.fillStyle = P.surface;
+  ctx.fill();
+  ctx.strokeStyle = P.hairlineStrong;
+  ctx.stroke();
+
+  ctx.fillStyle = P.text;
+  ctx.font = '700 32px "Space Grotesk", sans-serif';
+  ctx.fillText('86', rx + 22, uiY + 48);
+  ctx.fillStyle = P.textMuted;
+  ctx.font = '600 13px "IBM Plex Sans", sans-serif';
+  ctx.fillText('Display Languages', rx + 68, uiY + 34);
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+  ctx.fillText('5 RTL · Unicode Isolation', rx + 68, uiY + 52);
+
+  // Flowing script tags
+  ctx.font = '500 12.5px "IBM Plex Sans", sans-serif';
+  let tx = rx + 22, ty = uiY + 86;
+  const allLangs = rtlMix > 0.35 ? [...RTL_LANGS, ...SCRIPTS.slice(0, 7)] : [...SCRIPTS.slice(0, 8), ...RTL_LANGS.slice(0, 4)];
+  for (const lang of allLangs) {
+    const tw = ctx.measureText(lang).width + 18;
+    if (tx + tw > rx + rw - 18) { tx = rx + 22; ty += 30; }
+    const isRtl = RTL_LANGS.includes(lang);
+    drawRoundedRect(ctx, tx, ty - 16, tw, 24, 5);
+    ctx.fillStyle = (isRtl && rtlMix > 0.35)
+      ? (P.isDark ? 'rgba(85,201,157,0.20)' : 'rgba(19,111,80,0.14)')
+      : P.surfaceElev;
+    ctx.fill();
+    ctx.strokeStyle = (isRtl && rtlMix > 0.35) ? P.primary : P.hairline;
+    ctx.stroke();
+    ctx.fillStyle = (isRtl && rtlMix > 0.35) ? P.primary : P.text;
+    ctx.fillText(lang, tx + 9, ty);
+    tx += tw + 8;
+  }
+
+  // Bottom of right panel: 9 static + Native = 10 themes + OKLab contrast
+  const sy = uiY + 212;
+  ctx.strokeStyle = P.hairline;
+  ctx.beginPath(); ctx.moveTo(rx + 22, sy); ctx.lineTo(rx + rw - 22, sy); ctx.stroke();
+  ctx.fillStyle = P.textDim;
+  ctx.font = '600 10.5px "IBM Plex Mono", monospace';
+  ctx.fillText('9 BUILT-IN + NATIVE = 10 THEMES (OKLAB WCAG)', rx + 22, sy + 20);
+
+  THEMES_SWATCH.forEach((sw, i) => {
+    const sx = rx + 22 + i * 62;
+    drawRoundedRect(ctx, sx, sy + 32, 54, 28, 6);
+    ctx.fillStyle = sw.c;
+    ctx.fill();
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '600 9.5px "IBM Plex Sans", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(sw.name, sx + 27, sy + 50);
+    ctx.textAlign = 'left';
+  });
+
+  ctx.fillStyle = P.textDim;
+  ctx.font = '500 11px "IBM Plex Mono", monospace';
+  ctx.fillText('ltr() Unicode isolation guarantees URLs, file paths, and metrics stay legible inside Arabic, Persian, Hebrew, Urdu, and Uyghur.', 44, H - 20);
+  ctx.restore();
+};
+</script>
+</body>
+</html>

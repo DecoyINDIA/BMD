@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, drawRoundedRect
+} from '/velocity/lib/core.mjs';
+
+let ctx, W, H, P;
+
+const PLATFORMS = [
+  { name: 'Windows 10/11',  badge: 'SUPPORTED', spec1: 'x64 · ARM64 · x86', spec2: '19.0 MiB setup / portable', color: 'primary' },
+  { name: 'Linux Desktop',  badge: 'SUPPORTED', spec1: 'x86_64 · arm64',    spec2: '.deb · .rpm · AppImage',    color: 'cyan' },
+  { name: 'Docker / LAN',   badge: 'HEADLESS',  spec1: 'ghcr.io/decoyindia/bmd', spec2: '~175 MiB · HTTPS :8463', color: 'primary' },
+  { name: '6+ Browsers',    badge: 'MV3 + XPI', spec1: 'Chrome · Edge · Firefox', spec2: '261 KiB + Safari 17+',  color: 'specular' },
+  { name: 'macOS (Exp)',    badge: 'EXPERIMENTAL', spec1: 'arm64 · x86_64 .dmg', spec2: 'Unnotarized · 17.3 MiB', color: 'amber' },
+];
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width; H = height; P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+  const c = document.getElementById('c');
+  c.width = W; c.height = H;
+  ctx = c.getContext('2d');
+};
+
+window.renderFrame = async (t, progress) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = P.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const loopFade = smoothstep(0.0, 0.04, progress) * (1 - smoothstep(0.92, 0.995, progress));
+
+  ctx.save();
+  ctx.globalAlpha = 0.35 + 0.65 * loopFade;
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+  ctx.fillText('RELEASE V1.0.0 (2026-11-19)  ·  SHA256SUMS + KEYLESS SIGSTORE ATTESTATION', 44, 36);
+  ctx.fillStyle = P.text;
+  ctx.font = '700 24px "Space Grotesk", sans-serif';
+  ctx.fillText('Cross-Platform Distribution & Verified Provenance', 44, 66);
+  ctx.restore();
+
+  // Kinetic hydrodynamic illumination wave sweeping left -> right across 5 plinths
+  const waveX = lerp(-120, W + 120, easeInOutCubic(remap(progress, 0.08, 0.72)));
+
+  ctx.save();
+  ctx.globalAlpha = loopFade;
+
+  const cardW = 210, gap = 15.5, startX = 44;
+  PLATFORMS.forEach((pl, i) => {
+    const cx = startX + i * (cardW + gap);
+    const cy = 94, ch = 198;
+    const center = cx + cardW / 2;
+    const dist = Math.abs(waveX - center);
+    const focus = Math.exp(-(dist * dist) / (180 * 180));
+    const lit = smoothstep(0.06 + i * 0.11, 0.18 + i * 0.11, progress) * (1 - smoothstep(0.88, 0.96, progress));
+    const liftY = -focus * 7;
+
+    drawRoundedRect(ctx, cx, cy + liftY, cardW, ch, 10);
+    ctx.fillStyle = P.surface;
+    ctx.fill();
+    const accent = pl.color === 'amber' ? P.amber : (pl.color === 'cyan' ? P.cyan : P.primary);
+    ctx.strokeStyle = focus > 0.35 ? accent : (lit > 0.5 ? P.hairlineStrong : P.hairline);
+    ctx.lineWidth = focus > 0.35 ? 1.8 : 1.2;
+    ctx.stroke();
+
+    // Status pill
+    drawRoundedRect(ctx, cx + 14, cy + 16 + liftY, 98, 20, 4);
+    ctx.fillStyle = P.surfaceElev;
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.font = '700 10px "IBM Plex Mono", monospace';
+    ctx.fillText(pl.badge, cx + 22, cy + 30 + liftY);
+
+    ctx.fillStyle = P.text;
+    ctx.font = '700 17px "Space Grotesk", sans-serif';
+    ctx.fillText(pl.name, cx + 14, cy + 68 + liftY);
+
+    ctx.fillStyle = P.textMuted;
+    ctx.font = '500 11.5px "IBM Plex Mono", monospace';
+    ctx.fillText(pl.spec1, cx + 14, cy + 104 + liftY);
+
+    ctx.fillStyle = P.textDim;
+    ctx.font = '400 12px "IBM Plex Sans", sans-serif';
+    ctx.fillText(pl.spec2, cx + 14, cy + 126 + liftY);
+
+    // Verification tick bar at bottom of plinth
+    drawRoundedRect(ctx, cx + 14, cy + ch - 34 + liftY, cardW - 28, 18, 4);
+    ctx.fillStyle = lit > 0.4 ? (P.isDark ? 'rgba(85,201,157,0.14)' : 'rgba(19,111,80,0.10)') : P.surfaceElev;
+    ctx.fill();
+    ctx.fillStyle = lit > 0.4 ? P.primary : P.textDim;
+    ctx.font = '600 10px "IBM Plex Mono", monospace';
+    ctx.fillText(lit > 0.4 ? '✓ SHA-256 + SIGSTORE' : 'PENDING CHECK', cx + 22, cy + ch - 21 + liftY);
+  });
+
+  // Provenance verification strip below
+  const verifyP = easeOutExpo(remap(progress, 0.55, 0.80));
+  drawRoundedRect(ctx, 44, 310, W - 88, 46, 8);
+  ctx.fillStyle = P.surface;
+  ctx.fill();
+  ctx.strokeStyle = verifyP > 0.6 ? P.primary : P.hairline;
+  ctx.stroke();
+
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 12px "IBM Plex Mono", monospace';
+  ctx.fillText('$ gh attestation verify <downloaded-file> --repo DecoyINDIA/BMD', 64, 338);
+  ctx.fillStyle = P.textMuted;
+  ctx.textAlign = 'right';
+  ctx.fillText('winget install DecoyINDIA.BMD  ·  SHA256SUMS.txt (3.3 KiB)', W - 64, 338);
+  ctx.textAlign = 'left';
+
+  ctx.restore();
+};
+</script>
+</body>
+</html>
