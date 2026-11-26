@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, drawRoundedRect
+} from '/velocity/lib/core.mjs';
+
+let ctx, W, H, P;
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width; H = height; P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+  const c = document.getElementById('c');
+  c.width = W; c.height = H;
+  ctx = c.getContext('2d');
+};
+
+window.renderFrame = async (t, progress) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = P.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const loopFade = smoothstep(0.0, 0.04, progress) * (1 - smoothstep(0.92, 0.995, progress));
+
+  // Header
+  ctx.save();
+  ctx.globalAlpha = 0.35 + 0.65 * loopFade;
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+  ctx.fillText('CAPTURE CONDUIT  ·  EXTENSION -> BMD-NMHOST -> BMD-IPC -> ENGINE', 44, 36);
+  ctx.fillStyle = P.text;
+  ctx.font = '700 24px "Space Grotesk", sans-serif';
+  ctx.fillText('From Browser Click to Single-Instance Engine Dispatch', 44, 66);
+  ctx.restore();
+
+  const stages = [
+    { num: '01', title: 'Browser Extension', sub: 'Chrome · Edge · Firefox 140+', tag: 'MV3 + Safari 17+', x: 44,  w: 236, tAct: 0.06 },
+    { num: '02', title: 'bmd-nmhost',        sub: '1 MiB LinksPart frames',       tag: 'Capture Rules',    x: 326, w: 236, tAct: 0.28 },
+    { num: '03', title: 'bmd-ipc',           sub: '127.0.0.1 Token Socket',       tag: 'Single-Instance',  x: 608, w: 236, tAct: 0.50 },
+    { num: '04', title: 'Dispatch Target',   sub: 'bmd-app · remote · mcp',       tag: 'Engine Ready',     x: 890, w: 266, tAct: 0.72 },
+  ];
+
+  // Capsule travel x from stage 1 -> stage 4
+  const capsuleT = easeInOutCubic(remap(progress, 0.08, 0.80));
+  const capsuleX = lerp(162, 1020, capsuleT);
+  const capsuleY = 216;
+
+  ctx.save();
+  ctx.globalAlpha = loopFade;
+
+  // Main conduit rail + Alt-click browser fallback bypass line
+  ctx.strokeStyle = P.hairlineStrong;
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(162, 216); ctx.lineTo(1020, 216); ctx.stroke();
+
+  // Alt-click fallback bypass arc underneath
+  ctx.strokeStyle = P.textDim;
+  ctx.setLineDash([5, 5]);
+  ctx.lineWidth = 1.3;
+  ctx.beginPath();
+  ctx.moveTo(162, 286);
+  ctx.lineTo(162, 344);
+  ctx.lineTo(1020, 344);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = P.textDim;
+  ctx.font = '500 11px "IBM Plex Mono", monospace';
+  ctx.fillText('Alt-Click Bypass / Extension Reject -> Browser keeps native download fallback intact', 210, 336);
+
+  // Render 4 stage monolith cards
+  stages.forEach((st, idx) => {
+    const active = smoothstep(st.tAct, st.tAct + 0.08, progress) * (1 - smoothstep(0.88, 0.96, progress));
+    const cy = 104, ch = 182;
+
+    drawRoundedRect(ctx, st.x, cy, st.w, ch, 10);
+    ctx.fillStyle = P.surface;
+    ctx.fill();
+    ctx.strokeStyle = active > 0.35 ? P.primary : P.hairline;
+    ctx.lineWidth = active > 0.35 ? 1.8 : 1.2;
+    ctx.stroke();
+
+    // Stage number pill
+    drawRoundedRect(ctx, st.x + 16, cy + 16, 34, 22, 5);
+    ctx.fillStyle = active > 0.35 ? P.primary : P.surfaceElev;
+    ctx.fill();
+    ctx.fillStyle = active > 0.35 ? (P.isDark ? '#06150E' : '#FFFFFF') : P.textMuted;
+    ctx.font = '700 11.5px "IBM Plex Mono", monospace';
+    ctx.fillText(st.num, st.x + 25, cy + 31);
+
+    ctx.fillStyle = P.primary;
+    ctx.font = '600 11px "IBM Plex Mono", monospace';
+    ctx.fillText(st.tag, st.x + 60, cy + 31);
+
+    ctx.fillStyle = P.text;
+    ctx.font = '700 17px "Space Grotesk", sans-serif';
+    ctx.fillText(st.title, st.x + 16, cy + 66);
+
+    ctx.fillStyle = P.textMuted;
+    ctx.font = '400 12.5px "IBM Plex Sans", sans-serif';
+    ctx.fillText(st.sub, st.x + 16, cy + 88);
+
+    // Stage-specific micro-telemetry
+    drawRoundedRect(ctx, st.x + 16, cy + 124, st.w - 32, 42, 6);
+    ctx.fillStyle = P.surfaceElev;
+    ctx.fill();
+    ctx.fillStyle = active > 0.4 ? P.text : P.textDim;
+    ctx.font = '500 11px "IBM Plex Mono", monospace';
+    if (idx === 0) ctx.fillText('URL + UA + Cookies + Ref', st.x + 26, cy + 149);
+    if (idx === 1) ctx.fillText(active > 0.3 ? 'LinksPart: 3 × 1 MiB OK' : 'Rule Filter Standby', st.x + 26, cy + 149);
+    if (idx === 2) ctx.fillText(active > 0.3 ? 'ipc.json Token Validated' : '127.0.0.1 Socket Idle', st.x + 26, cy + 149);
+    if (idx === 3) {
+      // Three destination mini-nodes inside stage 4
+      const dests = ['APP', 'REMOTE', 'MCP'];
+      dests.forEach((d, di) => {
+        const dx = st.x + 22 + di * 76;
+        drawRoundedRect(ctx, dx, cy + 131, 68, 28, 4);
+        ctx.fillStyle = active > 0.4 ? (P.isDark ? 'rgba(85,201,157,0.18)' : 'rgba(19,111,80,0.12)') : P.surface;
+        ctx.fill();
+        ctx.strokeStyle = active > 0.4 ? P.primary : P.hairline;
+        ctx.stroke();
+        ctx.fillStyle = active > 0.4 ? P.primary : P.textDim;
+        ctx.font = '700 10.5px "IBM Plex Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(d, dx + 34, cy + 149);
+        ctx.textAlign = 'left';
+      });
+    }
+  });
+
+  // Moving Payload Capsule along the conduit
+  if (progress > 0.05 && progress < 0.88) {
+    const capAlpha = smoothstep(0.05, 0.12, progress) * (1 - smoothstep(0.80, 0.88, progress));
+    ctx.save();
+    ctx.globalAlpha = loopFade * capAlpha;
+    // Glow trail
+    const trailG = ctx.createLinearGradient(capsuleX - 70, capsuleY, capsuleX + 10, capsuleY);
+    trailG.addColorStop(0, 'rgba(85,201,157,0)');
+    trailG.addColorStop(1, P.primary);
+    ctx.strokeStyle = trailG;
+    ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(capsuleX - 70, capsuleY); ctx.lineTo(capsuleX, capsuleY); ctx.stroke();
+
+    // Capsule body (splits briefly into 3 micro-packets when passing through bmd-nmhost!)
+    const inNmhost = progress > 0.28 && progress < 0.46;
+    if (inNmhost) {
+      for (let k = -1; k <= 1; k++) {
+        drawRoundedRect(ctx, capsuleX - 10 + k * 14, capsuleY - 7, 10, 14, 3);
+        ctx.fillStyle = P.specular;
+        ctx.fill();
+      }
+    } else {
+      drawRoundedRect(ctx, capsuleX - 18, capsuleY - 9, 36, 18, 9);
+      ctx.fillStyle = P.specular;
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  ctx.restore();
+};
+</script>
+</body>
+</html>

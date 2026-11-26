@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  #stage { position: relative; width: 100%; height: 100%; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="gl"></canvas>
+  <canvas id="hud"></canvas>
+</div>
+<script type="module">
+import * as THREE from '/velocity/node_modules/three/build/three.module.js';
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, easeInOutSine, drawMarlinSculptural
+} from '/velocity/lib/core.mjs';
+
+let renderer, scene, camera, shaderMat, hudCtx, W, H, P;
+let particles = [];
+
+const VERT = `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = vec4(position, 1.0);
+  }
+`;
+
+// Hydrodynamic Potential Flow + 8-Lane Wake + Seamless Periodic Phase
+const FRAG = `
+  precision highp float;
+  varying vec2 vUv;
+  uniform float uPhase;      // 0..1 periodic
+  uniform float uFoil;       // 0..1 marlin hull displacement strength
+  uniform float uLanes;      // 0..1 8-lane split intensity
+  uniform float uThrust;     // 0..1 marlin forward thrust offset
+  uniform float uIsDark;
+  uniform vec2 uRes;
+
+  vec2 rot2(vec2 p, float a) {
+    float c = cos(a), s = sin(a);
+    return vec2(c * p.x - s * p.y, s * p.x + c * p.y);
+  }
+
+  void main() {
+    vec2 uv = vUv;
+    float aspect = uRes.x / uRes.y;
+    vec2 p = (uv - 0.5) * vec2(aspect, 1.0);
+
+    // Base canvas matched seamlessly to GitHub Dark (#090E0C / #0D1117) and Light (#F5F9F7)
+    vec3 bgDark = vec3(0.035, 0.055, 0.047);
+    vec3 bgLight = vec3(0.961, 0.976, 0.969);
+    vec3 col = mix(bgLight, bgDark, uIsDark);
+
+    // Subtle radial depth vignette
+    float rad = length(p * vec2(0.75, 1.1));
+    if (uIsDark > 0.5) {
+      col += vec3(0.015, 0.055, 0.042) * exp(-rad * rad * 2.2) * (0.4 + 0.6 * uFoil);
+    } else {
+      col -= vec3(0.025, 0.012, 0.018) * smoothstep(0.35, 1.2, rad) * 0.45;
+    }
+
+    // Marlin pressure envelope center in aspect space (slightly right of center, climbing 16 deg)
+    vec2 foilCenter = vec2(0.26 + uThrust * 0.14, 0.02 - uThrust * 0.04);
+    vec2 q = rot2(p - foilCenter, -0.28);
+
+    // Potential flow streamfunction around elongated Rankine hydrofoil
+    float r2 = dot(q * vec2(0.85, 2.3), q * vec2(0.85, 2.3)) + 0.028;
+    float psi = q.y - (uFoil * 0.095 * q.y) / r2;
+
+    float twoPi = 6.28318530718;
+    float drift = uPhase * twoPi * 2.0;
+
+    // 3 ambient laminar currents -> smoothly intensify as foil forms
+    vec3 cEmerald = mix(vec3(0.051, 0.361, 0.263), vec3(0.333, 0.788, 0.616), uIsDark);
+    vec3 cMint = mix(vec3(0.055, 0.643, 0.447), vec3(0.757, 0.941, 0.839), uIsDark);
+
+    for (int i = -4; i <= 4; i++) {
+      float fi = float(i);
+      float targetPsi = fi * 0.072;
+      float isAmbient = (abs(fi) == 0.0 || abs(fi) == 2.0 || abs(fi) == 4.0) ? 1.0 : 0.0;
+      float lineVis = mix(isAmbient * 0.55, 1.0, uFoil);
+      float d = abs(psi - targetPsi);
+      float width = mix(0.0042, 0.0026, uIsDark);
+      float line = smoothstep(width * 2.2, width * 0.2, d);
+
+      // Periodic traveling pressure wave (exact 2*pi periodicity -> frame N == frame 0)
+      float wave = 0.42 + 0.58 * (0.5 + 0.5 * sin(q.x * 11.0 - drift + fi * 0.7));
+      float alpha = line * lineVis * wave * mix(0.26, 0.38, uIsDark);
+
+      vec3 sCol = mix(cEmerald, cMint, 0.5 + 0.5 * sin(fi * 0.6));
+      if (uIsDark > 0.5) {
+        col += sCol * alpha;
+      } else {
+        col = mix(col, sCol, clamp(alpha * 0.68, 0.0, 0.85));
+      }
+    }
+
+    // Hydrofoil slipstream halo right around the marlin body
+    float hullGlow = exp(-dot(q * vec2(1.45, 3.6), q * vec2(1.45, 3.6)) * 6.5) * uFoil;
+    if (uIsDark > 0.5) {
+      col += vec3(0.08, 0.38, 0.27) * hullGlow * 0.42;
+    } else {
+      col = mix(col, vec3(0.80, 0.94, 0.88), hullGlow * 0.45);
+    }
+
+    gl_FragColor = vec4(col, 1.0);
+  }
+`;
+
+function buildDeterministicParticles() {
+  particles = [];
+  for (let i = 0; i < 42; i++) {
+    // Golden-ratio seeded deterministic cavitation motes
+    const seed = (i * 0.61803398875) % 1;
+    const seed2 = ((i * 1.3247179572) % 1);
+    particles.push({
+      lane: i % 8,
+      phaseOffset: seed,
+      ySpread: (seed2 - 0.5) * 26,
+      size: 1.4 + (i % 3) * 0.85,
+      speedMult: 1 + (i % 4) * 0.25,
+    });
+  }
+}
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width;
+  H = height;
+  P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+  buildDeterministicParticles();
+
+  const glCanvas = document.getElementById('gl');
+  const hudCanvas = document.getElementById('hud');
+  glCanvas.width = W; glCanvas.height = H;
+  hudCanvas.width = W; hudCanvas.height = H;
+  hudCtx = hudCanvas.getContext('2d');
+
+  renderer = new THREE.WebGLRenderer({
+    canvas: glCanvas,
+    antialias: true,
+    preserveDrawingBuffer: true,
+    powerPreference: 'high-performance',
+  });
+  renderer.setSize(W, H, false);
+  scene = new THREE.Scene();
+  camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+  shaderMat = new THREE.ShaderMaterial({
+    vertexShader: VERT,
+    fragmentShader: FRAG,
+    uniforms: {
+      uPhase: { value: 0 },
+      uFoil: { value: 0 },
+      uLanes: { value: 0 },
+      uThrust: { value: 0 },
+      uIsDark: { value: P.isDark ? 1.0 : 0.0 },
+      uRes: { value: new THREE.Vector2(W, H) },
+    },
+  });
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMat));
+};
+
+window.renderFrame = async (t, progress) => {
+  // 12.0s cycle (progress 0..1)
+  // Beat envelopes (all return cleanly to 0 at progress=0 and progress=1)
+  const enterFoil = easeOutExpo(remap(progress, 0.08, 0.30));
+  const exitFoil = 1 - easeInOutCubic(remap(progress, 0.87, 0.99));
+  const foilStrength = enterFoil * exitFoil;
+
+  const rimDraw = easeOutExpo(remap(progress, 0.14, 0.32));
+  const fillIn = smoothstep(0.20, 0.36, progress);
+  const coil = Math.sin(clamp01(remap(progress, 0.28, 0.38)) * Math.PI) * 0.035;
+  const surgeIn = easeOutExpo(remap(progress, 0.36, 0.56));
+  const surgeOut = 1 - easeInOutCubic(remap(progress, 0.86, 0.985));
+  const thrust = surgeIn * surgeOut;
+
+  const lanesIn = easeOutExpo(remap(progress, 0.38, 0.62));
+  const lanesOut = 1 - easeInOutCubic(remap(progress, 0.87, 0.975));
+  const lanesAlpha = lanesIn * lanesOut;
+
+  const textIn = easeOutExpo(remap(progress, 0.56, 0.72));
+  const textOut = 1 - easeInOutCubic(remap(progress, 0.86, 0.96));
+  const textVis = textIn * textOut;
+
+  shaderMat.uniforms.uPhase.value = progress;
+  shaderMat.uniforms.uFoil.value = foilStrength;
+  shaderMat.uniforms.uLanes.value = lanesAlpha;
+  shaderMat.uniforms.uThrust.value = thrust;
+  renderer.render(scene, camera);
+
+  const ctx = hudCtx;
+  ctx.clearRect(0, 0, W, H);
+
+  // Subtle architectural coordinate hairlines (fade gently in/out with composition)
+  ctx.save();
+  ctx.strokeStyle = P.grid;
+  ctx.lineWidth = 1;
+  const parallaxX = (thrust - 0.5) * -14;
+  for (let gx = 120; gx < W; gx += 160) {
+    ctx.beginPath();
+    ctx.moveTo(gx + parallaxX * 0.4, 28);
+    ctx.lineTo(gx + parallaxX * 0.4, H - 28);
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // 8 Parallel Velocity Lanes peeling from Marlin's caudal wake -> dedicated lower-left telemetry zone (zero overlap with headline!)
+  const marlinX = W * 0.72 + thrust * 56;
+  const marlinY = H * 0.44 - thrust * 20;
+  const marlinScale = (0.58 - coil) * (0.92 + 0.08 * foilStrength);
+
+  if (lanesAlpha > 0.005) {
+    ctx.save();
+    for (let i = 0; i < 8; i++) {
+      const laneFrac = (i - 3.5) / 3.5; // -1..+1
+      const yEnd = 334 + i * 24;
+      const xStart = 58;
+      // Tapered curved origins following the Marlin's sculpted flank/caudal arc (zero vertical cutoff!)
+      const xWake = marlinX - 42 - Math.abs(laneFrac) * 44;
+      const yWake = marlinY + 26 + laneFrac * 46;
+
+      const stagger = clamp01(remap(lanesIn, i * 0.055, 0.52 + i * 0.055)) * lanesOut;
+      if (stagger <= 0.01) continue;
+
+      const curX = lerp(xWake, xStart, stagger);
+      const cp1x = xWake - 110;
+      const cp1y = yWake + laneFrac * 18;
+      const cp2x = lerp(xWake, curX, 0.65);
+      const cp2y = yEnd;
+
+      // Tapered opacity at origin -> luminous core -> crisp horizontal channel
+      const grad = ctx.createLinearGradient(curX, yEnd, xWake, yWake);
+      grad.addColorStop(0, P.isDark ? 'rgba(85, 201, 157, 0.16)' : 'rgba(19, 111, 80, 0.12)');
+      grad.addColorStop(0.55, P.isDark ? 'rgba(85, 201, 157, 0.72)' : 'rgba(14, 164, 114, 0.64)');
+      grad.addColorStop(0.88, P.isDark ? 'rgba(193, 240, 214, 0.92)' : 'rgba(13, 92, 67, 0.85)');
+      grad.addColorStop(1, P.isDark ? 'rgba(193, 240, 214, 0.0)' : 'rgba(13, 92, 67, 0.0)');
+
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(xWake, yWake);
+      ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, curX, yEnd);
+      ctx.stroke();
+
+      // Traveling data packet along the ribbon (periodic)
+      const pktPhase = (progress * 3 + i * 0.125) % 1;
+      const tPkt = 1 - pktPhase;
+      const bx = Math.pow(1 - tPkt, 3) * xWake + 3 * Math.pow(1 - tPkt, 2) * tPkt * cp1x + 3 * (1 - tPkt) * Math.pow(tPkt, 2) * cp2x + Math.pow(tPkt, 3) * curX;
+      const by = Math.pow(1 - tPkt, 3) * yWake + 3 * Math.pow(1 - tPkt, 2) * tPkt * cp1y + 3 * (1 - tPkt) * Math.pow(tPkt, 2) * cp2y + Math.pow(tPkt, 3) * yEnd;
+      ctx.fillStyle = P.specular;
+      ctx.globalAlpha = stagger * Math.sin(pktPhase * Math.PI) * 0.95;
+      ctx.beginPath();
+      ctx.arc(bx, by, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Micro-telemetry lane index
+      ctx.globalAlpha = stagger * 0.92;
+      ctx.fillStyle = P.textMuted;
+      ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+      ctx.fillText(`CH 0${i + 1}`, curX, yEnd - 6);
+    }
+    ctx.restore();
+  }
+
+  // Cavitation micro-particles off dorsal & pectoral tips
+  if (foilStrength > 0.05) {
+    ctx.save();
+    for (const pt of particles) {
+      const pLoop = (progress * pt.speedMult + pt.phaseOffset) % 1;
+      const px = marlinX - 40 - pLoop * 420;
+      const py = marlinY + pt.ySpread + Math.sin(pLoop * Math.PI * 2) * 8;
+      const alpha = Math.sin(pLoop * Math.PI) * foilStrength * 0.55;
+      ctx.fillStyle = P.glow;
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(px, py, pt.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // Sculptural Black Marlin Hero Form with hydrodynamic caudal/dorsal flex + specular rim sweep
+  if (foilStrength > 0.005) {
+    const hydroFlex = Math.sin(progress * Math.PI * 4) * 0.025 * foilStrength;
+    drawMarlinSculptural(ctx, marlinX, marlinY, marlinScale * (1 + hydroFlex * 0.35), {
+      isDark: P.isDark,
+      fillAlpha: fillIn * foilStrength * 0.96,
+      strokeAlpha: foilStrength,
+      rimProgress: rimDraw,
+      rotationRad: -0.06 * thrust + hydroFlex,
+      facetSweep: (progress * 2) % 1,
+    });
+  }
+
+  // Kinetic Masked Editorial Typography (Left Architectural Field)
+  if (textVis > 0.005) {
+    const rev1 = easeOutExpo(remap(progress, 0.56, 0.70)) * textOut;
+    const rev2 = easeOutExpo(remap(progress, 0.60, 0.74)) * textOut;
+    const rev3 = easeOutExpo(remap(progress, 0.64, 0.78)) * textOut;
+
+    ctx.save();
+    // Eyebrow pill
+    ctx.globalAlpha = rev1;
+    ctx.fillStyle = P.primary;
+    ctx.font = '600 12.5px "IBM Plex Mono", monospace';
+    const eyebrowY = lerp(64, 52, rev1);
+    ctx.fillText('LAMINAR VELOCITY  ·  RUST 1.98  ·  GPL-3.0', 58, eyebrowY);
+
+    // Hero Headline (clipped directional reveal)
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(54, 70, 620 * rev1, 145);
+    ctx.clip();
+    ctx.globalAlpha = rev1;
+    ctx.fillStyle = P.text;
+    ctx.font = '700 62px "Space Grotesk", sans-serif';
+    ctx.fillText('BLACK MARLIN', 56, 134);
+    ctx.fillStyle = P.isDark ? P.glow : P.primary;
+    ctx.font = '700 44px "Space Grotesk", sans-serif';
+    ctx.fillText('DOWNLOADER', 58, 186);
+    ctx.restore();
+
+    // Spec strip
+    ctx.globalAlpha = rev2;
+    ctx.fillStyle = P.textMuted;
+    ctx.font = '500 17.5px "IBM Plex Sans", sans-serif';
+    ctx.fillText('Laminar speed, zero drag. The desktop workflow rebuilt in Rust.', 58, lerp(242, 228, rev2));
+
+    // Verified proof pills
+    ctx.globalAlpha = rev3;
+    const pills = [
+      { label: '5.41× FASTER (1 GiB)', accent: true },
+      { label: '13.7 ms COLD START', accent: false },
+      { label: '86 LANGUAGES · RTL', accent: false },
+    ];
+    let px = 58;
+    const py = lerp(278, 260, rev3);
+    for (const pill of pills) {
+      ctx.font = '600 12px "IBM Plex Mono", monospace';
+      const tw = ctx.measureText(pill.label).width;
+      const bw = tw + 24;
+      ctx.fillStyle = pill.accent
+        ? (P.isDark ? 'rgba(85, 201, 157, 0.16)' : 'rgba(19, 111, 80, 0.11)')
+        : (P.isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(9, 21, 17, 0.04)');
+      ctx.strokeStyle = pill.accent ? P.primary : P.hairlineStrong;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.roundRect(px, py, bw, 30, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = pill.accent ? (P.isDark ? P.specular : P.deep) : P.text;
+      ctx.fillText(pill.label, px + 12, py + 19);
+      px += bw + 10;
+    }
+    ctx.restore();
+  }
+};
+</script>
+</body>
+</html>

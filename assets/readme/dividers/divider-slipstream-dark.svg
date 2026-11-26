@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 40" width="1200" height="40" role="img" aria-label="Hydrodynamic slipstream section divider">
+  <defs>
+    <linearGradient id="div-a-dark" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#55c99d" stop-opacity="0"/>
+      <stop offset="22%" stop-color="#55c99d" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#80dbad" stop-opacity="0.95"/>
+      <stop offset="78%" stop-color="#55c99d" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#55c99d" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="div-b-dark" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#80dbad" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#c1f0d6" stop-opacity="0.72"/>
+      <stop offset="100%" stop-color="#80dbad" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .wake-a { stroke-dasharray: 280 920; animation: glide-a 6.5s cubic-bezier(.45,0,.55,1) infinite; }
+    .wake-b { stroke-dasharray: 180 1020; animation: glide-b 8.5s cubic-bezier(.45,0,.55,1) infinite; }
+    .crest-pulse { transform-origin: 600px 20px; animation: crest-breathe 4.5s ease-in-out infinite; }
+    .mote-l { animation: mote-left 6.5s ease-in-out infinite; }
+    .mote-r { animation: mote-right 6.5s ease-in-out infinite; }
+    @keyframes glide-a {
+      0% { stroke-dashoffset: 360; opacity: 0.25; }
+      50% { stroke-dashoffset: -360; opacity: 1; }
+      100% { stroke-dashoffset: -840; opacity: 0.25; }
+    }
+    @keyframes glide-b {
+      0% { stroke-dashoffset: -820; opacity: 0.2; }
+      50% { stroke-dashoffset: -220; opacity: 0.85; }
+      100% { stroke-dashoffset: 380; opacity: 0.2; }
+    }
+    @keyframes crest-breathe {
+      0%, 100% { transform: scale(1); opacity: 0.85; }
+      50% { transform: scale(1.14); opacity: 1; }
+    }
+    @keyframes mote-left {
+      0%, 100% { transform: translateX(0px); opacity: 0; }
+      20%, 80% { opacity: 0.85; }
+      100% { transform: translateX(-420px); opacity: 0; }
+    }
+    @keyframes mote-right {
+      0%, 100% { transform: translateX(0px); opacity: 0; }
+      20%, 80% { opacity: 0.85; }
+      100% { transform: translateX(420px); opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .wake-a, .wake-b, .crest-pulse, .mote-l, .mote-r { animation: none; }
+      .wake-a, .wake-b { stroke-dasharray: none; opacity: 0.65; }
+      .mote-l, .mote-r { opacity: 0; }
+    }
+  </style>
+  <path d="M24 20 Q 312 10, 600 20 T 1176 20" fill="none" stroke="#1f3a30" stroke-width="1"/>
+  <path d="M24 20 Q 312 30, 600 20 T 1176 20" fill="none" stroke="#1f3a30" stroke-width="0.9" stroke-opacity="0.7"/>
+  <path class="wake-a" d="M24 20 Q 312 10, 600 20 T 1176 20" fill="none" stroke="url(#div-a-dark)" stroke-width="2.2" stroke-linecap="round"/>
+  <path class="wake-b" d="M24 20 Q 312 30, 600 20 T 1176 20" fill="none" stroke="url(#div-b-dark)" stroke-width="1.6" stroke-linecap="round"/>
+  <circle class="mote-l" cx="560" cy="20" r="2.2" fill="#c1f0d6"/>
+  <circle class="mote-r" cx="640" cy="20" r="2.2" fill="#c1f0d6"/>
+  <g class="crest-pulse">
+    <polygon points="600,8 618,20 600,32 582,20" fill="#55c99d" fill-opacity="0.16" stroke="#55c99d" stroke-width="1.4"/>
+    <polygon points="600,14 608,20 600,26 592,20" fill="#80dbad" fill-opacity="0.45"/>
+    <circle cx="600" cy="20" r="2.6" fill="#c1f0d6"/>
+  </g>
+</svg>

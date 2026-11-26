@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, drawRoundedRect
+} from '/velocity/lib/core.mjs';
+
+let ctx, W, H, P;
+
+const WORKERS = [
+  { id: 'W1', seg: 'S0', range: '0–128M',   speed: 1.00, finishP: 0.34 },
+  { id: 'W2', seg: 'S1', range: '128–256M', speed: 1.08, finishP: 0.31 },
+  { id: 'W3', seg: 'S2', range: '256–384M', speed: 0.94, finishP: 0.37 },
+  { id: 'W4', seg: 'S3', range: '384–512M', speed: 0.98, finishP: 0.35 },
+  { id: 'W5', seg: 'S4', range: '512–640M', speed: 1.04, finishP: 0.325 },
+  { id: 'W6', seg: 'S5', range: '640–768M', speed: 0.14, finishP: 0.99, stalled: true },
+  { id: 'W7', seg: 'S6', range: '768–896M', speed: 0.92, finishP: 0.38 },
+  { id: 'W8', seg: 'S7', range: '896M–1G',  speed: 0.89, finishP: 0.395 },
+];
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width;
+  H = height;
+  P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+  const c = document.getElementById('c');
+  c.width = W; c.height = H;
+  ctx = c.getContext('2d');
+};
+
+window.renderFrame = async (t, progress) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = P.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle architectural grid
+  ctx.strokeStyle = P.grid;
+  ctx.lineWidth = 1;
+  for (let x = 60; x < W; x += 80) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+  }
+
+  // Master loop envelope so f(N-1) dissolves smoothly to f(0)
+  const loopFade = smoothstep(0.0, 0.04, progress) * (1 - smoothstep(0.92, 0.995, progress));
+
+  // Header stays crisp at f0 (persistent architectural anchor!)
+  ctx.save();
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 12px "IBM Plex Mono", monospace';
+  ctx.fillText('CRATES/ENGINE/SRC/PLANNER.RS  ·  ADAPTIVE BYTE-RANGE DISPATCH', 44, 38);
+  ctx.fillStyle = P.text;
+  ctx.font = '700 24px "Space Grotesk", sans-serif';
+  ctx.fillText('The Engine Beneath: Midpoint Re-Splitting & Sparse Atomic Write', 44, 68);
+  ctx.restore();
+
+  // Phase timings (14.0s cycle, progress 0..1)
+  const probeIn = easeOutExpo(remap(progress, 0.01, 0.11));
+  const splitIn = easeOutExpo(remap(progress, 0.10, 0.19));
+  const xferP = remap(progress, 0.18, 0.72);
+  const resplitTrigger = easeOutExpo(remap(progress, 0.35, 0.44));
+  const resplitFill = easeOutExpo(remap(progress, 0.42, 0.68));
+  const sparseP = remap(progress, 0.25, 0.78);
+  const verifyBeam = remap(progress, 0.71, 0.84);
+  const commitHold = smoothstep(0.79, 0.85, progress) * (1 - smoothstep(0.91, 0.97, progress));
+
+  // ---------------- LEFT MANIFOLD COLUMN: 01 PROBE() (borderless continuous architectural rail) ----------------
+  ctx.save();
+  ctx.globalAlpha = loopFade;
+  ctx.strokeStyle = probeIn > 0.1 ? P.primary : P.hairlineStrong;
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(44, 96); ctx.lineTo(44, 386); ctx.stroke();
+
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 12px "IBM Plex Mono", monospace';
+  ctx.fillText('01 · PROBE() HANDSHAKE', 58, 114);
+
+  const probeRows = [
+    ['GET Range', 'bytes=0-'],
+    ['Content-Length', '1.00 GiB'],
+    ['Accept-Ranges', 'bytes'],
+    ['ETag / Host', 'Verified'],
+    ['SHED_RATIO', '< 25% bar'],
+  ];
+  probeRows.forEach(([k, v], idx) => {
+    const rp = smoothstep(idx * 0.14, idx * 0.14 + 0.22, probeIn);
+    const ry = 148 + idx * 36;
+    ctx.globalAlpha = loopFade * (0.28 + 0.72 * rp);
+    ctx.fillStyle = P.textMuted;
+    ctx.font = '400 12px "IBM Plex Mono", monospace';
+    ctx.fillText(k, 58, ry);
+    ctx.fillStyle = rp > 0.8 ? P.primary : P.text;
+    ctx.font = '600 12px "IBM Plex Mono", monospace';
+    ctx.fillText(v, 178, ry);
+    ctx.strokeStyle = P.hairline;
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(58, ry + 11); ctx.lineTo(264, ry + 11); ctx.stroke();
+  });
+
+  // Incoming probe laser ray -> feeds manifold into Stage 02
+  if (probeIn > 0.05 && probeIn < 0.98) {
+    const rayX = lerp(44, 304, probeIn);
+    ctx.strokeStyle = P.glow;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(44, 246); ctx.lineTo(rayX, 246); ctx.stroke();
+  }
+  ctx.restore();
+
+  // ---------------- CENTER MANIFOLD: 8 WORKERS + DYNAMIC MIDPOINT RE-SPLIT (no boxed outer card!) ----------------
+  const stageX = 304, stageY = 96;
+  ctx.save();
+  ctx.globalAlpha = loopFade;
+  ctx.strokeStyle = P.hairlineStrong;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(stageX, stageY); ctx.lineTo(stageX, 386); ctx.stroke();
+
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 12px "IBM Plex Mono", monospace';
+  ctx.fillText('02 · PLANNER (8 PARALLEL WORKERS + LARGEST-UNCLAIMED RE-SPLIT)', stageX + 18, stageY + 18);
+
+  const trackX = stageX + 132;
+  const trackW = 336;
+  const rowStartY = stageY + 48;
+  const rowStep = 31;
+
+  // Compute W5 (idx 5 = S5) coordinates for cutter arc
+  const s5Y = rowStartY + 5 * rowStep;
+  const s5MidX = trackX + trackW * 0.56;
+
+  WORKERS.forEach((w, idx) => {
+    const ry = rowStartY + idx * rowStep;
+    const expandY = lerp(rowStartY + 3.5 * rowStep, ry, splitIn);
+    ctx.save();
+    ctx.globalAlpha = loopFade * smoothstep(0.05, 0.28, splitIn);
+
+    ctx.fillStyle = w.stalled && resplitTrigger > 0.25 ? P.amber : P.text;
+    ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+    ctx.fillText(`${w.id} · ${w.seg}`, stageX + 18, expandY + 13);
+
+    // Track rail
+    drawRoundedRect(ctx, trackX, expandY + 2, trackW, 14, 4);
+    ctx.fillStyle = P.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(9,21,17,0.06)';
+    ctx.fill();
+
+    if (!w.stalled) {
+      const fillRatio = clamp01(xferP / (w.finishP - 0.18));
+      const fw = Math.max(4, trackW * fillRatio);
+      const isDone = fillRatio >= 0.999;
+
+      drawRoundedRect(ctx, trackX, expandY + 2, fw, 14, 4);
+      ctx.fillStyle = isDone ? P.glow : P.primary;
+      ctx.fill();
+
+      // Active packet head
+      if (!isDone && fillRatio > 0.02) {
+        ctx.fillStyle = P.specular;
+        ctx.beginPath();
+        ctx.arc(trackX + fw, expandY + 9, 3.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = isDone ? P.primary : P.textDim;
+      ctx.font = '500 10.5px "IBM Plex Mono", monospace';
+      const label = isDone ? (idx === 1 && resplitTrigger > 0.1 ? 'RE-SPLITTING → S5' : '100% LOCKED') : w.range;
+      ctx.fillText(label, trackX + trackW + 12, expandY + 13);
+    } else {
+      // Stalled W6 on S5: crawls to ~22% then sheds after 2s grace!
+      const slowEnd = 0.22;
+      const slowFrac = clamp01(xferP * 0.45) * slowEnd;
+      const slowW = Math.max(4, trackW * slowFrac);
+      const isShed = resplitTrigger > 0.2;
+
+      drawRoundedRect(ctx, trackX, expandY + 2, slowW, 14, 4);
+      ctx.fillStyle = P.amber;
+      ctx.fill();
+
+      // Reclaimed remainder split at midpoint!
+      if (resplitTrigger > 0.05) {
+        const lowerStart = trackX + slowW;
+        const midX = lerp(lowerStart, trackX + trackW, 0.5);
+        const lowerW = (midX - lowerStart) * resplitFill;
+        const upperW = (trackX + trackW - midX) * resplitFill;
+
+        // Lower half filled by W1
+        drawRoundedRect(ctx, lowerStart, expandY + 2, Math.max(2, lowerW), 14, 3);
+        ctx.fillStyle = P.primary;
+        ctx.fill();
+
+        // Upper half filled in parallel by W2 from midpoint!
+        drawRoundedRect(ctx, midX, expandY + 2, Math.max(2, upperW), 14, 3);
+        ctx.fillStyle = P.glow;
+        ctx.fill();
+
+        // Razor midpoint cutline
+        ctx.strokeStyle = P.specular;
+        ctx.lineWidth = 1.6;
+        ctx.setLineDash([3, 2]);
+        ctx.beginPath();
+        ctx.moveTo(midX, expandY - 2);
+        ctx.lineTo(midX, expandY + 20);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      ctx.fillStyle = isShed ? P.amber : P.textDim;
+      ctx.font = '600 10.5px "IBM Plex Mono", monospace';
+      ctx.fillText(isShed ? 'W6 SHED → W1+W2' : 'SLOW (< 25% BAR)', trackX + trackW + 12, expandY + 13);
+    }
+    ctx.restore();
+  });
+
+  // Dynamic Midpoint Re-Split Cutter Arc from finished W2 (idx 1) down to S5 midpoint
+  if (resplitTrigger > 0.02 && resplitTrigger < 0.98) {
+    const w2EndY = rowStartY + 1 * rowStep + 9;
+    const w2EndX = trackX + trackW;
+    const midX = trackX + (trackW * 0.22 + trackW) * 0.5;
+    const arcP = smoothstep(0.05, 0.75, resplitTrigger);
+    ctx.save();
+    ctx.strokeStyle = P.specular;
+    ctx.lineWidth = 2.2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(w2EndX, w2EndY);
+    const curX = lerp(w2EndX, midX, arcP);
+    const curY = lerp(w2EndY, s5Y + 9, arcP);
+    ctx.quadraticCurveTo(w2EndX + 34, (w2EndY + s5Y) * 0.5, curX, curY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = P.specular;
+    ctx.beginPath();
+    ctx.arc(curX, curY, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+
+  // ---------------- RIGHT MANIFOLD: 03 ATOMIC COMMIT ----------------
+  ctx.save();
+  ctx.globalAlpha = loopFade;
+  ctx.strokeStyle = commitHold > 0.2 ? P.primary : P.hairlineStrong;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(916, 96); ctx.lineTo(916, 386); ctx.stroke();
+
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 12px "IBM Plex Mono", monospace';
+  ctx.fillText('03 · ATOMIC COMMIT', 932, 114);
+
+  const steps = [
+    { label: 'sparse .bmd.part', sub: 'Direct offset pwrite', p: smoothstep(0.15, 0.55, sparseP) },
+    { label: 'sync_data() + .json', sub: 'craft-atomic resume', p: smoothstep(0.45, 0.85, sparseP) },
+    { label: 'SHA-256 + rename()', sub: 'Zero post-merge copy', p: smoothstep(0.0, 0.9, verifyBeam) },
+  ];
+  steps.forEach((st, idx) => {
+    const sy = 148 + idx * 72;
+    drawRoundedRect(ctx, 932, sy, 224, 56, 7);
+    ctx.fillStyle = st.p > 0.8 ? (P.isDark ? 'rgba(85, 201, 157, 0.14)' : 'rgba(19, 111, 80, 0.10)') : P.surfaceElev;
+    ctx.fill();
+    ctx.strokeStyle = st.p > 0.8 ? P.primary : P.hairline;
+    ctx.stroke();
+    ctx.fillStyle = st.p > 0.8 ? (P.isDark ? P.specular : P.deep) : P.text;
+    ctx.font = '600 13px "IBM Plex Mono", monospace';
+    ctx.fillText(st.label, 944, sy + 24);
+    ctx.fillStyle = P.textMuted;
+    ctx.font = '400 12px "IBM Plex Sans", sans-serif';
+    ctx.fillText(st.sub, 944, sy + 43);
+  });
+
+  if (commitHold > 0.05) {
+    ctx.globalAlpha = loopFade * commitHold;
+    drawRoundedRect(ctx, 932, 362, 224, 26, 5);
+    ctx.fillStyle = P.primary;
+    ctx.fill();
+    ctx.fillStyle = P.isDark ? '#06150E' : '#FFFFFF';
+    ctx.font = '700 11.5px "IBM Plex Mono", monospace';
+    ctx.fillText('DELIVERED · 0 IDLE TAIL', 954, 379);
+  }
+  ctx.restore();
+
+  // ---------------- VERTICAL BYTE-WRITE BEAMS INTO SPARSE OFFSET MATRIX ----------------
+  if (xferP > 0.05 && verifyBeam < 0.5) {
+    ctx.save();
+    for (let b = 0; b < 8; b++) {
+      const w = WORKERS[b];
+      if (w.stalled && resplitTrigger < 0.2) continue;
+      const laneDone = !w.stalled && clamp01(xferP / (w.finishP - 0.18)) >= 0.999;
+      if (laneDone) continue;
+      const bx = 62 + (b + 0.5) * ((W - 124) / 8);
+      const laneY = rowStartY + b * rowStep + 16;
+      const gBeam = ctx.createLinearGradient(bx, laneY, bx, 452);
+      gBeam.addColorStop(0, P.isDark ? 'rgba(85,201,157,0.04)' : 'rgba(19,111,80,0.03)');
+      gBeam.addColorStop(1, P.isDark ? 'rgba(193,240,214,0.34)' : 'rgba(14,164,114,0.28)');
+      ctx.strokeStyle = gBeam;
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(trackX + trackW * 0.5, laneY); ctx.lineTo(bx, 452); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.restore();
+  }
+
+  // ---------------- BOTTOM STRIP: SPARSE DISK MAP (<file>.bmd.part) ----------------
+  ctx.save();
+  ctx.globalAlpha = loopFade;
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 12px "IBM Plex Mono", monospace';
+  ctx.fillText('SPARSE FILE OFFSET MAP (<dest>.bmd.part · 64 BLOCKS)', 44, 434);
+  ctx.fillStyle = verifyBeam > 0.9 ? P.primary : P.textMuted;
+  ctx.textAlign = 'right';
+  ctx.fillText(verifyBeam > 0.9 ? 'SHA-256 VERIFIED · ATOMIC RENAME COMPLETE' : 'OUT-OF-ORDER PWRITE · ZERO MERGE OVERHEAD', W - 44, 434);
+  ctx.textAlign = 'left';
+
+  const blocks = 64;
+  const bx0 = 44, bwTotal = W - 88;
+  const cellW = (bwTotal - (blocks - 1) * 3) / blocks;
+  for (let b = 0; b < blocks; b++) {
+    const lane = Math.floor(b / 8);
+    const localB = b % 8;
+    const w = WORKERS[lane];
+    let filled = false;
+    let isSplit = false;
+    if (!w.stalled) {
+      const ratio = clamp01(xferP / (w.finishP - 0.18));
+      filled = (localB + 0.5) / 8 <= ratio;
+    } else {
+      if (localB < 2) filled = clamp01(xferP * 0.45) * 0.22 * 8 > localB;
+      else if (localB < 4) { filled = resplitFill > (localB - 2) / 2; isSplit = true; }
+      else { filled = resplitFill > (localB - 4) / 4; isSplit = true; }
+    }
+    const bx = bx0 + b * (cellW + 3);
+    drawRoundedRect(ctx, bx, 452, cellW, 24, 2);
+    if (verifyBeam > 0.05 && b / blocks <= verifyBeam) {
+      ctx.fillStyle = P.specular;
+    } else if (filled) {
+      ctx.fillStyle = isSplit ? P.glow : (w.stalled ? P.amber : P.primary);
+    } else {
+      ctx.fillStyle = P.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(9,21,17,0.08)';
+    }
+    ctx.fill();
+  }
+
+  // SHA-256 Verification Laser Sweep
+  if (verifyBeam > 0.01 && verifyBeam < 0.99) {
+    const vx = bx0 + bwTotal * verifyBeam;
+    ctx.strokeStyle = P.specular;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(vx, 446);
+    ctx.lineTo(vx, 482);
+    ctx.stroke();
+  }
+  ctx.restore();
+};
+</script>
+</body>
+</html>

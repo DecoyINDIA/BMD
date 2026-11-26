@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script type="module">
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, drawRoundedRect
+} from '/velocity/lib/core.mjs';
+
+let ctx, W, H, P, dlData;
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width;
+  H = height;
+  P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+
+  const res = await fetch('/repo/data/analytics/downloads.json');
+  dlData = await res.json();
+
+  const c = document.getElementById('c');
+  c.width = W; c.height = H;
+  ctx = c.getContext('2d');
+};
+
+window.renderFrame = async (t, progress) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = P.bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const summary = dlData.summary;
+  const repo = dlData.repo;
+  const platforms = dlData.platforms.filter((p) => p.category === 'downloadable');
+  const auxPlatform = dlData.platforms.find((p) => p.category === 'auxiliary');
+  const totalProd = summary.total_product_downloads;
+  const totalAux = summary.total_auxiliary_downloads;
+  const totalAll = summary.total_all_assets;
+
+  // Center of Pelagic Orbital Sculpture
+  const ox = 290, oy = 252;
+
+  // Ambient pelagic radial behind sculpture
+  const radG = ctx.createRadialGradient(ox, oy, 18, ox, oy, 230);
+  radG.addColorStop(0, P.isDark ? 'rgba(85, 201, 157, 0.16)' : 'rgba(14, 164, 114, 0.10)');
+  radG.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = radG;
+  ctx.fillRect(0, 0, W, H);
+
+  // Header
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 11.5px "IBM Plex Mono", monospace';
+  ctx.fillText(`LIVING ADOPTION  ·  LIVE GITHUB RELEASE TELEMETRY (${summary.latest_release_tag.toUpperCase()})`, 44, 36);
+  ctx.fillStyle = P.text;
+  ctx.font = '700 24px "Space Grotesk", sans-serif';
+  ctx.fillText('Every Product Download in Orbital Equilibrium', 44, 66);
+
+  // Platform orbital colors
+  const platStyles = {
+    'Windows':              { r: 162, color: P.primary,  trail: P.isDark ? 'rgba(85,201,157,0.32)' : 'rgba(19,111,80,0.28)' },
+    'Linux':                { r: 126, color: P.cyan,     trail: P.isDark ? 'rgba(56,189,248,0.30)' : 'rgba(2,132,199,0.25)' },
+    'Browser Extensions':   { r: 92,  color: P.specular, trail: P.isDark ? 'rgba(193,240,214,0.28)' : 'rgba(14,164,114,0.25)' },
+    'macOS (Experimental)': { r: 60,  color: P.amber,    trail: P.isDark ? 'rgba(245,158,11,0.34)' : 'rgba(217,119,6,0.28)' },
+  };
+
+  // Harmonic radar pulse (100% periodic over progress 0..1)
+  const pulseR = 32 + progress * 190;
+  const pulseA = Math.sin(progress * Math.PI) * 0.35;
+  ctx.save();
+  ctx.strokeStyle = P.glow;
+  ctx.globalAlpha = pulseA;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(ox, oy, pulseR, 0, Math.PI * 2); ctx.stroke();
+  ctx.restore();
+
+  // Outer Auxiliary Perimeter Ring (representing aux assets excluded from product counts)
+  const auxR = 196;
+  ctx.save();
+  ctx.strokeStyle = P.hairline;
+  ctx.setLineDash([3, 5]);
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.arc(ox, oy, auxR, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+
+  const auxTicks = Math.min(72, Math.max(1, totalAux));
+  for (let i = 0; i < auxTicks; i++) {
+    const a = (i / auxTicks) * Math.PI * 2 + progress * Math.PI * 2 / auxTicks;
+    const x1 = ox + Math.cos(a) * (auxR - 4);
+    const y1 = oy + Math.sin(a) * (auxR - 4);
+    const x2 = ox + Math.cos(a) * (auxR + 4);
+    const y2 = oy + Math.sin(a) * (auxR + 4);
+    ctx.strokeStyle = P.textDim;
+    ctx.globalAlpha = 0.55;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  }
+  ctx.restore();
+
+  // Render the 4 Platform Orbital Rings + Discrete Nodes (<= 120) OR Density Filaments (> 120)
+  for (const plat of platforms) {
+    const st = platStyles[plat.name] || { r: 110, color: P.primary, trail: P.hairline };
+    const count = plat.downloads;
+
+    // Guide ring + proportional share arc
+    ctx.save();
+    ctx.strokeStyle = P.hairline;
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.arc(ox, oy, st.r, 0, Math.PI * 2); ctx.stroke();
+
+    const shareAngle = (plat.share_of_product_pct / 100) * Math.PI * 2;
+    const arcRot = progress * Math.PI * 2; // exact full turn -> zero loop seam!
+    ctx.strokeStyle = st.trail;
+    ctx.lineWidth = 6;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.arc(ox, oy, st.r, arcRot, arcRot + shareAngle);
+    ctx.stroke();
+
+    if (totalProd <= 120) {
+      // Discrete countable jewel-nodes (every single download visible!)
+      for (let i = 0; i < count; i++) {
+        // Exact integer harmonic rotation so progress=1 matches progress=0 identically
+        const theta = (i / Math.max(1, count)) * Math.PI * 2 + progress * Math.PI * 2;
+        const nx = ox + Math.cos(theta) * st.r;
+        const ny = oy + Math.sin(theta) * st.r;
+
+        // Hydrodynamic wake tail behind each node
+        ctx.strokeStyle = st.trail;
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        ctx.arc(ox, oy, st.r, theta - 0.24, theta);
+        ctx.stroke();
+
+        // Luminous jewel node
+        ctx.fillStyle = st.color;
+        ctx.beginPath();
+        ctx.arc(nx, ny, 4.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = P.bg;
+        ctx.beginPath();
+        ctx.arc(nx, ny, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    } else {
+      // Scale > 120: transition smoothly into density-modulated hydrodynamic filament bands
+      const bands = 24;
+      for (let i = 0; i < bands; i++) {
+        const theta = (i / bands) * Math.PI * 2 + progress * Math.PI * 2;
+        ctx.strokeStyle = st.color;
+        ctx.lineWidth = 3.2;
+        ctx.globalAlpha = 0.55 + 0.35 * Math.sin(theta * 3);
+        ctx.beginPath();
+        ctx.arc(ox, oy, st.r, theta, theta + 0.14);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  // Central Release Core Beacon
+  ctx.save();
+  ctx.fillStyle = P.surface;
+  ctx.strokeStyle = P.primary;
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(ox, oy, 34, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = P.text;
+  ctx.font = '700 20px "IBM Plex Mono", monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(String(totalProd), ox, oy + 4);
+  ctx.fillStyle = P.textDim;
+  ctx.font = '600 9.5px "IBM Plex Mono", monospace';
+  ctx.fillText('PRODUCT', ox, oy + 17);
+  ctx.textAlign = 'left';
+  ctx.restore();
+
+  // ---------------- RIGHT PANEL: HONEST TELEMETRY & PLATFORM BREAKDOWN ----------------
+  const rx = 540, rw = W - rx - 44;
+  drawRoundedRect(ctx, rx, 92, rw, 356, 12);
+  ctx.fillStyle = P.surface;
+  ctx.fill();
+  ctx.strokeStyle = P.hairlineStrong;
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  // KPI strip
+  const kpis = [
+    { label: 'PRODUCT DOWNLOADS', val: String(totalProd), sub: 'Zero double-count', accent: true },
+    { label: 'ALL ASSETS',        val: String(totalAll),  sub: `+${totalAux} auxiliary` },
+    { label: 'CONTRIBUTORS',      val: String(repo.contributors_count), sub: `${repo.stars} stars · ${repo.forks} forks` },
+  ];
+  kpis.forEach((k, i) => {
+    const kx = rx + 20 + i * 195;
+    ctx.fillStyle = P.textDim;
+    ctx.font = '600 10.5px "IBM Plex Mono", monospace';
+    ctx.fillText(k.label, kx, 122);
+    ctx.fillStyle = k.accent ? P.primary : P.text;
+    ctx.font = '700 28px "Space Grotesk", sans-serif';
+    ctx.fillText(k.val, kx, 154);
+    ctx.fillStyle = P.textMuted;
+    ctx.font = '400 12px "IBM Plex Sans", sans-serif';
+    ctx.fillText(k.sub, kx, 174);
+  });
+
+  ctx.strokeStyle = P.hairline;
+  ctx.beginPath(); ctx.moveTo(rx + 20, 192); ctx.lineTo(rx + rw - 20, 192); ctx.stroke();
+
+  // Platform rows
+  platforms.forEach((plat, i) => {
+    const py = 220 + i * 40;
+    const st = platStyles[plat.name] || { color: P.primary };
+    ctx.fillStyle = st.color;
+    ctx.beginPath(); ctx.arc(rx + 26, py - 4, 5, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = P.text;
+    ctx.font = '600 13.5px "IBM Plex Sans", sans-serif';
+    ctx.fillText(plat.name, rx + 42, py);
+
+    const barX = rx + 218, barW = 240;
+    drawRoundedRect(ctx, barX, py - 11, barW, 10, 4);
+    ctx.fillStyle = P.isDark ? 'rgba(255,255,255,0.06)' : 'rgba(9,21,17,0.07)';
+    ctx.fill();
+
+    const fillW = Math.max(6, barW * (plat.share_of_product_pct / 100));
+    drawRoundedRect(ctx, barX, py - 11, fillW, 10, 4);
+    ctx.fillStyle = st.color;
+    ctx.fill();
+
+    ctx.fillStyle = P.text;
+    ctx.font = '600 13px "IBM Plex Mono", monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(`${plat.downloads} (${plat.share_of_product_pct.toFixed(1)}%)`, rx + rw - 22, py);
+    ctx.textAlign = 'left';
+  });
+
+  // Snapshot / Baseline State Box (handles < 24h & zero-variance snapshots honestly!)
+  drawRoundedRect(ctx, rx + 20, 382, rw - 40, 48, 8);
+  ctx.fillStyle = P.surfaceElev;
+  ctx.fill();
+  ctx.strokeStyle = P.hairline;
+  ctx.stroke();
+
+  const snaps = dlData.snapshots || [];
+  let snapLabel = 'BASELINE RECORDING ACTIVE';
+  let snapSub = `Tracking started ${dlData.tracking_started_at.slice(0, 10)} · ${snaps.length} checkpoint(s) · 24h/7d/30d deltas populate as history grows`;
+  if (snaps.length >= 2) {
+    const t0 = new Date(snaps[0].timestamp).getTime();
+    const t1 = new Date(snaps[snaps.length - 1].timestamp).getTime();
+    const spanHours = (t1 - t0) / 3600000;
+    const vals = snaps.map((s) => s.total_product_downloads);
+    if (spanHours >= 24 && Math.max(...vals) > Math.min(...vals)) {
+      snapLabel = `LIVE GROWTH TRAJECTORY (${Math.round(spanHours / 24)}d SPAN)`;
+      snapSub = `${snaps[0].timestamp.slice(0, 10)} -> ${snaps[snaps.length - 1].timestamp.slice(0, 10)} · ${vals[0]} -> ${vals[vals.length - 1]} downloads`;
+    }
+  }
+  ctx.fillStyle = P.primary;
+  ctx.font = '600 11px "IBM Plex Mono", monospace';
+  ctx.fillText(snapLabel, rx + 34, 402);
+  ctx.fillStyle = P.textMuted;
+  ctx.font = '400 11.5px "IBM Plex Sans", sans-serif';
+  ctx.fillText(snapSub, rx + 34, 420);
+
+  // Footer
+  ctx.fillStyle = P.textDim;
+  ctx.font = '500 11px "IBM Plex Mono", monospace';
+  ctx.fillText(`Source: data/analytics/downloads.json · Synced ${dlData.last_updated_at} · API ${dlData.api_status.toUpperCase()} · Outer ticks = ${totalAux} auxiliary assets`, 44, H - 14);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "bmd-velocity-pipeline",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Cinematic motion rendering pipeline for Black Marlin Downloader README",
+  "dependencies": {
+    "puppeteer-core": "^24.0.0",
+    "three": "^0.174.0"
+  }
+}

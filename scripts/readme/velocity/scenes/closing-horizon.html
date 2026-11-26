@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  #stage { position: relative; width: 100%; height: 100%; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="gl"></canvas>
+  <canvas id="hud"></canvas>
+</div>
+<script type="module">
+import * as THREE from '/velocity/node_modules/three/build/three.module.js';
+import {
+  PALETTES, injectBrandFonts, clamp01, lerp, remap, smoothstep,
+  easeOutExpo, easeInOutCubic, drawMarlinSculptural, drawRoundedRect
+} from '/velocity/lib/core.mjs';
+
+let renderer, scene, camera, shaderMat, hudCtx, W, H, P;
+
+const VERT = `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = vec4(position, 1.0);
+  }
+`;
+
+// Deep Pelagic Horizon Shader: distinct upward breach aesthetic with volumetric light shaft
+const FRAG = `
+  precision highp float;
+  varying vec2 vUv;
+  uniform float uPhase;
+  uniform float uBreach;
+  uniform float uIsDark;
+  uniform vec2 uRes;
+
+  void main() {
+    vec2 uv = vUv;
+    float aspect = uRes.x / uRes.y;
+    vec2 p = vec2((uv.x - 0.5) * aspect, uv.y);
+    float twoPi = 6.28318530718;
+    float ang = uPhase * twoPi;
+
+    // Distinct horizon plane at y = 0.60 (upper 40% luminous sky/surface, lower 60% pelagic deep)
+    float horY = 0.60 + sin(uv.x * 5.0 + ang) * 0.004 * uBreach;
+    vec3 deepDark = vec3(0.024, 0.042, 0.036);
+    vec3 skyDark = vec3(0.052, 0.105, 0.085);
+    vec3 deepLight = vec3(0.920, 0.962, 0.945);
+    vec3 skyLight = vec3(0.985, 0.994, 0.990);
+
+    vec3 deepCol = mix(deepLight, deepDark, uIsDark);
+    vec3 skyCol = mix(skyLight, skyDark, uIsDark);
+
+    float above = smoothstep(horY - 0.02, horY + 0.03, uv.y);
+    vec3 col = mix(deepCol, skyCol, above);
+
+    // Horizon luminous meniscus line
+    float meniscus = exp(-abs(uv.y - horY) * 95.0);
+    vec3 hGlow = mix(vec3(0.08, 0.58, 0.42), vec3(0.45, 0.90, 0.72), uIsDark);
+    col += hGlow * meniscus * mix(0.28, 0.55, uIsDark) * (0.4 + 0.6 * uBreach);
+
+    // Volumetric light shaft descending diagonally into pelagic depth
+    float beamCoord = (uv.x - 0.25) * 1.4 - (1.0 - uv.y) * 0.42;
+    float shaft = exp(-beamCoord * beamCoord * 14.0) * smoothstep(0.0, 0.7, uv.y) * (1.0 - above * 0.65);
+    col += hGlow * shaft * mix(0.09, 0.16, uIsDark) * (0.35 + 0.65 * uBreach);
+
+    // 15 organic anisotropic wake waves + specular caustic shimmer below horizon (periodic)
+    float dHor = max(0.0, horY - uv.y);
+    float wakeField = sin(dHor * 68.0 - uv.x * 16.0 + ang * 2.0 + sin(uv.x * 11.0 - ang) * 0.9);
+    float caustic = pow(max(0.0, sin(uv.x * 26.0 + ang) * cos(dHor * 44.0 - ang * 2.0)), 3.0);
+    float rippleMask = exp(-dHor * 4.4) * (1.0 - above);
+    col += hGlow * ((0.5 + 0.5 * wakeField) * 0.055 + caustic * 0.085) * rippleMask * uBreach;
+
+    gl_FragColor = vec4(col, 1.0);
+  }
+`;
+
+window.initScene = async ({ theme, width, height }) => {
+  W = width;
+  H = height;
+  P = PALETTES[theme] || PALETTES.dark;
+  injectBrandFonts();
+  await document.fonts.ready;
+
+  const glCanvas = document.getElementById('gl');
+  const hudCanvas = document.getElementById('hud');
+  glCanvas.width = W; glCanvas.height = H;
+  hudCanvas.width = W; hudCanvas.height = H;
+  hudCtx = hudCanvas.getContext('2d');
+
+  renderer = new THREE.WebGLRenderer({
+    canvas: glCanvas,
+    antialias: true,
+    preserveDrawingBuffer: true,
+    powerPreference: 'high-performance',
+  });
+  renderer.setSize(W, H, false);
+  scene = new THREE.Scene();
+  camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+  shaderMat = new THREE.ShaderMaterial({
+    vertexShader: VERT,
+    fragmentShader: FRAG,
+    uniforms: {
+      uPhase: { value: 0 },
+      uBreach: { value: 0 },
+      uIsDark: { value: P.isDark ? 1.0 : 0.0 },
+      uRes: { value: new THREE.Vector2(W, H) },
+    },
+  });
+  scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), shaderMat));
+};
+
+window.renderFrame = async (t, progress) => {
+  const enter = easeOutExpo(remap(progress, 0.08, 0.42));
+  const exit = 1 - easeInOutCubic(remap(progress, 0.84, 0.985));
+  const breach = enter * exit;
+
+  const textIn = easeOutExpo(remap(progress, 0.44, 0.66));
+  const textVis = textIn * exit;
+
+  shaderMat.uniforms.uPhase.value = progress;
+  shaderMat.uniforms.uBreach.value = breach;
+  renderer.render(scene, camera);
+
+  const ctx = hudCtx;
+  ctx.clearRect(0, 0, W, H);
+
+  // 15 Organic Anisotropic Elliptical Pelagic Wake Waves (eccentric perspective foreshortening + caustic shimmer)
+  if (breach > 0.03) {
+    ctx.save();
+    for (let i = 0; i < 15; i++) {
+      const f = i / 14;
+      const rx = 115 + i * 28 + Math.sin(progress * Math.PI * 2 + i * 0.7) * 8;
+      const ry = 36 + i * 11.5; // strong anisotropic eccentricity (rx >> ry) for natural water perspective
+      const tilt = -0.16 + f * 0.05;
+      const cx = W * 0.24 + i * 11;
+      const cy = H * 0.61 + i * 4.5;
+      ctx.strokeStyle = i % 3 === 0 ? P.specular : P.primary;
+      ctx.globalAlpha = breach * (1 - f * 0.85) * (0.28 - f * 0.14);
+      ctx.lineWidth = i < 4 ? 1.8 : 1.1;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx, ry, tilt, -Math.PI * 0.28, Math.PI * 0.22);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // Ascending Black Marlin breaking across the horizon line (left-lower -> center-upper)
+  if (breach > 0.01) {
+    const mx = lerp(W * 0.10, W * 0.26, enter) + (1 - exit) * 80;
+    const my = lerp(H * 0.84, H * 0.46, enter) - (1 - exit) * 50;
+    drawMarlinSculptural(ctx, mx, my, 0.56 * (0.85 + 0.15 * breach), {
+      isDark: P.isDark,
+      fillAlpha: breach * 0.95,
+      strokeAlpha: breach,
+      rimProgress: 1,
+      rotationRad: -0.18,
+      facetSweep: progress,
+    });
+  }
+
+  // Editorial Closing Lockup (Right Field — pure quiet confidence, zero stamps/barcodes!)
+  if (textVis > 0.01) {
+    ctx.save();
+    ctx.globalAlpha = textVis;
+
+    // 3 Core Truths above horizon line
+    const truths = ['15 RUST CRATES', '86 LANGUAGES', 'GPL-3.0 · ZERO TELEMETRY'];
+    let tx = 480;
+    ctx.font = '600 12px "IBM Plex Mono", monospace';
+    for (const tr of truths) {
+      const w = ctx.measureText(tr).width + 24;
+      drawRoundedRect(ctx, tx, 82, w, 28, 6);
+      ctx.fillStyle = P.isDark ? 'rgba(85, 201, 157, 0.12)' : 'rgba(19, 111, 80, 0.09)';
+      ctx.fill();
+      ctx.strokeStyle = P.hairlineStrong;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.fillStyle = P.primary;
+      ctx.fillText(tr, tx + 12, 100);
+      tx += w + 10;
+    }
+
+    // Horizon Divider Rule
+    ctx.strokeStyle = P.hairlineStrong;
+    ctx.beginPath(); ctx.moveTo(480, 176); ctx.lineTo(1140, 176); ctx.stroke();
+
+    // Sculptural Finale Title
+    ctx.fillStyle = P.text;
+    ctx.font = '700 44px "Space Grotesk", sans-serif';
+    ctx.fillText('BLACK MARLIN DOWNLOADER', 480, 240);
+
+    ctx.fillStyle = P.textMuted;
+    ctx.font = '500 19px "IBM Plex Sans", sans-serif';
+    ctx.fillText('Built from scratch. Fast by geometry. Free forever.', 480, 278);
+
+    ctx.fillStyle = P.textDim;
+    ctx.font = '500 12.5px "IBM Plex Mono", monospace';
+    ctx.fillText('github.com/DecoyINDIA/BMD  ·  v1.0.0  ·  Clean-Room Rust', 480, 326);
+    ctx.restore();
+  }
+};
+</script>
+</body>
+</html>
