@@ -22,12 +22,15 @@ from zipfile import BadZipFile, ZipFile
 
 MAX_DEX_BYTES = 64 * 1024 * 1024
 PLATFORM_TEST_LIBRARIES = frozenset({"android.test.base", "android.test.runner"})
+DELEGATE_RUNNER = "Landroidx/test/internal/runner/junit4/AndroidJUnit4ClassRunner;"
+DELEGATE_CONSTRUCTOR = "(Ljava/lang/Class;)V"
 REQUIRED_DEFINITIONS = frozenset({
     "Landroidx/test/runner/AndroidJUnitRunner;",
     "Landroidx/test/ext/junit/runners/AndroidJUnit4;",
     "Landroidx/tracing/Trace;",
     "Lcom/blackmarlin/downloader/releasecheck/ReleaseRuntimeTest;",
     "Lorg/junit/Test;",
+    DELEGATE_RUNNER,
 })
 
 
@@ -36,7 +39,8 @@ def digest(path: Path) -> str:
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def dex_class_info(data: bytes, accessed_fields: set[int] | None = None) -> tuple[set[str], set[str]]:
+def dex_class_info(data: bytes, accessed_fields: set[int] | None = None,
+                   public_constructors: set[str] | None = None) -> tuple[set[str], set[str]]:
     """Return class definitions and member/supertype owners from a standard DEX."""
     if len(data) < 112 or len(data) > MAX_DEX_BYTES or data[:8] not in {
         b"dex\n035\0", b"dex\n037\0", b"dex\n038\0", b"dex\n039\0", b"dex\n040\0"
@@ -84,6 +88,65 @@ def dex_class_info(data: bytes, accessed_fields: set[int] | None = None) -> tupl
             raise ValueError("DEX type index is out of range")
         return types[index]
 
+    def type_list(offset: int) -> list[str]:
+        if not offset:
+            return []
+        count = uint(offset)
+        if offset + 4 + 2 * count > len(data):
+            raise ValueError("DEX type list exceeds file bounds")
+        return [type_at(struct.unpack_from("<H", data, offset + 4 + 2 * index)[0]) for index in range(count)]
+
+    method_ids = list(table(88, 8))
+    proto_ids = list(table(72, 12))
+
+    def read_delegate_constructors(offset: int) -> None:
+        # Only encoded_method entries in this class's class_data are definitions.
+        # A method_id, call site or signature string alone cannot satisfy this gate.
+        if not offset or public_constructors is None:
+            return
+
+        def uleb() -> int:
+            nonlocal offset
+            result = 0
+            for shift in range(0, 35, 7):
+                if offset >= len(data):
+                    raise ValueError("Truncated DEX class data")
+                value = data[offset]
+                offset += 1
+                result |= (value & 127) << shift
+                if not value & 128:
+                    return result
+            raise ValueError("Invalid DEX class-data ULEB128")
+
+        static_fields, instance_fields, direct_methods, virtual_methods = (uleb() for _ in range(4))
+        if static_fields + instance_fields > uint(80) or direct_methods + virtual_methods > len(method_ids):
+            raise ValueError("DEX class-data counts exceed their tables")
+        for _ in range(static_fields + instance_fields):
+            uleb()  # field_idx_diff
+            uleb()  # access_flags
+        for count in (direct_methods, virtual_methods):
+            method_index = 0
+            for _ in range(count):
+                method_index += uleb()
+                access_flags, code_offset = uleb(), uleb()
+                if method_index >= len(method_ids):
+                    raise ValueError("DEX defined-method index is out of range")
+                method = method_ids[method_index]
+                if type_at(struct.unpack_from("<H", data, method)[0]) != DELEGATE_RUNNER:
+                    raise ValueError("DEX method definition has the wrong class owner")
+                if descriptor(uint(method + 4)) != "<init>":
+                    continue
+                proto_index = struct.unpack_from("<H", data, method + 2)[0]
+                if proto_index >= len(proto_ids):
+                    raise ValueError("DEX method prototype is out of range")
+                proto = proto_ids[proto_index]
+                signature = "(" + "".join(type_list(uint(proto + 8))) + ")" + type_at(uint(proto + 4))
+                # ACC_PUBLIC | ACC_CONSTRUCTOR, without static/native/abstract.
+                if access_flags & 0x10001 == 0x10001 and not access_flags & (0x8 | 0x100 | 0x400):
+                    if code_offset < 112 or code_offset + 16 + uint(code_offset + 12) * 2 > len(data):
+                        raise ValueError("DEX constructor definition has invalid code bounds")
+                    public_constructors.add(signature)
+
     definitions: set[str] = set()
     owners: set[str] = set()
     for offset in table(96, 32):
@@ -91,17 +154,13 @@ def dex_class_info(data: bytes, accessed_fields: set[int] | None = None) -> tupl
         if name in definitions:
             raise ValueError("Duplicate DEX class definition")
         definitions.add(name)
+        if name == DELEGATE_RUNNER:
+            read_delegate_constructors(uint(offset + 24))
         superclass = uint(offset + 8)
         if superclass != 0xFFFFFFFF:
             owners.add(type_at(superclass))
-        interfaces = uint(offset + 12)
-        if interfaces:
-            count = uint(interfaces)
-            if interfaces + 4 + 2 * count > len(data):
-                raise ValueError("DEX interface list exceeds file bounds")
-            for index in range(count):
-                owners.add(type_at(struct.unpack_from("<H", data, interfaces + 4 + 2 * index)[0]))
-    for offset in table(88, 8):  # method_ids start with owner type_idx.
+        owners.update(type_list(uint(offset + 12)))
+    for offset in method_ids:  # method_ids start with owner type_idx.
         owners.add(type_at(struct.unpack_from("<H", data, offset)[0]))
     fields = list(table(80, 8))
     for index in accessed_fields or set():
@@ -135,7 +194,8 @@ def field_accesses(data: bytes, dexdump: Path) -> set[int]:
         return indices
 
 
-def apk_classes(path: Path, dexdump: Path | None = None) -> tuple[set[str], set[str]]:
+def apk_classes(path: Path, dexdump: Path | None = None,
+                public_constructors: set[str] | None = None) -> tuple[set[str], set[str]]:
     definitions: set[str] = set()
     owners: set[str] = set()
     with ZipFile(path) as archive:
@@ -149,7 +209,8 @@ def apk_classes(path: Path, dexdump: Path | None = None) -> tuple[set[str], set[
             if archive.getinfo(name).file_size > MAX_DEX_BYTES:
                 raise ValueError("APK has an oversized DEX")
             data = archive.read(name)
-            current, referenced = dex_class_info(data, field_accesses(data, dexdump) if dexdump else None)
+            current, referenced = dex_class_info(data, field_accesses(data, dexdump) if dexdump else None,
+                                                 public_constructors)
             if definitions & current:
                 raise ValueError("APK defines a class in multiple DEX files")
             definitions.update(current)
@@ -185,7 +246,11 @@ def declared_test_libraries(badging: str) -> set[str]:
 
 def verify_apks(release_apk: Path, test_apk: Path, android_jar: Path, build_tools: Path) -> dict:
     app, _ = apk_classes(release_apk)
-    harness, owners = apk_classes(test_apk, build_tools / "dexdump")
+    constructors: set[str] = set()
+    harness, owners = apk_classes(test_apk, build_tools / "dexdump", constructors)
+    if DELEGATE_CONSTRUCTOR not in constructors:
+        raise ValueError("Required public AndroidJUnit4ClassRunner(Class) constructor definition is absent; "
+                         + "actual public descriptors=" + repr(sorted(constructors)))
     badging = subprocess.run([str(build_tools / "aapt2"), "dump", "badging", str(test_apk)],
                              capture_output=True, text=True, check=True, timeout=60).stdout
     declared = declared_test_libraries(badging)
@@ -205,6 +270,7 @@ def verify_apks(release_apk: Path, test_apk: Path, android_jar: Path, build_tool
             "applicationApkSha256": digest(release_apk), "harnessApkSha256": digest(test_apk),
             "androidJarSha256": digest(android_jar),
             "manifestRequiredTestLibraries": sorted(declared),
+            "delegateRunnerPublicConstructorDefinition": DELEGATE_CONSTRUCTOR,
             "optionalSdkJarSha256": {jar.name: digest(jar) for jar in optional_jars}, **result}
 
 

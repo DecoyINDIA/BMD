@@ -2,6 +2,11 @@
 -keep class com.blackmarlin.downloader.releasecheck.ReleaseRuntimeTest { *; }
 -keep class androidx.test.runner.AndroidJUnitRunner { *; }
 -keep class androidx.test.ext.junit.runners.AndroidJUnit4 { *; }
+# AndroidJUnit4 loads this delegate by name and calls getConstructor(Class.class).
+# Preserve the reflective ABI: R8 otherwise removed the one-argument overload.
+-keep class androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner {
+    public <init>(java.lang.Class);
+}
 -keep class org.junit.** { *; }
 # Preserve the real tracing implementation and verify its DEX class definition.
 -keep class androidx.tracing.** { *; }
