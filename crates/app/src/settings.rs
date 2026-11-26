@@ -361,7 +361,8 @@ pub struct Settings {
     /// (with ffmpeg). On; a settings file from before has none: on.
     pub video_chapters: bool,
     /// Download video → "Social posts: start at once": a TikTok, X, Instagram, Facebook or
-    /// Threads post given to Add URL downloads in the best quality without the quality choice.
+    /// Threads post (from Add URL or the browser's button) downloads in the best quality without
+    /// the quality choice.
     /// On; a settings file from before has none: on.
     pub video_social_at_once: bool,
     /// Options → Sites Logins → Cookies for video sites (#229): the browser whose cookies

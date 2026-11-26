@@ -226,7 +226,7 @@
 	A single-file torrent keeps its name	A single-file torrent keeps its name
 #. text in the Download video window
 #. tooltip of "Social posts: start at once" in Download video
-	A TikTok, X, Instagram, Facebook or Threads post given to Add URL downloads in its best quality as soon as it is looked up	A TikTok, X, Instagram, Facebook or Threads post given to Add URL downloads in its best quality as soon as it is looked up
+	A TikTok, X, Instagram, Facebook or Threads post downloads in its best quality as soon as it is looked up	A TikTok, X, Instagram, Facebook or Threads post downloads in its best quality as soon as it is looked up
 #. text in the Add torrent window
 #. Add trackers: BMD never contacts a tracker on this computer or the local network
 	A tracker on this computer or the local network is never contacted: {line}	A tracker on this computer or the local network is never contacted: {line}
@@ -3278,7 +3278,7 @@
 #. button in the Download complete window: opens a menu of how long no Download complete window shows (30 minutes, 1 hour...)
 	Snooze	Snooze
 #. text in the Download video window
-#. checkbox in Download video: a TikTok, X, Instagram, Facebook or Threads post's address given to Add URL downloads at once in the best quality, without this window's choice
+#. checkbox in Download video: a TikTok, X, Instagram, Facebook or Threads post's address (from Add URL or the browser's button) downloads at once in the best quality, without this window's choice
 	Social posts: start at once	Social posts: start at once
 #. text in countries.rs
 #. a country's name (where a download's server is)

@@ -120,8 +120,8 @@ pub struct VideoDialog {
     /// Embed chapters (#827; settings.video_chapters).
     chapters: bool,
     /// "Social posts: start at once" (settings.video_social_at_once): a TikTok, X, Instagram,
-    /// Facebook or Threads post given to Add URL downloads in the best quality as soon as it is
-    /// looked up, without waiting for Download Now.
+    /// Facebook or Threads post opened here (Add URL, the browser's Download video button)
+    /// downloads in the best quality as soon as it is looked up, without waiting for Download Now.
     social_at_once: bool,
     /// This window was opened for such a post with that ticked: Download Now presses itself
     /// once the best quality is known (with ffmpeg, so that it is the best, not the best that
@@ -1228,14 +1228,14 @@ impl VideoDialog {
             ui,
             pos2(o.x + bx + 212.0, o.y + 350.0),
             &mut self.social_at_once,
-            // i18n: checkbox in Download video: a TikTok, X, Instagram, Facebook or Threads post's address given to Add URL downloads at once in the best quality, without this window's choice
+            // i18n: checkbox in Download video: a TikTok, X, Instagram, Facebook or Threads post's address (from Add URL or the browser's button) downloads at once in the best quality, without this window's choice
             "Social posts: start at once",
             true,
             Some(o.x + 489.0),
         );
         social.on_hover_text(crate::i18n::t(
             // i18n: tooltip of "Social posts: start at once" in Download video
-            "A TikTok, X, Instagram, Facebook or Threads post given to Add URL downloads in its best quality as soon as it is looked up",
+            "A TikTok, X, Instagram, Facebook or Threads post downloads in its best quality as soon as it is looked up",
         ));
         if !self.social_at_once {
             self.at_once = false;
