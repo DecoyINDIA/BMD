@@ -116,7 +116,7 @@ pub struct Settings {
     /// View → Always dark (#60): dark whatever the system says (a desktop that reports no
     /// preference, or a dark BMD on a light desktop).
     pub always_dark: bool,
-    /// The look (#45): a built-in theme's id ("classic", the default) or a theme file's name in
+    /// The look (#45): a built-in theme's id ("emerald", the default) or a theme file's name in
     /// the data folder's `themes` folder (crate::themefile).
     pub theme: String,
     /// View → Draw with (#89): OpenGL or Direct3D (Windows only), used from the next start.
@@ -360,6 +360,10 @@ pub struct Settings {
     /// Download video from a page → Embed chapters (#827): a video's chapters go into its file
     /// (with ffmpeg). On; a settings file from before has none: on.
     pub video_chapters: bool,
+    /// Download video → "Social posts: start at once": a TikTok, X, Instagram, Facebook or
+    /// Threads post given to Add URL downloads in the best quality without the quality choice.
+    /// On; a settings file from before has none: on.
+    pub video_social_at_once: bool,
     /// Options → Sites Logins → Cookies for video sites (#229): the browser whose cookies
     /// yt-dlp reads on this computer when the extension passed none (yt-dlp's name: `firefox`,
     /// `chrome`...; empty: off, the default), and its profile (a name or a folder; empty: the
@@ -436,7 +440,7 @@ impl Default for Settings {
             double_click_open: false,
             confirm_delete: true,
             delete_files_too: false,
-            categories_width: 143,
+            categories_width: 174,
             window: None,
             window_maximized: false,
             show_categories: true,
@@ -444,7 +448,7 @@ impl Default for Settings {
             view: None,
             dark_mode_support: true,
             always_dark: false,
-            theme: "classic".into(),
+            theme: "emerald".into(),
             renderer: None,
             window_system: None,
             interface_size: 100,
@@ -546,6 +550,7 @@ impl Default for Settings {
             drop_target_pos: None,
             video_subs: Default::default(),
             video_chapters: true,
+            video_social_at_once: true,
             video_cookies: String::new(),
             video_cookies_profile: String::new(),
             extract_auto: false,

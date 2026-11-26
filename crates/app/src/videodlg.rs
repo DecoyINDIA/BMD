@@ -119,6 +119,14 @@ pub struct VideoDialog {
     embed: bool,
     /// Embed chapters (#827; settings.video_chapters).
     chapters: bool,
+    /// "Social posts: start at once" (settings.video_social_at_once): a TikTok, X, Instagram,
+    /// Facebook or Threads post given to Add URL downloads in the best quality as soon as it is
+    /// looked up, without waiting for Download Now.
+    social_at_once: bool,
+    /// This window was opened for such a post with that ticked: Download Now presses itself
+    /// once the best quality is known (with ffmpeg, so that it is the best, not the best that
+    /// comes with its sound). Once only, and only for the address it came with.
+    at_once: bool,
     /// The last video's choice (settings.video_subs), applied to each video looked up.
     pref: Subs,
     /// The clipboard's page address, read off the window's thread (#661).
@@ -218,6 +226,8 @@ impl VideoDialog {
             sub_pick: 0,
             embed: false,
             chapters: true,
+            social_at_once: true,
+            at_once: false,
             pref: Subs::default(),
             clip: Default::default(),
         }
@@ -227,6 +237,38 @@ impl VideoDialog {
     pub fn with_chapters(mut self, on: bool) -> Self {
         self.chapters = on;
         self
+    }
+
+    /// "Social posts: start at once" ticked or not (settings.video_social_at_once); with it,
+    /// a social post's address (`bmd_tools::pages::is_social_post`) starts by itself.
+    pub fn with_social_at_once(mut self, on: bool) -> Self {
+        self.social_at_once = on;
+        self.at_once = on
+            && url::Url::parse(self.page.trim())
+                .is_ok_and(|u| bmd_tools::pages::is_social_post(&u));
+        self
+    }
+
+    /// "Social posts: start at once"'s tick, for the settings (`video_social_at_once`).
+    pub fn social_at_once(&self) -> bool {
+        self.social_at_once
+    }
+
+    /// Download Now is pressed by itself now: a social post opened with "start at once", its
+    /// one video looked up for the address it came with, with ffmpeg (the best quality is a
+    /// merge of the best video and the best sound), nothing installing, no error.
+    fn starts_by_itself(&self) -> bool {
+        self.at_once
+            && self.social_at_once
+            && self.list.is_none()
+            && self.lookup.is_none()
+            && self.install.is_none()
+            && self.helpers.is_none()
+            && self.error.is_none()
+            && self.looked_up == self.from_browser
+            && self.page.trim() == self.from_browser
+            && self.tools.as_ref().is_some_and(|t| t.2.is_some())
+            && self.video.as_ref().is_some_and(|(_, c)| !c.is_empty())
     }
 
     /// Offer `pref` (the last video's subtitles, settings.video_subs) for the videos looked up.
@@ -472,6 +514,16 @@ impl VideoDialog {
                 self.set_video(v);
             }
         }
+        // A social post with "start at once": its best quality (the first choice, picked when
+        // it was looked up) goes as Download Now would, unless the window was closed meanwhile.
+        let out = if matches!(out, Outcome::Open) && self.starts_by_itself() {
+            self.at_once = false;
+            self.chosen = 0;
+            self.start_now = Some(true);
+            Outcome::Done(())
+        } else {
+            out
+        };
         let folder = crate::dialogs::resolve_path(&self.folder);
         let out = crate::dialogs::ensure_folder(ctx, &mut self.asking, out, &folder);
         match out {
@@ -1155,7 +1207,7 @@ impl VideoDialog {
             // i18n: checkbox in Download video: the chapters a video's page lists (YouTube's, for one) go into the video file, where players show them and skip between them
             "Embed chapters",
             can,
-            Some(o.x + 489.0),
+            Some(o.x + bx + 205.0),
         );
         let resp = winui::why_disabled(
             resp,
@@ -1171,6 +1223,22 @@ impl VideoDialog {
         );
         if can {
             self.chapters = on;
+        }
+        let social = winui::checkbox_until(
+            ui,
+            pos2(o.x + bx + 212.0, o.y + 350.0),
+            &mut self.social_at_once,
+            // i18n: checkbox in Download video: a TikTok, X, Instagram, Facebook or Threads post's address given to Add URL downloads at once in the best quality, without this window's choice
+            "Social posts: start at once",
+            true,
+            Some(o.x + 489.0),
+        );
+        social.on_hover_text(crate::i18n::t(
+            // i18n: tooltip of "Social posts: start at once" in Download video
+            "A TikTok, X, Instagram, Facebook or Threads post given to Add URL downloads in its best quality as soon as it is looked up",
+        ));
+        if !self.social_at_once {
+            self.at_once = false;
         }
     }
 
@@ -2304,6 +2372,55 @@ mod tests {
             Some(VideoOut::One(add)) => (add.dest.parent().unwrap().to_owned(), add.category),
             _ => panic!("a video is added"),
         }
+    }
+
+    /// A social post (TikTok, X, Instagram, Facebook, Threads) opened with "Social posts: start
+    /// at once": once looked up with ffmpeg there, it starts by itself with the first choice,
+    /// the best (the 1080p video merged with the best sound, never the 360p that comes with
+    /// its sound); without ffmpeg, unticked, after an edit, or for another site it waits.
+    #[test]
+    fn a_social_post_starts_at_once_in_its_best_quality() {
+        const POST: &str = r#"{"title": "A clip", "duration": 15, "formats": [
+            {"format_id": "a", "ext": "m4a", "vcodec": "none", "acodec": "mp4a", "filesize": 300},
+            {"format_id": "s", "ext": "mp4", "height": 360, "vcodec": "avc1", "acodec": "mp4a", "filesize": 900},
+            {"format_id": "v7", "ext": "mp4", "height": 720, "vcodec": "avc1", "acodec": "none", "filesize": 2000},
+            {"format_id": "v10", "ext": "mp4", "height": 1080, "vcodec": "avc1", "acodec": "none", "filesize": 4000}]}"#;
+        let ffmpeg = || bmd_tools::Installed {
+            version: "7".into(),
+            exe: "ffmpeg".into(),
+        };
+        let open = |page: &str, tick: bool, with_ffmpeg: bool| {
+            let mut d = VideoDialog::for_page(dirs().0, page, Default::default())
+                .with_social_at_once(tick);
+            d.tools = Some((None, None, with_ffmpeg.then(ffmpeg)));
+            d.looked_up = d.page.clone();
+            d.set_video(bmd_tools::resolve::parse(POST.as_bytes()).unwrap());
+            d
+        };
+        let post = "https://www.instagram.com/reel/Cabc123/";
+        let d = open(post, true, true);
+        assert!(d.starts_by_itself());
+        match d.added() {
+            Some(VideoOut::One(add)) => {
+                assert!(add.start_now);
+                assert!(add.selector.contains("v10"), "{}", add.selector);
+                assert!(add.selector.contains('a'), "{}", add.selector);
+            }
+            _ => panic!("the post is added"),
+        }
+        // Unticked, without ffmpeg (the best would be the 360p with its sound), or a site
+        // that isn't social: the window waits for a choice.
+        assert!(!open(post, false, true).starts_by_itself());
+        assert!(!open(post, true, false).starts_by_itself());
+        assert!(!open("https://vimeo.com/76979871", true, true).starts_by_itself());
+        // The address edited since: Look up and a choice again.
+        let mut edited = open(post, true, true);
+        edited.page = "https://www.instagram.com/reel/Cother/".into();
+        assert!(!edited.starts_by_itself());
+        // A look-up that failed waits too, saying why.
+        let mut failed = open(post, true, true);
+        failed.error = Some("private".into());
+        assert!(!failed.starts_by_itself());
     }
 
     /// #1076: the video a page declares is what the download keeps (its address, the page as its

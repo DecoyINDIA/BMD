@@ -564,8 +564,17 @@ impl Updates {
                             right,
                             "update-line",
                         );
-                        // A package of another package manager (pacman, …): that one updates it.
-                        let have = if install == bmd_tools::update::Install::System {
+                        // A package of another package manager (pacman, …) or the Microsoft Store's
+                        // copy: that one updates it.
+                        let have = if install == bmd_tools::update::Install::Store {
+                            crate::i18n::fmt(
+                                // i18n: Check for updates, under the new version's line, when BMD was installed from the Microsoft Store, which updates it (BMD can't)
+                                crate::i18n::t(
+                                    "You have version {version}, from the Microsoft Store: update it there.",
+                                ),
+                                &[("version", VERSION)],
+                            )
+                        } else if install == bmd_tools::update::Install::System {
                             crate::i18n::fmt(
                                 // i18n: Check for updates, under the new version's line, when BMD was installed by the Linux system's package manager (pacman, ...), which BMD can't update itself
                                 crate::i18n::t(
@@ -622,8 +631,9 @@ impl Updates {
                     crate::update::asset_for(install, &rel.version, &rel.assets)
                         .filter(|_| !matches!(self.status, Some(UpdateStatus::Failed(_))))
                 });
-                // Another package manager's copy: no Update now nor Download, the notes only.
-                let managed = install == bmd_tools::update::Install::System;
+                // Another package manager's or the Microsoft Store's copy: no Update now nor
+                // Download, the notes only.
+                let managed = install.updated_elsewhere();
                 let close_label = if self.job.is_some() {
                     // i18n: button: stop downloading the update
                     crate::i18n::mark("Cancel")

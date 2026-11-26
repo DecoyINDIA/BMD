@@ -2,6 +2,11 @@
   <img src="art/BMD Black Marlin Lockup.svg" alt="Black Marlin Downloader" width="420">
 </p>
 
+<p align="center">
+  <a href="https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-setup.exe"><b>⬇ Try our application: download the Windows installer</b></a><br>
+  <sub>One file: download it, open it, and BMD installs. Other systems and files: <a href="https://github.com/DecoyINDIA/BMD/releases">all releases</a>.</sub>
+</p>
+
 # Black Marlin Downloader
 
 Losing your connection halfway through a big download shouldn't cost you the first half. With Black Marlin, you can pick up where you left off when the server supports resume. You can also queue your next few files and let them run while you sleep.

@@ -6,7 +6,7 @@
 use reqwest::Url;
 
 /// Whether `url` is a video's page on a site yt-dlp reads (YouTube, Vimeo, Dailymotion, Twitch,
-/// TikTok, X, Instagram, Facebook, Reddit, SoundCloud, Bilibili, Rumble).
+/// TikTok, X, Instagram, Facebook, Threads, Reddit, SoundCloud, Bilibili, Rumble).
 pub fn is_video_page(url: &Url) -> bool {
     if !matches!(url.scheme(), "http" | "https") {
         return false;
@@ -44,14 +44,27 @@ pub fn is_video_page(url: &Url) -> bool {
         "dai.ly" => segs.len() == 1,
         "twitch.tv" => matches!(segs.as_slice(), ["videos", _] | [_, "clip", _]),
         "clips.twitch.tv" => segs.len() == 1,
-        "tiktok.com" => matches!(segs.as_slice(), [_, "video", _]),
-        "x.com" | "twitter.com" => matches!(segs.as_slice(), [_, "status", _, ..]),
-        "instagram.com" => matches!(segs.as_slice(), ["reel" | "reels" | "p" | "tv", _, ..]),
-        "facebook.com" => {
+        // A post's own address, and the short links the apps' Share buttons copy.
+        "tiktok.com" => matches!(segs.as_slice(), [_, "video", _] | ["t", _]),
+        "vm.tiktok.com" | "vt.tiktok.com" => segs.len() == 1,
+        "x.com" | "twitter.com" | "mobile.twitter.com" | "mobile.x.com" => {
+            matches!(segs.as_slice(), [_, "status", _, ..])
+        }
+        "instagram.com" => matches!(
+            segs.as_slice(),
+            ["reel" | "reels" | "p" | "tv", _, ..] | [_, "reel" | "p", _, ..]
+        ),
+        "facebook.com" | "web.facebook.com" => {
             (path == "/watch" || path == "/watch/") && query("v")
-                || matches!(segs.as_slice(), [_, "videos", ..] | ["reel", _, ..])
+                || matches!(
+                    segs.as_slice(),
+                    [_, "videos", ..] | ["reel", _, ..] | ["share", "v" | "r", _, ..]
+                )
         }
         "fb.watch" => segs.len() == 1,
+        "threads.net" | "threads.com" => {
+            matches!(segs.as_slice(), [user, "post", _, ..] if user.starts_with('@'))
+        }
         "reddit.com" | "old.reddit.com" => matches!(segs.as_slice(), ["r", _, "comments", _, ..]),
         "v.redd.it" => segs.len() == 1,
         "soundcloud.com" => segs.len() == 2,
@@ -61,6 +74,28 @@ pub fn is_video_page(url: &Url) -> bool {
             .is_some_and(|s| s.starts_with('v') && s.contains('-')),
         _ => false,
     }
+}
+
+/// Whether `url` is a post on a social site (TikTok, X, Instagram, Facebook, Threads) that holds
+/// a video: Add URL starts these at once in the best quality, without the quality window, when
+/// Download video's "Start social posts at once" is ticked. A post is one video, never a list.
+pub fn is_social_post(url: &Url) -> bool {
+    let social = url.host_str().is_some_and(|host| {
+        let host = host.to_ascii_lowercase();
+        [
+            "tiktok.com",
+            "x.com",
+            "twitter.com",
+            "instagram.com",
+            "facebook.com",
+            "fb.watch",
+            "threads.net",
+            "threads.com",
+        ]
+        .iter()
+        .any(|site| host == *site || host.ends_with(&format!(".{site}")))
+    });
+    social && is_video_page(url)
 }
 
 /// The address to give yt-dlp for a video page: Dailymotion's embedded player
@@ -216,6 +251,50 @@ mod tests {
             "https://www.reddit.com/r/videos/comments/abc123/title/"
         ));
         assert!(page("https://soundcloud.com/artist/track"));
+    }
+
+    #[test]
+    fn social_posts_and_their_share_links_are_recognised() {
+        let social = |s: &str| is_social_post(&s.parse().unwrap());
+        for post in [
+            "https://www.tiktok.com/@someone/video/7300000000000000000",
+            "https://vm.tiktok.com/ZMabc123/",
+            "https://vt.tiktok.com/ZSabc123/",
+            "https://www.tiktok.com/t/ZTabc123/",
+            "https://x.com/someone/status/1800000000000000000",
+            "https://twitter.com/someone/status/1800000000000000000/video/1",
+            "https://mobile.twitter.com/someone/status/1800000000000000000",
+            "https://www.instagram.com/reel/Cabc123/",
+            "https://www.instagram.com/p/Cabc123/?igsh=xyz",
+            "https://www.instagram.com/someone/reel/Cabc123/",
+            "https://www.facebook.com/watch/?v=1234567890",
+            "https://www.facebook.com/someone/videos/1234567890/",
+            "https://www.facebook.com/reel/1234567890",
+            "https://www.facebook.com/share/v/1AbCdEf/",
+            "https://www.facebook.com/share/r/1AbCdEf/",
+            "https://m.facebook.com/watch/?v=1234567890",
+            "https://fb.watch/abcDEF/",
+            "https://www.threads.net/@someone/post/C8abc123",
+            "https://www.threads.com/@someone/post/C8abc123",
+        ] {
+            assert!(social(post), "{post}");
+        }
+        for not in [
+            // A profile, a feed, a home page: no one video.
+            "https://www.tiktok.com/@someone",
+            "https://x.com/someone",
+            "https://www.instagram.com/someone/",
+            "https://www.facebook.com/",
+            "https://www.threads.net/@someone",
+            // A video site that isn't social: the quality window, as before.
+            "https://www.youtube.com/watch?v=Tg6byXUo8RU",
+            "https://vimeo.com/76979871",
+            // Only lookalike hosts.
+            "https://notx.com/someone/status/1",
+            "https://tiktok.com.example/@a/video/1",
+        ] {
+            assert!(!social(not), "{not}");
+        }
     }
 
     #[test]

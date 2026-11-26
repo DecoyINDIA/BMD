@@ -35,7 +35,7 @@ AppPublisher=DecoyINDIA
 AppPublisherURL=https://github.com/DecoyINDIA/BMD
 AppSupportURL=https://github.com/DecoyINDIA/BMD/issues
 AppUpdatesURL=https://github.com/DecoyINDIA/BMD/releases
-AppCopyright=Copyright (C) 2026 Ahmed Nefzaoui
+AppCopyright=Copyright (C) 2026 DecoyINDIA
 DefaultDirName={autopf}\{#AppName}
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
@@ -184,15 +184,40 @@ Filename: "{app}\{#HostExe}"; Parameters: "--unregister --all-users"; Flags: run
 
 [UninstallDelete]
 Type: files; Name: "{app}\com.blackmarlindownloader.host*.json"
+Type: files; Name: "{app}\store.marker"
 
 [Code]
 const
   RunningMutex = 'BlackMarlinDownloader.Running';
 
+procedure InitializeWizard;
+begin
+  { Leave room for DPI-scaled checkbox glyphs and their captions. }
+  WizardForm.TasksList.Offset := ScaleX(8);
+end;
+
 { /relaunch=1 on the command line (BMD's Update now): start BMD again after installing. }
 function Relaunch: Boolean;
 begin
   Result := ExpandConstant('{param:relaunch|0}') = '1';
+end;
+
+{ /store=1 on the command line (the Microsoft Store's run of this setup, tools/installer/
+  store-notes.md): the Store updates this copy, so BMD must not (it finds store.marker, see
+  bmd_tools::update::Install::find). A later setup without it (Update now, a download from the
+  releases page) takes the marker away: that copy is BMD's to update again. }
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  Marker: String;
+begin
+  if CurStep = ssPostInstall then
+  begin
+    Marker := ExpandConstant('{app}\store.marker');
+    if ExpandConstant('{param:store|0}') = '1' then
+      SaveStringToFile(Marker, 'Installed by the Microsoft Store.' + #13#10, False)
+    else
+      DeleteFile(Marker);
+  end;
 end;
 
 { Ask a running BMD to save and quit, and wait up to 15 s for it. }

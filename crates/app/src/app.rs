@@ -2401,6 +2401,7 @@ impl App {
         // Every byte in (#736): no rate, as once it is complete.
         let receiving = it.live.is_some() && !it.past_last_byte();
         list::Row {
+            progress: receiving.then(|| it.fraction()).flatten().map(|f| f as f32),
             status_group: match it.status {
                 // i18n: a download's status (state it is in, not a command): being downloaded now
                 Status::Downloading => "Downloading",
@@ -5522,6 +5523,7 @@ impl App {
         .with_subs(self.settings.video_subs.clone())
         .with_chapters(self.settings.video_chapters)
         .with_music_folder(music)
+        .with_social_at_once(self.settings.video_social_at_once)
     }
 
     /// Download video from a page → Download Now / Later; or the browser's quality menu's
@@ -9937,8 +9939,23 @@ impl App {
         let (ids, rows) = self.list_rows();
         self.selection.retain(&ids);
         let (selected, focus) = self.selection.rows(&ids);
+        let pane_top = o.y + chrome::MENU_H + chrome::pane_top();
+        let mut table_top = pane_top;
+        if crate::theme::emerald_workspace() {
+            table_top += 42.0;
+            let mut font = winui::tahoma_title();
+            font.size = crate::theme::font_size(23.0);
+            let p = ui.painter();
+            let title = crate::i18n::t("Downloads");
+            let x = o.x + list_left + 13.0;
+            let shown = winui::ellipsize(p, &font, title, o.x + w - 14.0 - x);
+            let drawn = winui::text_font(p, font, x, pane_top + 30.0, &shown, winui::TEXT());
+            if shown != title {
+                winui::full_on_hover(ui, drawn, "downloads-heading", title);
+            }
+        }
         let outer = egui::Rect::from_min_max(
-            pos2(o.x + list_left, o.y + chrome::MENU_H + chrome::pane_top()),
+            pos2(o.x + list_left, table_top),
             pos2(o.x + w - 7.0, o.y + h - STRIP_H - 4.0),
         );
         self.list.menu_open = self.popup.is_some() || self.open_menu.is_some();
@@ -11879,7 +11896,15 @@ impl App {
             }
         }
         if let Some(v) = &mut self.video_dlg {
-            match v.show(ctx, &self.rt) {
+            let out = v.show(ctx, &self.rt);
+            // "Social posts: start at once" is kept for the next post, however the window ends.
+            if !matches!(out, Outcome::Open)
+                && self.settings.video_social_at_once != v.social_at_once()
+            {
+                self.settings.video_social_at_once = v.social_at_once();
+                self.dirty = true;
+            }
+            match out {
                 Outcome::Open => {}
                 Outcome::Closed => self.video_dlg = None,
                 Outcome::Done(out) => {

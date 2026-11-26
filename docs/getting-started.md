@@ -31,8 +31,8 @@ version after 0.5.2, each comes for two more kinds of PC too, with the processor
 The upstream BMD is available through [WinGet](https://learn.microsoft.com/windows/package-manager/winget/). Use GitHub Releases for BMD. These commands apply to the upstream package:
 
 ```
-winget install AhmedNefzaoui.BMD
-winget upgrade AhmedNefzaoui.BMD
+winget install DecoyINDIA.BMD
+winget upgrade DecoyINDIA.BMD
 ```
 
 ### On Linux
@@ -136,7 +136,7 @@ Browser integration is set up by BMD itself at each start (the browsers installe
 
 If BMD is already running, the setup asks it to save and close first. To update, use **Help → Check for updates → Update now**, or run the setup of the new version (when available); your list and settings stay.
 
-Browser integration needs one more step in each browser: adding the extension. In Firefox, click **Add to Firefox** on [its page on addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/); in Chrome, Edge, Brave, Opera and Vivaldi, **Add to Chrome** on [its page in the Chrome Web Store](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp). [Browser integration](browser-integration.md) shows how.
+Browser integration needs one more step in each browser. Firefox needs BMD's add-on to be published on addons.mozilla.org first, which has not happened yet. For Chrome, Edge, Brave, Opera, Vivaldi and Helium, [load the bundled extension manually](browser-integration.md#chrome-edge-brave-opera-and-vivaldi).
 
 ### Uninstall
 
@@ -195,9 +195,10 @@ BMD follows your system: when Windows (or your desktop's light/dark preference o
 
 ## Themes
 
-**View → Theme** changes BMD's look at once, keeping its layout:
+Choose a theme under **View → Theme**.
 
-- **Classic**: BMD's own look, the default.
+- **Emerald** is the default for new installations. It uses a sage sidebar, a green **Add URL** button, and a spacious transfer list with progress bars for active downloads of known size.
+- **Classic** is BMD's original layout and palette.
 - **Native**: your system's colours. Windows' accent colour (Settings → Personalization →
   Colors) and, when it is on, its contrast theme; the desktop's accent colour and its higher
   contrast setting on Linux (GNOME 47 and later, KDE Plasma); the accent colour on macOS. It
@@ -222,9 +223,6 @@ BMD follows your system: when Windows (or your desktop's light/dark preference o
 - **Aqua**: Mac OS X's look: gel buttons round at the ends (the default one blue), glossy check
   boxes, a blue focus ring, a blue gel progress bar, a grey title bar with small round buttons
   (on Windows), and icons drawn for BMD in that manner.
-- **Emerald**: a white canvas with one near-black ink and a ladder of
-  neutral greys for structure, emerald fills that always carry near-black text rather than white,
-  6-point corners on every control, and Metro's one-colour icons.
 
 ![View → Theme open: Classic, Native, High contrast, Metro, Adwaita, Breeze, Luna, Aero, Aqua and Emerald, and Open themes folder](images/help/view-theme.webp)
 *View → Theme switches at once, keeping the layout.*

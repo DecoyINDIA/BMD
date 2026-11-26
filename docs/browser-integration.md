@@ -6,39 +6,34 @@ With the BMD extension, clicking a download link in your browser hands the downl
 
 The extension works in **Google Chrome**, **Microsoft Edge**, **Brave**, **Opera** and **Vivaldi**, in **Firefox** 140 or later, and in **Safari** 17 or later on a Mac (see [Safari](#safari-macos)).
 
-Browsers built on them work too: Chromium and Helium take the extension as Chrome does, Brave Origin as Brave does, Zen and LibreWolf as Firefox does. On Windows, Zen has a bug of its own (see [The browser and BMD aren't connected](browser-help.md#not-installed)).
+Browsers built on them work too. Chromium, Helium and Comet on Windows take the extension as Chrome does, Brave Origin as Brave does, and Zen and LibreWolf as Firefox does. On Windows, Zen has a bug of its own (see [The browser and BMD aren't connected](browser-help.md#not-installed)).
 
 ## Set it up
 
 Browser integration has two parts: a small helper program that the browser talks to, and the extension itself.
 
 1. Install BMD with the setup and keep **Set up browser integration (Chrome, Edge, Brave, Firefox)** ticked. This registers the helper. (The portable copy can't do this; see [Portable mode](portable.md).) On Linux and macOS BMD registers it itself, each time it starts, for the browsers installed then.
-2. Add the extension to each browser you use, as below: using the install options below. The store listings provide the compatible upstream extension. Until a browser's extension has reached BMD, BMD's **Add BMD to your browser** window opens at each start: it lists the browsers it found, and **Add the extension** opens the store's page in that browser. **Install it by hand** opens the steps for loading it without the store; **Don't ask again** stops the window.
-
-![Add BMD to your browser: each browser found, with a button to its store page](images/help/browser-offer.webp)
-*BMD's own window opens each browser's store page for you.*
+2. Add the extension to each browser you use. Until a browser's extension has reached BMD, the **Add BMD to your browser** window opens at each start. **Add the extension** opens the Firefox add-on page or opens a local setup guide in the selected Chromium browser and copies the bundled extension's folder path. **Show me how** opens the online guide when the bundled setup files are unavailable. **Don't ask again** stops the window.
 
 ### Firefox
 
-Firefox 140 or later is needed. Install the add-on from its page on addons.mozilla.org, [BMD](https://addons.mozilla.org/firefox/addon/mister-download-manager/): click **Add to Firefox**. Firefox keeps it updated. Zen and LibreWolf install it from the same page. (BMD's **Add BMD to your browser** window opens that page for you.)
+Firefox 140 or later is needed. BMD's Firefox add-on is not on addons.mozilla.org yet: Firefox only keeps add-ons that Mozilla has signed, so until BMD's listing is published, use the Chromium-based browsers below, or the browser's own download handling with BMD's clipboard watcher. This page will link the listing once it exists.
 
 ### Chrome, Edge, Brave, Opera and Vivaldi
 
-Install the extension from its page in the Chrome Web Store, [BMD](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp): click **Add to Chrome**. In Edge the button is **Get**: Edge first asks to **Allow extensions from other stores** (click **Allow**), then **Add extension**. The browser keeps it updated. BMD's **Add BMD to your browser** window opens that page in each browser for you, and Chrome may offer it by itself at its next start once BMD is installed.
+Load the bundled extension manually. Its files are in the `extension` folder where BMD is installed, at `%LOCALAPPDATA%\Programs\BMD\extension` if you installed it for yourself or `Program Files\BMD\extension` if you installed it for everyone. You can also download and unzip the release's `...-extension-chromium.zip`.
 
-To load it by hand instead (a browser that can't use the store, or a build of your own): its files are in the `extension` folder where BMD is installed: `%LOCALAPPDATA%\Programs\BMD\extension` if you installed it for yourself, or `Program Files\BMD\extension` if you installed it for everyone. Every release also has them as their own download, `...-extension-chromium.zip` (unzip it first).
-
-1. Open the extensions page: `chrome://extensions`, `edge://extensions` or `brave://extensions`.
+1. Open the browser's extensions page. Use `chrome://extensions` in Chrome and Comet, `edge://extensions` in Edge, or `brave://extensions` in Brave.
 2. Turn on **Developer mode**.
-3. Click **Load unpacked** and choose the `extension\chromium` folder.
+3. Click **Load unpacked** and paste the folder path copied by BMD, or choose the bundled `extension\chromium` folder.
 
 The unpacked BMD build appears as **BMD**. Leave it turned on. Pin its button to the toolbar to see at a glance whether the browser reaches BMD.
 
+Comet identifies itself as Google Chrome. BMD records its connection and applies capture settings under **Google Chrome**.
+
 ### Helium
 
-[Helium](https://helium.computer/) installs the extension from the same page in the Chrome Web Store: click **Add to Chrome**. Helium fetches extensions through its own services, so this works only while they're allowed. If Helium says **Extension downloads are disabled**, open `helium://settings/privacy/services` (**Settings → Privacy and security → Helium services**), turn on **Allow connecting to Helium services** and **Proxy extension downloads and updates**, and click **Add to Chrome** again. With those off, load the extension by hand instead, as above (`chrome://extensions` works in Helium too).
-
-BMD's setup registers the helper where Helium looks for it, on Windows, Linux and macOS. On Linux and macOS BMD also offers the extension to Helium, through Helium's own services, so with them allowed it arrives by itself at Helium's next start (on macOS Helium asks first: **New extension added** in its menu, where you turn it on). The Linux packages (.deb, .rpm) leave that to the window below, writing nothing in your home folder. On Windows Helium can't be offered the extension this way: BMD's **Add BMD to your browser** window opens the store's page in Helium when Helium was installed with its setup; Helium from its zip isn't found there, so open the store's page in it yourself. Helium presents itself as Google Chrome, on purpose, so in **Options → General → Capture downloads from the following browsers** it is **Google Chrome**.
+In Helium, open `chrome://extensions` and follow the manual installation steps above. BMD registers the helper for Helium on Windows, Linux and macOS. Helium appears as **Google Chrome** in **Options → General → Capture downloads from the following browsers**.
 
 ### Safari (macOS)
 

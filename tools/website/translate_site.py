@@ -50,7 +50,7 @@ MODEL = tr.MODEL
 BATCH_ITEMS = 30
 BATCH_WORDS = 1400
 # Names that stay as they are (the app's list, and the site's own).
-KEEP = sorted(set(tr.KEEP + ["macOS", "Linux", "Rust", "YouTube", "Vimeo", "Tonec", "Ahmed Nefzaoui",
+KEEP = sorted(set(tr.KEEP + ["macOS", "Linux", "Rust", "YouTube", "Vimeo", "Tonec", "DecoyINDIA",
                              "Statcounter", "OpenRouter", "Gemini", "Homebrew", "AppImage", "Flatpak",
                              "Chromium", "Vivaldi", "Safari", "MCP", "GPL",
                              # The other download managers idm-alternative.html compares.
@@ -61,11 +61,7 @@ KEEP = sorted(set(tr.KEEP + ["macOS", "Linux", "Rust", "YouTube", "Vimeo", "Tone
                              # The code signing policy's signer.
                              "SignPath Foundation", "SignPath.io", "SignPath"]), key=len, reverse=True)
 # Kept names a language writes in its own script instead (the maintainer's spelling of his name).
-OWN_SPELLING = {
-    "ar": {"Ahmed Nefzaoui": "أحمد نفزاوي"},
-    "fa": {"Ahmed Nefzaoui": "احمد نفزاوی"},
-    "bn": {"Ahmed Nefzaoui": "আহমেদ নেফজাউই"},
-}
+OWN_SPELLING = {}
 # The spellings the model falls back to in these scripts, whatever it is told (ویندوز for Windows):
 # written back as the name the page uses everywhere else before the answer is checked.
 RESPELL = {
@@ -219,7 +215,7 @@ def why_not(code: str, row: dict, text) -> str | None:
         return "keep every {name} slot exactly as written: " + " ".join(sorted(set(re.findall(r"\{\w+\}", src))))
     for name in KEEP:
         written = OWN_SPELLING.get(code, {}).get(name, name)
-        # A language that declines names may add an ending ("Ahmeda Nefzaoui", "na GitHubie"); one
+        # A language that declines names may add an ending ("DecoyINDIAa", "na GitHubie"); one
         # without spaces sets a name straight after its own letters ("オープンソースのIDM代替"),
         # so only a Latin letter or digit before it makes it part of another word.
         kept = len(re.findall(r"(?<![0-9A-Za-zÀ-ɏ])" + r"\w*\s+".join(map(re.escape, written.split())), text))

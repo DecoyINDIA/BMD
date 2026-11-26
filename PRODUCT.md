@@ -66,11 +66,7 @@ maker (Tonec), or as a crack or copy of it.
   runs, IDM 6.42 vs BMD at defaults); the methodology is on the benchmark page.
 - The app's logo (`website/assets/logo-*`), its 71 flag icons (`crates/app/assets/flags/`, lipis
   flag-icons, MIT), browser logos for the extension (`website/assets/browsers/`).
-- Real third-party words and figures, checked by hand: `website/content/quotes.tsv` (reviews and
-  articles, quoted exactly with their source and date), `website/content/press.tsv` (independent
-  articles and videos) and `build.py` FIGURES (the browser stores' users and ratings, GitHub's
-  download count, Trendshift's ranking), each with the date it was checked. Nothing beyond these
-  may be invented, shortened into a different meaning or combined; no customer or press logos.
+- No third-party quotes, ratings or press yet: nothing about BMD is quoted until a real, checked source exists (then with its source and date, exactly as written); no customer or press logos.
   GitHub stars are shown only as the live count.
 
 ## Product Principles

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Install the BMD extension</title>
+  <style>
+    :root { color-scheme: light dark; font: 1rem/1.55 system-ui, sans-serif; }
+    main { max-width: 42rem; margin: 8vh auto; padding: 0 1.5rem; }
+    li + li { margin-top: .8rem; }
+    input { box-sizing: border-box; width: 100%; padding: .5rem; font: inherit; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Install the BMD extension</h1>
+    <ol>
+      <li>Open a new tab and enter the address for your browser.
+        <ul>
+          <li>Chrome, Comet and other Chromium browsers <code>chrome://extensions</code></li>
+          <li>Microsoft Edge <code>edge://extensions</code></li>
+          <li>Brave <code>brave://extensions</code></li>
+        </ul>
+      </li>
+      <li>Turn on <strong>Developer mode</strong> and choose <strong>Load unpacked</strong>.</li>
+      <li>Select the folder containing this guide and <code>manifest.json</code>. If you opened the guide from BMD, the folder path is already copied.</li>
+    </ol>
+    <p><label for="folder">Extension folder</label>
+      <input id="folder" readonly spellcheck="false"></p>
+    <p>After BMD appears in the extensions list, open its toolbar popup to check the connection.</p>
+  </main>
+  <script>
+    const folder = document.getElementById("folder");
+    const path = decodeURIComponent(new URL(".", location.href).pathname).replace(/\/$/, "");
+    const windows = navigator.platform.startsWith("Win");
+    folder.value = windows
+      ? (location.hostname ? `//${location.hostname}${path}` : path.replace(/^\/(?=[A-Za-z]:)/, "")).replaceAll("/", "\\")
+      : path;
+    folder.addEventListener("focus", () => folder.select());
+  </script>
+</body>
+</html>

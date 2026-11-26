@@ -6,7 +6,7 @@ Key facts:
 - Price: free, no ads, no trial, no paid edition. Licence: GNU GPL 3.0. Source: https://github.com/DecoyINDIA/BMD
 - Downloads: HTTP, HTTPS, FTP, FTPS (explicit and implicit TLS), BitTorrent and magnet links, and videos from web pages via yt-dlp. Proxies, SOCKS and PAC scripts.
 - Engine: up to 32 connections per file (8 by default; 128 once allowed in Options), dynamic re-splitting, crash-safe resume, checksum verification, refresh of expired download links, per-server connection limits learned automatically.
-- Browser extension for Firefox (from addons.mozilla.org) and Chrome, Edge, Brave, Opera and Vivaldi (from the Chrome Web Store): hands downloads over with cookies and referrer, right-click "Download with BMD", a draggable "Download video" button over videos. Without the extension, copying a link to a file opens the download window.
+- Browser extension for Firefox (from addons.mozilla.org) and Chrome, Edge, Brave, Opera and Vivaldi (load the bundled extension manually): hands downloads over with cookies and referrer, right-click "Download with BMD", a draggable "Download video" button over videos. Without the extension, copying a link to a file opens the download window.
 - 86 interface languages (every Windows 11 display language), right-to-left layouts for Arabic, Hebrew, Persian, Urdu and Uyghur.
 - Imports IDM's export files (.ef2). Accepts IDM's command-line switches (/d /p /f /a /n /s). Has a CLI (bmd-cli, with --json output for scripts and agents) and a local token-protected automation API, described by a JSON Schema.
 - AI assistants: an MCP server (bmd-mcp) lets Claude, Cursor, VS Code and other MCP clients list, add, pause, resume and remove downloads in the running app.
@@ -26,4 +26,3 @@ Key facts:
 - [Languages](https://bmd.example.com/languages.html)
 - [Privacy policy](https://bmd.example.com/privacy.html)
 - [Benchmark report with raw data](https://bmd.example.com/benchmark.html)
-- [Press and mentions](https://bmd.example.com/press.html): independent articles, reviews and videos about BMD, its figures in the browser stores and on GitHub, and the official places to get it

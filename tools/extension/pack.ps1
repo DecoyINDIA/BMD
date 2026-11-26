@@ -28,6 +28,9 @@ foreach ($kind in "chromium", "firefox", "safari") {
   foreach ($f in "background.js", "video.js", "page.js", "popup.html", "popup.css", "popup.js") {
     Copy-Item (Join-Path $src $f) $dir
   }
+  if ($kind -eq "chromium") {
+    Copy-Item (Join-Path $PSScriptRoot "setup.html") $dir
+  }
   Copy-Item (Join-Path $src "icons") (Join-Path $dir "icons") -Recurse
   # Its texts in the browser's language (tools/extension/locales.py).
   Copy-Item (Join-Path $src "_locales") (Join-Path $dir "_locales") -Recurse
@@ -46,6 +49,7 @@ foreach ($kind in "chromium", "firefox", "safari") {
 $store = Join-Path $out "chrome-store"
 if (Test-Path $store) { Remove-Item -LiteralPath $store -Recurse -Force }
 Copy-Item (Join-Path $out "chromium") $store -Recurse
+Remove-Item -LiteralPath (Join-Path $store "setup.html")
 $manifest = Get-Content (Join-Path $store "manifest.json") -Raw | ConvertFrom-Json
 $manifest.PSObject.Properties.Remove("key")
 $json = $manifest | ConvertTo-Json -Depth 10

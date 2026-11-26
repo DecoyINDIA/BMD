@@ -35,7 +35,10 @@ for (const kind of ["chromium", "chrome-store", "firefox", "safari"]) {
   ].filter(Boolean);
   for (const f of files) assert.ok(existsSync(new URL(f, dir)), `${kind}: ${f} is there`);
   assert.ok(existsSync(new URL("_locales/en/messages.json", dir)), `${kind}: English texts`);
-  if (kind === "chromium") assert.equal(idOf(m.key), unpackedId, "the key gives the ID the host serves");
+  if (kind === "chromium") {
+    assert.equal(idOf(m.key), unpackedId, "the key gives the ID the host serves");
+    assert.ok(existsSync(new URL("setup.html", dir)), "chromium: the local setup guide is bundled");
+  }
   if (kind === "chrome-store") {
     assert.equal(m.key, undefined, "the store signs it with its own key");
     const video = m.content_scripts.find((c) => c.js.includes("video.js"));

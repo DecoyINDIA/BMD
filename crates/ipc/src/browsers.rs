@@ -279,6 +279,7 @@ pub const BROWSERS: &[Browser] = &[
         &["vivaldi", "vivaldi-snapshot"],
     )
     .linux_system_in(&[ETC_CHROMIUM]),
+    chromium("Comet", &[], &[], &[], &[]),
     // Opera's folders: unverified.
     chromium(
         "Opera",
@@ -374,6 +375,7 @@ pub const WINDOWS_PROGRAMS: &[(&str, Option<&str>, &str)] = &[
     ("chrome.exe", Some(r"\chromium\"), "Chromium"),
     ("msedge.exe", None, "Microsoft Edge"),
     ("brave.exe", None, "Brave"),
+    ("comet.exe", None, "Comet"),
     ("vivaldi.exe", None, "Vivaldi"),
     ("opera.exe", None, "Opera"),
     ("thorium.exe", None, "Thorium"),
@@ -1010,6 +1012,10 @@ mod tests {
         assert_eq!(
             named(r"C:\Users\a\AppData\Local\Chromium\Application\chrome.exe"),
             Some("Chromium")
+        );
+        assert_eq!(
+            named(r"C:\Users\a\AppData\Local\Perplexity\Comet\Application\comet.exe"),
+            Some("Comet")
         );
         assert_eq!(
             named(r"D:\Tools\chrome.exe"),

@@ -13,7 +13,6 @@ pub const STORE_ID: &str = "ejoleppdfgjdndddcjoehopknmlglojp";
 pub const OTHER_STORE_IDS: [&str; 2] = ["EDGE_ADDONS_ID_PENDING", "OPERA_ADDONS_ID_PENDING"];
 /// The Firefox add-on's page on addons.mozilla.org (listed: Firefox installs and updates it from
 /// there).
-pub const FIREFOX_PAGE: &str = "https://addons.mozilla.org/firefox/addon/mister-download-manager/";
 /// The Firefox add-on's ID (extension/manifest.firefox.json).
 pub const FIREFOX_ID: &str = "integration@bmd.decoyindia.github.io";
 /// Chrome's update service: an external-install entry naming it makes Chrome offer the store's
@@ -43,16 +42,7 @@ pub fn chromium_ids() -> Vec<&'static str> {
         .collect()
 }
 
-/// The extension's page in the Chrome Web Store (Chrome, Edge, Brave, Opera and Vivaldi all
-/// install from it), once it is listed: the listing's own address, its name then its ID.
-pub fn store_page() -> Option<String> {
-    store_id()
-        .map(|id| format!("https://chromewebstore.google.com/detail/mister-download-manager/{id}"))
-}
-
-/// The tutorial that adds the extension: from the stores, and by hand (a build of its own, or
-/// a browser that can't use its store). Its file in docs/: the app opens it on the website, in
-/// the interface language (the app's help::page_url).
+/// The extension installation tutorial in docs/.
 pub const GUIDE_DOC: &str = "guide-catch-browser-downloads.md";
 
 /// The help page for a browser that doesn't reach BMD, at the section for
@@ -119,10 +109,9 @@ mod tests {
     fn ids_are_chromium_ids() {
         assert!(valid_id(UNPACKED_ID));
         assert!(!valid_id("STORE_ID_PENDING") && !valid_id("abc"));
-        // A placeholder store ID is never served, registered or linked.
+        // A placeholder store ID is never served or registered.
         assert_eq!(store_id().is_some(), valid_id(STORE_ID));
         assert!(chromium_ids().iter().all(|id| valid_id(id)));
-        assert_eq!(store_page().is_some(), store_id().is_some());
     }
 
     /// The store's copy and the app folder's (unpacked) both reach the host: the manifests'
@@ -135,12 +124,6 @@ mod tests {
         assert!(
             ids.contains(&UNPACKED_ID) && ids.contains(&STORE_ID),
             "{ids:?}"
-        );
-        assert_eq!(
-            store_page().as_deref(),
-            Some(
-                "https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp"
-            )
         );
     }
 
