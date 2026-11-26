@@ -8,7 +8,7 @@ Set up the extension once, and every download link you click in Firefox, Chrome,
 
 On Windows, BMD must be installed with the setup, with **Set up browser integration (Chrome, Edge, Brave, Firefox)** ticked. It is ticked by default. If you're not sure, run the setup again. A portable copy can't do this. On Linux and macOS, start BMD once: it sets browser integration up itself.
 
-BMD's **Add BMD to your browser** window, which opens at each start until a browser's extension has reached BMD, does the steps below for you: **Add the extension** opens the store's page in that browser.
+BMD's **Add BMD to your browser** window opens at each start until a browser's extension has reached BMD. **Add the extension** opens the Firefox add-on page or opens a local setup guide in the selected Chromium browser and copies the bundled extension's folder path. **Show me how** opens this guide when the bundled setup files are unavailable.
 
 Once it is set up, a download link goes like this:
 
@@ -23,26 +23,18 @@ Once it is set up, a download link goes like this:
 
 ## In Firefox
 
-1. Open the add-on's page on addons.mozilla.org, [BMD](https://addons.mozilla.org/firefox/addon/mister-download-manager/), and click **Add to Firefox**. Zen and LibreWolf use the same page.
-2. Firefox asks to confirm: click **Add**. Firefox keeps the add-on up to date.
-3. Go to a web page and click a download link, for example a ZIP or an EXE: BMD opens **Download File Info**. Click **Start Download**.
+BMD's Firefox add-on is not on addons.mozilla.org yet, and Firefox installs only add-ons Mozilla has signed. Use a Chromium-based browser below for now; this guide will link the listing once it exists.
 
-## In Chrome, Edge, Brave, Opera or Vivaldi
+Then, in any browser where the extension is on: go to a web page and click a download link, for example a ZIP or an EXE: BMD opens **Download File Info**. Click **Start Download**.
 
-1. Open the extension's page in the Chrome Web Store, [BMD](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp), and click **Add to Chrome**. In Edge the button is **Get**, and Edge first asks to **Allow extensions from other stores**: click **Allow**.
-2. The browser asks to confirm: click **Add extension**. It keeps the extension up to date.
-3. Go to a web page and click a download link, for example a ZIP or an EXE: BMD opens **Download File Info**. Click **Start Download**.
+## In Chrome, Edge, Brave, Comet, Opera, Vivaldi or Helium
 
-Helium installs it from the same page, as long as Helium may download extensions: see [Helium](browser-integration.md#helium).
+Load the bundled extension manually.
 
-## Without the store
-
-When a browser can't use its store (a computer managed by an organization, or a build of your own), add the extension by hand:
-
-1. Open your browser's extensions page: type `chrome://extensions`, `edge://extensions` or `brave://extensions` in the address bar.
+1. Open your browser's extensions page from its menu or type its address. In Comet, use `chrome://extensions`.
 2. Turn on **Developer mode**.
 3. Click **Load unpacked**.
-4. Choose the `extension\chromium` folder inside BMD's folder. If you installed BMD for yourself, that is `%LOCALAPPDATA%\Programs\BMD\extension\chromium`; you can paste that path into the folder box.
+4. Paste the folder path copied by BMD or choose the `extension\chromium` folder inside BMD's folder. If you downloaded the Chromium extension ZIP, unzip it and choose the folder containing `manifest.json`.
 5. **BMD** appears. Make sure it is turned on.
 6. Go to a web page and click a download link, for example a ZIP or an EXE.
 7. BMD opens **Download File Info** instead of the browser downloading the file. Click **Start Download**.

@@ -28,9 +28,15 @@ pub enum Install {
     /// Linux, a package of another package manager (pacman, …): that package manager updates
     /// it, never BMD.
     System,
+    /// Windows, the setup program run by the Microsoft Store (`/store=1`, bmd.iss, which leaves
+    /// [`STORE_MARKER`] next to the program): the Store updates it, never BMD.
+    Store,
     /// Built here: never updated from a release.
     Source,
 }
+
+/// The file bmd.iss leaves in the program's folder when the Microsoft Store ran the setup.
+pub const STORE_MARKER: &str = "store.marker";
 
 impl Install {
     /// This copy's, from where its program is (found once: on Linux it asks the package
@@ -52,9 +58,14 @@ impl Install {
         };
         let dir = exe.parent().unwrap_or(Path::new("."));
         if cfg!(windows) {
-            // The installer leaves its uninstaller next to the program; the zips don't.
+            // The installer leaves its uninstaller next to the program; the zips don't. The
+            // Microsoft Store's run of it also leaves a marker: that copy is the Store's to update.
             return if dir.join("unins000.exe").is_file() {
-                Install::Installer
+                if dir.join(STORE_MARKER).is_file() {
+                    Install::Store
+                } else {
+                    Install::Installer
+                }
             } else {
                 Install::PlainZip
             };
@@ -91,12 +102,18 @@ impl Install {
             Install::Deb => "The .deb",
             Install::Rpm => "The .rpm",
             Install::TarGz => "The .tar.gz",
+            Install::Store => "The Microsoft Store",
             Install::System => "Another package manager",
             Install::Source => "Built from source",
         }
     }
 
-    pub const ALL: [Install; 10] = [
+    /// Whether another program updates this copy, never BMD (no Update now, no Download).
+    pub fn updated_elsewhere(self) -> bool {
+        matches!(self, Install::System | Install::Store)
+    }
+
+    pub const ALL: [Install; 11] = [
         Install::Installer,
         Install::PortableZip,
         Install::PlainZip,
@@ -105,6 +122,7 @@ impl Install {
         Install::Deb,
         Install::Rpm,
         Install::TarGz,
+        Install::Store,
         Install::System,
         Install::Source,
     ];
@@ -137,7 +155,7 @@ impl Install {
             Install::AppImage | Install::Deb | Install::Rpm | Install::TarGz
         );
         let (tail, ext) = match (self, arch) {
-            (Install::System | Install::Source, _) => return Vec::new(),
+            (Install::System | Install::Store | Install::Source, _) => return Vec::new(),
             (Install::Installer, _) => (windows("setup"), ".exe"),
             (Install::PortableZip, _) => (windows("portable"), ".zip"),
             (Install::PlainZip, _) => (arch.name().to_owned(), ".zip"),
@@ -680,6 +698,10 @@ Connection: close
         );
         // BMD updates neither another package manager's copy nor a build of its own.
         assert!(Install::System.assets("1.0.0").is_empty());
+        // Nor the Microsoft Store's: the Store updates it.
+        assert!(Install::Store.assets("1.0.0").is_empty());
+        assert!(Install::Store.updated_elsewhere() && Install::System.updated_elsewhere());
+        assert!(!Install::Installer.updated_elsewhere());
     }
 
     #[test]

@@ -61,11 +61,11 @@ Open Windows **Settings → Apps**, find BMD and choose Uninstall. The uninstall
 
 ### Which browsers does it work with? {#browsers}
 
-Firefox (from [addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/)), Google Chrome, Microsoft Edge, Brave, Opera and Vivaldi (from [the Chrome Web Store](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp)), through the BMD browser extension, and browsers built on them: Zen and LibreWolf, Helium. The extension hands downloads to BMD with their cookies and referrer, so files behind a sign-in still work, and it adds **Download with BMD** to the right-click menu and a **Download video** button over videos. See [Browser integration](/help/browser-integration.html).
+The BMD extension supports Firefox, Chrome, Edge, Brave, Opera, Vivaldi, Zen, LibreWolf and Helium. The extension hands downloads to BMD with their cookies and referrer, so files behind a sign-in still work, and it adds **Download with BMD** to the right-click menu and a **Download video** button over videos. See [Browser integration](/help/browser-integration.html).
 
 ### How do I install the browser extension? {#install-extension}
 
-Install BMD with the setup and keep **Set up browser integration** ticked. In Firefox, then open [the add-on's page on addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/) and click **Add to Firefox**. In Chrome, Edge, Brave, Opera and Vivaldi, open [its page in the Chrome Web Store](https://chromewebstore.google.com/detail/mister-download-manager/ejoleppdfgjdndddcjoehopknmlglojp) and click **Add to Chrome** (Edge shows **Get**, and first asks to allow extensions from other stores). Can't use a store? Open the browser's extensions page, turn on Developer mode, choose **Load unpacked** and pick the `extension\chromium` folder in BMD's folder. The [tutorial](/help/guide-catch-browser-downloads.html) walks through it.
+Install BMD with the setup and keep **Set up browser integration** ticked. The Firefox add-on is not on addons.mozilla.org yet. In a Chromium browser, open the extensions page, turn on **Developer mode**, choose **Load unpacked** and pick the `extension\chromium` folder in BMD's folder. The [tutorial](/help/guide-catch-browser-downloads.html) walks through it.
 
 ### Why doesn't BMD take over my download? {#not-catching}
 

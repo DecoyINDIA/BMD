@@ -1,11 +1,6 @@
 # Emerald: one of BMD's built-in themes, and an example of a theme file.
-# A white canvas, one near-black ink, a ladder of neutral greys for structure, and emerald as the
-# one chromatic event.
-#
-# Emerald is a fill here, never small text on white (1.75:1), so the roles that must be read
-# against the canvas — focus rings, links, success — take the deeper green instead. A green fill
-# carries near-black text, never white. Corners stay at 6, buttons included: a pill is the one
-# shape this look never draws.
+# White transfer surfaces, a sage sidebar and a forest-green primary action. The night variant
+# uses the same hierarchy with pine surfaces and a mint accent.
 #
 # A theme file names only what it changes. A few seeds per variant derive every other colour
 # (`crate::derive`), so a role BMD adds later arrives in this look rather than the classic one.
@@ -21,7 +16,6 @@ check = "fluent"
 button = "fluent"
 progress = "bar"
 scroll = "overlay"
-caption = "metro"
 focus = "ring"
 
 [sizes]
@@ -35,68 +29,56 @@ radius = 6
 "radius.popup" = 8
 border = 1
 "focus-line" = 2
-"list.row" = 19
-"list.header" = 26
+"list.row" = 32
+"list.header" = 32
 
 [seeds.light]
-background = "#ffffff"
+background = "#f8fbf9"
 surface = "#ffffff"
-header = "#fafafa"
-text = "#171717"
-accent = "#17a673"
-selection = "#3ecf8e"
+header = "#f1f6f3"
+text = "#152e24"
+accent = "#187052"
+selection = "#d8efe2"
 error = "#d1004f"
 warning = "#8a6100"
 success = "#0e7a55"
 
 [seeds.dark]
-background = "#1c1c1c"
-surface = "#202020"
-header = "#202020"
-text = "#ffffff"
-accent = "#3ecf8e"
-selection = "#3ecf8e"
+background = "#14211d"
+surface = "#182822"
+header = "#1b3028"
+text = "#eef7f2"
+accent = "#80dbad"
+selection = "#2b523f"
 error = "#ff8095"
 warning = "#ffdb13"
 success = "#3ecf8e"
 
 [light]
-# The accent's fills are painted in the light emerald, which carries near-black text; the seed's
-# deeper green stays on the lines and labels that must be read against white.
-"button.accent" = "#3ecf8e"
-"button.accent.hot" = "#4ade80"
-"button.accent.pressed" = "#35c283"
-"button.accent.bottom" = "#24b47e"
-"button.accent.text" = "#171717"
-"button.accent.text.pressed" = "#171717"
-"check.on" = "#3ecf8e"
-"check.on.hot" = "#4ade80"
-"check.on.pressed" = "#35c283"
-"check.mark" = "#171717"
-"progress.bar" = "#3ecf8e"
-"progress.track" = "#ededed"
-
-# The focus ring in the seed's green rather than a grey: the one accent, seen at 3:1.
-"focus.ring" = "#17a673"
-
-# Text on a selection: the ink, so the emerald stays a fill and not a colour that inks other text.
-"selection.text" = "#171717"
-
-# Dotted tree connectors, quiet enough to read as structure rather than as ink.
-"tree.lines" = "#dedede"
-
-# Kind chips: a soft fill with the ink on it, so one text colour works on both hues.
-"chip.web" = "#d9f6e7"
-"chip.torrent" = "#ece6fa"
-"chip.text" = "#171717"
+"selection.text" = "#152e24"
+"selection.inactive" = "#e9f3ed"
+"selection.focus" = "#187052"
+"focus.ring" = "#185a44"
+"progress.track" = "#c7ded1"
+"tree-chevrons" = true
+"tree" = "#edf5ef"
+"header.sep" = "#dce9e1"
+"header.line" = "#dce9e1"
+"list.grid" = "#e7efe9"
+"chip.web" = "#e1f2e8"
+"chip.torrent" = "#e7ede9"
+"chip.text" = "#254536"
 
 [dark]
-# These seeds already paint the accent's fills in emerald with near-black text, so only the
-# roles derived from the wrong seed would show.
-"progress.track" = "#333333"
-"focus.ring" = "#3ecf8e"
-"selection.text" = "#171717"
-"tree.lines" = "#2e2e2e"
-"chip.web" = "#12352a"
-"chip.torrent" = "#211a33"
-"chip.text" = "#e6e6e6"
+"selection.text" = "#eef7f2"
+"selection.inactive" = "#233b30"
+"selection.focus" = "#80dbad"
+"focus.ring" = "#a5f0c5"
+"progress.track" = "#466456"
+"tree" = "#1b3028"
+"header.sep" = "#304b3e"
+"header.line" = "#304b3e"
+"list.grid" = "#284236"
+"chip.web" = "#284c3a"
+"chip.torrent" = "#2e433a"
+"chip.text" = "#e1f2e8"

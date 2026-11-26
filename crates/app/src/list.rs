@@ -394,6 +394,8 @@ impl ListState {
 pub struct Row {
     /// What the Status filter sees: Downloading, Stopped, Waiting, Complete or Error.
     pub status_group: &'static str,
+    /// Bytes received for an active transfer when its total is known.
+    pub progress: Option<f32>,
     pub icon: IconKey,
     /// In a queue: the Q column shows a queue icon (IDM: stacked files).
     pub queued: bool,
@@ -594,10 +596,17 @@ pub fn show(
         outer.right() - 1.0,
         outer.bottom() - 1.0,
     );
-    winui::solid(&p, screen(outer), FRAME());
-    fill(&p, l + 1.0, t + 1.0, r - 1.0, b - 1.0, BG());
-    let (cl, ct, cr, cb) = (l + 2.0, t + 2.0, r - 2.0, b - 2.0);
-    let font = winui::tahoma();
+    let emerald = crate::theme::emerald_workspace();
+    let colors = crate::theme::colors();
+    let (inset, font) = if emerald {
+        winui::solid(&p, screen(outer), BG());
+        (0.0, winui::segoe())
+    } else {
+        winui::solid(&p, screen(outer), FRAME());
+        fill(&p, l + 1.0, t + 1.0, r - 1.0, b - 1.0, BG());
+        (2.0, winui::tahoma())
+    };
+    let (cl, ct, cr, cb) = (l + inset, t + inset, r - inset, b - inset);
     // Status at its default width follows the font and the language (#736): a few words to
     // measure, kept by egui from frame to frame.
     if st.status_fits {
@@ -766,6 +775,11 @@ pub fn show(
     let p_all = p.clone();
     let p = p.with_clip_rect(screen(header));
     fill(&p, cl, ct, rr, ct + header_h() - 1.0, HEADER_BG());
+    if emerald {
+        fill(&p, cl, ct, rr, ct, colors.header_line);
+        let bottom = ct + header_h() - 1.0;
+        fill(&p, cl, bottom, rr, bottom, colors.header_line);
+    }
     for (c, x0, x1) in &cols {
         let hovered = hresp
             .hover_pos()
@@ -850,7 +864,12 @@ pub fn show(
             *x0..=*x1,
             ct..=ct + header_h(),
         )));
-        text_font(&clip, font.clone(), x0 + 6.0, ct + 15.0, &label, TEXT());
+        let (baseline, ink) = if emerald {
+            (winui::baseline_in(ct, header_h()), colors.muted)
+        } else {
+            (ct + 15.0, TEXT())
+        };
+        text_font(&clip, font.clone(), x0 + 6.0, baseline, &label, ink);
     }
 
     // ---- body ------------------------------------------------------------------------------
@@ -1005,6 +1024,12 @@ pub fn show(
         let idx = first + k;
         let top = body_top + k as f32 * row_h() - offset;
         if let Some(row) = rows.get(idx) {
+            let icon_top = top + if emerald { (row_h() - 16.0) / 2.0 } else { 0.0 };
+            let baseline = if emerald {
+                winui::baseline_in(top, row_h())
+            } else {
+                top + 12.0
+            };
             let picked = selected.get(idx).copied().unwrap_or(false);
             expose_row(idx, row, picked);
             let sel = picked && st.focused;
@@ -1038,11 +1063,18 @@ pub fn show(
                     bottom,
                     winui::SELECTED_INACTIVE(),
                 );
+            } else if emerald
+                && resp
+                    .hover_pos()
+                    .map(english)
+                    .is_some_and(|p| p.y >= top && p.y < top + row_h())
+            {
+                fill(&bp, cl, top, rr, top + row_h() - 2.0, colors.subtle_hot);
             }
             for (c, x0, x1) in &cols {
                 // The file-type icon sits in the File Name column, wherever it is.
                 let tx = if *c == 0 {
-                    icons.paint_in(ui, &bp, row.icon.clone(), pos2(x0 + 4.0, top));
+                    icons.paint_in(ui, &bp, row.icon.clone(), pos2(x0 + 4.0, icon_top));
                     x0 + 22.0
                 } else {
                     x0 + 6.0
@@ -1052,7 +1084,7 @@ pub fn show(
                         ui,
                         &bp,
                         IconKey::Silk("page_white_stack"),
-                        pos2(x0 + 2.0, top),
+                        pos2(x0 + 2.0, icon_top),
                     );
                 }
                 let cell = Rect::from_min_max(pos2(*x0, top), pos2(*x1 - 1.0, top + row_h()));
@@ -1110,14 +1142,38 @@ pub fn show(
                 } else {
                     TEXT()
                 };
-                text_font(&clip, font.clone(), tx, top + 12.0, &s, ink);
+                let progress = if emerald && *c == STATUS && x1 - tx >= 38.0 {
+                    row.progress
+                } else {
+                    None
+                };
+                text_font(
+                    &clip,
+                    font.clone(),
+                    tx,
+                    baseline - if progress.is_some() { 4.0 } else { 0.0 },
+                    &s,
+                    ink,
+                );
+                if let Some(progress) = progress {
+                    let track = Rect::from_min_max(
+                        pos2(tx, top + row_h() - 7.0),
+                        pos2(x1 - 8.0, top + row_h() - 4.0),
+                    );
+                    clip.rect_filled(screen(track), 1.5, colors.progress_track);
+                    let fill = Rect::from_min_size(
+                        track.min,
+                        egui::vec2(track.width() * progress, track.height()),
+                    );
+                    clip.rect_filled(screen(fill), 1.5, colors.progress_bar);
+                }
             }
         }
         // The grid line is the item's own last row (top + 16), so icons are not clipped; in
         // both modes (dark changes only colours).
         let gy = top + row_h() - 1.0;
         // An empty list has no grid (the empty state stands alone).
-        if !rows.is_empty() {
+        if idx < rows.len() || (!emerald && !rows.is_empty()) {
             fill(&bp, cl, gy, rr, gy, GRID_H());
         }
     }
@@ -1138,7 +1194,7 @@ pub fn show(
         resp.clone().on_hover_text_at_pointer(full);
     }
     filter_box(ui, st);
-    for (_, _, x1) in cols.iter().filter(|_| !rows.is_empty()) {
+    for (_, _, x1) in cols.iter().filter(|_| !emerald && !rows.is_empty()) {
         // On the column's last pixel, under its header's divider: one straight line from the
         // header down (#924: it sat a pixel to the right, on the next column's first).
         fill(&bp, *x1, body_top, *x1, rb, GRID_V_RIGHT());
@@ -1466,16 +1522,27 @@ fn chip(
     // Room: the pill starts 5 px in, pads its text 6 px each side, and ends 3 px before the cell.
     let label = &winui::ellipsize(p, font, full, (x1 - x0 - 5.0 - 12.0 - 3.0).max(0.0));
     let w = winui::text_width_font(p, font.clone(), label).round();
+    let emerald = crate::theme::emerald_workspace();
+    let h = if emerald { 19.0 } else { row_h() - 4.0 };
     let pill = Rect::from_min_size(
-        pos2(x0 + 5.0, top + 2.0),
-        egui::vec2(w + 12.0, row_h() - 4.0),
+        pos2(x0 + 5.0, top + (row_h() - h) / 2.0),
+        egui::vec2(w + 12.0, h),
     );
-    p.rect_filled(winui::rect(pill), (row_h() - 4.0) / 2.0, fill);
+    let radius = if emerald {
+        crate::theme::metrics().part_radius
+    } else {
+        h / 2.0
+    };
+    p.rect_filled(winui::rect(pill), radius, fill);
     text_font(
         p,
         font.clone(),
         pill.left() + 6.0,
-        top + 12.0,
+        if emerald {
+            winui::baseline_in(top, row_h())
+        } else {
+            top + 12.0
+        },
         label,
         crate::theme::colors().chip_text,
     );
@@ -1804,6 +1871,7 @@ mod tests {
         cells[0] = name.into();
         cells[SOURCE] = source.into();
         Row {
+            progress: None,
             status_group: status,
             icon: IconKey::Silk("page_white"),
             queued,
@@ -2046,6 +2114,7 @@ mod tests {
         ctx.enable_accesskit();
         let rows: Vec<Row> = (0..3)
             .map(|i| Row {
+                progress: None,
                 status_group: "Complete",
                 icon: IconKey::Silk("page_white"),
                 queued: false,

@@ -41,11 +41,11 @@ Point at a video and a small **Download video** button appears at its edge. It o
 [video downloads](/features/video.html)). You can hide it on one video or one site, or turn it
 off in **Options**.
 
-## Installed from the store, kept up to date
+## Install the extension
 
-Install BMD with its setup and keep **Set up browser integration** ticked. Then add the
-extension: Firefox 140 or later takes it from addons.mozilla.org, and Chrome, Edge, Brave, Opera
-and Vivaldi from the Chrome Web Store. The browser keeps it updated.
+Install BMD with its setup and keep **Set up browser integration** ticked. Firefox 140 or
+later installs the extension from addons.mozilla.org and keeps it updated. In Chromium browsers,
+[load the bundled extension manually](/help/guide-catch-browser-downloads.html).
 
 Some limits, plainly: the portable copy can't connect to a browser, since it writes nothing
 outside its folder.

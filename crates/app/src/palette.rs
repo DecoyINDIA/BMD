@@ -607,7 +607,7 @@ impl Theme {
     }
 }
 
-/// The classic look, BMD's default.
+/// The classic look and fallback for themes that fail to load.
 pub static CLASSIC: Theme = Theme {
     id: Cow::Borrowed("classic"),
     name: Cow::Borrowed("Classic"),
@@ -619,7 +619,7 @@ pub static CLASSIC: Theme = Theme {
     controls: Controls::CLASSIC,
 };
 
-/// The built-in themes that don't change by themselves, the default first: the classic look
+/// The built-in themes that don't change by themselves: the classic look
 /// (written out above), then the ones shipped as theme files (`assets/themes/`, in the format
 /// users write, so they double as examples). Native follows the system and is made when chosen
 /// (`crate::native`).
@@ -958,6 +958,17 @@ mod tests {
             assert!(contrast(p.chip_text, p.chip_web) >= 4.5);
             assert!(contrast(p.chip_text, p.chip_torrent) >= 4.5);
             assert!(contrast(p.text, p.window) >= 4.5);
+            assert!(contrast(p.text, p.tree) >= 4.5);
+            assert!(contrast(p.text, p.selection) >= 4.5);
+            assert!(contrast(p.selection_text, p.selection) >= 4.5);
+            assert!(contrast(p.muted, p.header) >= 4.5);
+            for fill in [
+                p.button_accent,
+                p.button_accent_hot,
+                p.button_accent_pressed,
+            ] {
+                assert!(contrast(p.button_accent_text, fill) >= 4.5);
+            }
         }
     }
 

@@ -113,7 +113,7 @@ In Chrome, Edge and Brave you can limit an extension to some sites (right-click 
 
 ## Firefox forgets the extension after a restart {#firefox-temporary}
 
-An add-on loaded with **Load Temporary Add-on** (from `about:debugging`) is removed when Firefox closes. Remove it and install the add-on from [its page on addons.mozilla.org](https://addons.mozilla.org/firefox/addon/mister-download-manager/) instead: Firefox keeps that one, and updates it.
+An add-on loaded with **Load Temporary Add-on** (from `about:debugging`) is removed when Firefox closes. Firefox removes it on purpose; BMD's signed add-on will be listed on addons.mozilla.org, and Firefox keeps that one and updates it.
 
 <a name="linux-sandbox"></a>
 
