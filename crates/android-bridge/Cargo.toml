@@ -10,7 +10,10 @@ publish.workspace = true
 
 [lib]
 name = "bmd_android_bridge"
-crate-type = ["cdylib", "rlib"]
+# An rlib for the workspace (tests, clippy) on every host; tools/android/build_native.py asks for
+# the Android shared library itself (`cargo rustc --crate-type cdylib`). A cdylib on every host
+# would be linked on desktop builds too, where MinGW's linker refuses a DLL this size
+# ("export ordinal too large") and stops `cargo test --workspace` on x86_64-pc-windows-gnu.
 
 [dependencies]
 bmd-engine.workspace = true
