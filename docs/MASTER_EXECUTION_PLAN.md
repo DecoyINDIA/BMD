@@ -181,12 +181,11 @@ change, in a fresh context, checks the acceptance criteria against the code and 
 
 ### WP-00 Repository stabilization
 
-**WP-00.1 Consolidate branches and PRs** — P1 · all · IN PROGRESS (consolidation PR open; deletions after its merge)
+**WP-00.1 Consolidate branches and PRs** — P1 · all · DONE (PR #17, `72120d3`)
 - Problem: four open PRs, stale branches, a failing check on `main`. Root cause: work landed on
   long-lived branches without a merge path.
-- Reconciled and merged on the consolidation branch ([BRANCH_RECONCILIATION.md](BRANCH_RECONCILIATION.md)); what
-  is left: merge the consolidation PR, delete the reconciled branches, see its CI (Android included)
-  green on `main` (that Android run is also the first proof of REPO-14's build change).
+- Reconciled and merged ([BRANCH_RECONCILIATION.md](BRANCH_RECONCILIATION.md)); all 17 checks of the PR green, Android
+  included (the first proof of REPO-14's build change); the reconciled branches are deleted.
 - Acceptance: one long-lived branch; every open PR merged or closed with a reason; checks green.
 
 **WP-00.2 Apply the PR rules to the Android work** — P1 · Android · IN PROGRESS
