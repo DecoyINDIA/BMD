@@ -443,23 +443,7 @@ class BmdRepository(private val graph: BmdGraph) : BmdUiStore {
         // to a settled hold, after its writer has released the retained download.
         val publicationNeedsRecovery = stage == TransferStage.WAITING_SAVE &&
             task.ownerSession == null && task.verified && unfinishedPublication
-        val actions = mutableSetOf<TaskOperation>()
-        if (!DownloadPolicy.isFinal(task.stage)) {
-            if (task.ownerSession != null) {
-                if (task.userIntent == "RUN") actions += if (local) TaskOperation.STOP_SAVING_KEEP_DATA else TaskOperation.PAUSE
-                if (task.userIntent != "CANCEL") actions += TaskOperation.CANCEL
-            } else if (local) {
-                actions += TaskOperation.RETRY_SAVE
-                actions += TaskOperation.STOP_SAVING_KEEP_DATA
-                if (publication != null && task.verified) actions += TaskOperation.SAVE_SEPARATE_COPY
-                actions += TaskOperation.CANCEL
-                actions += TaskOperation.DISCARD_DOWNLOADED_DATA
-            } else {
-                actions += if (stage == TransferStage.FILE_CHANGED) TaskOperation.RESTART else TaskOperation.RESUME
-                if (stage in setOf(TransferStage.NEEDS_LINK, TransferStage.FAILED, TransferStage.FILE_CHANGED)) actions += TaskOperation.REPLACE_LINK
-                actions += TaskOperation.CANCEL
-            }
-        }
+        val actions = permittedTaskActions(stage, task.ownerSession, task.userIntent, local, task.verified, publication != null)
         return UiTask(task.id, task.name, task.origin, stage, task.receivedBytes, task.totalBytes, task.speed.takeIf { it > 0 },
             if (task.speed > 0 && task.totalBytes != null) ((task.totalBytes - task.receivedBytes).coerceAtLeast(0) / task.speed) else null,
             task.saveBytes.takeIf { local || stage == TransferStage.COMPLETE }, task.totalBytes, task.mimeType,
@@ -470,4 +454,31 @@ class BmdRepository(private val graph: BmdGraph) : BmdUiStore {
     }
     private fun present(file: SavedFileEntity) = UiFile(file.id, file.taskId, file.name, file.mimeType, file.bytes, file.savedAt,
         file.destinationLabel, file.uri, file.accessible, file.sha256Verified)
+}
+
+internal fun permittedTaskActions(
+    stage: TransferStage,
+    ownerSession: String?,
+    userIntent: String,
+    local: Boolean,
+    verified: Boolean,
+    hasPublication: Boolean,
+): Set<TaskOperation> {
+    if (DownloadPolicy.isFinal(stage.name)) return emptySet()
+    val actions = mutableSetOf<TaskOperation>()
+    if (ownerSession != null) {
+        if (userIntent == "RUN") actions += if (local) TaskOperation.STOP_SAVING_KEEP_DATA else TaskOperation.PAUSE
+        if (userIntent != "CANCEL") actions += TaskOperation.CANCEL
+    } else if (local) {
+        actions += TaskOperation.RETRY_SAVE
+        actions += TaskOperation.STOP_SAVING_KEEP_DATA
+        if (hasPublication && verified) actions += TaskOperation.SAVE_SEPARATE_COPY
+        actions += TaskOperation.CANCEL
+        actions += TaskOperation.DISCARD_DOWNLOADED_DATA
+    } else {
+        actions += if (stage == TransferStage.FILE_CHANGED) TaskOperation.RESTART else TaskOperation.RESUME
+        if (stage in setOf(TransferStage.NEEDS_LINK, TransferStage.FAILED, TransferStage.FILE_CHANGED)) actions += TaskOperation.REPLACE_LINK
+        actions += TaskOperation.CANCEL
+    }
+    return actions
 }

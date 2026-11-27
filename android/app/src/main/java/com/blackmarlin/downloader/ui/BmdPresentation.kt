@@ -111,13 +111,32 @@ fun parseSourceOrigin(input: String): String? = runCatching {
 
 fun isValidExpectedSha256(value: String): Boolean = value.isBlank() || value.trim().matches(Regex("[a-fA-F0-9]{64}"))
 
+const val MAX_SHARED_TEXT_CHARS = 16 * 1024
+const val MAX_SHARED_LINKS = 50
+
+fun boundSharedText(value: CharSequence?): String? {
+    if (value == null) return null
+    if (value.length <= MAX_SHARED_TEXT_CHARS) return value.toString()
+    var end = MAX_SHARED_TEXT_CHARS
+    if (end > 0 && Character.isHighSurrogate(value[end - 1])) end--
+    return value.subSequence(0, end).toString()
+}
+
 fun sharedHttpLinks(value: String): List<String> {
-    val exact = value.trim()
+    val bounded = boundSharedText(value).orEmpty()
+    val exact = bounded.trim()
     if (parseSourceOrigin(exact) != null && exact.none(Char::isWhitespace)) return listOf(exact)
-    return Regex("(?i)https?://[^\\s<>\\\"']+").findAll(value).map { match ->
+    return Regex("(?i)https?://[^\\s<>\\\"']+").findAll(bounded).map { match ->
         var link = match.value.trimEnd('.', ',', ';')
         while (link.endsWith(')') && link.count { it == ')' } > link.count { it == '(' }) link = link.dropLast(1)
         while (link.endsWith(']') && link.count { it == ']' } > link.count { it == '[' }) link = link.dropLast(1)
         link
-    }.filter { parseSourceOrigin(it) != null }.distinct().toList()
+    }.filter { parseSourceOrigin(it) != null }.distinct().take(MAX_SHARED_LINKS).toList()
+}
+
+fun selectedNavigationTab(route: BmdRoute): BmdScreen = when {
+    route.screen == BmdScreen.FILES || route.screen == BmdScreen.FILE_DETAIL -> BmdScreen.FILES
+    route.screen in setOf(BmdScreen.TRANSFERS, BmdScreen.TRANSFER_DETAIL, BmdScreen.ADD_LINK, BmdScreen.REVIEW, BmdScreen.SEARCH) -> BmdScreen.TRANSFERS
+    route.screen in setOf(BmdScreen.DESTINATION, BmdScreen.CREDENTIALS) && route.context != "settings" -> BmdScreen.TRANSFERS
+    else -> BmdScreen.SETTINGS
 }

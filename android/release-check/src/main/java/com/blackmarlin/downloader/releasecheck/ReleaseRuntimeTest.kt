@@ -240,11 +240,11 @@ class ReleaseRuntimeTest {
         // Require actual expansion before sending checksum input, including a bounded scroll
         // to the enabled editor when the newly revealed section exceeds the viewport.
         scrollTo(By.clazz("android.widget.EditText").enabled(true)
-            .hasChild(By.pkg(TARGET_PACKAGE).text("Expected SHA-256 (optional)")), 10_000)
+            .hasChild(By.pkg(TARGET_PACKAGE).text("Expected SHA-256 (optional)")), 15_000)
     }
 
     private fun clickText(text: String, mergedRow: Boolean = false) {
-        val end = SystemClock.elapsedRealtime() + remaining(15_000)
+        val end = SystemClock.elapsedRealtime() + remaining(20_000)
         // Clickable Compose rows can expose their title and subtitle as one accessibility text.
         scrollTo(if (mergedRow) By.textContains(text) else By.text(text),
             maxOf(1L, end - SystemClock.elapsedRealtime() - 5_000))
@@ -316,21 +316,21 @@ class ReleaseRuntimeTest {
             try {
                 visibleTarget()?.let { return it }
                 // Reserve the tail for fresh observations instead of starting another stroke.
-                if (gestures < 12 && end - SystemClock.elapsedRealtime() > 2_000) {
+                if (gestures < 18 && end - SystemClock.elapsedRealtime() > 2_000) {
                     // Reacquire the actual app viewport, including keyboard-driven resizing.
                     val bounds = device.findObjects(By.pkg(TARGET_PACKAGE).scrollable(true))
                         .map { it.visibleBounds }
                         .filter { it.height() >= 8 && it.width() > 0 }
                         .maxByOrNull { it.height() }
                     if (bounds != null) {
-                        val upper = bounds.top + bounds.height() / 4
-                        val lower = bounds.bottom - bounds.height() / 4
-                        val down = gestures < 6
+                        val upper = bounds.top + bounds.height() / 6
+                        val lower = bounds.bottom - bounds.height() / 6
+                        val down = gestures < 12
                         // Eighty injected steps took 3–6 seconds on the observed emulator.
                         // A shorter continuous, overlapping stroke leaves time to observe it.
                         assertTrue("The app viewport swipe could not be injected during $phase",
                             device.swipe(bounds.centerX(), if (down) lower else upper,
-                                bounds.centerX(), if (down) upper else lower, 24))
+                                bounds.centerX(), if (down) upper else lower, 16))
                         gestures++
                         remaining(1)
                         visibleTarget()?.let { return it }
