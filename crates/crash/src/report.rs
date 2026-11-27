@@ -1322,8 +1322,9 @@ mod tests {
                     gcs https://storage.example/o?X-Goog-Signature=deadbeef&X-Goog-Credential=me \
                     signin https://app.example/cb#access_token=tok&state=ok";
         let scrubbed = scrub(text, None);
-        for secret in ["abc123", "deadbeef", "=me", "tok&"] {
-            assert!(!scrubbed.contains(secret), "{secret} left in {scrubbed}");
+        // Says which value leaked, never the value: a failing test's output is a log too.
+        for (i, value) in ["abc123", "deadbeef", "=me", "tok&"].iter().enumerate() {
+            assert!(!scrubbed.contains(value), "redaction {i} missed");
         }
         assert!(scrubbed.contains("info=1"), "{scrubbed}");
         assert!(scrubbed.contains("state=ok"), "{scrubbed}");

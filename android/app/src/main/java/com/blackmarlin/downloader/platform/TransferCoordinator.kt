@@ -37,7 +37,8 @@ class TransferCoordinator internal constructor(
     constructor(graph: BmdGraph) : this(
         graph,
         graph.networks,
-        { dir -> runCatching { StatFs(dir.absolutePath).availableBytes }.getOrDefault(0) },
+        // `kotlin.` so it isn't the `this.runCatching` extension: there is no `this` yet here.
+        { dir -> kotlin.runCatching { StatFs(dir.absolutePath).availableBytes }.getOrDefault(0) },
     )
 
     private class ForegroundStartBlockedException(cause: Throwable) : Exception(cause)
