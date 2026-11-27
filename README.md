@@ -335,21 +335,21 @@ Refreshed every **6 hours** via [`.github/workflows/readme-analytics.yml`](.gith
 <!-- BMD:ANALYTICS-TEXT:START -->
 | Metric | Value |
 | :--- | :--- |
-| **Product & Extension Downloads** | **27** (excludes 19 auxiliary files; zero double-counting) |
-| **All Release Assets Total** (incl. symbols, `.zsync`, checksums, geo) | 46 |
-| **Latest Release** | `v1.0.0` (27 product downloads · 2026-11-19) |
-| **Growth Windows** | Baseline recording active (awaiting >= 24h real snapshot span) |
+| **Product & Extension Downloads** | **37** (excludes 19 auxiliary files; zero double-counting) |
+| **All Release Assets Total** (incl. symbols, `.zsync`, checksums, geo) | 56 |
+| **Latest Release** | `v1.0.0` (37 product downloads · 2026-11-19) |
+| **Growth Windows** | 24h: +10 · 7d: pending · 30d: pending |
 | **Repository Pulse** | 0 stars · 0 forks · 4 contributors |
 | **Tracking Started** | `2026-11-26 16:20 UTC` |
-| **Last Synced** | `2026-11-27 01:36 UTC` · `api_status`: `ok (live GitHub API)` |
+| **Last Synced** | `2026-11-27 16:26 UTC` · `api_status`: `ok (live GitHub API)` |
 
 | Platform Bucket | Category | Downloads | Share (Product) | Share (All Assets) |
 | :--- | :--- | ---: | ---: | ---: |
-| Windows | Product | 12 | 44.4% | 26.1% |
-| Linux | Product | 8 | 29.6% | 17.4% |
-| macOS (Experimental) | Product | 2 | 7.4% | 4.3% |
-| Browser Extensions | Product | 5 | 18.5% | 10.9% |
-| Other / Auxiliary | Auxiliary | 19 | n/a | 41.3% |
+| Windows | Product | 20 | 54.0% | 35.7% |
+| Linux | Product | 8 | 21.6% | 14.3% |
+| macOS (Experimental) | Product | 2 | 5.4% | 3.6% |
+| Browser Extensions | Product | 7 | 18.9% | 12.5% |
+| Other / Auxiliary | Auxiliary | 19 | n/a | 33.9% |
 <!-- BMD:ANALYTICS-TEXT:END -->
 
 </details>
