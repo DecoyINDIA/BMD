@@ -88,6 +88,31 @@ static MAIN_WINDOW: std::sync::atomic::AtomicIsize = std::sync::atomic::AtomicIs
 /// can't tell. The taskbar and its flyout, always on top, don't count, nor do hidden, minimized
 /// or cloaked windows (another virtual desktop, a suspended app) or this program's own (its
 /// dialogs over it). None: the main window isn't known yet.
+/// Has the user turned Windows' animations off (Settings → Accessibility → Visual effects →
+/// Animation effects; SPI_GETCLIENTAREAANIMATION)? The main window's backdrop then holds still.
+/// Read at most once a second: it is asked every frame the backdrop draws.
+pub fn animations_off() -> bool {
+    use std::sync::Mutex;
+    use std::time::{Duration, Instant};
+    use windows_sys::Win32::UI::WindowsAndMessaging::{
+        SPI_GETCLIENTAREAANIMATION, SystemParametersInfoW,
+    };
+    static SEEN: Mutex<Option<(Instant, bool)>> = Mutex::new(None);
+    let mut seen = SEEN.lock().unwrap_or_else(|e| e.into_inner());
+    if let Some((at, off)) = *seen
+        && at.elapsed() < Duration::from_secs(1)
+    {
+        return off;
+    }
+    let mut on: i32 = 1;
+    // SAFETY: SPI_GETCLIENTAREAANIMATION writes one BOOL to the pointer given, a live local.
+    let ok =
+        unsafe { SystemParametersInfoW(SPI_GETCLIENTAREAANIMATION, 0, (&raw mut on).cast(), 0) };
+    let off = ok != 0 && on == 0;
+    *seen = Some((Instant::now(), off));
+    off
+}
+
 pub fn main_window_in_front() -> Option<bool> {
     use windows_sys::Win32::Graphics::Dwm::{DWMWA_CLOAKED, DwmGetWindowAttribute};
     use windows_sys::Win32::UI::WindowsAndMessaging::{
@@ -1255,6 +1280,24 @@ pub fn caption_colour(hwnd: isize, rgb: [u8; 3]) {
             );
         }
     }
+}
+
+/// The title bar of the window titled `title` in `rgb`, or Windows' own colour (None): BMD's look
+/// makes it the canvas's colour, one band with the menu bar and toolbar (Windows 11; Windows 10
+/// can't colour a caption). True once the window was found.
+pub fn caption_tint(title: &str, rgb: Option<[u8; 3]>) -> bool {
+    use windows_sys::Win32::Graphics::Dwm::DWMWA_COLOR_DEFAULT;
+    let Some(hwnd) = find_own_window(title) else {
+        return false;
+    };
+    match rgb {
+        Some(rgb) => caption_colour(hwnd as isize, rgb),
+        None => {
+            let [r, g, b, _] = DWMWA_COLOR_DEFAULT.to_le_bytes();
+            caption_colour(hwnd as isize, [r, g, b]);
+        }
+    }
+    true
 }
 
 /// The window menu (the system menu) of a window framed by [`caption_less`], opened at screen

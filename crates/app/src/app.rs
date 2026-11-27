@@ -443,6 +443,15 @@ fn menu_answer(step: DupStep, start_now: bool) -> &'static str {
     }
 }
 
+/// View → Appearance's three choices.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum Appearance {
+    Light,
+    Dark,
+    /// Light or dark as the system's app mode is.
+    System,
+}
+
 /// Menu, toolbar and context-menu commands.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Cmd {
@@ -498,17 +507,13 @@ enum Cmd {
     AddToQueue(usize),
     RemoveFromQueue,
     ToggleCategories,
-    /// View → Dark Mode support.
-    ToggleDarkMode,
-    /// View → Always dark (#60).
-    ToggleAlwaysDark,
+    /// View → Appearance: light, dark, or as the system says. BMD's two looks are the brand
+    /// theme's light and dark variants; this sets the two mode settings together.
+    Appearance(Appearance),
+    /// View → Appearance → Animated background, on or off.
+    AnimatedBackground,
     /// View → Theme → a theme (#45): a built-in's id or a theme file's name.
     Theme(&'static str),
-    /// View → Theme → Open themes folder.
-    OpenThemesFolder,
-    /// View → Theme → Add a theme file: a theme or a Base16 or pywal colour scheme, copied
-    /// into the themes folder and picked.
-    AddThemeFile,
     /// View → Draw with → OpenGL / Direct3D, Vulkan or Metal (#89, #206), from the next start.
     #[cfg(gpu)]
     DrawWith(crate::renderer::Api),
@@ -1503,6 +1508,8 @@ pub struct App {
     /// View → Theme's choices (#45), and the number of the theme watcher's answer they come from
     /// (`lookwatch::theme_files`: taken again when it changes).
     theme_list: Vec<crate::themefile::Entry>,
+    /// The animated clouds behind the main window's canvas (View → Appearance).
+    backdrop: crate::backdrop::Backdrop,
     theme_files_seen: u64,
     /// When `logic`'s every-2-seconds work last ran (crash state, torrents, #174).
     ticked: Option<Instant>,
@@ -1846,6 +1853,7 @@ impl App {
         // The zoom main.rs started at (View → Interface size, #262).
         let zoom = crate::scale::startup(loaded.settings.interface_size);
         let mut settings = loaded.settings;
+        settings.theme = crate::theme::settled_id(&settings.theme).to_owned();
         if settings.limiter_on_startup {
             settings.speed_limit_on = true;
         }
@@ -2158,6 +2166,7 @@ impl App {
             fitted: false,
             // The built-ins until the watcher's first look at the themes folder (#719).
             theme_list: crate::themefile::list_in(None, None),
+            backdrop: crate::backdrop::Backdrop::default(),
             theme_files_seen: 0,
             ticked: None,
             caption_set: false,
@@ -3327,10 +3336,10 @@ impl App {
                 let (index, sub) = tab.split_once(':').unwrap_or((tab, ""));
                 let index = index.parse().unwrap_or(0);
                 self.open_menu = Some(index);
-                // menu:3:theme opens View → Theme (#45), menu:3:size View → Interface size (#262).
+                // menu:3:look opens View → Appearance, menu:3:size View → Interface size (#262).
                 let wanted = match sub {
                     "draw" => "Draw with",
-                    "theme" => "Theme",
+                    "look" => "&Appearance",
                     "size" => "&Interface size",
                     _ => "",
                 };
@@ -7766,15 +7775,22 @@ impl App {
                 self.dirty = true;
                 ctx.request_repaint();
             }
-            Cmd::ToggleDarkMode => {
-                self.settings.dark_mode_support = !self.settings.dark_mode_support;
-                self.theme_checked = None;
+            Cmd::AnimatedBackground => {
+                self.settings.animated_background = !self.settings.animated_background;
                 self.dirty = true;
+                ctx.request_repaint();
             }
-            Cmd::ToggleAlwaysDark => {
-                self.settings.always_dark = !self.settings.always_dark;
+            Cmd::Appearance(look) => {
+                let (support, always) = match look {
+                    Appearance::Light => (false, false),
+                    Appearance::Dark => (true, true),
+                    Appearance::System => (true, false),
+                };
+                self.settings.dark_mode_support = support;
+                self.settings.always_dark = always;
                 self.theme_checked = None;
                 self.dirty = true;
+                ctx.request_repaint();
             }
             Cmd::Theme(id) => {
                 self.settings.theme = id.to_owned();
@@ -7787,34 +7803,6 @@ impl App {
                 self.theme_checked = None;
                 self.dirty = true;
                 ctx.request_repaint();
-            }
-            Cmd::OpenThemesFolder => {
-                if let Some(dir) = crate::themefile::dir() {
-                    let _ = std::fs::create_dir_all(&dir);
-                    crate::launch::open(dir);
-                }
-            }
-            Cmd::AddThemeFile => {
-                // i18n: title of the file dialog of View → Theme → Add a theme file
-                let title = crate::i18n::t("Add a theme file").to_owned();
-                // i18n: the kind of file View → Theme → Add a theme file lists: BMD's themes (TOML, JSON), Base16 schemes (YAML) and pywal's colors.json
-                let kinds = crate::i18n::t("Themes and colour schemes").to_owned();
-                let all = crate::i18n::t("All files").to_owned();
-                // Where pywal writes its colours, when it has: the first place to look.
-                let start = crate::themefile::pywal_file()
-                    .filter(|p| p.is_file())
-                    .and_then(|p| p.parent().map(std::path::Path::to_path_buf));
-                winui::start_pick(&self.ui_ctx, "app-theme-file", move || {
-                    let dialog = crate::winui::file_dialog(&title);
-                    let dialog = match start {
-                        Some(dir) => dialog.set_directory(dir),
-                        None => dialog,
-                    };
-                    dialog
-                        .add_filter(kinds, &["toml", "json", "yaml", "yml"])
-                        .add_filter(all, &["*"])
-                        .pick_file()
-                });
             }
             // Every window at once (the frames after this one); saved by `follow_zoom`.
             Cmd::InterfaceSize(percent) => crate::scale::set(ctx, percent),
@@ -8626,20 +8614,7 @@ impl App {
                 Sub("Toolbar", false, vec![]),
                 Sub("&Tray icon", false, vec![]),
                 off("C&ustomize URL List..."),
-                I(
-                    "Dark Mode support",
-                    Cmd::ToggleDarkMode,
-                    true,
-                    self.settings.dark_mode_support,
-                ),
-                // BMD's (#60): dark whatever the system says (a desktop that reports nothing).
-                I(
-                    // i18n: View menu: a check item; dark mode on, whatever the system's setting
-                    "Always dark",
-                    Cmd::ToggleAlwaysDark,
-                    true,
-                    self.settings.always_dark,
-                ),
+                self.appearance_menu(),
                 // i18n: noun: the list's font (submenu)
                 Sub("Font", false, vec![]),
                 Sep,
@@ -8682,83 +8657,69 @@ impl App {
         // built (Windows, Linux, macOS: renderer.rs).
         if let Some(at) = menu
             .iter()
-            .position(|e| matches!(e, I(_, Cmd::ToggleAlwaysDark, ..)))
+            .position(|e| matches!(e, MenuEntry::Sub("&Appearance", ..)))
         {
-            menu.insert(at + 1, self.theme_menu());
-            menu.insert(at + 2, self.interface_size_menu());
+            menu.insert(at + 1, self.interface_size_menu());
             #[cfg(windows)]
-            menu.insert(at + 3, self.text_menu());
+            menu.insert(at + 2, self.text_menu());
             #[cfg(gpu)]
             menu.insert(
-                at + if cfg!(windows) { 4 } else { 3 },
+                at + if cfg!(windows) { 3 } else { 2 },
                 self.draw_with_menu(),
             );
             // Linux, a Wayland session that runs XWayland too: after Draw with (#624).
             #[cfg(target_os = "linux")]
             if crate::unix::window_system().both {
-                menu.insert(at + 4, self.window_system_menu());
+                menu.insert(at + 3, self.window_system_menu());
             }
         }
         menu
     }
 
-    /// View → Theme (#45): the built-in themes, the theme files in the themes folder, and a way
-    /// to that folder. Picked, a theme applies at once.
-    fn theme_menu(&self) -> MenuEntry<Cmd> {
-        use MenuEntry::{Item as I, Radio, Sep, Sub};
-        let chosen = self.settings.theme.as_str();
-        let mut items = Vec::new();
-        let mut files = false;
-        let on = |id: &str| chosen == id;
-        // i18n: View → Theme: BMD's own look, the default (IDM's layout, Windows 11's controls)
-        items.push(Radio("Classic", Cmd::Theme("classic"), true, on("classic")));
-        // i18n: View → Theme: the system's own colours (its accent colour, its high contrast)
-        items.push(Radio("Native", Cmd::Theme("native"), true, on("native")));
-        // i18n: View → Theme: black and white with strong edges, for low vision
-        items.push(Radio(
-            "High contrast",
-            Cmd::Theme("high-contrast"),
+    /// View → Appearance: BMD's two looks, light and dark (the brand theme's variants), or as the
+    /// system's app mode says. Applies at once. Replaces Dark Mode support, Always dark and
+    /// the theme list in the menu (a theme file still loads from the settings or `BMD_THEME`).
+    fn appearance_menu(&self) -> MenuEntry<Cmd> {
+        use MenuEntry::Radio;
+        let s = &self.settings;
+        let now = match (s.dark_mode_support, s.always_dark) {
+            (_, true) => Appearance::Dark,
+            (true, false) => Appearance::System,
+            (false, false) => Appearance::Light,
+        };
+        let mut items = vec![
+            // i18n: View → Appearance: BMD always light
+            Radio(
+                "&Light",
+                Cmd::Appearance(Appearance::Light),
+                true,
+                now == Appearance::Light,
+            ),
+            // i18n: View → Appearance: BMD always dark (kombu green surfaces, orange accents)
+            Radio(
+                "&Dark",
+                Cmd::Appearance(Appearance::Dark),
+                true,
+                now == Appearance::Dark,
+            ),
+            // i18n: View → Appearance: light or dark as the system's setting is, changing with it
+            Radio(
+                "Follow &system",
+                Cmd::Appearance(Appearance::System),
+                true,
+                now == Appearance::System,
+            ),
+        ];
+        items.push(MenuEntry::Sep);
+        items.push(MenuEntry::Item(
+            // i18n: View → Appearance: a check item; slow clouds in BMD's colours move behind the menu bar, toolbar and categories
+            "Animated &background",
+            Cmd::AnimatedBackground,
             true,
-            on("high-contrast"),
+            s.animated_background,
         ));
-        items.push(Sep);
-        // i18n: View → Theme: a style theme's name (Windows 8's flat look); keep "Metro" unless your language writes it otherwise
-        items.push(Radio("Metro", Cmd::Theme("metro"), true, on("metro")));
-        // i18n: View → Theme: a style theme's name (GNOME's look, the Linux desktop), a name: keep "Adwaita" as written
-        items.push(Radio("Adwaita", Cmd::Theme("adwaita"), true, on("adwaita")));
-        // i18n: View → Theme: a style theme's name (KDE Plasma's look, the Linux desktop), a name: keep "Breeze" as written
-        items.push(Radio("Breeze", Cmd::Theme("breeze"), true, on("breeze")));
-        // i18n: View → Theme: a style theme's name (Windows XP's look), a name: keep "Luna" as written
-        items.push(Radio("Luna", Cmd::Theme("luna"), true, on("luna")));
-        // i18n: View → Theme: a style theme's name (Windows 7's glassy look), a name: keep "Aero" as written
-        items.push(Radio("Aero", Cmd::Theme("aero"), true, on("aero")));
-        // i18n: View → Theme: a style theme's name (Mac OS X's look), a name: keep "Aqua" as written
-        items.push(Radio("Aqua", Cmd::Theme("aqua"), true, on("aqua")));
-        // i18n: View → Theme: a style theme's name (a white canvas, emerald fills, 6-point corners), a name: keep "Emerald" as written
-        items.push(Radio("Emerald", Cmd::Theme("emerald"), true, on("emerald")));
-        let wal = crate::themefile::PYWAL;
-        for e in self.theme_list.iter().filter(|e| e.path.is_some()) {
-            if !files {
-                items.push(Sep);
-                files = true;
-            }
-            // pywal's colours, where `wal` writes them, followed as it writes them again.
-            if e.id == wal && e.name == wal {
-                // i18n: View → Theme: the colours of pywal (a program making colour schemes from the wallpaper), followed as they change; a name: keep "pywal" as written
-                items.push(Radio("pywal", Cmd::Theme(wal), true, chosen == wal));
-                continue;
-            }
-            // A file's theme by its own name, untranslated.
-            let (id, name) = (crate::chrome::label(&e.id), crate::chrome::label(&e.name));
-            items.push(Radio(name, Cmd::Theme(id), true, e.id == chosen));
-        }
-        items.push(Sep);
-        // i18n: View → Theme: picks a theme file or a Base16 or pywal colour scheme, copies it into the themes folder and uses it
-        items.push(I("Add a theme file…", Cmd::AddThemeFile, true, false));
-        // i18n: View → Theme: opens the folder where theme files go (TOML or JSON)
-        items.push(I("Open themes folder", Cmd::OpenThemesFolder, true, false));
-        // i18n: View menu: submenu choosing BMD's look (colours, sizes, icons): Classic, Native…
-        Sub("Theme", true, items)
+        // i18n: View menu: submenu choosing light or dark (or as the system says)
+        MenuEntry::Sub("&Appearance", true, items)
     }
 
     /// View → Interface size (#262): every window larger, as a browser zooms (Ctrl + / Ctrl − /
@@ -9618,6 +9579,10 @@ impl App {
         // A style theme's title bar, drawn above the layout (Windows; #45), mirrored right to
         // left as the progress window's.
         let full = self.drawn_caption(ui, full);
+        // The brand clouds behind the canvas (BMD's look only; a theme file of the user's own
+        // keeps its flat colours). The list and dialogs paint over them.
+        let backdrop = self.settings.animated_background && crate::theme::emerald_workspace();
+        self.backdrop.paint(ui, full, backdrop);
         let o = full.min;
         let (w, h) = (full.width(), full.height());
         let mut chosen: Option<(Cmd, Option<u64>)> = None;
@@ -9957,6 +9922,13 @@ impl App {
             let mut font = winui::tahoma_title();
             font.size = crate::theme::font_size(23.0);
             let p = ui.painter();
+            // The heading sits on the list's own surface, one panel from the title to the last
+            // row (the canvas shows only around it).
+            let head = winui::rect(egui::Rect::from_min_max(
+                pos2(o.x + list_left, pane_top),
+                pos2(o.x + w - 7.0, table_top),
+            ));
+            p.rect_filled(head, 0.0, crate::theme::colors().list);
             let title = crate::i18n::t("Downloads");
             let x = o.x + list_left + 13.0;
             let shown = winui::ellipsize(p, &font, title, o.x + w - 14.0 - x);
@@ -10752,9 +10724,6 @@ impl App {
         }
         if let Some(path) = winui::picked(ctx, "app-import") {
             self.import_file(&path);
-        }
-        if let Some(path) = winui::picked(ctx, "app-theme-file") {
-            self.add_theme_file(&path, ctx);
         }
         if let Some(target) = winui::picked(ctx, "app-move-rename")
             && let Some(id) = self.move_rename_for.take()
@@ -12559,6 +12528,14 @@ impl App {
                 {
                     self.caption_set =
                         crate::win32::caption_dark(crate::MAIN_TITLE, crate::theme::dark_surface());
+                    // BMD's look: the title bar in the canvas's colour, one band with the menu
+                    // bar and toolbar; another theme keeps Windows' own.
+                    let canvas = crate::theme::colors().window;
+                    crate::win32::caption_tint(
+                        crate::MAIN_TITLE,
+                        crate::theme::emerald_workspace()
+                            .then(|| [canvas.r(), canvas.g(), canvas.b()]),
+                    );
                     // The menus Windows draws (the tray icon's, the window menu) too (#682).
                     crate::win32::menus_dark(crate::theme::dark_surface());
                 }
@@ -12760,8 +12737,10 @@ impl App {
             tracing::warn!("delete: some deleted downloads' files were still being deleted");
         }
         // The feeds as last handed to their saver.
-        if !self.rss_saver.flush_until(deadline) {
-            tracing::warn!("rss: the feeds weren't written in time");
+        match self.rss_saver.flush_until(deadline) {
+            Ok(true) => {}
+            Ok(false) => tracing::warn!("rss: the feeds weren't written in time"),
+            Err(e) => tracing::warn!("rss: the feeds weren't saved: {e}"),
         }
         // The last state, after what the saver has in hand.
         if let Err(e) = self.saver.save(
@@ -12772,10 +12751,15 @@ impl App {
             &self.queues,
         ) {
             tracing::warn!("the list wasn't saved: {e}");
-        } else if !self.saver.flush_until(deadline) {
-            tracing::warn!("the list wasn't written in time (the disk held it)");
-        } else if deadline.is_some() {
-            tracing::info!("the list is saved ({} ms)", began.elapsed().as_millis());
+        } else {
+            match self.saver.flush_until(deadline) {
+                Ok(true) if deadline.is_some() => {
+                    tracing::info!("the list is saved ({} ms)", began.elapsed().as_millis());
+                }
+                Ok(true) => {}
+                Ok(false) => tracing::warn!("the list wasn't written in time (the disk held it)"),
+                Err(e) => tracing::warn!("the list wasn't saved: {e}"),
+            }
         }
     }
 

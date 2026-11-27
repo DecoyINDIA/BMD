@@ -8,7 +8,7 @@
 #                                       (system: Dark Mode support, following the desktop; theme:
 #                                       classic, native, high-contrast, metro, adwaita, breeze…)
 #   win.sh open <main|fileinfo|show name>              e.g. options, scheduler, addurl, progress,
-#                                       properties, about, menu:3:theme
+#                                       properties, about, menu:3:look
 #   win.sh close                         every BMD window but the main one, closed as a person would
 #   win.sh theme <id>                    View → Theme → <id>, live (/show theme:<id>)
 #   win.sh click|hover|press|release <x> <y>   real input at a point of the main window's frame

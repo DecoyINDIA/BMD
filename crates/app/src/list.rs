@@ -598,6 +598,8 @@ pub fn show(
     );
     let emerald = crate::theme::emerald_workspace();
     let colors = crate::theme::colors();
+    // Every other row's shade in BMD's look (a step toward the ink).
+    let zebra = crate::derive::mix(colors.list, colors.text, 0.035);
     let (inset, font) = if emerald {
         winui::solid(&p, screen(outer), BG());
         (0.0, winui::segoe())
@@ -776,7 +778,7 @@ pub fn show(
     let p = p.with_clip_rect(screen(header));
     fill(&p, cl, ct, rr, ct + header_h() - 1.0, HEADER_BG());
     if emerald {
-        fill(&p, cl, ct, rr, ct, colors.header_line);
+        // One hairline under the titles; the heading above shares the list's surface.
         let bottom = ct + header_h() - 1.0;
         fill(&p, cl, bottom, rr, bottom, colors.header_line);
     }
@@ -817,7 +819,12 @@ pub fn show(
         } else if let Some(t) = tint {
             fill(&p, *x0, ct, x1 - 1.0, ct + header_h() - 1.0, t);
         }
-        fill(&p, *x1, ct, *x1, ct + header_h() - 1.0, HEADER_SEP());
+        // Emerald: a quiet header, titles over a hairline; a column's divider shows only while
+        // the pointer is on the header (where it is dragged to resize).
+        let header_hot = hresp.hovered() || st.drag.is_some();
+        if !emerald || header_hot {
+            fill(&p, *x1, ct, *x1, ct + header_h() - 1.0, HEADER_SEP());
+        }
         let mut arrow_room = if st.sort.is_some_and(|(sc, _)| sc == *c) {
             14.0
         } else {
@@ -828,7 +835,8 @@ pub fn show(
         // and the funnel (Q) shows it only under the pointer.
         let filtered = st.filters[*c].is_some();
         let open = st.filter_open.is_some_and(|(fc, _)| fc == *c);
-        let roomy = x1 - x0 >= 44.0;
+        // Emerald: the funnel shows on the column under the pointer, open or filtered only.
+        let roomy = x1 - x0 >= 44.0 && !emerald;
         if roomy || filtered || hovered || open {
             let fr = funnel_rect(st, *c, *x0, *x1, ct);
             let color = if filtered {
@@ -838,11 +846,14 @@ pub fn show(
             } else {
                 SORT_ARROW().gamma_multiply(0.45)
             };
-            if !roomy {
+            // A filtered column keeps room for its funnel; one shown only under the pointer
+            // sits on a patch of the header over the title's end.
+            let reserved = roomy || (emerald && filtered);
+            if !reserved {
                 p.rect_filled(screen(fr), crate::theme::metrics().part_radius, HEADER_BG());
             }
             funnel(&p, fr, color);
-            if roomy {
+            if reserved {
                 arrow_room += 14.0;
             }
         }
@@ -1036,7 +1047,39 @@ pub fn show(
             // The focused row's dotted outline only once the keyboard is in use, as every
             // control's focus (winui::keyboard_in_use).
             let has_focus = focus == Some(idx) && st.focused && keys_in_use;
-            if sel || has_focus {
+            // BMD's look: alternate rows a shade apart instead of grid lines, and the selection
+            // and hover as rounded bars inset from the list's edges, as a Mac table draws them.
+            let bar = |c: Color32| {
+                let r = Rect::from_min_max(
+                    pos2(cl + 4.0, top + 1.0),
+                    pos2(rr - 4.0, top + row_h() - 1.0),
+                );
+                bp.rect_filled(screen(r), crate::theme::metrics().control_radius, c);
+            };
+            if emerald && idx % 2 == 1 {
+                fill(&bp, cl, top, rr, top + row_h() - 1.0, zebra);
+            }
+            if emerald && (picked || has_focus) {
+                if picked {
+                    bar(if sel {
+                        SELECTED()
+                    } else {
+                        winui::SELECTED_INACTIVE()
+                    });
+                }
+                if has_focus {
+                    let r = Rect::from_min_max(
+                        pos2(cl + 4.0, top + 1.0),
+                        pos2(rr - 4.0, top + row_h() - 1.0),
+                    );
+                    bp.rect_stroke(
+                        screen(r),
+                        crate::theme::metrics().control_radius,
+                        egui::Stroke::new(1.5, crate::theme::colors().focus_ring),
+                        egui::StrokeKind::Inside,
+                    );
+                }
+            } else if sel || has_focus {
                 // The row above its grid line; the focused row has a dotted outline (every other
                 // pixel), in the fill's inverse on a selected row. Both modes alike.
                 let (right, bottom) = (last_right - 1.0, top + row_h() - 2.0);
@@ -1063,13 +1106,20 @@ pub fn show(
                     bottom,
                     winui::SELECTED_INACTIVE(),
                 );
-            } else if emerald
-                && resp
+            } else if emerald {
+                // The hover bar fades in and out (0.12 s), keyed by the row's file.
+                let over = resp
                     .hover_pos()
                     .map(english)
-                    .is_some_and(|p| p.y >= top && p.y < top + row_h())
-            {
-                fill(&bp, cl, top, rr, top + row_h() - 2.0, colors.subtle_hot);
+                    .is_some_and(|p| p.y >= top && p.y < top + row_h());
+                let hot = ui.ctx().animate_bool_with_time(
+                    egui::Id::unique(("row-hover", &row.cells[0])),
+                    over,
+                    0.12,
+                );
+                if hot > 0.0 {
+                    bar(colors.subtle_hot.gamma_multiply(hot));
+                }
             }
             for (c, x0, x1) in &cols {
                 // The file-type icon sits in the File Name column, wherever it is.
@@ -1156,6 +1206,17 @@ pub fn show(
                     ink,
                 );
                 if let Some(progress) = progress {
+                    // BMD's look: the bar glides to each new value (0.35 s) rather than jumping
+                    // once a second, keyed by the file's name so sorting doesn't restart it.
+                    let progress = if emerald {
+                        ui.ctx().animate_value_with_time(
+                            egui::Id::unique(("row-progress", &row.cells[0])),
+                            progress,
+                            0.35,
+                        )
+                    } else {
+                        progress
+                    };
                     let track = Rect::from_min_max(
                         pos2(tx, top + row_h() - 7.0),
                         pos2(x1 - 8.0, top + row_h() - 4.0),
@@ -1173,7 +1234,7 @@ pub fn show(
         // both modes (dark changes only colours).
         let gy = top + row_h() - 1.0;
         // An empty list has no grid (the empty state stands alone).
-        if idx < rows.len() || (!emerald && !rows.is_empty()) {
+        if !emerald && (idx < rows.len() || !rows.is_empty()) {
             fill(&bp, cl, gy, rr, gy, GRID_H());
         }
     }

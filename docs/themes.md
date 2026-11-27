@@ -2,25 +2,19 @@
 
 [← Back to docs index](README.md)
 
-A theme sets the colours, controls and icons for BMD's light and dark modes. Emerald also styles
-the main workspace with a grouped toolbar, a tinted category sidebar and a roomier download list.
+BMD has one look in two modes, light and dark, in its brand colours (Kombu Green, Brushed
+Aluminium, Signal Orange): choose under **View → Appearance**
+([Light and dark](getting-started.md#light-and-dark)). The menu offers no other themes.
 
-## Pick one
-
-Open **View → Theme** and click a theme: the whole window changes at once, nothing to restart.
-**View → Dark Mode support** and **View → Always dark** then choose its light or dark side, as
-for the classic look ([Dark mode](getting-started.md#dark-mode)).
-
-The built-in themes are **Emerald** (the default for new installations), **Classic** (BMD's
-original look), **Native** (your system's accent colour and contrast), **High contrast**,
-**Metro**, **Adwaita**, **Breeze**, **Luna**, **Aero** and **Aqua**. See the
-[theme descriptions](getting-started.md#themes) and the
-[light and dark previews](https://bmd.example.com/themes.html).
+A theme file still sets the colours, controls and icons of BMD's light and dark modes, for
+people who make or test themes: start BMD with `BMD_THEME` set to the file's path (or a file's
+name in the themes folder), or write that name as `"theme"` in the settings. A built-in theme of
+earlier versions (Classic, Native, High contrast, Metro, Adwaita, Breeze, Luna, Aero, Aqua) chosen
+before starts in BMD's own look.
 
 ## Where theme files go
 
-Theme files you make or download go in BMD's themes folder. **View → Theme → Open themes folder**
-opens it (and makes it the first time). It is in BMD's data folder:
+Theme files you make or download go in BMD's themes folder, in BMD's data folder:
 
 | System | Folder |
 |---|---|
@@ -29,14 +23,10 @@ opens it (and makes it the first time). It is in BMD's data folder:
 | macOS | `~/Library/Application Support/bmd/themes` |
 | [Portable copy](portable.md) | `data\themes` beside the program |
 
-Within two seconds a new file shows in **View → Theme**, under the built-in themes, by the `name`
-it gives itself. After you edit a file, pick it again in **View → Theme** to see the change.
+After you edit a file, start BMD again to see the change.
 
 A theme can be one file (`harbour.toml`) or a folder of its own (`harbour/theme.toml`) when it
 brings icons.
-
-**View → Theme → Add a theme file…** does it for you: pick a file anywhere, and BMD copies it into
-the themes folder and uses it at once. A file that isn't a theme stays out, and BMD says why.
 
 ## Base16 and pywal colour schemes
 
@@ -48,14 +38,12 @@ Colour schemes made for other programs are themes too, with nothing to convert:
   `palette:` block). A Base24 scheme reads as its first 16 colours.
 - **pywal's `colors.json`**, or any program's file in pywal's shape (wallust's pywal template).
 
-Add it with **View → Theme → Add a theme file…**, or put it in the themes folder yourself. It
-shows in **View → Theme** under the scheme's name (`name:` or `scheme:`; pywal's is named after
-the wallpaper).
+Put it in the themes folder and start BMD with `BMD_THEME` set to its file name.
 
-**pywal itself:** once `wal` has run, **View → Theme** lists **pywal**, read straight from where
+**pywal itself:** `BMD_THEME=pywal` reads the colours straight from where
 pywal writes its colours: `~/.cache/wal/colors.json` (on Windows
 `%USERPROFILE%\.cache\wal\colors.json`, where winwal and pywal write it; `$PYWAL_CACHE_DIR` or
-`$XDG_CACHE_HOME/wal` when you set them). Pick it and BMD follows your wallpaper: each time `wal`
+`$XDG_CACHE_HOME/wal` when you set them). BMD then follows your wallpaper: each time `wal`
 writes new colours, BMD takes them within two seconds. It looks only at the file's date and size,
 every two seconds, and only while pywal is the theme. A copy added with **Add a theme file…**
 keeps the colours it had.
@@ -124,7 +112,7 @@ radius = 6
 focus = "ring"
 ```
 
-- **`name`** — what **View → Theme** lists; the file's name when there is none.
+- **`name`** — what the theme calls itself; the file's name when there is none.
 - **`inherits`** — the theme yours starts from: `classic` (the default when it's left out), a
   built-in theme's id (`metro`, `adwaita`, `breeze`, `luna`, `aero`, `aqua`, `high-contrast`), or
   another theme file in the same folder, by its file name without `.toml`. A file that inherits
@@ -162,9 +150,10 @@ names is in [themeicons.rs](https://github.com/DecoyINDIA/BMD/blob/main/crates/a
 
 ## Make one
 
-1. **View → Theme → Open themes folder**, and make a new `.toml` file there (any text editor).
+1. Make a new `.toml` file in the themes folder (any text editor).
 2. Start from the example above: change the seeds' colours, then add roles and sizes as you go.
-3. Pick it in **View → Theme**, and look at both sides: **View → Always dark** on and off. Check
+3. Start BMD with `BMD_THEME` set to its name, and look at both sides: **View → Appearance →
+   Light** and **Dark**. Check
    that text is readable and the focus mark visible in both.
 
 The website's [Themes page](https://bmd.example.com/themes.html#ai-prompt) has a prompt

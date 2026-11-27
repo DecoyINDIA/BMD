@@ -128,7 +128,7 @@ fun ReviewDownloadScreen(state: BmdAppState, session: BmdSession, model: BmdView
             SectionTitle("Network for this download")
             ChoiceRow("Unmetered only", "Wait for a network Android marks as unmetered.", draft.networkPolicy == NetworkPolicy.UNMETERED, { model.setDraftNetwork(NetworkPolicy.UNMETERED) })
             ChoiceRow("Any network", "Allow metered data for this download.", draft.networkPolicy == NetworkPolicy.ANY, { model.setDraftNetwork(NetworkPolicy.ANY) })
-            if (draft.allowMeteredOnce) Text("Metered access allowed once for this task.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+            if (draft.allowMeteredOnce) Text("Metered access allowed once for this task.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
         }
         ContentCard {
             TextButton({ advanced = !advanced }, Modifier.fillMaxWidth()) {

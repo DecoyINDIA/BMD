@@ -135,6 +135,9 @@ pub struct Settings {
     /// controls' hinted, whole-pixel look, the default (`crate::theme::set_smooth_text`): text
     /// doesn't change look on an update; a dense screen can choose Smooth.
     pub smooth_text: bool,
+    /// View → Appearance → Animated background: the main window's slow brand-colour clouds
+    /// behind the menu bar, toolbar and categories (`crate::backdrop`).
+    pub animated_background: bool,
     /// Scheduler → Download limits: "Download no more than `limits_mb` MBytes every
     /// `limits_hours` hours" (IDM defaults 200 / 5), with a warning before stopping.
     pub limits_on: bool,
@@ -454,6 +457,7 @@ impl Default for Settings {
             window_system: None,
             interface_size: 100,
             smooth_text: false,
+            animated_background: true,
             limits_on: false,
             limits_mb: 200,
             limits_hours: 5,

@@ -180,70 +180,30 @@ From top to bottom:
   - **Tasks** — add downloads, torrents, magnet links, batch downloads and videos from a page; **Torrent settings**; **Link grabber**; **RSS feeds**; show the drop target; import and export the list; exit.
   - **File** — the selected download: **Stop Download**, **Remove**, **Download Now**, **Redownload**.
   - **Downloads** — **Pause All**, **Stop All**, **Delete All Completed**, **Find**, the **Scheduler**, queues, the **Speed Limiter** and **Options**.
-  - **View** — show or hide the categories, sort the list (**Arrange files**), **Dark Mode support**, **Always dark**, **Theme**, **Interface size** (every window larger, 100 % to 200 %; **Ctrl +**, **Ctrl −** and **Ctrl 0** too), **Text** (Windows: smooth or classic letters), **Draw with** (OpenGL, or Direct3D on Windows, Vulkan on Linux, Metal on macOS) and **Language**.
+  - **View** — show or hide the categories, sort the list (**Arrange files**), **Appearance** (Light, Dark or Follow system), **Interface size** (every window larger, 100 % to 200 %; **Ctrl +**, **Ctrl −** and **Ctrl 0** too), **Text** (Windows: smooth or classic letters), **Draw with** (OpenGL, or Direct3D on Windows, Vulkan on Linux, Metal on macOS) and **Language**.
   - **Help** — help pages and tutorials (on the website, in your language when it has it), **Keyboard shortcuts**, **Report a problem**, **Check for updates**, **About**, **Tell a friend** and **Support BMD** (the project on GitHub).
 - **Toolbar.** **Add URL**, **Add Torrent**, **Resume**, **Stop**, **Stop All**, **Delete**, **Delete Completed**, **Options**, **Scheduler**, **Start Queue**, **Stop Queue**. The small arrow next to **Add Torrent**, **Start Queue** and **Stop Queue** opens more choices.
 - **Categories** (left). Choose what the list shows: **All Downloads**, **Unfinished**, **Finished** and **Queues**, each with its categories. Drag the gap between the pane and the list to make it wider.
 - **Download list** (right). One row per download. See [The download list](download-list.md).
 
-## Dark mode
+## Light and dark
 
-BMD follows your system: when Windows (or your desktop's light/dark preference on Linux and macOS) is set to dark mode, so is BMD. To keep BMD light whatever the system does, turn off **View → Dark Mode support**. To keep it dark whatever the system does, for example on a desktop that reports no preference, turn on **View → Always dark**.
+BMD has two looks, light and dark, both in its brand colours: Kombu Green, Brushed Aluminium and a
+Signal Orange accent. Choose under **View → Appearance**:
 
-![The View menu open, with Dark Mode support and Always dark](images/help/view-dark-mode.webp)
-*1 Dark Mode support follows the system; 2 Always dark keeps BMD dark.*
+- **Light**: always light: brushed aluminium surfaces, kombu green text and orange actions.
+- **Dark**: always dark: kombu green surfaces, aluminium text and orange actions.
+- **Follow system**: light or dark as Windows (or your desktop's light/dark preference on Linux
+  and macOS) is set, changing when it changes. A desktop that reports no preference shows light.
 
-## Themes
+The change applies at once, nothing to restart.
 
-Choose a theme under **View → Theme**.
+Behind the menu bar, toolbar and categories, slow clouds in the same colours drift (the download
+list stays solid). They hold still while BMD's window isn't the active one, and when Windows'
+**Animation effects** are off. **View → Appearance → Animated background** turns them off.
 
-- **Emerald** is the default for new installations. It uses a sage sidebar, a green **Add URL** button, and a spacious transfer list with progress bars for active downloads of known size.
-- **Classic** is BMD's original layout and palette.
-- **Native**: your system's colours. Windows' accent colour (Settings → Personalization →
-  Colors) and, when it is on, its contrast theme; the desktop's accent colour and its higher
-  contrast setting on Linux (GNOME 47 and later, KDE Plasma); the accent colour on macOS. It
-  follows them when you change them.
-- **High contrast**: black and white, a bright accent, every edge drawn, text at 7:1 or more.
-- **Metro**: Windows 8's flat look: square corners, flat buttons and boxes, a coloured title bar
-  with the title centred (on Windows, where BMD draws it), and one-colour icons (Microsoft's
-  Fluent UI System Icons).
-- **Adwaita**: GNOME's look: round corners, flat grey buttons, a rounded focus ring, GNOME's
-  check boxes, a header bar with the title in bold and round buttons (on Windows, where BMD
-  draws it), and GNOME's Adwaita icons, in colour for files and categories, one colour in the
-  toolbar.
-- **Breeze**: KDE Plasma's look: rounded corners, buttons and boxes that take the accent's edge
-  under the pointer or when focused, KDE's check boxes and focus frame, KDE's title bar with the
-  title centred and round buttons (on Windows, where BMD draws it), and KDE's Breeze icons.
-- **Luna**: Windows XP's look: buttons shaded from white with an orange glow under the pointer,
-  green ticks, square text boxes, progress in green blocks, a deep blue title bar with the title
-  in bold (on Windows, where BMD draws it), and colourful icons drawn for BMD in that manner.
-- **Aero**: Windows 7's look: glossy buttons that turn light blue under the pointer, quiet check
-  boxes, a glossy green progress bar, a glassy title bar with the title on a soft glow (on
-  Windows), and glossy icons drawn for BMD in that manner.
-- **Aqua**: Mac OS X's look: gel buttons round at the ends (the default one blue), glossy check
-  boxes, a blue focus ring, a blue gel progress bar, a grey title bar with small round buttons
-  (on Windows), and icons drawn for BMD in that manner.
-
-![View → Theme open: Classic, Native, High contrast, Metro, Adwaita, Breeze, Luna, Aero, Aqua and Emerald, and Open themes folder](images/help/view-theme.webp)
-*View → Theme switches at once, keeping the layout.*
-
-<!-- pictures -->
-
-- ![The main window's toolbar and categories in the Classic theme](images/help/theme-classic.webp)
-  *Classic*
-- ![The main window's toolbar and categories in the High contrast theme](images/help/theme-high-contrast.webp)
-  *High contrast*
-- ![The main window's toolbar and categories in the Adwaita theme](images/help/theme-adwaita.webp)
-  *Adwaita*
-- ![The main window's toolbar and categories in the Breeze theme](images/help/theme-breeze.webp)
-  *Breeze*
-
-Each has a light and a dark side: **Dark Mode support** and **Always dark** choose between
-them as before. Theme files you put in the themes folder (**View → Theme → Open themes folder**)
-are listed there too, and so are Base16 and pywal colour schemes (**View → Theme → Add a theme
-file…**; **pywal** follows `wal` as it runs): [Themes](themes.md) says where that folder is, what
-a theme file holds (`inherits`, colours, sizes, control shapes, icons), how a scheme's colours are
-used, and how to make and share one.
+![The View menu open, with its Appearance submenu](images/help/view-dark-mode.webp)
+*1 Appearance: Light, Dark, or Follow system.*
 
 ## The tray icon
 
