@@ -78,8 +78,8 @@ work package.
 | REPO-10 | P3 | Gradle wrapper skipped its URL check | **Fixed** (`validateDistributionUrl=true`; its SHA-256 was already pinned) |
 | REPO-11 | P3 | Two README tool trees (`tools/readme`, `scripts/readme`); a stale ARCHITECTURE line on contributor photos; code citing a private `notes/ENGINE.md` | Open → WP-00.4 |
 | REPO-12 | P3 | The shipped app and extension manifests point at the placeholder `bmd.example.com` | Open → WP-10.2 (release-blocking for store builds) |
-| REPO-13 | P3 | Two stale branches, one local branch, five local agent refs | **Pending merge**: classified and backed up; removed once the consolidation PR is merged ([BRANCH_RECONCILIATION.md](BRANCH_RECONCILIATION.md)) |
-| REPO-14 | P2 | PR #16 made `bmd-android-bridge` a shared library on every host; MinGW's linker refuses it ("export ordinal too large"), so `cargo test --workspace` failed on Windows with the GNU toolchain (CI uses MSVC and missed it) | **Fixed in the tree**: an ordinary library in the workspace, the Android build asks for the shared library. The workspace suite now runs on GNU; the changed Android build is proven only by the consolidation PR's Android CI run |
+| REPO-13 | P3 | Two stale branches, one local branch, five local agent refs | **Fixed**: classified, backed up, merged and deleted; `main` is the only branch ([BRANCH_RECONCILIATION.md](BRANCH_RECONCILIATION.md)) |
+| REPO-14 | P2 | PR #16 made `bmd-android-bridge` a shared library on every host; MinGW's linker refuses it ("export ordinal too large"), so `cargo test --workspace` failed on Windows with the GNU toolchain (CI uses MSVC and missed it) | **Fixed**: an ordinary library in the workspace, the Android build asks for the shared library; the workspace suite runs on GNU and the Android build passed in PR #17's CI |
 
 ### Desktop
 
@@ -136,15 +136,14 @@ and time limits; every GitHub Action is pinned by SHA and no workflow uses `pull
 | Desktop (Windows) | **Ready for use; next release blocked by SEC-01** | Engine, resume, persistence and lifecycle verified in code and tests; one P1 in release trust |
 | Desktop (Linux, macOS) | Ready as documented in ROADMAP (Linux) / experimental (macOS) | CI green on both; runtime not checked here |
 | Android | **Source-ready, not release-ready** | Builds and passes emulator tests in CI at `aef830b`; AND-01 (P1), no translations, no device matrix, no store identity |
-| Repository | **Consolidated on a branch; pending merge** | Every branch and PR reconciled on `integrate/consolidation-2026-11-27`; one `main` once its PR is merged and the reconciled branches are deleted |
+| Repository | **Consolidated** | One `main` (PR #17, `72120d3`), every reconciled branch deleted, 17 checks green |
 
 ## Quality score
 
 Weighted as the audit brief asks. Each category is scored from the evidence above; an unverified
 category is not given full marks. A total cannot override an open P1: the product is not
-release-ready at either score. The "after" column is **provisional** until the consolidation PR
-is merged and its CI (Android included) is green on `main`; Android's 4 credits code and emulator
-CI at `aef830b`, not this tree.
+release-ready at either score. The "after" column was provisional until PR #17 merged with its CI green (Android included);
+it now stands. Android's 4 credits real, CI-tested code on emulators, not store-readiness.
 
 | Category | Weight | Before (main `05bdca2`) | After (consolidated) | Evidence |
 |---|---:|---:|---:|---|
