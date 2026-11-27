@@ -91,16 +91,24 @@ kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas"); arg("room.
 // foreground-service rules, AND-01). Every SDK a test pins must be staged here: offline,
 // Robolectric fails a missing one in LocalDependencyResolver. Resolve them through Gradle's cache
 // before testing instead of Robolectric's separate, uncached Maven downloader.
-val robolectricSdk by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-    isTransitive = false
+// One configuration per SDK: versions of the same module in one configuration are a conflict
+// Gradle resolves by keeping only the newest, which silently dropped SDK 33's runtime.
+val robolectricRuntimes = mapOf(
+    33 to "org.robolectric:android-all-instrumented:13-robolectric-9030017-i7",
+    34 to "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7",
+)
+val robolectricSdks = robolectricRuntimes.map { (sdk, coordinate) ->
+    configurations.create("robolectricSdk$sdk") {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        isTransitive = false
+    }.also { dependencies.add(it.name, coordinate) }
 }
 val robolectricSdkDirectory = layout.buildDirectory.dir("robolectric-sdk")
 val prepareRobolectricSdk by tasks.registering(Sync::class) {
     group = "verification"
-    description = "Stage the pinned Android runtime for offline Robolectric tests."
-    from(robolectricSdk)
+    description = "Stage the pinned Android runtimes for offline Robolectric tests."
+    from(robolectricSdks)
     into(robolectricSdkDirectory)
 }
 tasks.withType<Test>().configureEach {
@@ -152,8 +160,6 @@ tasks.configureEach {
 apply(from = "android-notices.gradle.kts")
 
 dependencies {
-    add(robolectricSdk.name, "org.robolectric:android-all-instrumented:13-robolectric-9030017-i7")
-    add(robolectricSdk.name, "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7")
     val composeBom = platform("androidx.compose:compose-bom:2025.10.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)
