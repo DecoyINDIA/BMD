@@ -273,7 +273,7 @@ def crew_pile() -> str:
     more_li = (f'<li class="pile-more"><a href="/contributors.html"><span translate="no" dir="ltr">{more}</span> '
                f'<span class="sr-only">Everyone who helped</span></a></li>' if more else "")
     full = " ".join(f"pile-full-{cap}" for _, cap in PILE_TIERS if n > cap)
-    return f"""<div class="parcel-crew">
+    return f"""<div class="hero-crew">
           <p class="crew-title" id="crew-title">Made possible by these amazing humans</p>
           <ul class="faces pile {full}" style="--face: 44px" role="list" aria-labelledby="crew-title">{"".join(face(p, 44) for p in CREW[:shown])}{more_li}</ul>
           <p class="crew-fine">{people_count(n)} who sent a pull request, reported a problem or joined a conversation on GitHub. <a href="/contributors.html">Meet them all</a></p>
