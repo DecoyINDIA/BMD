@@ -28,3 +28,17 @@ node_modules/
 /.claude/worktrees/
 # Keys (API keys, signing keys): never committed.
 /k/
+# The maintainer's private notes (CLAUDE.md imports notes/CLAUDE.private.md).
+/notes/
+# Secrets and signing material, wherever they land.
+.env
+.env.*
+*.p12
+*.pfx
+*.pem
+*.jks
+*.keystore
+key.properties
+# Android outputs outside android/**/build/.
+*.apk
+*.aab

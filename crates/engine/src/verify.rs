@@ -174,12 +174,28 @@ pub fn digest(path: &Path, algo: Algo) -> std::io::Result<Vec<u8>> {
 
 /// [`digest`], adding each part read to `read` as it goes (#736: how far a check has come).
 pub fn digest_counted(path: &Path, algo: Algo, read: &AtomicU64) -> std::io::Result<Vec<u8>> {
+    digest_cancellable(path, algo, read, || false)
+}
+
+/// Checks cancellation between bounded reads; its caller must join this worker before release.
+pub fn digest_cancellable(
+    path: &Path,
+    algo: Algo,
+    read: &AtomicU64,
+    cancelled: impl Fn() -> bool,
+) -> std::io::Result<Vec<u8>> {
     let mut f = std::fs::File::open(path)?;
     let mut buf = vec![0u8; 1 << 20];
     macro_rules! run {
         ($h:expr) => {{
             let mut h = $h;
             loop {
+                if cancelled() {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::Interrupted,
+                        "verification cancelled",
+                    ));
+                }
                 let n = f.read(&mut buf)?;
                 if n == 0 {
                     break;
@@ -194,6 +210,12 @@ pub fn digest_counted(path: &Path, algo: Algo, read: &AtomicU64) -> std::io::Res
         Algo::Crc32 => {
             let mut h = crc32fast::Hasher::new();
             loop {
+                if cancelled() {
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::Interrupted,
+                        "verification cancelled",
+                    ));
+                }
                 let n = f.read(&mut buf)?;
                 if n == 0 {
                     break;
@@ -287,5 +309,14 @@ mod tests {
         let read = AtomicU64::new(0);
         assert!(matches_counted(&p, &sha, &read).unwrap());
         assert_eq!(read.load(Ordering::Relaxed), 43);
+    }
+    #[test]
+    fn cancelled_digest_does_not_claim_a_checksum() {
+        let file = tempfile::NamedTempFile::new().unwrap();
+        std::fs::write(file.path(), b"bytes").unwrap();
+        let count = AtomicU64::new(0);
+        let error = digest_cancellable(file.path(), Algo::Sha256, &count, || true).unwrap_err();
+        assert_eq!(error.kind(), std::io::ErrorKind::Interrupted);
+        assert_eq!(count.load(Ordering::Relaxed), 0);
     }
 }

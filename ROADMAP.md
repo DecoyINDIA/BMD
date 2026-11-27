@@ -1307,7 +1307,14 @@ These ship in a later version, when they're ready.
   placing their menus, which needs popup windows the window library doesn't have yet, so
   XWayland stays the default unless X11's windows would be scaled up (#624); Vulkan as the
   default renderer (below)
+- 🔄 **BMD for Android**: the native app over the desktop's engine (direct HTTP and HTTPS,
+  share and paste, pause and resume, SHA-256 check, saving to Downloads or a chosen folder),
+  built and tested in CI on Android 8.0 and 16 emulators; still to do before a store release:
+  resuming in the background on Android 12 and 13, very large shared texts, its translations,
+  more Android versions and real phones, and its store listing
 - 🔄 The Safari extension (in 0.5.2): still to check in Safari itself, signed with a Developer ID
+- 🔄 Security hardening before the next version (described in the CHANGELOG when it ships), and
+  a check of the dependencies against known advisories in CI
 
 ### Bugs being looked into
 

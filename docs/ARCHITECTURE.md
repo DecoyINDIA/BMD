@@ -21,12 +21,15 @@ How BMD's pieces fit together.
 | `crates/crash` | `bmd-crash` | Crash and freeze reports: the monitor process, out-of-process minidumps, symbolicated stacks, the report's text and the release logs ([crash-reports.md](crash-reports.md)) |
 | `crates/torrent` | `bmd-torrent` | BitTorrent and magnet links through librqbit |
 | `crates/labserver` | `bmd-labserver` | An HTTP Range server with a request log and fault injection, and an FTP/FTPS server with its own faults, for tests and benchmarks |
+| `crates/android-bridge` | `bmd-android-bridge` | The Android app's native library (`libbmd_android_bridge.so`, JNI): runs `bmd-engine` for direct HTTP(S) with strict URL rules, private staging and a socket bound to the network Android assigned ([android/NATIVE_CONTRACT.md](android/NATIVE_CONTRACT.md)) |
+| `android/` | — | The native Android app (Kotlin, Jetpack Compose, Room): screens, scheduling, storage publication and encrypted source credentials, over `bmd-android-bridge` ([android/BUILD_AND_RELEASE.md](android/BUILD_AND_RELEASE.md)) |
 | `extension/` | — | The Chromium (MV3) and Firefox extension |
 | `docs/` | — | The user guide and tutorials, this file, the benchmark data; the website makes the guide its help pages, which Help opens |
 | `website/` | — | bmd.example.com's own pages (home, download, features, themes, FAQ); `tools/website/build.py` adds the help from `docs/` and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it |
 
-Dependencies point inward: `app`, `cli`, `mcp`, `nmhost` and `remote` use `engine` and `ipc`; the engine knows
-nothing of the UI. The app sees the engine only through its events (progress, segment table
+Dependencies point inward: `app`, `cli` and `remote` use `engine` and `ipc`; `mcp` and `nmhost` use
+only `ipc` (they talk to the running app, never download themselves); `android-bridge` uses only
+`engine`, and nothing uses it. The engine knows nothing of the UI. The app sees the engine only through its events (progress, segment table
 snapshots, finished, failed).
 
 ## Engine
@@ -154,6 +157,24 @@ before.
 A download's server location (#140) is the country of the address it connected to, looked up in
 `bmd-geo`'s table on this computer (`countries.rs` names it in the interface language); the
 release job builds the table again from the month's data (`tools/geo/build.py --release`).
+
+## Android
+
+The Android app is a second front end to the same engine, not a port of the desktop app. Kotlin
+owns what Android owns: the screens, Room (tasks, history), scheduling (user-initiated data
+transfer jobs on Android 14 and later, WorkManager before), the network Android assigns,
+MediaStore and folder (SAF) publication, and source credentials sealed with an Android Keystore
+key. Rust (`crates/android-bridge`, JNI) owns the bytes: `bmd-engine` downloads into private
+staging through a socket bound to that network, and keeps the checkpoints that make a resume
+safe. Its scope is direct HTTP(S) links; torrents, FTP, video pages, browser capture, PAC scripts
+and queues are desktop-only (`cfg(target_os = "android")` keeps PAC and QuickJS out of its build).
+
+Engine additions for it are off on the desktop: `strict_http` (exact origins, no downgrade, no
+direct-socket fallback) and `network_completion` (a durable proof that a file is complete) are
+only set by the bridge. The contract between the two halves is
+[android/NATIVE_CONTRACT.md](android/NATIVE_CONTRACT.md); building, testing and releasing it,
+[android/BUILD_AND_RELEASE.md](android/BUILD_AND_RELEASE.md). What the two apps do alike and
+differently is in the feature matrix of [MASTER_EXECUTION_PLAN.md](MASTER_EXECUTION_PLAN.md).
 
 ## Browser integration
 

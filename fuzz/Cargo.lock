@@ -319,6 +319,141 @@ dependencies = [
 ]
 
 [[package]]
+name = "bmd-cnl"
+version = "1.0.0"
+dependencies = [
+ "aes",
+ "axum",
+ "base64",
+ "tokio",
+ "tracing",
+ "url",
+]
+
+[[package]]
+name = "bmd-engine"
+version = "1.0.0"
+dependencies = [
+ "base64",
+ "bytes",
+ "core-foundation 0.10.1",
+ "core-foundation-sys",
+ "craft-atomic",
+ "crc32fast",
+ "futures",
+ "hex",
+ "hickory-resolver",
+ "http",
+ "httpdate",
+ "hyper-util",
+ "md-5",
+ "network-interface",
+ "percent-encoding",
+ "reqwest",
+ "rquickjs",
+ "rustix",
+ "rustls",
+ "rustls-platform-verifier",
+ "serde",
+ "serde_json",
+ "sha1",
+ "sha2",
+ "socket2",
+ "suppaftp",
+ "thiserror 2.0.21",
+ "tokio",
+ "tokio-rustls",
+ "tokio-util",
+ "tower-layer",
+ "tower-service",
+ "unicode-segmentation",
+ "url",
+ "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "bmd-extract"
+version = "1.0.0"
+dependencies = [
+ "bmd-engine",
+ "flate2",
+ "lzma-rust2",
+ "tar",
+ "tracing",
+ "zip",
+]
+
+[[package]]
+name = "bmd-fuzz"
+version = "0.0.0"
+dependencies = [
+ "aes",
+ "base64",
+ "bmd-cnl",
+ "bmd-engine",
+ "bmd-extract",
+ "bmd-tools",
+ "bmd-torrent",
+ "libfuzzer-sys",
+ "serde_json",
+ "url",
+]
+
+[[package]]
+name = "bmd-ipc"
+version = "1.0.0"
+dependencies = [
+ "craft-atomic",
+ "dirs",
+ "schemars 1.2.3",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "bmd-tools"
+version = "1.0.0"
+dependencies = [
+ "aws-lc-rs",
+ "base64",
+ "bmd-engine",
+ "bmd-ipc",
+ "bytes",
+ "craft-atomic",
+ "futures",
+ "hex",
+ "percent-encoding",
+ "reqwest",
+ "rustix",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror 2.0.21",
+ "tokio",
+ "tokio-util",
+ "tracing",
+ "url",
+ "win32job",
+ "zip",
+]
+
+[[package]]
+name = "bmd-torrent"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "bmd-engine",
+ "flate2",
+ "librqbit",
+ "librqbit-dualstack-sockets",
+ "serde_json",
+ "thiserror 2.0.21",
+ "tokio",
+ "tracing",
+ "url",
+]
+
+[[package]]
 name = "bs58"
 version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -895,9 +1030,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
 
 [[package]]
 name = "form_urlencoded"
-version = "1.2.2"
+version = "1.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
 dependencies = [
  "percent-encoding",
 ]
@@ -2111,141 +2246,6 @@ checksum = "69b6441f590336821bb897fb28fc622898ccceb1d6cea3fde5ea86b090c4de98"
 dependencies = [
  "cfg-if",
  "digest",
-]
-
-[[package]]
-name = "bmd-cnl"
-version = "0.5.2"
-dependencies = [
- "aes",
- "axum",
- "base64",
- "tokio",
- "tracing",
- "url",
-]
-
-[[package]]
-name = "bmd-engine"
-version = "0.5.2"
-dependencies = [
- "base64",
- "bytes",
- "core-foundation 0.10.1",
- "core-foundation-sys",
- "craft-atomic",
- "crc32fast",
- "futures",
- "hex",
- "hickory-resolver",
- "http",
- "httpdate",
- "hyper-util",
- "md-5",
- "network-interface",
- "percent-encoding",
- "reqwest",
- "rquickjs",
- "rustix",
- "rustls",
- "rustls-platform-verifier",
- "serde",
- "serde_json",
- "sha1",
- "sha2",
- "socket2",
- "suppaftp",
- "thiserror 2.0.21",
- "tokio",
- "tokio-rustls",
- "tokio-util",
- "tower-layer",
- "tower-service",
- "unicode-segmentation",
- "url",
- "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "bmd-extract"
-version = "0.5.2"
-dependencies = [
- "flate2",
- "lzma-rust2",
- "bmd-engine",
- "tar",
- "tracing",
- "zip",
-]
-
-[[package]]
-name = "bmd-fuzz"
-version = "0.0.0"
-dependencies = [
- "aes",
- "base64",
- "libfuzzer-sys",
- "bmd-cnl",
- "bmd-engine",
- "bmd-extract",
- "bmd-tools",
- "bmd-torrent",
- "serde_json",
- "url",
-]
-
-[[package]]
-name = "bmd-ipc"
-version = "0.5.2"
-dependencies = [
- "craft-atomic",
- "dirs",
- "schemars 1.2.3",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "bmd-tools"
-version = "0.5.2"
-dependencies = [
- "aws-lc-rs",
- "base64",
- "bytes",
- "craft-atomic",
- "futures",
- "hex",
- "bmd-engine",
- "bmd-ipc",
- "percent-encoding",
- "reqwest",
- "rustix",
- "serde",
- "serde_json",
- "sha2",
- "thiserror 2.0.21",
- "tokio",
- "tokio-util",
- "tracing",
- "url",
- "win32job",
- "zip",
-]
-
-[[package]]
-name = "bmd-torrent"
-version = "0.5.2"
-dependencies = [
- "anyhow",
- "flate2",
- "librqbit",
- "librqbit-dualstack-sockets",
- "bmd-engine",
- "serde_json",
- "thiserror 2.0.21",
- "tokio",
- "tracing",
- "url",
 ]
 
 [[package]]
@@ -3891,9 +3891,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
 
 [[package]]
 name = "url"
-version = "2.5.8"
+version = "2.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
+checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
 dependencies = [
  "form_urlencoded",
  "idna",

@@ -737,12 +737,20 @@ ON_SITE = {
 }
 
 
+# Engineering records in docs/ that are no help page (the 2026-11-27 audit's): not built, not
+# translated; a link to one goes to the repository.
+NOT_HELP = {"MASTER_EXECUTION_PLAN.md", "AUDIT_REPORT.md", "VERIFICATION_REPORT.md",
+            "BRANCH_RECONCILIATION.md"}
+
+
 def doc_link(target: str, here: Path) -> str:
     """A link inside a docs page, made to work on the site."""
     if re.match(r"^[a-z]+:", target) or target.startswith("#"):
         return target
     path, _, frag = target.partition("#")
     frag = "#" + frag if frag else ""
+    if path in NOT_HELP and here.parent == ROOT / "docs":
+        return f"{REPO}/blob/main/docs/{path}{frag}"
     if path.endswith(".md") and "/" not in path and here.parent == ROOT / "docs":
         return ("/help/" if path == "README.md" else f"/help/{path[:-3]}.html") + frag
     if path.startswith("images/"):
@@ -889,7 +897,7 @@ def help_figures(body: str) -> str:
 
 def build_help() -> None:
     sections = doc_sections()
-    docs = sorted((ROOT / "docs").glob("*.md"))
+    docs = sorted(f for f in (ROOT / "docs").glob("*.md") if f.name not in NOT_HELP)
     titles = {}
     for f in docs:
         first = f.read_text("utf-8").splitlines()[0]
