@@ -1,0 +1,33 @@
+# Known advisories (RustSec) against both lockfiles: on every change to them, and weekly, since an
+# advisory can be published for a lockfile nobody has touched. Exceptions, each with its reason
+# and when to look again, are in .cargo/audit.toml. Warnings (unmaintained, yanked) don't fail it.
+name: Dependency advisories
+
+on:
+  push:
+    branches: [main]
+    paths: ["Cargo.lock", "fuzz/Cargo.lock", ".cargo/audit.toml", ".github/workflows/advisories.yml"]
+  pull_request:
+    paths: ["Cargo.lock", "fuzz/Cargo.lock", ".cargo/audit.toml", ".github/workflows/advisories.yml"]
+  schedule:
+    - cron: "23 5 * * 2"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: cargo audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+      - name: Install cargo-audit
+        run: cargo install cargo-audit --version 0.23.0 --locked
+      - name: Workspace
+        run: cargo audit
+      - name: Fuzz targets
+        run: cargo audit --file fuzz/Cargo.lock
