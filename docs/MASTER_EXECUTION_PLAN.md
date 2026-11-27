@@ -23,9 +23,10 @@ A work package here that ships something user-visible gets its ROADMAP line in t
 BMD is a mature desktop download manager (Rust, egui; Windows first, Linux, experimental macOS)
 with a newly added native Android app over the same engine. The desktop engine, resume and
 persistence are verified sound; 1,642 tests pass on the consolidated tree (one target flaky under
-parallel load, DESK-07). Once the consolidation PR is merged (WP-00.1), the repository is one
-`main` with no open stale work. What stands between this and the next release is mostly **release trust** (SEC-01,
-P1) and, for Android, **one lifecycle defect, translations and real-device qualification**.
+parallel load, DESK-07). PR #17–#19 consolidated `main`, and PR #20 lands the first wave of audit
+fixes (`REPO-07`, `REPO-09`, `DESK-05`, `SEC-03`, `SEC-10`, `AND-01` code, `AND-02`). What stands
+between this and the next release is mostly **release trust** (SEC-01, P1) and, for Android,
+**API 31–33 device verification, 16 KiB CI stability (AND-10), translations and real-device qualification**.
 Order: stabilize the repository's rules (WP-00), fix the release blockers (WP-01), then the
 narrow reliability windows (WP-02), then each app's completion in parallel (WP-03, WP-04), then
 the cross-cutting work (WP-05…WP-09), and only then a release (WP-10).
@@ -107,15 +108,15 @@ it was last checked: T (tests), CI, E (emulator), R (runtime by hand), — (not 
 | Queues, scheduler | ✅ | ➖ | — | — | T / — |
 | Speed limiter | ✅ | ➖ | — | — | T / — |
 | Network selection | ✅ (adapter choice) | ✅ (Android's network, metered rules) | Downloads leave from the chosen network only | — | T / T |
-| Proxy, PAC | ✅ | ➖ (one explicit proxy, no PAC) | — | REPO-09 | T / — |
+| Proxy, PAC | ✅ | ➖ (one explicit proxy, no PAC) | — | — | T / — |
 | Source credentials | ✅ (OS keychain) | ✅ (Keystore, exact HTTPS origin) | Never sent to another origin, never logged | — | T / T |
 | FTP/FTPS | ✅ | ➖ | — | — | T / — |
 | Torrents, magnets | ✅ | ➖ | — | — | T / — |
 | Video pages, galleries | ✅ (yt-dlp, gallery-dl) | ➖ | — | — | T / — |
-| Browser capture | ✅ (extension, native host) | ➖ (Android share sheet instead) | — | AND-02 | T, CI / E |
+| Browser capture | ✅ (extension, native host) | ➖ (Android share sheet instead) | — | — | T, CI / E |
 | Clipboard / paste | ✅ | ✅ (explicit Paste) | — | AND-08 | T / E |
 | Notifications | ✅ | ✅ | Progress and completion; Android 13+ asks permission | — | — / E |
-| Remote control, automation API, MCP | ⚠️ | ➖ | — | SEC-03 → WP-01.3 | T / — |
+| Remote control, automation API, MCP | ✅ | ➖ | — | — | T / — |
 | Self-update | ⚠️ | ➖ (store-managed) | Only the project's own releases install | SEC-01 → WP-01.1 | T / — |
 | Translations | ✅ (21 languages) | ❌ (English only) | Every visible text translatable | AND-03 → WP-07.1 | CI / — |
 | Accessibility | ⚠️ (Linux screen readers in progress) | — | Screen reader names every control | WP-07.2 | — / — |
@@ -129,15 +130,14 @@ package below; the package's status is the defect's status.
 
 ## 8. Security findings
 
-SEC-01 (P1) and SEC-03 (P2) are release blockers; SEC-02, SEC-04, SEC-05 (P2) are to be done
-before or with the release; SEC-06…12 (P3) are hardening; SEC-13 is fixed.
+SEC-01 (P1) is a release blocker; SEC-02 and SEC-05 (P2) are to be done before or with the release;
+SEC-06…09, 11, 12 (P3) are hardening; SEC-03, SEC-04, SEC-10, and SEC-13 are fixed.
 Details are kept with the maintainer until fixed (SECURITY.md). Their work packages are WP-01.x.
 
 ## 9. Technical debt
 
 | Debt | Where | Package |
 |---|---|---|
-| Platform `unsafe` outside the two named platform files, not recorded as exceptions | engine `disk.rs`, `sparse.rs`; `nmhost/win32.rs`; `android-bridge` | WP-00.3 |
 | URL and name rules in three places | Kotlin `DownloadPolicy`, bridge `transfer.rs`, engine | WP-05.1 |
 | Lock poisoning not isolated in shared engine statics | `agent.rs`, `dns.rs`, `naming.rs` | WP-02.4 |
 | Two README tool trees; stale contributor-photo text; citations of a private file | `tools/readme`, `scripts/readme`, `ARCHITECTURE.md`, engine headers | WP-00.4 |
@@ -199,7 +199,7 @@ change, in a fresh context, checks the acceptance criteria against the code and 
 **WP-00.3 Record the platform-code exceptions** — P2 · all · DONE (PR #20)
 - Problem: REPO-07. Root cause: rule 3 and D-008 name only `app/src/win32.rs` and `unix.rs`.
 - Proposal: name every platform module that may opt in to `unsafe` (engine `disk.rs` and
-  `sparse.rs`, `nmhost/src/win32.rs`, `android-bridge` `native.rs` and `network::platform`) in
+  `sparse.rs`, `nmhost/src/win32.rs`, `android-bridge` `src/lib.rs` and `src/network.rs`) in
   CLAUDE.md rule 3 and the `Cargo.toml` lint comment, or move them into such modules. No behaviour
   change.
 - Acceptance: `grep -rn "allow(unsafe_code)" crates` lists only named modules (examples such as
@@ -245,8 +245,8 @@ Details of each finding are with the maintainer. Public text for all of these: C
   record each one's upstream base and diff, and add a source allow-list (cargo-deny).
 - Complexity: M.
 
-**WP-01.6 Local interface hardening** — P3 · desktop · TODO
-- SEC-08…12, as listed for the maintainer. Complexity: M.
+**WP-01.6 Local interface hardening** — P3 · desktop · IN PROGRESS (`SEC-10` fixed in PR #20; `SEC-08, 09, 11, 12` TODO)
+- SEC-08…12, as listed for the maintainer (`SEC-10` crash-log URL/query scrubbing landed in PR #20). Complexity: M.
 
 ### WP-02 Core download reliability
 
@@ -305,8 +305,7 @@ Details of each finding are with the maintainer. Public text for all of these: C
 - Problem: AND-02. Files: `MainActivity.kt`, `ui/BmdViewModel.kt`, `ui/BmdPresentation.kt`.
 - Proposal: cut or refuse shared text above 16 KiB before storing or scanning it; scan off the
   main thread.
-- Acceptance: a 1 MB share neither freezes nor crashes; a test proves it. Depends on WP-05.1 (the
-  intake uses its shared rules). Complexity: S.
+- Acceptance: a 1 MB share neither freezes nor crashes; a test proves it. Complexity: S.
 
 **WP-04.3 Device matrix** — P2 · Android · TODO
 - Problem: AND-04. Proposal: add API 31, 33 and 35 emulators to `android.yml`'s device smoke;
@@ -387,7 +386,7 @@ Details of each finding are with the maintainer. Public text for all of these: C
 - Problems: AND-05 (Maven Central's rate limit), AND-10 (the 16 KiB optimized-release test
   reading a stale accessibility tree), REPO-15 (the preflight's classifier taking artifact names
   for diagnostics), REPO-16 (the preflight on Windows).
-- Done in `fix/android-ci-reliability`: REPO-15, REPO-16 (with tests); AND-10's test change
+- Done in PR #19 (`757a2c1` / `fix/android-ci-reliability`): REPO-15, REPO-16 (with tests); AND-10's test change
   (a fresh tree before every observation in `ReleaseRuntimeTest`, a log line per swipe).
 - Left: the dependency cache now exists on `main` (its first `main` run created it); put Google's
   Maven first; if AND-10 recurs, read the per-swipe log lines in that job's logcat before changing
@@ -415,7 +414,6 @@ WP-00.3 ──► WP-02.2
 WP-01.* ──► WP-10.1           (release blockers)
 WP-09.3 ──► WP-04.3 ──► WP-04.1, WP-06.2, WP-07.2 (Android)
 WP-07.1 ──► WP-00.2 (screenshots in de, ar), WP-07.3
-WP-05.1 ──► WP-04.2           (intake uses the shared rules)
 WP-02.*, WP-03.1, WP-04.1, WP-04.2 ──► WP-10.1
 WP-09.1 ──► WP-10.1
 WP-10.2, WP-10.3 (maintainer inputs) ──► store releases
