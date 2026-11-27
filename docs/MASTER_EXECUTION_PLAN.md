@@ -124,7 +124,7 @@ it was last checked: T (tests), CI, E (emulator), R (runtime by hand), — (not 
 ## 7. Defect inventory
 
 All defects, with priority, are the findings in [AUDIT_REPORT.md](AUDIT_REPORT.md):
-REPO-01…14, DESK-01…07, AND-01…09, SEC-01…13. Each open one is assigned to exactly one work
+REPO-01…16, DESK-01…07, AND-01…10, SEC-01…13. Each open one is assigned to exactly one work
 package below; the package's status is the defect's status.
 
 ## 8. Security findings
@@ -383,12 +383,17 @@ Details of each finding are with the maintainer. Public text for all of these: C
   Pages and reference it from the README, so `main` only moves by pull request.
 - Acceptance: no bot commit on `main` for a week; README still shows the telemetry.
 
-**WP-09.3 Android CI resilience** — P2 · CI · TODO
-- Problem: AND-05. Proposal: let the dependency cache be created on `main` (it is per-branch
-  today, and Android CI had never run on `main`); put Google's Maven first and retry on HTTP 429
-  with backoff; keep the dependency preflight's "transport failure" distinct from a product
-  failure, as it already is.
-- Acceptance: ten consecutive Android runs without a transport failure.
+**WP-09.3 Android CI resilience** — P1 · CI · IN PROGRESS
+- Problems: AND-05 (Maven Central's rate limit), AND-10 (the 16 KiB optimized-release test
+  reading a stale accessibility tree), REPO-15 (the preflight's classifier taking artifact names
+  for diagnostics), REPO-16 (the preflight on Windows).
+- Done in `fix/android-ci-reliability`: REPO-15, REPO-16 (with tests); AND-10's test change
+  (a fresh tree before every observation in `ReleaseRuntimeTest`, a log line per swipe).
+- Left: the dependency cache now exists on `main` (its first `main` run created it); put Google's
+  Maven first; if AND-10 recurs, read the per-swipe log lines in that job's logcat before changing
+  anything else.
+- Acceptance: the API 36 16 KiB release job passes five consecutive runs, carrying the test through
+  publication and its SHA-256 readback; ten consecutive Android runs without a transport failure.
 
 ### WP-10 Production readiness and release
 
@@ -448,7 +453,7 @@ user-visible text goes through i18n; ROADMAP is updated; the PR shows its proof.
 | R2 Tests | Full suite green three times in a row on Windows (WP-08.1) |
 | R3 Security | No open P0/P1; P2 release blockers (WP-01.1, WP-01.3) done; `cargo audit` clean or every exception reasoned |
 | R4 Release trust | WP-01.1's acceptance cases pass against the release candidate, checked by the previous release's updater |
-| R5 Android (store) | WP-04.1, WP-04.2, WP-04.3, WP-07.1, WP-10.3 done; real-device checklist recorded |
+| R5 Android (store) | WP-04.1, WP-04.2, WP-04.3, WP-07.1, WP-10.3 done; the API 36 16 KiB optimized-release test green on five consecutive runs (AND-10); real-device checklist recorded |
 | R6 Docs | ROADMAP and CHANGELOG true; help pages for new features |
 | R7 Independent review | A reviewer who did not write the release checks R1–R6 |
 

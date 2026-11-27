@@ -61,6 +61,7 @@ build) was deleted to free 47 GB, and the run repeated with `CARGO_INCREMENTAL=0
 | CI, CodeQL, Fuzzing, Help pictures | `14ac304` | success |
 | Dependabot PRs #12, #13, #14 | their heads | success on every system |
 | All 17 checks of PR #17 | `0d2aff9` | success, including Android `build` (REPO-14's `cargo rustc --crate-type cdylib` change) and `device-smoke` on API 26, 36 and 36 with 16 KiB pages. The 16 KiB job failed once on a UI-automation timing error in the minified-release test and passed on re-run, with no change to the code |
+| Android, after the merge | `72120d3` (`main`, run 45945391501) | **failure**: `device-smoke (api36-16k)`, the optimized-release test, with the same error as PR #17's first attempt (Advanced options "unavailable"). Rust contracts, build (APK, AAB, JNI, 16 KiB alignment), API 26 and API 36 (4 KiB, release test included) passed. Read as AND-10: intermittent, not a one-off |
 
 ## 4. Not verified, and why
 
@@ -100,7 +101,7 @@ independent in context, not in model.
 | G5 Regression integrity | **PASS** | consolidated tests ⊇ baseline tests, 0 failures; the one aborted target also aborts on `main` and passes alone |
 | G6 Independent verification | **PASS, with the same-model limitation** | five reviews done; every finding fixed or planned |
 | G7 Execution readiness | **PASS** | MASTER_EXECUTION_PLAN.md: every open finding in one work package, with files, acceptance, tests, dependencies |
-| G8 Consolidation readiness | **PASS** | PR #17 merged into `main` as `72120d3` with all 17 checks green (Android build and all three device emulators, Windows, Linux, macOS, CodeQL, fuzzing, `cargo audit`); #12, #13, #14, #16 show merged; reconciled branches deleted; `main` is the only branch |
+| G8 Consolidation readiness | **PASS** (repository); Android's 16 KiB release check intermittent, AND-10 | PR #17 merged into `main` as `72120d3` with all 17 checks green (Android build and all three device emulators, Windows, Linux, macOS, CodeQL, fuzzing, `cargo audit`); #12, #13, #14, #16 show merged; reconciled branches deleted; `main` is the only branch |
 
 ## 7. Reproducing
 
