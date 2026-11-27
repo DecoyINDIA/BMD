@@ -49,7 +49,7 @@ every two seconds, and only while pywal is the theme. A copy added with **Add a 
 keeps the colours it had.
 
 A scheme changes colours only, on the classic look: every window, button and menu stays where it
-was. A dark scheme makes BMD dark and a light one light, whatever **View → Always dark** says. The
+was. A dark scheme makes BMD dark and a light one light, whatever **View → Appearance** is set to. The
 scheme's colours go where they mean the same:
 
 | BMD | Base16 | pywal |
