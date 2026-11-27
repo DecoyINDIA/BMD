@@ -273,7 +273,7 @@ def crew_pile() -> str:
     more_li = (f'<li class="pile-more"><a href="/contributors.html"><span translate="no" dir="ltr">{more}</span> '
                f'<span class="sr-only">Everyone who helped</span></a></li>' if more else "")
     full = " ".join(f"pile-full-{cap}" for _, cap in PILE_TIERS if n > cap)
-    return f"""<div class="parcel-crew">
+    return f"""<div class="hero-crew">
           <p class="crew-title" id="crew-title">Made possible by these amazing humans</p>
           <ul class="faces pile {full}" style="--face: 44px" role="list" aria-labelledby="crew-title">{"".join(face(p, 44) for p in CREW[:shown])}{more_li}</ul>
           <p class="crew-fine">{people_count(n)} who sent a pull request, reported a problem or joined a conversation on GitHub. <a href="/contributors.html">Meet them all</a></p>
@@ -1602,13 +1602,14 @@ def build_themes() -> None:
     prompt = (CONTENT / "theme-prompt.txt").read_text("utf-8").strip()
     builtin = ", ".join(f"<code>{esc(t['id'])}</code>" for t in themes if t["id"] != "native"
                         and (ROOT / "crates" / "app" / "assets" / "themes" / f"{t['id']}.toml").is_file())
+    builtin_clause = f", {builtin}" if builtin else ""
     trail = [("Home", "/"), ("Themes", "/themes.html")]
     themes_dir = f"{REPO}/tree/main/crates/app/assets/themes"
-    body = f"""{page_head("The same window, your way", "View → Theme changes how BMD looks at once and keeps everything where it was. Pick one of the built-in looks, each with a light and a dark side, or make your own in a text file.", trail)}
+    body = f"""{page_head("The same window, your way", "BMD has one look in two modes, light and dark, in its brand colours (Kombu Green, Brushed Aluminium, Signal Orange): choose under View → Appearance. Or make your own theme in a text file.", trail)}
     <div class="wrap themes">
       {coming_banner()}
       <div class="themes-bar">
-        <p>{len(themes)} built-in themes · light and dark</p>
+        <p>One look · light and dark</p>
         <div class="variant-seg" role="group" aria-label="Show the themes" data-variant-switch hidden>
           <button type="button" aria-pressed="true" data-variant="light">Light</button><button type="button" aria-pressed="false" data-variant="dark">Dark</button>
         </div>
@@ -1625,7 +1626,7 @@ def build_themes() -> None:
           <p>Start with a few colours, then add more as you go:</p>
           <pre><code translate="no">{esc(THEME_SAMPLE)}</code></pre>
           <ul>
-            <li><code>inherits</code> is the theme yours starts from: <code>classic</code> (the default), {builtin}, or another theme file in the same folder.</li>
+            <li><code>inherits</code> is the theme yours starts from: <code>classic</code> (the default){builtin_clause}, or another theme file in the same folder.</li>
             <li><code>[seeds]</code> are a handful of colours (<code>background</code>, <code>surface</code>, <code>header</code>, <code>text</code>, <code>accent</code>, <code>selection</code>, <code>error</code>, <code>warning</code>, <code>success</code>) that BMD spreads over every control. <code>[seeds.light]</code> and <code>[seeds.dark]</code> give each side its own.</li>
             <li><code>[colors]</code> sets single colour roles on both sides, <code>[light]</code> and <code>[dark]</code> on one side only: <code>#rrggbb</code>, or <code>#rrggbbaa</code> with transparency.</li>
             <li><code>[sizes]</code> are corner radii, border widths, font sizes and row heights, in pixels. <code>[controls]</code> chooses the shape of text boxes, check boxes, buttons, progress bars, scroll bars, the focus mark and the title bar.</li>
@@ -1644,17 +1645,16 @@ def build_themes() -> None:
           </div>
         </li>
         <li id="try-it"><h3>Try it, without building BMD</h3>
-          <p>Put the file in BMD's themes folder. <b>View → Theme → Open themes folder</b> opens it, and makes it the first time. It is in BMD's data folder:</p>
+          <p>Put the file in BMD's themes folder, inside BMD's data folder:</p>
           <dl class="fields os-paths">
             <div><dt>Windows</dt><dd><code translate="no">%APPDATA%\\bmd\\themes</code></dd></div>
             <div><dt>Linux</dt><dd><code translate="no">~/.local/share/bmd/themes</code></dd></div>
             <div><dt>macOS</dt><dd><code translate="no">~/Library/Application Support/bmd/themes</code></dd></div>
             <div><dt>Portable copy</dt><dd><code translate="no">data\\themes</code> beside the program</dd></div>
           </dl>
-          <p>Within two seconds it shows in <b>View → Theme</b>, under the built-in themes, by the <code>name</code> it gives itself. Pick it and the whole window changes at once. After you edit the file, pick it again in <b>View → Theme</b> to see the change. <b>View → Dark Mode support</b> and <b>Always dark</b> switch between its light and dark side.</p>
-          <p><b>View → Theme → Add a theme file…</b> does it for you: pick the file anywhere, and BMD copies it into the themes folder and uses it at once.</p>
+          <p>Start BMD with <code translate="no">BMD_THEME</code> set to the file's path (or its name in the themes folder), or write that name as <code translate="no">"theme"</code> in the settings. After you edit the file, start BMD again to see the change. <b>View → Appearance</b> (<b>Light</b>, <b>Dark</b> and <b>Follow system</b>) switches between its light and dark side.</p>
           <h4 id="schemes">Already have a Base16 or pywal scheme?</h4>
-          <p>It's a theme already. A <a href="https://github.com/tinted-theming/schemes">Base16 or Base24 scheme</a> (<code>.yaml</code>) or pywal's <code>colors.json</code>, added the same way, changes BMD's colours and nothing else: the scheme's backgrounds behind the list and the windows, its text kept readable (4.5:1 or more), its blue on the focus, the selection and the progress bar. Once <code>wal</code> has run, <b>View → Theme</b> lists <b>pywal</b>, read from <code>~/.cache/wal/colors.json</code> (<code translate="no">%USERPROFILE%\\.cache\\wal\\colors.json</code> on Windows), and BMD follows each new wallpaper's colours within two seconds. <a href="{REPO}/blob/main/docs/themes.md#base16-and-pywal-colour-schemes">The guide</a> shows which colour goes where.</p>
+          <p>It's a theme already. A <a href="https://github.com/tinted-theming/schemes">Base16 or Base24 scheme</a> (<code>.yaml</code>) or pywal's <code>colors.json</code>, put in the themes folder and named with <code translate="no">BMD_THEME</code>, changes BMD's colours and nothing else: the scheme's backgrounds behind the list and the windows, its text kept readable (4.5:1 or more), its accent on the focus, the selection and the progress bar. Once <code>wal</code> has run, <code translate="no">BMD_THEME=pywal</code> reads straight from <code>~/.cache/wal/colors.json</code> (<code translate="no">%USERPROFILE%\\.cache\\wal\\colors.json</code> on Windows), and BMD follows each new wallpaper's colours within two seconds. <a href="{REPO}/blob/main/docs/themes.md#base16-and-pywal-colour-schemes">The guide</a> shows which colour goes where.</p>
         </li>
         <li id="share-it"><h3>Share it</h3>
           <p>Made something others would like? Open a <a href="{REPO}/pulls">pull request on GitHub</a> that adds it to <a href="{themes_dir}"><code>crates/app/assets/themes</code></a>, with:</p>
@@ -1670,8 +1670,7 @@ def build_themes() -> None:
       {cta_band()}
     </div>"""
     write("/themes.html", f"Themes — {NAME}",
-          f"{len(themes)} built-in looks for {NAME}, each light and dark: "
-          + ", ".join(t["name"] for t in themes) + ". Or make your own in a text file.",
+          f"One look for {NAME} in light and dark (Kombu Green, Brushed Aluminium, Signal Orange), or make your own in a text file.",
           body, section="themes", jsonld=[crumbs_ld(trail)], priority="0.7")
 
 
