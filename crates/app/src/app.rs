@@ -3599,12 +3599,9 @@ impl App {
         // Options → Downloads → "Show start download dialog" off: start (or only queue) at once.
         let skip_dialog = !self.settings.show_start_dialog;
         if cmd.later || cmd.silent || skip_dialog {
-            if let Some(ref raw_dir) = cmd.dir
-                && let Err(why) = ipc::validate_download_dir(raw_dir)
-            {
-                tracing::warn!("refusing download to unsafe folder {raw_dir:?}: {why}");
-                return;
-            }
+            // A folder from the automation API or MCP was checked before it got here
+            // (`answer_add`, `bmd-mcp`), with the refusal answered to the caller; the command
+            // line's `/p` is the user's own choice and is not checked.
             let guessed = cmd.name.is_none();
             let name = cmd
                 .name
@@ -15867,8 +15864,11 @@ mod fresh_address_tests {
         assert!(get(&app, 1).private_window);
     }
 
+    /// A program's add through the automation API (MCP's too) into an unsafe folder is refused
+    /// with an answer it can read, and nothing is added; the command line's `/p` is the user's
+    /// own choice and goes through `handle_command` unchecked.
     #[test]
-    fn silent_add_rejects_dangerous_folders() {
+    fn api_add_rejects_dangerous_folders() {
         let rt = runtime();
         let mut app = app_with(rt, Vec::new());
         let ctx = egui::Context::default();
@@ -15879,8 +15879,8 @@ mod fresh_address_tests {
             r"D:\repo\.git",
             r"D:\Files\..\Windows",
         ] {
-            app.handle_command(
-                ipc::Command {
+            let answer = app.answer_add(
+                &ipc::Command {
                     url: Some("https://example.com/payload.exe".into()),
                     dir: Some(bad.into()),
                     later: true,
@@ -15888,6 +15888,10 @@ mod fresh_address_tests {
                     ..Default::default()
                 },
                 &ctx,
+            );
+            assert!(
+                answer.contains("bad-request"),
+                "unsafe folder {bad} should be refused to the caller: {answer}"
             );
             assert!(
                 app.items.is_empty(),

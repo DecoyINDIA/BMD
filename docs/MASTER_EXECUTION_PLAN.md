@@ -196,7 +196,7 @@ change, in a fresh context, checks the acceptance criteria against the code and 
   themes and two languages.
 - Depends on: WP-07.1 for the shots. Complexity: S.
 
-**WP-00.3 Record the platform-code exceptions** — P2 · all · TODO
+**WP-00.3 Record the platform-code exceptions** — P2 · all · DONE (PR #20)
 - Problem: REPO-07. Root cause: rule 3 and D-008 name only `app/src/win32.rs` and `unix.rs`.
 - Proposal: name every platform module that may opt in to `unsafe` (engine `disk.rs` and
   `sparse.rs`, `nmhost/src/win32.rs`, `android-bridge` `native.rs` and `network::platform`) in
@@ -230,7 +230,7 @@ Details of each finding are with the maintainer. Public text for all of these: C
   token-permission check passes; the rest as in the private notes. Ties in with WP-09.2.
   Complexity: S.
 
-**WP-01.3 Automation interface hardening** — P2 · desktop · TODO · release blocker
+**WP-01.3 Automation interface hardening** — P2 · desktop · DONE (PR #20)
 - Problem: SEC-03. Area: what a request through the automation interfaces (API, MCP) may do
   without the user.
 - Proposal, acceptance and tests: in the private notes. Complexity: S–M.
@@ -265,7 +265,7 @@ Details of each finding are with the maintainer. Public text for all of these: C
 - Acceptance: a file created between check and rename is never replaced. Depends on WP-00.3.
   Complexity: S.
 
-**WP-02.3 List saver robustness** — P3 · desktop · TODO
+**WP-02.3 List saver robustness** — P3 · desktop · IN PROGRESS (DESK-05 done in PR #20; DESK-04 open)
 - Problems: DESK-04, DESK-05. File: `crates/app/src/store.rs`.
 - Proposal: if the saver thread can't start, save on the calling thread and report it; write the
   backup generations with the same atomic, owner-only write as the main file.
@@ -291,7 +291,7 @@ Details of each finding are with the maintainer. Public text for all of these: C
 
 ### WP-04 Android completion
 
-**WP-04.1 Background resume on Android 12–13** — P1 · Android · TODO · release blocker
+**WP-04.1 Background resume on Android 12–13** — P1 · Android · IN PROGRESS (code and JVM test in PR #20; device run on API 31 and 33 waits on WP-04.3) · release blocker
 - Problem: AND-01. Root cause: a refused foreground start is classified as a transfer failure.
   Files: `platform/TransferExecutors.kt`, `TaskScheduler.kt`, `TransferCoordinator.kt`.
 - Proposal: treat a refused foreground start as "waiting for Android" (retry when visible or
@@ -301,7 +301,7 @@ Details of each finding are with the maintainer. Public text for all of these: C
 - Tests: JVM test of the classification; a device-smoke case on API 31 and 33.
 - Depends on: WP-04.3 (matrix). Complexity: M.
 
-**WP-04.2 Bound shared text at intake** — P2 · Android · TODO
+**WP-04.2 Bound shared text at intake** — P2 · Android · DONE (PR #20)
 - Problem: AND-02. Files: `MainActivity.kt`, `ui/BmdViewModel.kt`, `ui/BmdPresentation.kt`.
 - Proposal: cut or refuse shared text above 16 KiB before storing or scanning it; scan off the
   main thread.
@@ -329,7 +329,7 @@ Details of each finding are with the maintainer. Public text for all of these: C
   bridge.
 - Acceptance: one fixture file; all three suites pass it. Complexity: M.
 
-**WP-05.2 Android `cfg` completeness** — P3 · engine · TODO
+**WP-05.2 Android `cfg` completeness** — P3 · engine · DONE (PR #20)
 - REPO-09: gate `browserlike.rs`'s PAC call for Android, or refuse the feature combination at
   compile time. Acceptance: `cargo check --target aarch64-linux-android -p bmd-engine
   --features browser-connection` fails with a clear message or builds. Complexity: S.

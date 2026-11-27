@@ -208,7 +208,16 @@ fn keep_generations(p: &Path) {
     };
     if due {
         if g1.exists() {
-            let _ = std::fs::rename(&g1, &g2);
+            // Copied with the private write rather than renamed: a g1 from before backups were
+            // written privately would otherwise keep its old, readable permissions as g2.
+            match std::fs::read(&g1) {
+                Ok(old) => {
+                    let _ = bmd_ipc::private_write(&g2, &old);
+                }
+                Err(_) => {
+                    let _ = std::fs::rename(&g1, &g2);
+                }
+            }
         }
         let _ = bmd_ipc::private_write(&g1, &current);
     }
