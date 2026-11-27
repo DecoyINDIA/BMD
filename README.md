@@ -373,49 +373,49 @@ Next up in [`ROADMAP.md`](ROADMAP.md): Orca screen-reader & Flatpak native-messa
 
 ## 15 · Download Center
 
-[Latest installers and checksums](https://github.com/DecoyINDIA/BMD/releases/latest). The tables below list the `v1.0.0` packages.
+[Latest installers and checksums](https://github.com/DecoyINDIA/BMD/releases/latest).
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/features/download-platforms-dark.webp">
     <source media="(prefers-color-scheme: light)" srcset="assets/readme/features/download-platforms-light.webp">
-    <img src="assets/readme/features/download-platforms-light.webp" alt="BMD v1.0.0 supported ecosystems: Windows, Linux, Docker Headless, Browser Extensions, and macOS Experimental with SHA-256 and Sigstore provenance" width="960">
+    <img src="assets/readme/features/download-platforms-light.webp" alt="BMD supported ecosystems: Windows, Linux, Docker Headless, Browser Extensions, and macOS Experimental with SHA-256 and Sigstore provenance" width="960">
   </picture>
 </p>
 
-Published **2026-11-19** · [Release Notes (`v1.0.0`)](https://github.com/DecoyINDIA/BMD/releases/tag/v1.0.0) · [All Releases](https://github.com/DecoyINDIA/BMD/releases)
+Published **2026-11-27** · [Release Notes (`v1.1.0`)](https://github.com/DecoyINDIA/BMD/releases/tag/v1.1.0) · [All Releases](https://github.com/DecoyINDIA/BMD/releases)
 
 ### Windows (Windows 10 / 11)
 Also via WinGet: `winget install DecoyINDIA.BMD`
 
 | Architecture | Installer (Recommended) | Portable Zip (`data/` beside exe) | Raw Zip (`%APPDATA%\bmd`) |
 | :--- | :--- | :--- | :--- |
-| **x64** (Intel / AMD) | [`BMD-1.0.0-setup.exe`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-setup.exe) (`19.0 MiB`) | [`BMD-1.0.0-portable.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-portable.zip) (`23.5 MiB`) | [`BMD-1.0.0-x64.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-x64.zip) (`23.5 MiB`) |
-| **ARM64** (Snapdragon) | [`BMD-1.0.0-setup-arm64.exe`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-setup-arm64.exe) (`17.9 MiB`) | [`BMD-1.0.0-portable-arm64.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-portable-arm64.zip) (`22.2 MiB`) | [`BMD-1.0.0-arm64.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-arm64.zip) (`22.2 MiB`) |
-| **x86** (32-bit Win 10) | [`BMD-1.0.0-setup-x86.exe`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-setup-x86.exe) (`18.4 MiB`) | [`BMD-1.0.0-portable-x86.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-portable-x86.zip) (`22.2 MiB`) | [`BMD-1.0.0-x86.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-x86.zip) (`22.2 MiB`) |
+| **x64** (Intel / AMD) | [`BMD-1.1.0-setup.exe`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-setup.exe) (`19.5 MiB`) | [`BMD-1.1.0-portable.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-portable.zip) (`24.5 MiB`) | [`BMD-1.1.0-x64.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-x64.zip) (`24.5 MiB`) |
+| **ARM64** (Snapdragon) | [`BMD-1.1.0-setup-arm64.exe`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-setup-arm64.exe) (`18.3 MiB`) | [`BMD-1.1.0-portable-arm64.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-portable-arm64.zip) (`23.1 MiB`) | [`BMD-1.1.0-arm64.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-arm64.zip) (`23.1 MiB`) |
+| **x86** (32-bit Win 10) | [`BMD-1.1.0-setup-x86.exe`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-setup-x86.exe) (`18.9 MiB`) | [`BMD-1.1.0-portable-x86.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-portable-x86.zip) (`23.1 MiB`) | [`BMD-1.1.0-x86.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-x86.zip) (`23.1 MiB`) |
 
 ### Linux (`glibc >= 2.35`) & Docker / Headless
 Tested on Ubuntu 24.04, Debian 12, and Fedora (GNOME, KDE Plasma, Xfce, Cinnamon on X11 & Wayland/XWayland).
 
 | Architecture | Debian / Ubuntu (`.deb`) | Fedora / RHEL (`.rpm`) | Universal (`.AppImage`) | Plain Archive (`.tar.gz`) |
 | :--- | :--- | :--- | :--- | :--- |
-| **`x86_64`** | [`BMD-1.0.0-linux-x86_64.deb`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-linux-x86_64.deb) (`19.5 MiB`) | [`BMD-1.0.0-linux-x86_64.rpm`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-linux-x86_64.rpm) (`23.6 MiB`) | [`BMD-1.0.0-linux-x86_64.AppImage`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-linux-x86_64.AppImage) (`22.9 MiB`) | [`BMD-1.0.0-linux-x86_64.tar.gz`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-linux-x86_64.tar.gz) (`23.7 MiB`) |
-| **`arm64`** | [`BMD-1.0.0-linux-arm64.deb`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-linux-arm64.deb) (`18.7 MiB`) | [`BMD-1.0.0-linux-arm64.rpm`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-linux-arm64.rpm) (`22.4 MiB`) | [`BMD-1.0.0-linux-arm64.AppImage`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-linux-arm64.AppImage) (`21.8 MiB`) | [`BMD-1.0.0-linux-arm64.tar.gz`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-linux-arm64.tar.gz) (`22.4 MiB`) |
+| **`x86_64`** | [`BMD-1.1.0-linux-x86_64.deb`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-x86_64.deb) (`20.2 MiB`) | [`BMD-1.1.0-linux-x86_64.rpm`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-x86_64.rpm) (`24.6 MiB`) | [`BMD-1.1.0-linux-x86_64.AppImage`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-x86_64.AppImage) (`23.7 MiB`) | [`BMD-1.1.0-linux-x86_64.tar.gz`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-x86_64.tar.gz) (`24.6 MiB`) |
+| **`arm64`** | [`BMD-1.1.0-linux-arm64.deb`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-arm64.deb) (`19.4 MiB`) | [`BMD-1.1.0-linux-arm64.rpm`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-arm64.rpm) (`23.3 MiB`) | [`BMD-1.1.0-linux-arm64.AppImage`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-arm64.AppImage) (`22.6 MiB`) | [`BMD-1.1.0-linux-arm64.tar.gz`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-arm64.tar.gz) (`23.3 MiB`) |
 
-- **Docker / Unraid (`--headless`):** `ghcr.io/decoyindia/bmd:latest` (or `:v1.0.0`, ~`175 MiB` slim Debian, exposes `:8463` LAN HTTPS remote) · [`docker/compose.yml`](docker/compose.yml) · [`docker/unraid.xml`](docker/unraid.xml) · [Server guide](docs/server.md).
+- **Docker / Unraid (`--headless`):** `ghcr.io/decoyindia/bmd:latest` (exposes `:8463` for LAN HTTPS remote control) · [`docker/compose.yml`](docker/compose.yml) · [`docker/unraid.xml`](docker/unraid.xml) · [Server guide](docs/server.md).
 
 ### macOS (Experimental) & Browser Extensions
 
 | Target | Package | Size | Notes |
 | :--- | :--- | ---: | :--- |
-| **macOS Apple Silicon (`arm64`)** | [`BMD-1.0.0-macos-arm64-experimental.dmg`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-macos-arm64-experimental.dmg) | `17.3 MiB` | Experimental, unnotarized; right-click → **Open** ([On a Mac](docs/getting-started.md#on-a-mac)) |
-| **macOS Intel (`x86_64`)** | [`BMD-1.0.0-macos-x86_64-experimental.dmg`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-macos-x86_64-experimental.dmg) | `19.0 MiB` | Experimental, unnotarized; bundles Safari `17+` extension |
-| **Chromium MV3 (Unpacked)** | [`BMD-1.0.0-extension-chromium.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-extension-chromium.zip) | `260.9 KiB` | Chrome, Edge, Brave, Opera, Vivaldi, Helium, Comet |
-| **Chrome Web Store Bundle** | [`BMD-1.0.0-chrome-web-store.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-chrome-web-store.zip) | `260.6 KiB` | Store-packaged Chromium MV3 bundle |
-| **Firefox (`140+`) Add-on** | [`BMD-1.0.0-extension-firefox.xpi`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-extension-firefox.xpi) | `263.1 KiB` | Unsigned `.xpi` for `about:debugging` / Nightly / unbranded forks |
+| **macOS Apple Silicon (`arm64`)** | [`BMD-1.1.0-macos-arm64-experimental.dmg`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-macos-arm64-experimental.dmg) | `17.4 MiB` | Experimental, unnotarized; right-click → **Open** ([On a Mac](docs/getting-started.md#on-a-mac)) |
+| **macOS Intel (`x86_64`)** | [`BMD-1.1.0-macos-x86_64-experimental.dmg`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-macos-x86_64-experimental.dmg) | `19.8 MiB` | Experimental, unnotarized; bundles Safari `17+` extension |
+| **Chromium MV3 (Unpacked)** | [`BMD-1.1.0-extension-chromium.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-extension-chromium.zip) | `445.0 KiB` | Chrome, Edge, Brave, Opera, Vivaldi, Helium, Comet |
+| **Chrome Web Store Bundle** | [`BMD-1.1.0-chrome-web-store.zip`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-chrome-web-store.zip) | `443.7 KiB` | Store-packaged Chromium MV3 bundle |
+| **Firefox (`140+`) Add-on** | [`BMD-1.1.0-extension-firefox.xpi`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-extension-firefox.xpi) | `446.2 KiB` | Unsigned `.xpi` for `about:debugging` / Nightly / unbranded forks |
 
 ### Verification & Provenance
-- **SHA-256 Manifest:** [`SHA256SUMS.txt`](https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/SHA256SUMS.txt) (`3.3 KiB`)
+- **SHA-256 Manifest:** [`SHA256SUMS.txt`](https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/SHA256SUMS.txt) (`3.3 KiB`)
 - **Keyless Sigstore Provenance:** `gh attestation verify <downloaded-file> --repo DecoyINDIA/BMD`
 
 ---
