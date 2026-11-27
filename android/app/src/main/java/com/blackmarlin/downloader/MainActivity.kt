@@ -33,6 +33,7 @@ import com.blackmarlin.downloader.ui.BmdViewModel
 import com.blackmarlin.downloader.ui.DestinationKind
 import com.blackmarlin.downloader.ui.UiDestination
 import com.blackmarlin.downloader.ui.UiFile
+import com.blackmarlin.downloader.ui.boundSharedText
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 
@@ -111,7 +112,7 @@ class MainActivity : ComponentActivity() {
     private fun handleEntryIntent(intent: Intent?) {
         if (intent == null) return
         when (intent.action) {
-            Intent.ACTION_SEND -> intent.getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString()?.let(model::incomingShare)
+            Intent.ACTION_SEND -> boundSharedText(intent.getCharSequenceExtra(Intent.EXTRA_TEXT))?.let(model::incomingShare)
             Intent.ACTION_VIEW -> {
                 val uri = intent.data
                 if (uri?.scheme.equals("https", true) || uri?.scheme.equals("http", true)) model.incomingShare(uri.toString())
@@ -127,7 +128,7 @@ class MainActivity : ComponentActivity() {
             BmdEffect.ReadClipboard -> {
                 val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 // Paste is explicit and reads text only; never dereference an arbitrary clipboard URI.
-                val text = clipboard.primaryClip?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.text?.toString()
+                val text = boundSharedText(clipboard.primaryClip?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.text)
                 model.pastedText(text)
             }
             is BmdEffect.PickDestination -> {

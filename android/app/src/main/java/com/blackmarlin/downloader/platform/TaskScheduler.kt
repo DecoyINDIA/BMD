@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 class TaskScheduler(private val graph: BmdGraph) {
     private val context = graph.context
     private val jobs = context.getSystemService(JobScheduler::class.java)
-    private val work = WorkManager.getInstance(context)
+    private val work by lazy { WorkManager.getInstance(context) }
 
     suspend fun schedule(task: TaskEntity, fromVisibleAction: Boolean) {
         graph.ensureReady()
@@ -47,6 +47,10 @@ class TaskScheduler(private val graph: BmdGraph) {
                 holdLocked(task, "WAITING_ANDROID", "Android has not allowed this transfer to start. Return to the app and tap Resume.")
             }
         } else {
+            if (Build.VERSION.SDK_INT >= 31 && (!fromVisibleAction || !graph.visibility.visible)) {
+                holdLocked(task, "WAITING_ANDROID", "Open Black Marlin and tap Resume to start this transfer.")
+                return@withLock
+            }
             val constraints = Constraints.Builder().setRequiredNetworkType(if (task.networkPolicy == "UNMETERED" && !task.allowMeteredOnce) NetworkType.UNMETERED else NetworkType.CONNECTED).build()
             val request = OneTimeWorkRequestBuilder<TransferWorker>().setInputData(data(task)).setConstraints(constraints)
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS).addTag("bmd-transfer").build()

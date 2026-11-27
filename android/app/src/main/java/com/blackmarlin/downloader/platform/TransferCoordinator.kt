@@ -1,10 +1,13 @@
 package com.blackmarlin.downloader.platform
 
+import android.app.ForegroundServiceStartNotAllowedException
 import android.net.Network
+import android.os.Build
 import android.os.SystemClock
 import android.os.StatFs
 import android.os.Environment
 import android.system.Os
+import androidx.annotation.RequiresApi
 import androidx.room.withTransaction
 import com.blackmarlin.downloader.BmdGraph
 import com.blackmarlin.downloader.bridge.NativeFailure
@@ -26,7 +29,19 @@ import org.json.JSONObject
 data class ExecutionOutcome(val retry: Boolean = false, val localReady: Boolean = false)
 
 /** Room owns intent/generation. A native writer claim lives until Rust explicitly joins it. */
-class TransferCoordinator(private val graph: BmdGraph) {
+class TransferCoordinator internal constructor(
+    private val graph: BmdGraph,
+    private val networks: NetworkGateway,
+    private val availableStorageBytes: (File) -> Long,
+) {
+    constructor(graph: BmdGraph) : this(
+        graph,
+        graph.networks,
+        { dir -> runCatching { StatFs(dir.absolutePath).availableBytes }.getOrDefault(0) },
+    )
+
+    private class ForegroundStartBlockedException(cause: Throwable) : Exception(cause)
+
     private val dao = graph.db.tasks()
     private data class Run(
         val task: TaskEntity,
@@ -80,34 +95,41 @@ class TransferCoordinator(private val graph: BmdGraph) {
                 return@withContext null
             }
             val policy = NetworkPolicy.valueOf(task.networkPolicy)
-            val network = assigned ?: if (!requireAssigned) graph.networks.select(policy, task.allowMeteredOnce) else null
-            val lease = network?.let { graph.networks.admit(it, policy, task.allowMeteredOnce) }
+            val network = assigned ?: if (!requireAssigned) networks.select(policy, task.allowMeteredOnce) else null
+            val lease = network?.let { networks.admit(it, policy, task.allowMeteredOnce) }
             if (lease == null) {
                 dao.update(task.copy(stage = "WAITING_NETWORK", detail = "Waiting for an allowed network.", updatedAt = System.currentTimeMillis()))
                 return@withContext null
             }
             val settings = graph.preferences.state.value
             val networkRuns = active.values.filter { !it.local }
-            val metered = graph.networks.metered(lease.network)
+            val metered = networks.metered(lease.network)
             val host = DownloadPolicy.parse(task.sourceUrl, task.httpConsent).host
             val hostUsed = networkRuns.filter { DownloadPolicy.parse(it.task.sourceUrl, it.task.httpConsent).host == host }.sumOf { it.connections }
             val globalFree = settings.globalSegmentLimit - networkRuns.sumOf { it.connections }
             val hostFree = settings.perHostLimit - hostUsed
             val count = minOf(if (metered) 1 else settings.segmentsPerTransfer, globalFree, hostFree)
             if (networkRuns.size >= (if (metered) 1 else settings.maxActiveTransfers) || count < 1 ||
-                networkRuns.any { it.lease?.let { l -> graph.networks.metered(l.network) } == true }) {
-                graph.networks.release(lease)
+                networkRuns.any { it.lease?.let { l -> networks.metered(l.network) } == true }) {
+                networks.release(lease)
                 dao.update(task.copy(stage = "QUEUED", detail = "Waiting for a transfer slot.", updatedAt = System.currentTimeMillis()))
                 return@withContext null
             }
             val claimed = task.copy(runGeneration = Math.addExact(task.runGeneration, 1), ownerSession = graph.session,
                 stage = "CONNECTING", errorCode = null, detail = "Connecting to the source.", speed = 0, updatedAt = System.currentTimeMillis())
-            try { dao.update(claimed) } catch (error: Exception) { graph.networks.release(lease); throw error }
+            try { dao.update(claimed) } catch (error: Exception) { networks.release(lease); throw error }
             Run(claimed, false, count, lease, executorStopped).also { active[taskId] = it }
         } } ?: return ExecutionOutcome(retry = mayRetry(taskId, epoch))
         var result = ExecutionOutcome()
         try {
-            foreground(run.task)
+            try {
+                foreground(run.task)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                if (isForegroundStartNotAllowed(error)) throw ForegroundStartBlockedException(error)
+                throw error
+            }
             val request = networkRequest(run.task, run.lease!!, run.connections)
             startUnderGate(run, request)
             val end = poll(run)
@@ -129,8 +151,17 @@ class TransferCoordinator(private val graph: BmdGraph) {
             throw cancelled
         } catch (error: Exception) {
             graph.gate.withLock { owned(run)?.let {
-                if (it.userIntent != "RUN" || run.stop.get() || run.executorStopped()) settleStoppedLocked(it, run)
-                else failLocked(it, (error as? NativeFailure)?.code ?: if (error is BmdUiException && error.recovery == BmdUiException.Recovery.SOURCE_CREDENTIALS) "SOURCE_AUTH_REQUIRED" else "TRANSFER_INTERRUPTED")
+                when {
+                    it.userIntent != "RUN" || run.stop.get() || run.executorStopped() -> settleStoppedLocked(it, run)
+                    error is ForegroundStartBlockedException -> dao.update(it.copy(
+                        stage = "WAITING_ANDROID",
+                        speed = 0,
+                        errorCode = null,
+                        detail = "Android did not allow this transfer to start in the background. Open Black Marlin and tap Resume to continue.",
+                        updatedAt = System.currentTimeMillis(),
+                    ))
+                    else -> failLocked(it, (error as? NativeFailure)?.code ?: if (error is BmdUiException && error.recovery == BmdUiException.Recovery.SOURCE_CREDENTIALS) "SOURCE_AUTH_REQUIRED" else "TRANSFER_INTERRUPTED")
+                }
             } }
         } finally {
             finish(run)
@@ -238,7 +269,7 @@ class TransferCoordinator(private val graph: BmdGraph) {
     private suspend fun startUnderGate(run: Run, request: JSONObject) = graph.gate.withLock {
         val task = owned(run) ?: throw NativeFailure("STALE_OWNER")
         if (run.stop.get() || run.executorStopped() || task.userIntent != "RUN" || task.userResumeRequired) throw NativeFailure("ADMISSION_CLOSED")
-        run.lease?.let { if (!it.valid.get() || !graph.networks.eligible(it.network, it.policy, it.allowMetered)) throw NativeFailure("NETWORK_UNAVAILABLE") }
+        run.lease?.let { if (!it.valid.get() || !networks.eligible(it.network, it.policy, it.allowMetered)) throw NativeFailure("NETWORK_UNAVAILABLE") }
         // JNI returns an executor handle immediately; no network work runs on the Android main thread.
         // withContext has prompt cancellation on its return: publish the returned handle in the
         // same non-cancelable section as admission so a real native writer can never be orphaned.
@@ -319,7 +350,7 @@ class TransferCoordinator(private val graph: BmdGraph) {
                 detail = "The engine has not confirmed that this transfer stopped. Open Android App info for Black Marlin, choose Force stop, then reopen it and retry. This interrupts all active transfers. Retained data will be checked when you retry.", errorCode = "WRITER_NOT_RELEASED")) } }
             return@withContext
         }
-        run.lease?.let(graph.networks::release)
+        run.lease?.let(networks::release)
         graph.gate.withLock {
             if (run.local && !run.serviceOwnedNotification) graph.notifications.manager.cancel(run.task.jobId)
             owned(run)?.let { task ->
@@ -372,7 +403,7 @@ class TransferCoordinator(private val graph: BmdGraph) {
 
     /** Reserve future copy space for active transfers and completed private files on primary storage. */
     private suspend fun hasNetworkSpace(candidate: TaskEntity? = null): Boolean {
-        val available = runCatching { StatFs(graph.context.noBackupFilesDir.absolutePath).availableBytes }.getOrDefault(0)
+        val available = availableStorageBytes(graph.context.noBackupFilesDir)
         var needed = StorageBudget.SAFETY_BYTES
         val networkRuns = active.values.filter { !it.local }
         for (run in networkRuns) needed = StorageBudget.sum(needed, StorageBudget.additionalBytes(
@@ -394,9 +425,24 @@ class TransferCoordinator(private val graph: BmdGraph) {
         }
     }
 
+    private fun isForegroundStartNotAllowed(error: Throwable): Boolean {
+        if (Build.VERSION.SDK_INT < 31) return false
+        var current: Throwable? = error
+        while (current != null) {
+            if (Api31Foreground.isNotAllowed(current) || current is IllegalStateException) return true
+            current = current.cause
+        }
+        return false
+    }
+
     /** Caller holds gate and has proved no live writer / unresolved publication. */
     fun cleanPrivateDirectory(taskId: String) {
         deletePrivateTransferDirectory(graph.context.noBackupFilesDir, taskId)
+    }
+
+    @RequiresApi(31)
+    private object Api31Foreground {
+        fun isNotAllowed(error: Throwable) = error is ForegroundServiceStartNotAllowedException
     }
 
     companion object {

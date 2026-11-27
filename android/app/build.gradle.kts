@@ -1,3 +1,4 @@
+import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.gradle.api.tasks.testing.Test
 
@@ -29,13 +30,29 @@ android {
         ndk { abiFilters += setOf("arm64-v8a", "x86_64") }
     }
     signingConfigs {
-        val keystore = providers.environmentVariable("BMD_ANDROID_KEYSTORE").orNull
-        if (!keystore.isNullOrBlank()) {
+        val keystore = providers.environmentVariable("BMD_ANDROID_KEYSTORE").orNull?.takeIf { it.isNotBlank() }
+        val storePasswordEnv = providers.environmentVariable("BMD_ANDROID_STORE_PASSWORD").orNull?.takeIf { it.isNotBlank() }
+        val keyAliasEnv = providers.environmentVariable("BMD_ANDROID_KEY_ALIAS").orNull?.takeIf { it.isNotBlank() }
+        val keyPasswordEnv = providers.environmentVariable("BMD_ANDROID_KEY_PASSWORD").orNull?.takeIf { it.isNotBlank() }
+        if (listOf(keystore, storePasswordEnv, keyAliasEnv, keyPasswordEnv).any { it != null }) {
+            val missing = buildList {
+                if (keystore == null) add("BMD_ANDROID_KEYSTORE")
+                if (storePasswordEnv == null) add("BMD_ANDROID_STORE_PASSWORD")
+                if (keyAliasEnv == null) add("BMD_ANDROID_KEY_ALIAS")
+                if (keyPasswordEnv == null) add("BMD_ANDROID_KEY_PASSWORD")
+            }
+            if (missing.isNotEmpty()) {
+                throw GradleException(
+                    "Incomplete Android signing configuration: set all of BMD_ANDROID_KEYSTORE, " +
+                        "BMD_ANDROID_STORE_PASSWORD, BMD_ANDROID_KEY_ALIAS, and BMD_ANDROID_KEY_PASSWORD " +
+                        "(missing: ${missing.joinToString(", ")})."
+                )
+            }
             create("production") {
-                storeFile = file(keystore)
-                storePassword = providers.environmentVariable("BMD_ANDROID_STORE_PASSWORD").get()
-                keyAlias = providers.environmentVariable("BMD_ANDROID_KEY_ALIAS").get()
-                keyPassword = providers.environmentVariable("BMD_ANDROID_KEY_PASSWORD").get()
+                storeFile = file(keystore!!)
+                storePassword = storePasswordEnv
+                keyAlias = keyAliasEnv
+                keyPassword = keyPasswordEnv
             }
         }
     }
