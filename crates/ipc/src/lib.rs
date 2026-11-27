@@ -525,6 +525,21 @@ fn validate_lexical_download_dir(raw: &str) -> Result<(), &'static str> {
             return Err("cannot save into a Windows system folder");
         }
     } else {
+        // On macOS APFS, canonicalizing paths under `/home`, `/Users`, etc. may resolve through
+        // the firmlink `/System/Volumes/Data/...`. Unwrap that data-volume prefix before checking
+        // Unix system roots, while still rejecting `/System/Volumes/Data` itself and other `/System/*`.
+        let unix_segs: &[String] = if segs.len() >= 3
+            && segs[0] == "system"
+            && segs[1] == "volumes"
+            && segs[2] == "data"
+        {
+            if segs.len() == 3 {
+                return Err("cannot save directly to the filesystem root");
+            }
+            &segs[3..]
+        } else {
+            &segs
+        };
         const UNIX_SYSTEM_ROOTS: &[&str] = &[
             "etc",
             "usr",
@@ -546,13 +561,13 @@ fn validate_lexical_download_dir(raw: &str) -> Result<(), &'static str> {
             "applications",
             "cores",
         ];
-        if UNIX_SYSTEM_ROOTS.contains(&segs[0].as_str()) {
+        if UNIX_SYSTEM_ROOTS.contains(&unix_segs[0].as_str()) {
             return Err("cannot save into a system folder");
         }
-        let var_tail = if segs[0] == "var" {
-            Some(&segs[1..])
-        } else if segs.len() >= 2 && segs[0] == "private" && segs[1] == "var" {
-            Some(&segs[2..])
+        let var_tail = if unix_segs[0] == "var" {
+            Some(&unix_segs[1..])
+        } else if unix_segs.len() >= 2 && unix_segs[0] == "private" && unix_segs[1] == "var" {
+            Some(&unix_segs[2..])
         } else {
             None
         };
@@ -562,7 +577,7 @@ fn validate_lexical_download_dir(raw: &str) -> Result<(), &'static str> {
                 return Err("cannot save into a system /var folder");
             }
         }
-        if segs.len() >= 2 && segs[0] == "private" && segs[1] == "etc" {
+        if unix_segs.len() >= 2 && unix_segs[0] == "private" && unix_segs[1] == "etc" {
             return Err("cannot save into a system folder");
         }
     }
@@ -1370,6 +1385,9 @@ mod tests {
             r"D:\repo\.git\hooks",
             "/home/alice/.config/autostart",
             "/var/log",
+            "/System/Volumes/Data",
+            "/System/Volumes/Data/etc",
+            "/System/Library",
         ] {
             assert!(validate_download_dir(bad).is_err(), "should reject {bad}");
         }
@@ -1379,6 +1397,7 @@ mod tests {
             r"C:\Users\alice\Downloads",
             r"C:\Users\alice\AppData\Local\Temp\bmd-test",
             "/home/alice/Downloads",
+            "/System/Volumes/Data/home/alice/Downloads",
             "/tmp/bmd-downloads",
             "/var/tmp/bmd-downloads",
             "/var/folders/xx/yy/T/bmd-test",
