@@ -18,7 +18,7 @@ cd android
   testDebugUnitTest assembleDebug assembleDebugAndroidTest assembleRelease bundleRelease
 ```
 
-Set `ANDROID_HOME` or `ANDROID_SDK_ROOT` to the SDK. `ANDROID_NDK_HOME` may explicitly select the pinned NDK. The native build script sets the correct API-26 compiler, archiver and linker for each target, uses `cargo build --locked --profile android`, and requests 16 KiB ELF alignment. The `android` profile uses thin LTO, eight code-generation units, stripped debug information and panic unwinding so the JNI boundary can contain panics. Do not change it to `panic=abort`.
+Set `ANDROID_HOME` or `ANDROID_SDK_ROOT` to the SDK. `ANDROID_NDK_HOME` may explicitly select the pinned NDK. The native build script sets the correct API-26 compiler, archiver and linker for each target, builds the shared library with `cargo rustc --locked --lib --crate-type cdylib --profile android` (in the workspace the crate is an ordinary library, so desktop builds never link it), and requests 16 KiB ELF alignment. The `android` profile uses thin LTO, eight code-generation units, stripped debug information and panic unwinding so the JNI boundary can contain panics. Do not change it to `panic=abort`.
 
 No source file uses a developer machine's absolute toolchain path. Do not commit `local.properties`, build output, native libraries or signing keys.
 

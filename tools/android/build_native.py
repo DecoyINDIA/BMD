@@ -104,7 +104,7 @@ def main() -> None:
         flags = env.get("CARGO_ENCODED_RUSTFLAGS", "").split("\x1f") if env.get("CARGO_ENCODED_RUSTFLAGS") else shlex.split(env.get("RUSTFLAGS", ""))
         flags.extend(["-C", "link-arg=-Wl,-z,max-page-size=16384"])
         env["CARGO_ENCODED_RUSTFLAGS"] = "\x1f".join(flags)
-        command = ["cargo", "build", "--locked", "-p", "bmd-android-bridge", "--no-default-features", "--target", target, "--profile", "android", "--jobs", str(args.jobs), "--message-format=json-render-diagnostics"]
+        command = ["cargo", "rustc", "--locked", "-p", "bmd-android-bridge", "--lib", "--crate-type", "cdylib", "--no-default-features", "--target", target, "--profile", "android", "--jobs", str(args.jobs), "--message-format=json-render-diagnostics"]
         print(f"Building {abi} with NDK {NDK_VERSION}, API {API}, Rust 1.98.0", flush=True)
         process = subprocess.Popen(command, cwd=ROOT, env=env, stdout=subprocess.PIPE, text=True)
         assert process.stdout is not None
