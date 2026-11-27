@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1120" height="444" viewBox="0 0 1120 444" role="img" aria-labelledby="svg-title svg-desc">
 <title id="svg-title">Black Marlin Downloader Platform and Release Manifest (Dark Theme)</title>
-<desc id="svg-desc">Download breakdown across Windows, Linux, macOS (Experimental), Browser Extensions, and Auxiliary assets for DecoyINDIA/BMD (27 product downloads out of 46 total release assets).</desc>
+<desc id="svg-desc">Download breakdown across Windows, Linux, macOS (Experimental), Browser Extensions, and Auxiliary assets for DecoyINDIA/BMD (37 product downloads out of 56 total release assets).</desc>
 <style>
     .t-disp { font-family: 'Space Grotesk', 'Segoe UI', system-ui, -apple-system, sans-serif; font-weight: 700; font-variant-numeric: tabular-nums; }
     .t-lbl { font-family: 'IBM Plex Mono', 'Cascadia Mono', Consolas, ui-monospace, monospace; font-weight: 600; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; fill: #5B7A6D; }
@@ -41,74 +41,74 @@
   </style>
 <rect width="1120" height="444" rx="14" fill="#090E0C"/>
 <text x="36" y="34" class="t-mono" font-size="11.5" font-weight="600" letter-spacing="0.06em" fill="#55C99D">PLATFORM &amp; RELEASE MANIFEST</text>
-<text x="1084" y="34" class="t-mono" font-size="10.5" text-anchor="end" fill="#5B7A6D">PRODUCT 27  ·  ALL ASSETS 46  ·  ZERO DOUBLE-COUNTING</text>
+<text x="1084" y="34" class="t-mono" font-size="10.5" text-anchor="end" fill="#5B7A6D">PRODUCT 37  ·  ALL ASSETS 56  ·  ZERO DOUBLE-COUNTING</text>
 <line x1="36" y1="50" x2="1084" y2="50" stroke="#1F3A30" stroke-width="1"/>
 <rect x="36" y="68" width="516" height="332" rx="12" fill="#0F1915" stroke="#2E5848" stroke-width="1.2"/>
 <text x="58" y="96" class="t-lbl">DOWNLOADS BY TARGET BUCKET</text>
 <text x="58" y="134" class="t-strong" font-size="13">Windows</text>
 <text x="242" y="134" class="t-mono" font-size="10.5" fill="#5B7A6D">[PROD · 9 files]</text>
-<text x="530" y="134" class="t-mono" font-size="12" text-anchor="end" fill="#ECF7F2">12 <tspan fill="#5B7A6D">(26.1%)</tspan></text>
+<text x="530" y="134" class="t-mono" font-size="12" text-anchor="end" fill="#ECF7F2">20 <tspan fill="#5B7A6D">(35.7%)</tspan></text>
 <rect x="58" y="142" width="472" height="10" rx="4" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
-<rect x="58.0" y="142.0" width="298.1" height="10.0" rx="4" fill="#55C99D" class="bar-grow"/>
+<rect x="58.0" y="142.0" width="472.0" height="10.0" rx="4" fill="#55C99D" class="bar-grow"/>
 <text x="58" y="186" class="t-strong" font-size="13">Linux</text>
 <text x="242" y="186" class="t-mono" font-size="10.5" fill="#5B7A6D">[PROD · 8 files]</text>
-<text x="530" y="186" class="t-mono" font-size="12" text-anchor="end" fill="#ECF7F2">8 <tspan fill="#5B7A6D">(17.4%)</tspan></text>
+<text x="530" y="186" class="t-mono" font-size="12" text-anchor="end" fill="#ECF7F2">8 <tspan fill="#5B7A6D">(14.3%)</tspan></text>
 <rect x="58" y="194" width="472" height="10" rx="4" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
-<rect x="58.0" y="194.0" width="198.7" height="10.0" rx="4" fill="#38BDF8" class="bar-grow" style="animation-delay: 0.10s;"/>
+<rect x="58.0" y="194.0" width="188.8" height="10.0" rx="4" fill="#38BDF8" class="bar-grow" style="animation-delay: 0.10s;"/>
 <text x="58" y="238" class="t-strong" font-size="13">macOS (Experimental)</text>
 <text x="242" y="238" class="t-mono" font-size="10.5" fill="#5B7A6D">[PROD · 2 files]</text>
-<text x="530" y="238" class="t-mono" font-size="12" text-anchor="end" fill="#ECF7F2">2 <tspan fill="#5B7A6D">(4.3%)</tspan></text>
+<text x="530" y="238" class="t-mono" font-size="12" text-anchor="end" fill="#ECF7F2">2 <tspan fill="#5B7A6D">(3.6%)</tspan></text>
 <rect x="58" y="246" width="472" height="10" rx="4" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
-<rect x="58.0" y="246.0" width="49.7" height="10.0" rx="4" fill="#F59E0B" class="bar-grow" style="animation-delay: 0.20s;"/>
+<rect x="58.0" y="246.0" width="47.2" height="10.0" rx="4" fill="#F59E0B" class="bar-grow" style="animation-delay: 0.20s;"/>
 <text x="58" y="290" class="t-strong" font-size="13">Browser Extensions</text>
 <text x="242" y="290" class="t-mono" font-size="10.5" fill="#5B7A6D">[PROD · 3 files]</text>
-<text x="530" y="290" class="t-mono" font-size="12" text-anchor="end" fill="#ECF7F2">5 <tspan fill="#5B7A6D">(10.9%)</tspan></text>
+<text x="530" y="290" class="t-mono" font-size="12" text-anchor="end" fill="#ECF7F2">7 <tspan fill="#5B7A6D">(12.5%)</tspan></text>
 <rect x="58" y="298" width="472" height="10" rx="4" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
-<rect x="58.0" y="298.0" width="124.2" height="10.0" rx="4" fill="#80DBAD" class="bar-grow" style="animation-delay: 0.30s;"/>
+<rect x="58.0" y="298.0" width="165.2" height="10.0" rx="4" fill="#80DBAD" class="bar-grow" style="animation-delay: 0.30s;"/>
 <text x="58" y="342" class="t-strong" font-size="13">Other / Auxiliary</text>
 <text x="242" y="342" class="t-mono" font-size="10.5" fill="#5B7A6D">[AUX · 15 files]</text>
-<text x="530" y="342" class="t-mono" font-size="12" text-anchor="end" fill="#ECF7F2">19 <tspan fill="#5B7A6D">(41.3%)</tspan></text>
+<text x="530" y="342" class="t-mono" font-size="12" text-anchor="end" fill="#ECF7F2">19 <tspan fill="#5B7A6D">(33.9%)</tspan></text>
 <rect x="58" y="350" width="472" height="10" rx="4" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
-<rect x="58.0" y="350.0" width="472.0" height="10.0" rx="4" fill="#5B7A6D" class="bar-grow" style="animation-delay: 0.40s;"/>
+<rect x="58.0" y="350.0" width="448.4" height="10.0" rx="4" fill="#5B7A6D" class="bar-grow" style="animation-delay: 0.40s;"/>
 <rect x="572" y="68" width="512" height="332" rx="12" fill="#0F1915" stroke="#2E5848" stroke-width="1.2"/>
 <text x="594" y="96" class="t-lbl">RELEASES LEDGER &amp; TOP PACKAGES</text>
 <rect x="594" y="111" width="58" height="17" rx="4" fill="#55C99D" stroke="#1F3A30" stroke-width="1"/>
 <text x="623" y="123" class="t-mono" font-size="9.5" font-weight="600" text-anchor="middle" fill="#06150E">LATEST</text>
 <text x="664" y="124" class="t-val" font-size="14">v1.0.0</text>
 <text x="738" y="124" class="t-mono" font-size="11" fill="#5B7A6D">2026-11-19</text>
-<text x="1062" y="124" class="t-mono" font-size="12" text-anchor="end" fill="#55C99D">27 prod <tspan fill="#5B7A6D">/ 46 total</tspan></text>
+<text x="1062" y="124" class="t-mono" font-size="12" text-anchor="end" fill="#55C99D">37 prod <tspan fill="#5B7A6D">/ 56 total</tspan></text>
 <line x1="594" y1="150" x2="1062" y2="150" stroke="#1F3A30" stroke-width="1"/>
 <text x="594" y="170" class="t-lbl">TOP DOWNLOADED PRODUCT PACKAGES</text>
 <text x="594" y="190" class="t-mono" font-size="11" fill="#ECF7F2">BMD-1.0.0-portable.zip</text>
 <text x="854" y="190" class="t-mono" font-size="10.5" fill="#5B7A6D">23.5 MiB</text>
 <rect x="916" y="181.5" width="108" height="9" rx="3" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
 <rect x="916.0" y="181.5" width="108.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow"/>
-<text x="1062" y="190" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">3</text>
+<text x="1062" y="190" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">4</text>
 <text x="594" y="214" class="t-mono" font-size="11" fill="#ECF7F2">BMD-1.0.0-chrome-web-store.zip</text>
 <text x="854" y="214" class="t-mono" font-size="10.5" fill="#5B7A6D">260.6 KiB</text>
 <rect x="916" y="205.5" width="108" height="9" rx="3" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
-<rect x="916.0" y="205.5" width="72.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow" style="animation-delay: 0.08s;"/>
-<text x="1062" y="214" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">2</text>
+<rect x="916.0" y="205.5" width="81.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow" style="animation-delay: 0.08s;"/>
+<text x="1062" y="214" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">3</text>
 <text x="594" y="238" class="t-mono" font-size="11" fill="#ECF7F2">BMD-1.0.0-extension-chromium.zip</text>
 <text x="854" y="238" class="t-mono" font-size="10.5" fill="#5B7A6D">260.9 KiB</text>
 <rect x="916" y="229.5" width="108" height="9" rx="3" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
-<rect x="916.0" y="229.5" width="72.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow" style="animation-delay: 0.16s;"/>
-<text x="1062" y="238" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">2</text>
-<text x="594" y="262" class="t-mono" font-size="11" fill="#ECF7F2">BMD-1.0.0-x64.zip</text>
-<text x="854" y="262" class="t-mono" font-size="10.5" fill="#5B7A6D">23.5 MiB</text>
+<rect x="916.0" y="229.5" width="81.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow" style="animation-delay: 0.16s;"/>
+<text x="1062" y="238" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">3</text>
+<text x="594" y="262" class="t-mono" font-size="11" fill="#ECF7F2">BMD-1.0.0-setup.exe</text>
+<text x="854" y="262" class="t-mono" font-size="10.5" fill="#5B7A6D">19.0 MiB</text>
 <rect x="916" y="253.5" width="108" height="9" rx="3" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
-<rect x="916.0" y="253.5" width="72.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow" style="animation-delay: 0.24s;"/>
-<text x="1062" y="262" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">2</text>
-<text x="594" y="286" class="t-mono" font-size="11" fill="#ECF7F2">BMD-1.0.0-arm64.zip</text>
-<text x="854" y="286" class="t-mono" font-size="10.5" fill="#5B7A6D">22.2 MiB</text>
+<rect x="916.0" y="253.5" width="81.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow" style="animation-delay: 0.24s;"/>
+<text x="1062" y="262" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">3</text>
+<text x="594" y="286" class="t-mono" font-size="11" fill="#ECF7F2">BMD-1.0.0-x64.zip</text>
+<text x="854" y="286" class="t-mono" font-size="10.5" fill="#5B7A6D">23.5 MiB</text>
 <rect x="916" y="277.5" width="108" height="9" rx="3" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
-<rect x="916.0" y="277.5" width="36.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow" style="animation-delay: 0.32s;"/>
-<text x="1062" y="286" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">1</text>
-<text x="594" y="310" class="t-mono" font-size="11" fill="#ECF7F2">BMD-1.0.0-extension-firefox.xpi</text>
-<text x="854" y="310" class="t-mono" font-size="10.5" fill="#5B7A6D">263.1 KiB</text>
+<rect x="916.0" y="277.5" width="81.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow" style="animation-delay: 0.32s;"/>
+<text x="1062" y="286" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">3</text>
+<text x="594" y="310" class="t-mono" font-size="11" fill="#ECF7F2">BMD-1.0.0-arm64.zip</text>
+<text x="854" y="310" class="t-mono" font-size="10.5" fill="#5B7A6D">22.2 MiB</text>
 <rect x="916" y="301.5" width="108" height="9" rx="3" fill="#172721" stroke="#1F3A30" stroke-width="1"/>
-<rect x="916.0" y="301.5" width="36.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow" style="animation-delay: 0.40s;"/>
-<text x="1062" y="310" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">1</text>
+<rect x="916.0" y="301.5" width="54.0" height="9.0" rx="3" fill="#55C99D" class="bar-grow" style="animation-delay: 0.40s;"/>
+<text x="1062" y="310" class="t-mono" font-size="11.5" text-anchor="end" fill="#ECF7F2">2</text>
 <text x="36" y="428" class="t-body" font-size="11">Product = installers, portable archives, Linux packages, experimental macOS .dmg, browser extensions. Auxiliary = symbols, .zsync, checksums, geo.</text>
-<text x="1084" y="428" class="t-mono" font-size="10.5" text-anchor="end" fill="#5B7A6D">Last synced 2026-11-27 01:36 UTC  ·  Source: GitHub Releases API</text>
+<text x="1084" y="428" class="t-mono" font-size="10.5" text-anchor="end" fill="#5B7A6D">Last synced 2026-11-27 16:26 UTC  ·  Source: GitHub Releases API</text>
 </svg>

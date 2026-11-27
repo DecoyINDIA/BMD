@@ -11,6 +11,7 @@ import com.blackmarlin.downloader.platform.*
 import com.blackmarlin.downloader.storage.PublicationManager
 import com.blackmarlin.downloader.ui.BmdUiStore
 import com.blackmarlin.downloader.ui.BmdUiStoreOwner
+import com.blackmarlin.downloader.widget.QuickDownloadWidgets
 import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.*
@@ -53,6 +54,7 @@ class BmdGraph(val context: Context) {
     val coordinator by lazy { TransferCoordinator(this) }
     val scheduler by lazy { TaskScheduler(this) }
     val repository by lazy { BmdRepository(this) }
+    val quickDownloads = QuickDownloadWidgets(context, repository)
     private val startup = Mutex()
     @Volatile private var ready = false
 
