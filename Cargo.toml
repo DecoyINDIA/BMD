@@ -133,7 +133,7 @@ hyper-util = { version = "0.1.21", default-features = false, features = ["client
 # library rustls brings anyway, with the same features.
 aws-lc-rs = { version = "1.19.0", default-features = false, features = ["aws-lc-sys", "prebuilt-nasm"] }
 # The MCP server (crates/mcp): the official Rust SDK, stdio only.
-rmcp = { version = "3.9.0", default-features = false, features = ["server", "macros", "transport-io"] }
+rmcp = { version = "3.11.0", default-features = false, features = ["server", "macros", "transport-io"] }
 schemars = "1.2.3"
 tokio-rustls = { version = "0.26.6", default-features = false, features = ["aws-lc-rs", "tls12", "logging"] }
 # The lab FTP server's test certificates.
@@ -150,7 +150,7 @@ thiserror = "2.0.21"
 tokio = { version = "1.54.1", features = ["full"] }
 tokio-util = "0.7.20"
 percent-encoding = "2.3.2"
-url = { version = "2.5.8", features = ["serde"] }
+url = { version = "2.5.9", features = ["serde"] }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 
