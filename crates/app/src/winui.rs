@@ -756,6 +756,23 @@ pub fn progress_bar(p: &Painter, rc: Rect, fraction: Option<f32>, time: f64) {
     if era_bar(p, rect(rc), from, to, c.progress_bar, rtl()) {
         return;
     }
+    // BMD's look: a rounded capsule, the track a soft tint, the part done in the accent.
+    if crate::theme::emerald_workspace() {
+        let r = rc.height() / 2.0;
+        p.rect_filled(rect(rc), r, c.progress_track);
+        if to > from {
+            let w = rc.width();
+            let done = Rect::from_min_max(
+                pos2(rc.left() + from * w, rc.top()),
+                pos2(
+                    (rc.left() + to * w).max(rc.left() + from * w + rc.height()),
+                    rc.bottom(),
+                ),
+            );
+            p.rect_filled(rect(done.intersect(rc)), r, c.progress_bar);
+        }
+        return;
+    }
     // Windows 8: a bordered bar, filled.
     if crate::theme::current().controls.progress == crate::palette::ProgressLook::Bar {
         let border = crate::theme::metrics().border;
@@ -3591,6 +3608,10 @@ pub fn group_box(p: &Painter, rc: Rect, gap: Option<(f32, f32)>) {
         }
         None => hline(p, l, rr, t, GROUP_LINE()),
     }
+    // BMD's look: a section, its heading over a rule, without a box round it.
+    if crate::theme::emerald_workspace() {
+        return;
+    }
     vline(p, l, t, b, GROUP_LINE());
     vline(p, rr, t, b, GROUP_LINE());
     hline(p, l, rr, b, GROUP_LINE());
@@ -4046,7 +4067,19 @@ fn button_face(
     }
     let state = State::of(&resp, enabled);
     let p = ui.painter();
-    let face = button_colors(kind, state, crate::theme::colors());
+    let mut face = button_colors(kind, state, crate::theme::colors());
+    // BMD's look: the face eases between rest and hover (0.12 s) instead of switching.
+    if crate::theme::emerald_workspace() && matches!(state, State::Normal | State::Hot) {
+        let t = ui
+            .ctx()
+            .animate_bool_with_time(resp.id.with("hot"), state == State::Hot, 0.12);
+        let c = crate::theme::colors();
+        let (rest, hot) = (
+            button_colors(kind, State::Normal, c),
+            button_colors(kind, State::Hot, c),
+        );
+        face.fill = crate::derive::mix(rest.fill, hot.fill, t);
+    }
     let radius = paint_button(p, rc, kind, state, &face, Shape::Push);
     // "&Start now": the letter after '&' is underlined and Alt+letter presses it.
     let (shown, mnemonic) = match label.split_once('&') {
@@ -4201,6 +4234,13 @@ struct Face {
 /// A button's colours for `kind` in `state`, from `c` (a theme's variant). The states are
 /// decided here, once for every button: the pressed one flattens its bottom edge.
 fn button_colors(kind: ButtonKind, state: State, c: &crate::palette::Palette) -> Face {
+    // BMD's look: a dialog's default button (OK, Download, Save) is the accent filled, the
+    // others a bordered neutral face beside it.
+    let kind = if kind == ButtonKind::Default && crate::theme::emerald_workspace() {
+        ButtonKind::Accent
+    } else {
+        kind
+    };
     button_colors_in(kind, state, c, crate::theme::current().controls.button)
 }
 
@@ -5613,6 +5653,11 @@ pub fn radio_keys(ui: &Ui, group: &[Response]) -> Option<usize> {
 /// white line 1 px longer so it covers the far end.
 pub fn etched_h(p: &Painter, x: f32, y: f32, w: f32) {
     let x = rect(Rect::from_min_size(pos2(x, y), vec2(w, 2.0))).left();
+    // BMD's look: one hairline, as a section rule.
+    if crate::theme::emerald_workspace() {
+        hline(p, x, x + w - 1.0, y, HEADER_LINE());
+        return;
+    }
     hline(p, x, x + w - 2.0, y, ETCH_SHADOW());
     px(p, x + w - 1.0, y, ETCH_LIGHT());
     hline(p, x, x + w - 1.0, y + 1.0, ETCH_LIGHT());
@@ -5621,6 +5666,10 @@ pub fn etched_h(p: &Painter, x: f32, y: f32, w: f32) {
 /// Etched vertical separator in English rect `x, y, 2 × h`.
 pub fn etched_v(p: &Painter, x: f32, y: f32, h: f32) {
     let x = rect(Rect::from_min_size(pos2(x, y), vec2(2.0, h))).left();
+    if crate::theme::emerald_workspace() {
+        vline(p, x, y, y + h - 1.0, HEADER_LINE());
+        return;
+    }
     vline(p, x, y, y + h - 2.0, ETCH_SHADOW());
     px(p, x, y + h - 1.0, ETCH_LIGHT());
     vline(p, x + 1.0, y, y + h - 1.0, ETCH_LIGHT());

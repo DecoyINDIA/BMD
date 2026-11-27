@@ -46,7 +46,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
@@ -256,7 +255,7 @@ fun HelpScreen(state: BmdAppState, session: BmdSession, model: BmdViewModel) {
             }
             session.diagnostics?.let { report ->
                 OutlinedTextField(report, {}, Modifier.fillMaxWidth(), readOnly = true, minLines = 7, maxLines = 15,
-                    label = { Text("Report preview") }, textStyle = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace))
+                    label = { Text("Report preview") }, textStyle = MaterialTheme.typography.bodySmall.copy(fontFamily = BmdFonts.Mono))
                 Button(model::shareDiagnostics, Modifier.fillMaxWidth().heightIn(min = 48.dp)) { Text("Share this report") }
             }
         }

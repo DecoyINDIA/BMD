@@ -116,8 +116,8 @@ fun FileDetailScreen(state: BmdAppState, session: BmdSession, model: BmdViewMode
         ContentCard {
             FileTypeIcon(file.mimeType)
             Text(file.name, style = MaterialTheme.typography.headlineMedium)
-            Text(formatBytes(file.bytes), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
-            if (file.sha256Verified) Text("Matches the expected SHA-256", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+            Text(formatBytes(file.bytes), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)
+            if (file.sha256Verified) Text("Matches the expected SHA-256", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
             Button({ model.openFile(file) }, Modifier.fillMaxWidth().heightIn(min = 54.dp), enabled = file.accessible) { Text(stringResource(R.string.action_open)) }
             OutlinedButton({ model.shareFile(file) }, Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled = file.accessible) { Text(stringResource(R.string.action_share)) }
         }

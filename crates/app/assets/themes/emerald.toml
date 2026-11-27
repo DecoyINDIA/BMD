@@ -1,12 +1,23 @@
-# Emerald: one of BMD's built-in themes, and an example of a theme file.
-# White transfer surfaces, a sage sidebar and a forest-green primary action. The night variant
-# uses the same hierarchy with pine surfaces and a mint accent.
+# BMD's look, light and dark (View → Appearance), and an example of a theme file. Its id stays
+# "emerald" (the saved setting and the workspace layout key on it); its colours are BMD's brand:
+#
+#   Kombu Green        #354230   main
+#   Brushed Aluminium  #c7cac5   second
+#   Signal Orange      #ff6a1a   accent
+#
+# A 60 / 30 / 10 split. Dark: kombu surfaces (60), aluminium ink and icons (30), orange accents (10).
+# Light: aluminium surfaces (60), kombu ink, icons and selections (30), orange accents (10). On the
+# light aluminium the orange is a deeper signal orange (#b84300): #ff6a1a can't reach the 3:1 an
+# accent needs against any light background, white included.
+#
+# One surface system: the menu bar, toolbar and sidebar share the canvas, the download list sits
+# on its own surface, a hairline between them, no cards inside the window.
 #
 # A theme file names only what it changes. A few seeds per variant derive every other colour
 # (`crate::derive`), so a role BMD adds later arrives in this look rather than the classic one.
 # The icons are Metro's: one-colour line art where the default look has pictures.
 
-name = "Emerald"
+name = "Kombu"
 icons = "mono"
 icon-set = "metro"
 
@@ -21,64 +32,87 @@ focus = "ring"
 [sizes]
 radius = 6
 "radius.button" = 6
-"radius.part" = 4
+"radius.part" = 5
 "radius.check" = 4
-"radius.flyout" = 10
+"radius.flyout" = 12
 "radius.menu-item" = 6
-"radius.egui" = 6
-"radius.popup" = 8
+"radius.egui" = 8
+"radius.popup" = 10
 border = 1
 "focus-line" = 2
-"list.row" = 32
+"list.row" = 34
 "list.header" = 32
 
 [seeds.light]
-background = "#f8fbf9"
-surface = "#ffffff"
-header = "#f1f6f3"
-text = "#152e24"
-accent = "#187052"
-selection = "#d8efe2"
-error = "#d1004f"
-warning = "#8a6100"
-success = "#0e7a55"
+background = "#d3d6d1"
+surface = "#e8eae6"
+header = "#e8eae6"
+text = "#29331f"
+accent = "#b84300"
+selection = "#b9c2b1"
+error = "#a8002f"
+warning = "#7a5200"
+success = "#2f6b3a"
 
 [seeds.dark]
-background = "#14211d"
-surface = "#182822"
-header = "#1b3028"
-text = "#eef7f2"
-accent = "#80dbad"
-selection = "#2b523f"
-error = "#ff8095"
-warning = "#ffdb13"
-success = "#3ecf8e"
+background = "#2c3728"
+surface = "#354230"
+header = "#354230"
+text = "#dfe2dc"
+accent = "#ff6a1a"
+selection = "#4f5e47"
+error = "#ff9aa6"
+warning = "#ffd25c"
+success = "#8fd99a"
 
 [light]
-"selection.text" = "#152e24"
-"selection.inactive" = "#e9f3ed"
-"selection.focus" = "#187052"
-"focus.ring" = "#185a44"
-"progress.track" = "#c7ded1"
+# Notes a step darker than derived: they also sit on the animated backdrop's shadows.
+"text.muted" = "#4a5444"
+"selection.text" = "#1d251a"
+"selection.inactive" = "#cbd2c5"
+"selection.focus" = "#b84300"
+"focus.ring" = "#9a3800"
+"progress.track" = "#c4cabf"
 "tree-chevrons" = true
-"tree" = "#edf5ef"
-"header.sep" = "#dce9e1"
-"header.line" = "#dce9e1"
-"list.grid" = "#e7efe9"
-"chip.web" = "#e1f2e8"
-"chip.torrent" = "#e7ede9"
-"chip.text" = "#254536"
+"tree" = "#d3d6d1"
+"menubar" = "#d3d6d1"
+"menubar.bottom" = "#d3d6d1"
+"menubar.line" = "#d3d6d1"
+"toolbar.line" = "#d3d6d1"
+"toolbar.line.light" = "#d3d6d1"
+"header.sep" = "#c3c8bf"
+"header.line" = "#c3c8bf"
+"list.grid" = "#d9ddd5"
+"chip.web" = "#cdd5c6"
+"chip.torrent" = "#d6d8d3"
+"chip.text" = "#1d251a"
+# Push buttons with depth: a lighter face, a hairline border, a darker bottom edge.
+"button" = "#f6f7f5"
+"button.hot" = "#fbfbfa"
+"button.pressed" = "#e3e6e0"
+"button.border" = "#c0c5bb"
+"button.bottom" = "#a3a99e"
 
 [dark]
-"selection.text" = "#eef7f2"
-"selection.inactive" = "#233b30"
-"selection.focus" = "#80dbad"
-"focus.ring" = "#a5f0c5"
-"progress.track" = "#466456"
-"tree" = "#1b3028"
-"header.sep" = "#304b3e"
-"header.line" = "#304b3e"
-"list.grid" = "#284236"
-"chip.web" = "#284c3a"
-"chip.torrent" = "#2e433a"
-"chip.text" = "#e1f2e8"
+"selection.text" = "#f1f3ef"
+"selection.inactive" = "#414e3b"
+"selection.focus" = "#ff6a1a"
+"focus.ring" = "#ff8a47"
+"progress.track" = "#4a5843"
+"tree" = "#2c3728"
+"menubar" = "#2c3728"
+"menubar.bottom" = "#2c3728"
+"menubar.line" = "#2c3728"
+"toolbar.line" = "#2c3728"
+"toolbar.line.light" = "#2c3728"
+"header.sep" = "#46533f"
+"header.line" = "#46533f"
+"list.grid" = "#3d4a37"
+"chip.web" = "#4a5843"
+"chip.torrent" = "#434a40"
+"chip.text" = "#eef0eb"
+"button" = "#4a5843"
+"button.hot" = "#54634c"
+"button.pressed" = "#3c4836"
+"button.border" = "#5a6852"
+"button.bottom" = "#1f271c"

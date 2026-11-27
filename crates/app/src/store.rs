@@ -387,10 +387,9 @@ impl Saver {
             .take()
     }
 
-    /// Wait until nothing is waiting or being written (BMD closing), or until `deadline` (the
-    /// session ending, which can't wait for a disk that holds its writes). True when all of it
-    /// was written.
-    pub fn flush_until(&self, deadline: Option<std::time::Instant>) -> bool {
+    /// Wait for pending writes. Return `Ok(false)` on timeout, or the latest unreported write
+    /// error if the saver has finished. Leave the outcome available for polling.
+    pub fn flush_until(&self, deadline: Option<std::time::Instant>) -> Result<bool, String> {
         let (lock, cv) = &*self.shared;
         let mut s = lock.lock().unwrap_or_else(|e| e.into_inner());
         while s.waiting.is_some() || s.writing {
@@ -399,7 +398,7 @@ impl Saver {
                 Some(d) => {
                     let left = d.saturating_duration_since(std::time::Instant::now());
                     if left.is_zero() {
-                        return false;
+                        return Ok(false);
                     }
                     cv.wait_timeout(s, left)
                         .unwrap_or_else(|e| e.into_inner())
@@ -407,7 +406,10 @@ impl Saver {
                 }
             };
         }
-        true
+        match &s.outcome {
+            Some(Err(error)) => Err(error.clone()),
+            _ => Ok(true),
+        }
     }
 }
 
@@ -427,6 +429,22 @@ mod tests {
     }
 
     #[test]
+    fn flush_reports_write_failure() {
+        fn fail_write(_: &Path, _: &[u8]) -> std::io::Result<()> {
+            Err(std::io::Error::other("test saver write failed"))
+        }
+
+        let saver = Saver::writing("failing test saver", fail_write);
+        saver.queue("unused.json".into(), Vec::new());
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
+        assert_eq!(
+            saver.flush_until(Some(deadline)),
+            Err("test saver write failed".into())
+        );
+        assert_eq!(saver.outcome(), Some(Err("test saver write failed".into())));
+    }
+
+    #[test]
     fn the_saver_writes_the_newest_list_off_the_calling_thread() {
         let dir = tempfile::tempdir().unwrap();
         let p = dir.path().join("downloads.json");
@@ -436,7 +454,7 @@ mod tests {
             let json = encode(&p, id, &[], &layout, &Settings::default(), &[]).unwrap();
             saver.queue(p.clone(), json);
         }
-        assert!(saver.flush_until(None));
+        assert_eq!(saver.flush_until(None), Ok(true));
         assert_eq!(saver.outcome(), Some(Ok(())));
         assert_eq!(load_from(&p, empty()).next_id, 5);
     }
@@ -470,11 +488,17 @@ mod tests {
         );
         // The session's end waits for it only until its deadline.
         let waited = std::time::Instant::now();
-        assert!(!saver.flush_until(Some(waited + Duration::from_millis(100))));
+        assert_eq!(
+            saver.flush_until(Some(waited + Duration::from_millis(100))),
+            Ok(false)
+        );
         assert!(waited.elapsed() < Duration::from_secs(5));
         *HELD.0.lock().unwrap() = false;
         HELD.1.notify_all();
-        assert!(saver.flush_until(Some(std::time::Instant::now() + Duration::from_secs(30))));
+        assert_eq!(
+            saver.flush_until(Some(std::time::Instant::now() + Duration::from_secs(30))),
+            Ok(true)
+        );
         assert_eq!(saver.outcome(), Some(Ok(())));
         assert_eq!(std::fs::read(&p).unwrap(), b"9");
     }
