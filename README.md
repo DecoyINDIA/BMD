@@ -12,7 +12,7 @@
 
 <p align="center">
   <strong>Laminar speed. Zero drag. Familiar control.</strong><br>
-  The desktop download manager workflow you already know by heart—rebuilt from scratch in <strong>Rust 1.98</strong> with dynamic midpoint segment re-splitting, BitTorrent &amp; uTP, 4K video capture, and 86 interface languages. Free and open source under <code>GPL-3.0-or-later</code>, with no ads, trials, or telemetry.
+  The desktop download manager workflow you already know by heart—rebuilt from scratch in <strong>Rust</strong> (MSRV <code>1.98</code>, <code>stable</code> toolchain) with dynamic midpoint segment re-splitting, BitTorrent &amp; uTP, 4K video capture, and 86 interface languages. Free and open source under <code>GPL-3.0-or-later</code>, with no ads, trials, or telemetry.
 </p>
 
 <!-- CHAPTER 03: DOWNLOAD BMD -->
@@ -44,7 +44,7 @@
 
 ## 02 · Meet Black Marlin
 
-Losing a connection at 90% of a multi-gigabyte archive shouldn't cost you the transfer—or force you onto adware, trial timers, or closed binaries. **Black Marlin Downloader (`BMD`)** keeps the desktop layout, category tree, queues, Scheduler, Speed Limiter, and segmented progress window download-manager users already know ([`PRODUCT.md`](PRODUCT.md) · [`DESIGN.md`](DESIGN.md)), powered by a clean-room engine written from scratch in **Rust `1.98`** (edition `2024`).
+Losing a connection at 90% of a multi-gigabyte archive shouldn't cost you the transfer—or force you onto adware, trial timers, or closed binaries. **Black Marlin Downloader (`BMD`)** keeps the desktop layout, category tree, queues, Scheduler, Speed Limiter, and segmented progress window download-manager users already know ([`PRODUCT.md`](PRODUCT.md) · [`DESIGN.md`](DESIGN.md)), powered by a clean-room engine written from scratch in **Rust** (edition `2024`, MSRV `1.98`, `stable` toolchain in [`rust-toolchain.toml`](rust-toolchain.toml)).
 
 | Design Pillar | Engineering Reality |
 | :--- | :--- |
@@ -223,20 +223,20 @@ Recorded **2026-10-29** (`website/bench/results.json`, status `final`, commit `c
 
 ---
 
-## 10 · Engineering Architecture (15 Crates + Extension)
+## 10 · Engineering Architecture (16 Crates + Extension)
 
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/illustrations/architecture-blueprint-dark.webp">
     <source media="(prefers-color-scheme: light)" srcset="assets/readme/illustrations/architecture-blueprint-light.webp">
-    <img src="assets/readme/illustrations/architecture-blueprint-light.webp" alt="Exploded 3D architectural blueprint of BMD's 15 Rust crates and browser extension showing strict inward dependencies toward bmd-ipc and bmd-engine" width="960">
+    <img src="assets/readme/illustrations/architecture-blueprint-light.webp" alt="Exploded 3D architectural blueprint of BMD's 16 Rust crates and browser extension showing strict inward dependencies toward bmd-ipc and bmd-engine" width="960">
   </picture>
 </p>
 
-Dependencies point strictly inward: frontends (`bmd-app`, `bmd-cli`, `bmd-mcp`, `bmd-nmhost`, `bmd-remote`) talk to `bmd-engine` over `bmd-ipc`, while `bmd-engine` has **zero** UI dependencies. The workspace enforces `unsafe_code = "deny"` globally, confining `allow(unsafe_code)` to **5** OS/syscall boundary files (`crates/app/src/win32.rs`, `crates/app/src/unix.rs`, `crates/engine/src/disk.rs`, `crates/engine/src/sparse.rs`, `crates/nmhost/src/win32.rs`). See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+Dependencies point strictly inward: frontends (`bmd-app`, `bmd-cli`, `bmd-mcp`, `bmd-nmhost`, `bmd-remote`, `bmd-android-bridge`) talk to `bmd-engine` (and desktop frontends over `bmd-ipc`), while `bmd-engine` has **zero** UI dependencies. The workspace enforces `unsafe_code = "deny"` globally, confining `allow(unsafe_code)` to **7** OS/FFI/syscall boundary files (`crates/app/src/win32.rs`, `crates/app/src/unix.rs`, `crates/engine/src/disk.rs`, `crates/engine/src/sparse.rs`, `crates/nmhost/src/win32.rs`, `crates/android-bridge/src/lib.rs`, `crates/android-bridge/src/network.rs`, plus the non-shipped crash example `crates/crash/examples/crashy.rs`). See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 <details>
-<summary><strong>Complete 15-Crate Workspace Manifest</strong></summary>
+<summary><strong>Complete 16-Crate Workspace Manifest</strong></summary>
 
 | Crate | Path | Binary | Role |
 | :--- | :--- | :--- | :--- |
@@ -255,6 +255,7 @@ Dependencies point strictly inward: frontends (`bmd-app`, `bmd-cli`, `bmd-mcp`, 
 | `bmd-geo` | [`crates/geo`](crates/geo) | — | Offline DB-IP IP-to-Country Lite lookup + 250-country flag atlas |
 | `bmd-crash` | [`crates/crash`](crates/crash) | — | Out-of-process crash/freeze watchdog, minidumps, and symbolicated stack traces |
 | `bmd-labserver` | [`crates/labserver`](crates/labserver) | `labserver` | HTTP Range + FTP/FTPS fault-injection test and benchmark server |
+| `bmd-android-bridge` | [`crates/android-bridge`](crates/android-bridge) | — | Native Android JNI and admitted-network adapter bridging Kotlin UI to `bmd-engine` |
 
 </details>
 
@@ -427,7 +428,7 @@ Tested on Ubuntu 24.04, Debian 12, and Fedora (GNOME, KDE Plasma, Xfce, Cinnamon
 | [**Security Policy**](SECURITY.md) | Private advisories, `bmd-nmhost`/`bmd-ipc` trust boundaries, helper signatures |
 | [**Attribution & License**](ATTRIBUTION.md) | Icons, DB-IP Lite dataset, SIL OFL fonts, and [`GPL-3.0-or-later`](LICENSE) |
 
-Requires **Rust `1.98+`** (edition `2024`), **CMake**, **LLVM (`libclang`)**, and **NASM** on Windows (for BoringSSL):
+Requires **Rust `1.98+`** (`stable` toolchain via [`rust-toolchain.toml`](rust-toolchain.toml), edition `2024`), **CMake**, **LLVM (`libclang`)**, and **NASM** on Windows (for BoringSSL):
 
 ```sh
 cargo build
@@ -460,6 +461,6 @@ Read the [build, test and release instructions](docs/android/BUILD_AND_RELEASE.m
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/readme/branding/closing-horizon-dark.webp">
     <source media="(prefers-color-scheme: light)" srcset="assets/readme/branding/closing-horizon-light.webp">
-    <img src="assets/readme/branding/closing-horizon-light.webp" alt="Beyond the Horizon — Black Marlin Downloader closing composition synthesizing 15 Rust crates, 86 languages, and GPL-3.0 open-source freedom" width="960">
+    <img src="assets/readme/branding/closing-horizon-light.webp" alt="Beyond the Horizon — Black Marlin Downloader closing composition synthesizing 16 Rust crates, 86 languages, and GPL-3.0 open-source freedom" width="960">
   </picture>
 </p>

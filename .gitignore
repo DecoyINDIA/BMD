@@ -18,14 +18,9 @@ __pycache__/
 
 node_modules/
 
-# Impeccable (.claude/skills/impeccable): its engine downloads on first use; personal Claude Code settings
-/.claude/skills/impeccable/scripts/bin/
-/.claude/settings.local.json
-/.impeccable/review/
-/.impeccable/hook.cache.json
-/.impeccable/questions/
-# Agents' git worktrees (Claude Code).
-/.claude/worktrees/
+# Local AI agent configuration and worktrees (Claude Code, Impeccable)
+/.claude/
+/.impeccable/
 # Keys (API keys, signing keys): never committed.
 /k/
 # The maintainer's private notes (CLAUDE.md imports notes/CLAUDE.private.md).
