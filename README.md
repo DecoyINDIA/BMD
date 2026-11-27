@@ -338,9 +338,9 @@ Refreshed every **6 hours** via [`.github/workflows/readme-analytics.yml`](.gith
 | **All Release Assets Total** (incl. symbols, `.zsync`, checksums, geo) | 46 |
 | **Latest Release** | `v1.0.0` (27 product downloads · 2026-11-19) |
 | **Growth Windows** | Baseline recording active (awaiting >= 24h real snapshot span) |
-| **Repository Pulse** | 0 stars · 0 forks · 3 contributors |
+| **Repository Pulse** | 0 stars · 0 forks · 4 contributors |
 | **Tracking Started** | `2026-11-26 16:20 UTC` |
-| **Last Synced** | `2026-11-26 17:07 UTC` · `api_status`: `ok (live GitHub API)` |
+| **Last Synced** | `2026-11-27 01:36 UTC` · `api_status`: `ok (live GitHub API)` |
 
 | Platform Bucket | Category | Downloads | Share (Product) | Share (All Assets) |
 | :--- | :--- | ---: | ---: | ---: |

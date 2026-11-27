@@ -2,14 +2,14 @@
   "schema_version": 1,
   "repository": "DecoyINDIA/BMD",
   "tracking_started_at": "2026-11-26T16:20:48Z",
-  "last_updated_at": "2026-11-26T17:07:02Z",
-  "last_successful_api_sync_at": "2026-11-26T17:07:02Z",
+  "last_updated_at": "2026-11-27T01:36:41Z",
+  "last_successful_api_sync_at": "2026-11-27T01:36:41Z",
   "api_status": "ok",
   "api_error": null,
   "rate_limit": {
-    "remaining": 4923,
+    "remaining": 4997,
     "limit": 5000,
-    "reset_at": "2026-11-26T17:51:34Z"
+    "reset_at": "2026-11-27T02:36:41Z"
   },
   "classification_policy": {
     "product_downloads": "Installers, portable archives, Linux packages (.AppImage, .deb, .rpm, .tar.gz), experimental macOS .dmg, and browser extensions (.zip, .xpi). Zero double-counting.",
@@ -20,9 +20,9 @@
     "forks": 0,
     "open_issues": 4,
     "watchers": 0,
-    "contributors_count": 3,
+    "contributors_count": 4,
     "default_branch": "main",
-    "pushed_at": "2026-11-26T17:06:28Z"
+    "pushed_at": "2026-11-26T20:09:52Z"
   },
   "summary": {
     "release_count": 1,
@@ -46,9 +46,9 @@
     "weekly_delta": null,
     "monthly_delta": null,
     "delta_notes": {
-      "daily_delta": "Insufficient history (0h recorded; requires >= 24h since tracking started)",
-      "weekly_delta": "Insufficient history (0h recorded; requires >= 7d since tracking started)",
-      "monthly_delta": "Insufficient history (0h recorded; requires >= 30d since tracking started)"
+      "daily_delta": "Insufficient history (9h recorded; requires >= 24h since tracking started)",
+      "weekly_delta": "Insufficient history (9h recorded; requires >= 7d since tracking started)",
+      "monthly_delta": "Insufficient history (9h recorded; requires >= 30d since tracking started)"
     }
   },
   "platforms": [
@@ -482,6 +482,24 @@
     },
     {
       "timestamp": "2026-11-26T17:07:02Z",
+      "total_product_downloads": 27,
+      "total_all_assets": 46,
+      "stars": 0,
+      "forks": 0,
+      "open_issues": 4,
+      "release_count": 1,
+      "per_release_product": {
+        "v1.0.0": 27
+      },
+      "per_platform_product": {
+        "Windows": 12,
+        "Linux": 8,
+        "macOS (Experimental)": 2,
+        "Browser Extensions": 5
+      }
+    },
+    {
+      "timestamp": "2026-11-27T01:36:41Z",
       "total_product_downloads": 27,
       "total_all_assets": 46,
       "stars": 0,
