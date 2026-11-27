@@ -399,6 +399,231 @@ pub fn private_write(path: &std::path::Path, bytes: &[u8]) -> std::io::Result<()
         .atomic_write(path, bytes)
 }
 
+/// Where a download asked for by a program (the automation API, MCP) may be saved: refuses
+/// relative, non-canonical and device paths, the system drive's root, system folders,
+/// autostart locations and credential or repository folders. Network shares, other drives'
+/// roots, removable media and every user's home stay allowed, however they are mounted
+/// (`/var/home` on image-based Linux, `/run/media`, `/run/user/<uid>/gvfs`, mapped drives).
+/// Folders the user chose (the dialog, Options, the command line's `/p`) are never checked.
+pub fn validate_download_dir(raw: &str) -> Result<(), &'static str> {
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return Err("download folder cannot be empty");
+    }
+    if trimmed.chars().any(char::is_control) {
+        return Err("download folder contains control characters");
+    }
+    validate_lexical_download_dir(trimmed)?;
+
+    // If an ancestor exists on this machine (e.g., a symlink pointing to `/etc` or `Startup`),
+    // canonicalize it and re-check the resolved path as well.
+    let path = std::path::Path::new(trimmed);
+    let mut suffix: Vec<&std::ffi::OsStr> = Vec::new();
+    let mut cur = Some(path);
+    while let Some(p) = cur {
+        if p.exists() {
+            if let Ok(canon) = std::fs::canonicalize(p) {
+                let mut full = canon;
+                for part in suffix.iter().rev() {
+                    full.push(part);
+                }
+                let s = full.to_string_lossy();
+                // Windows' canonical form is verbatim: `\\?\D:\x`, or `\\?\UNC\server\share\x`
+                // for a share or a mapped drive. Check it as the ordinary path it names.
+                let normalized = if let Some(unc) = s.strip_prefix(r"\\?\UNC\") {
+                    format!(r"\\{unc}")
+                } else {
+                    s.strip_prefix(r"\\?\").unwrap_or(&s).to_string()
+                };
+                validate_lexical_download_dir(&normalized)?;
+            }
+            break;
+        }
+        if let Some(name) = p.file_name() {
+            suffix.push(name);
+        }
+        cur = p.parent();
+    }
+    Ok(())
+}
+
+/// The system drive's letter (`SystemDrive`, else `C`), lower case.
+fn system_drive() -> u8 {
+    std::env::var("SystemDrive")
+        .ok()
+        .and_then(|d| d.bytes().next())
+        .filter(u8::is_ascii_alphabetic)
+        .unwrap_or(b'C')
+        .to_ascii_lowercase()
+}
+
+fn validate_lexical_download_dir(raw: &str) -> Result<(), &'static str> {
+    if raw.starts_with(r"\\.\")
+        || raw.starts_with(r"\\?\")
+        || raw.starts_with("//./")
+        || raw.starts_with("//?/")
+    {
+        return Err("device or verbatim paths are not allowed");
+    }
+    let bytes = raw.as_bytes();
+    // `windows`: a drive or a share, checked against Windows' folders. `drive`: the drive whose
+    // root this is, for a drive letter or an administrative share (`\\server\c$`).
+    let (windows, rest, drive) = if raw.starts_with(r"\\") || raw.starts_with("//") {
+        let mut parts = raw[2..].splitn(3, ['/', '\\']);
+        let (server, share) = (parts.next().unwrap_or(""), parts.next().unwrap_or(""));
+        if server.is_empty() || share.is_empty() {
+            return Err("a network path needs a server and a share");
+        }
+        let admin =
+            share.len() == 2 && share.as_bytes()[0].is_ascii_alphabetic() && share.ends_with('$');
+        let drive = admin.then(|| share.as_bytes()[0].to_ascii_lowercase());
+        (true, parts.next().unwrap_or(""), drive)
+    } else if bytes.len() >= 3
+        && bytes[0].is_ascii_alphabetic()
+        && bytes[1] == b':'
+        && (bytes[2] == b'\\' || bytes[2] == b'/')
+    {
+        (true, &raw[3..], Some(bytes[0].to_ascii_lowercase()))
+    } else if let Some(rest) = raw.strip_prefix('/') {
+        (false, rest, None)
+    } else {
+        return Err("download folder must be an absolute path");
+    };
+
+    let mut segs: Vec<String> = Vec::new();
+    for part in rest.split(['/', '\\']) {
+        if part.is_empty() {
+            continue;
+        }
+        if part == "." || part == ".." {
+            return Err("download folder must be a canonical path without '.' or '..'");
+        }
+        // On Windows a colon names a drive or a file's alternate stream; on Unix it is an
+        // ordinary character (gvfs mounts shares as `smb-share:server=nas,share=dl`).
+        if windows && part.contains(':') {
+            return Err("download folder contains an invalid drive or stream separator");
+        }
+        segs.push(part.to_ascii_lowercase());
+    }
+    if segs.is_empty() {
+        // `/` and the system drive's root hold the system; another drive's root (a USB stick)
+        // or a share's root is an ordinary place to save.
+        if !windows || drive == Some(system_drive()) {
+            return Err("cannot save directly to the filesystem root");
+        }
+        return Ok(());
+    }
+
+    // Credentials and repositories, at any depth.
+    const SENSITIVE: &[&str] = &[".ssh", ".git", ".gnupg", ".aws", ".kube", ".docker"];
+    if segs.iter().any(|s| SENSITIVE.contains(&s.as_str())) {
+        return Err("cannot save into a sensitive, repository, or autostart folder");
+    }
+    // Autostart locations, by where they are, not by a folder's name: a folder of one's own
+    // called "Startup" is an ordinary folder.
+    let at = |pattern: &[&str]| {
+        segs.windows(pattern.len())
+            .any(|w| w.iter().zip(pattern).all(|(s, p)| s == p))
+    };
+    if at(&["start menu", "programs", "startup"])
+        || at(&[".config", "autostart"])
+        || at(&[".config", "systemd"])
+        || at(&["library", "launchagents"])
+        || at(&["library", "launchdaemons"])
+    {
+        return Err("cannot save into a sensitive, repository, or autostart folder");
+    }
+    if at(&["appdata", "roaming", "microsoft", "windows"])
+        || at(&["appdata", "local", "microsoft", "windows"])
+        || at(&["appdata", "roaming", "bmd"])
+    {
+        return Err("cannot save into Windows or application configuration folders");
+    }
+
+    if windows {
+        const WIN_SYSTEM_ROOTS: &[&str] = &[
+            "windows",
+            "program files",
+            "program files (x86)",
+            "programdata",
+            "system volume information",
+            "$recycle.bin",
+            "recovery",
+            "boot",
+            "efi",
+        ];
+        if WIN_SYSTEM_ROOTS.contains(&segs[0].as_str()) {
+            return Err("cannot save into a Windows system folder");
+        }
+    } else {
+        // On macOS APFS, canonicalizing paths under `/home`, `/Users`, etc. may resolve through
+        // the firmlink `/System/Volumes/Data/...`. Unwrap that data-volume prefix before checking
+        // Unix system roots, while still rejecting `/System/Volumes/Data` itself and other `/System/*`.
+        let unix_segs: &[String] = if segs.len() >= 3
+            && segs[0] == "system"
+            && segs[1] == "volumes"
+            && segs[2] == "data"
+        {
+            if segs.len() == 3 {
+                return Err("cannot save directly to the filesystem root");
+            }
+            &segs[3..]
+        } else {
+            &segs
+        };
+        const UNIX_SYSTEM_ROOTS: &[&str] = &[
+            "etc",
+            "usr",
+            "bin",
+            "sbin",
+            "lib",
+            "lib64",
+            "lib32",
+            "boot",
+            "dev",
+            "proc",
+            "sys",
+            "snap",
+            "system",
+            "library",
+            "applications",
+            "cores",
+        ];
+        if UNIX_SYSTEM_ROOTS.contains(&unix_segs[0].as_str()) {
+            return Err("cannot save into a system folder");
+        }
+        // `/run` is the system's runtime state, but removable media (`/run/media/<user>`) and a
+        // user's runtime folder (`/run/user/<uid>`, where gvfs mounts shares) are theirs.
+        if unix_segs[0] == "run"
+            && !(unix_segs.len() >= 3 && (unix_segs[1] == "media" || unix_segs[1] == "user"))
+        {
+            return Err("cannot save into a system folder");
+        }
+        let var_tail = if unix_segs[0] == "var" {
+            Some(&unix_segs[1..])
+        } else if unix_segs.len() >= 2 && unix_segs[0] == "private" && unix_segs[1] == "var" {
+            Some(&unix_segs[2..])
+        } else {
+            None
+        };
+        if let Some(tail) = var_tail {
+            // tmp: temporary files; folders: macOS's per-user temporary folders; home and mnt:
+            // the homes and mounts of image-based Linux (Fedora Silverblue, Kinoite, Bazzite),
+            // where /home and /mnt are links to them.
+            let allowed = tail
+                .first()
+                .is_some_and(|s| matches!(s.as_str(), "tmp" | "folders" | "home" | "mnt"));
+            if !allowed {
+                return Err("cannot save into a system /var folder");
+            }
+        }
+        if unix_segs.len() >= 2 && unix_segs[0] == "private" && unix_segs[1] == "etc" {
+            return Err("cannot save into a system folder");
+        }
+    }
+    Ok(())
+}
+
 /// Portable mode: the `data` folder next to the program, when it exists and can be written
 /// (else the profile folder is used). Nothing is written to the registry in this mode.
 /// Asked once per run and kept, like [`data_dir`] (#565).
@@ -1170,6 +1395,110 @@ mod tests {
     fn tokens_are_random() {
         assert_ne!(random_token(), random_token());
         assert_eq!(random_token().len(), 64);
+    }
+
+    #[test]
+    fn download_dir_validation_rejects_dangerous_and_traversal_paths() {
+        for bad in [
+            "",
+            "   ",
+            "relative/path",
+            r"C:relative",
+            r"D:\Files\..\Windows",
+            "/tmp/../etc",
+            "/home/user/./Downloads",
+            "/",
+            r"C:\",
+            r"\\server",
+            r"\\server\c$",
+            r"\\server\c$\Windows\System32",
+            r"\\.\C:\Downloads",
+            r"\\?\C:\Windows",
+            r"C:\Users\alice\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup",
+            r"C:\Users\alice\AppData\Roaming\Microsoft\Windows\Start Menu",
+            r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp",
+            r"C:\Windows\System32",
+            r"C:\Program Files\App",
+            "/etc/cron.d",
+            "/usr/local/bin",
+            "/home/alice/.ssh",
+            "/home/alice/repo/.git",
+            r"D:\repo\.git\hooks",
+            "/home/alice/.config/autostart",
+            "/var/log",
+            "/System/Volumes/Data",
+            "/System/Volumes/Data/etc",
+            "/System/Library",
+            "/run",
+            "/run/systemd/system",
+            "/var/lib/bmd",
+            "/home/alice/.config/systemd/user",
+            "/Users/alice/Library/LaunchAgents",
+            "/Library/LaunchDaemons",
+        ] {
+            assert!(validate_download_dir(bad).is_err(), "should reject {bad}");
+        }
+
+        for good in [
+            r"D:\Files",
+            r"C:\Users\alice\Downloads",
+            r"C:\Users\alice\AppData\Local\Temp\bmd-test",
+            "/home/alice/Downloads",
+            "/System/Volumes/Data/home/alice/Downloads",
+            "/tmp/bmd-downloads",
+            "/var/tmp/bmd-downloads",
+            "/var/folders/xx/yy/T/bmd-test",
+            // Folders whose names only look like autostart ones.
+            r"C:\Users\alice\Startup",
+            r"D:\Projects\Startup",
+            "/home/alice/Documents/startup",
+            // Another drive's root.
+            r"E:\",
+            // Image-based Linux homes and mounts, removable media, /opt, /root.
+            "/var/home/alice/Downloads",
+            "/var/mnt/data",
+            "/run/media/alice/USB",
+            "/opt/data/downloads",
+            "/root/Downloads",
+            "/mnt/data",
+            "/media/alice/USB",
+        ] {
+            assert!(
+                validate_download_dir(good).is_ok(),
+                "should allow {good}: {:?}",
+                validate_download_dir(good)
+            );
+        }
+    }
+
+    /// Network shares and gvfs mounts, by their names only: looking a share up would wait on
+    /// the network, and on Windows a Unix path would be resolved against the current drive.
+    #[test]
+    fn download_dir_rules_allow_shares_and_gvfs_mounts() {
+        for good in [
+            r"\\nas\share",
+            r"\\nas\share\Downloads",
+            "//nas/share/Downloads",
+            r"\\nas\d$\Downloads",
+            "/run/user/1000/gvfs/smb-share:server=nas,share=dl",
+        ] {
+            assert!(
+                validate_lexical_download_dir(good).is_ok(),
+                "should allow {good}: {:?}",
+                validate_lexical_download_dir(good)
+            );
+        }
+        for bad in [
+            r"\\nas",
+            r"\\nas\share\Windows",
+            r"\\nas\share\x\.ssh",
+            r"D:\file.txt:stream",
+        ] {
+            assert!(
+                validate_lexical_download_dir(bad).is_err(),
+                "should reject {bad}"
+            );
+        }
     }
 }
 

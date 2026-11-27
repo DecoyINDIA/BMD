@@ -25,7 +25,7 @@ bmd-torrent = { path = "../crates/torrent" }
 aes = "0.9.4"
 base64 = "0.23.1"
 serde_json = "1.0.154"
-url = "2.5.8"
+url = "2.5.9"
 
 # What the top workspace patches, for the crates used here (see its Cargo.toml): librqbit and its
 # uTP from BMD's commits.

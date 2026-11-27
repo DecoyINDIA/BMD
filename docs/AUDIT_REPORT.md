@@ -72,9 +72,9 @@ work package.
 | REPO-04 | P2 | `docs/ARCHITECTURE.md` had no Android, no `bmd-android-bridge`, and a wrong dependency sentence (`mcp`, `nmhost` use only `ipc`) | **Fixed** |
 | REPO-05 | P2 | `.gitignore` did not cover the private notes folder, env files, keys, keystores, APK/AAB | **Fixed** |
 | REPO-06 | P2 | A scheduled job pushes generated README telemetry to `main` every 6 hours; every open PR falls behind | Open → WP-09.2 |
-| REPO-07 | P2 | `unsafe` outside `win32.rs`/`unix.rs` (engine disk and sparse files, nmhost, android-bridge): each scoped and commented, but rule 3 and decision D-008 don't name them | Open → WP-00.3 |
+| REPO-07 | P2 | `unsafe` outside `win32.rs`/`unix.rs` (engine disk and sparse files, nmhost, android-bridge): each scoped and commented, but rule 3 and decision D-008 don't name them | **Fixed** (PR #20): CLAUDE.md rule 3 names every module allowed `unsafe` |
 | REPO-08 | P2 | Mobile URL rules exist three times (Kotlin, bridge, engine), and Kotlin names files differently from the engine | Open → WP-05.1 |
-| REPO-09 | P3 | `browserlike.rs` calls PAC without the Android `cfg`; it builds only because Android turns that feature off | Open → WP-05.2 |
+| REPO-09 | P3 | `browserlike.rs` calls PAC without the Android `cfg`; it builds only because Android turns that feature off | **Fixed** (PR #20): the PAC call is gated for Android as in `download.rs` |
 | REPO-10 | P3 | Gradle wrapper skipped its URL check | **Fixed** (`validateDistributionUrl=true`; its SHA-256 was already pinned) |
 | REPO-11 | P3 | Two README tool trees (`tools/readme`, `scripts/readme`); a stale ARCHITECTURE line on contributor photos; code citing a private `notes/ENGINE.md` | Open → WP-00.4 |
 | REPO-12 | P3 | The shipped app and extension manifests point at the placeholder `bmd.example.com` | Open → WP-10.2 (release-blocking for store builds) |
@@ -91,7 +91,7 @@ work package.
 | DESK-02 | P3 | A crash between the final rename and the removal of the resume state can, on a numbered name, report the wrong file as complete | Open → WP-02.1 |
 | DESK-03 | P3 | "Never replace" is checked before the rename, not by it: another program's file created in between could be replaced | Open → WP-02.2 |
 | DESK-04 | P3 | If the list saver thread can't be started, Exit can wait for ever | Open → WP-02.3 |
-| DESK-05 | P3 | The list's backup generations are written non-atomically | Open → WP-02.3 |
+| DESK-05 | P3 | The list's backup generations are written non-atomically | **Fixed** (PR #20): backups and both generations written atomically, owner-only |
 | DESK-06 | P3 | A panic while a shared lock is held poisons it for every later download in the process | Open → WP-02.4 |
 | DESK-07 | P3 | Three test targets fail when the whole workspace runs at once on Windows (a file held by another process, an abnormal exit) and pass alone: they share resources | Open → WP-08.1 |
 
@@ -99,8 +99,8 @@ work package.
 
 | ID | Pri | Finding | Status |
 |---|---|---|---|
-| AND-01 | P1 | On Android 12–13 a download resumed in the background ends *Failed* instead of waiting, because the foreground start is refused and that error is treated as fatal | Open → WP-04.1 |
-| AND-02 | P2 | Shared text is stored and scanned whole before its 8 KiB limit applies: a huge share can freeze or crash the app | Open → WP-04.2 |
+| AND-01 | P1 | On Android 12–13 a download resumed in the background ends *Failed* instead of waiting, because the foreground start is refused and that error is treated as fatal | **Fixed in code** (PR #20): a refused foreground start waits (WAITING_ANDROID) instead of failing; JVM-tested on API 33; a device run on Android 12–13 is still WP-04.3 |
+| AND-02 | P2 | Shared text is stored and scanned whole before its 8 KiB limit applies: a huge share can freeze or crash the app | **Fixed** (PR #20): shared text bounded at 16K characters and 50 links before it is stored or scanned, tested |
 | AND-03 | P2 | All interface text is hard-coded English (102 texts outside resources): not translatable | Open → WP-07.1 |
 | AND-04 | P2 | Devices tested: API 26 and 36 (4 and 16 KiB pages) emulators only; nothing on Android 12–15 or real hardware | Open → WP-04.3 |
 | AND-05 | P2 | The Android CI depends on Maven Central at every run and failed twice on its rate limit (HTTP 429), with no code change | Open → WP-09.3 |
@@ -118,13 +118,14 @@ Details with the maintainer; see SECURITY.md to report one.
 |---|---|---|---|
 | SEC-01 | P1 | Release trust hardening | Open → WP-01.1 (release blocker) |
 | SEC-02 | P2 | CI least privilege | Open → WP-01.2 |
-| SEC-03 | P2 | Automation interface hardening | Open → WP-01.3 |
+| SEC-03 | P2 | Automation interface hardening | **Fixed** (PR #20), tested |
 | SEC-04 | P2 | Dependency advisories were never checked in CI | **Fixed in the tree**: a `cargo audit` job; `cargo audit` passes locally; first CI run with the consolidation PR |
 | SEC-05 | P2 | One dependency advisory, only in the developers' symbolication tool, not in the shipped app; no upstream fix yet | **Accepted with reason** in `.cargo/audit.toml`; revisit → WP-01.4 |
 | SEC-13 | P2 | A dependency advisory published 2026-11-20 against a URL-parsing crate used across the workspace | **Fixed**: patched version in both lockfiles; `cargo audit` passes |
 | SEC-06 | P3 | Forked dependencies hosted on personal accounts (all pinned by commit) | Open → WP-01.5 |
 | SEC-07 | P3 | CI least privilege (release job) | Open → WP-01.2 |
-| SEC-08–12 | P3 | Hardening of local interfaces, crash report scrubbing and helper key pinning | Open → WP-01.6 |
+| SEC-08, 09, 11, 12 | P3 | Hardening of local interfaces and helper key pinning | Open → WP-01.6 |
+| SEC-10 | P3 | Crash report URL and query/fragment scrubbing | **Fixed in PR #20** (`crates/crash/src/report.rs`), tested |
 
 Checked and sound: no secret in any tracked file or in history; the command channel, remote
 control server, native messaging host, extension messaging and Click'n'Load are bound, token- or
@@ -138,7 +139,7 @@ and time limits; every GitHub Action is pinned by SHA and no workflow uses `pull
 |---|---|---|
 | Desktop (Windows) | **Ready for use; next release blocked by SEC-01** | Engine, resume, persistence and lifecycle verified in code and tests; one P1 in release trust |
 | Desktop (Linux, macOS) | Ready as documented in ROADMAP (Linux) / experimental (macOS) | CI green on both; runtime not checked here |
-| Android | **Source-ready, not release-ready** | APK and AAB build; API 26 and API 36 (4 KiB) pass; the API 36 16 KiB optimized-release test is intermittent (AND-10, P1); AND-01 (P1), no translations, no device matrix, no store identity |
+| Android | **Source-ready, not release-ready** | APK and AAB build; API 26 and API 36 (4 KiB) pass; the API 36 16 KiB optimized-release test is intermittent (AND-10, P1); AND-01 fixed in code (device run pending), no translations, no device matrix, no store identity |
 | Repository | **Consolidated** | One `main` (PR #17, `72120d3`), every reconciled branch deleted, 17 checks green |
 
 ## Quality score
@@ -151,7 +152,7 @@ it now stands. Android's 4 credits real, CI-tested code on emulators, not store-
 | Category | Weight | Before (main `05bdca2`) | After (consolidated) | Evidence |
 |---|---:|---:|---:|---|
 | Functional correctness | 20 | 16 | 16 | 1,608 → 1,642 tests pass (flaky targets DESK-07); DESK-02…06 open; Android AND-01 |
-| Architecture and maintainability | 15 | 11 | 12 | Clear inward dependencies; docs now match; REPO-07/08 open |
+| Architecture and maintainability | 15 | 11 | 12 | Clear inward dependencies; docs now match; REPO-07 fixed, REPO-08 open |
 | Security and privacy | 15 | 9 | 10 | No P0, sound local interfaces; SEC-01 (P1) open; advisories now checked |
 | Testing and verification | 15 | 11 | 12 | Large unit and fault-injection suite, fuzzing, extension tests; a failing check on `main` (fixed); flaky targets; Android device matrix thin |
 | Desktop readiness | 10 | 7 | 7 | Ready to use; release trust and UI-thread I/O open |

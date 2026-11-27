@@ -45,7 +45,7 @@ tasks.register("resolveAndroidDependencies") {
                 val name = configuration.name
                 configuration.isCanBeResolved && (
                     name.endsWith("CompileClasspath") || name.endsWith("RuntimeClasspath") ||
-                    name.endsWith("AnnotationProcessor") || name == "robolectricSdk" ||
+                    name.endsWith("AnnotationProcessor") || name.startsWith("robolectricSdk") ||
                     name.startsWith("lintClassPath") || name.startsWith("kotlinCompiler") ||
                     name.startsWith("kapt")
                 )

@@ -184,11 +184,22 @@ impl Server {
                  https, ftp and ftps addresses and magnet links."
             ));
         }
+        let folder = args
+            .folder
+            .as_deref()
+            .map(str::trim)
+            .filter(|d| !d.is_empty())
+            .map(|d| {
+                bmd_ipc::validate_download_dir(d)
+                    .map(|()| d.to_owned())
+                    .map_err(|why| format!("Invalid download folder {d:?}: {why}"))
+            })
+            .transpose()?;
         let queue = args.queue.filter(|q| !q.trim().is_empty());
         let category = args.category.filter(|c| !c.trim().is_empty());
         self.call(Command {
             url: Some(url.clone()),
-            dir: args.folder.filter(|d| !d.trim().is_empty()),
+            dir: folder,
             name: args.file_name.filter(|n| !n.trim().is_empty()),
             category: category.clone(),
             queue: queue.clone(),
@@ -535,5 +546,52 @@ mod tests {
         assert!(!addable("file:///etc/passwd"));
         assert!(!addable("javascript:alert(1)"));
         assert!(!addable("example.com/a.zip"));
+    }
+
+    #[tokio::test]
+    async fn add_download_rejects_dangerous_folders_before_calling_app() {
+        let called = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let flag = called.clone();
+        let server = Server::new(Arc::new(move |_| {
+            flag.store(true, std::sync::atomic::Ordering::SeqCst);
+            Ok("ok".into())
+        }));
+
+        for bad in [
+            r"C:\Users\alice\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup",
+            r"C:\Users\alice\AppData\Roaming\Microsoft\Windows\Start Menu",
+            "/home/alice/.ssh",
+            r"D:\code\.git",
+            "/etc",
+            "/usr/bin",
+            r"C:\Windows\System32",
+            r"D:\Downloads\..\Startup",
+            "relative/folder",
+        ] {
+            let err = server
+                .add_download(Parameters(AddArgs {
+                    url: "https://example.com/payload.exe".into(),
+                    folder: Some(bad.into()),
+                    file_name: None,
+                    category: None,
+                    queue: None,
+                    checksum: None,
+                    referer: None,
+                    user_agent: None,
+                    cookie: None,
+                    private: false,
+                    later: false,
+                }))
+                .await
+                .unwrap_err();
+            assert!(
+                err.contains("Invalid download folder"),
+                "unexpected error for {bad}: {err}"
+            );
+        }
+        assert!(
+            !called.load(std::sync::atomic::Ordering::SeqCst),
+            "dangerous folder must never reach the app"
+        );
     }
 }

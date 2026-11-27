@@ -14,7 +14,7 @@ findings are in [AUDIT_REPORT.md](AUDIT_REPORT.md), the plan in
 | Rust | rustc 1.99.1, cargo 1.99.1, toolchain `stable-x86_64-pc-windows-gnu` (MinGW-w64); `CMAKE_GENERATOR=Ninja` and a bindgen include path set, as this machine needs |
 | Other | Python 3, Node.js, JDK 21 and 17, Android SDK (platforms 34, 36), NDK 28.2 only, no Rust Android targets, cargo-audit 0.23.0 |
 | Baseline | `main` at `05bdca2` (= `origin/main`) |
-| Consolidated | branch `integrate/consolidation-2026-11-27`; Rust checks at `e17f51f` (later commits change documents and workflows only) |
+| Consolidated | branch `integrate/bmd-audit-consolidation` (`ccee463` + doc/comment alignment); PR #17 (`72120d3`), PR #18 (`783c507`), PR #19 (`757a2c1`) already on `main` |
 
 ## 2. Local checks
 
@@ -62,6 +62,8 @@ build) was deleted to free 47 GB, and the run repeated with `CARGO_INCREMENTAL=0
 | Dependabot PRs #12, #13, #14 | their heads | success on every system |
 | All 17 checks of PR #17 | `0d2aff9` | success, including Android `build` (REPO-14's `cargo rustc --crate-type cdylib` change) and `device-smoke` on API 26, 36 and 36 with 16 KiB pages. The 16 KiB job failed once on a UI-automation timing error in the minified-release test and passed on re-run, with no change to the code |
 | Android, after the merge | `72120d3` (`main`, run 45945391501) | **failure**: `device-smoke (api36-16k)`, the optimized-release test, with the same error as PR #17's first attempt (Advanced options "unavailable"). Rust contracts, build (APK, AAB, JNI, 16 KiB alignment), API 26 and API 36 (4 KiB, release test included) passed. Read as AND-10: intermittent, not a one-off |
+| PR #19 (`fix/android-ci-reliability`) | `757a2c1` (`main`) | Merged: fresh accessibility tree per observation in `ReleaseRuntimeTest`, retry on Maven 429 in preflight, `gradlew.bat` on Windows |
+| PR #20 (`integrate/bmd-audit-consolidation`, `ccee463`) | `ccee463` | **PASS** on `windows-latest`, `ubuntu-latest`, `macos-latest`, `fuzz`, `rust`, `rust-contracts`, `CodeQL`, `actions`, `browser extension`, `check`, `javascript-typescript`, `translations`. `Android / build` failed on Maven dependency transport (rerun `45997115202` in progress before doc-alignment push; final CI on PR #20 head pending) |
 
 ## 4. Not verified, and why
 
@@ -77,9 +79,21 @@ build) was deleted to free 47 GB, and the run repeated with `CARGO_INCREMENTAL=0
 ## 5. Independent review
 
 Five reviewers, each a fresh agent context with its own brief and no access to the others'
-conclusions until after its verdict. **Limitation:** all were the same model as the author
-(Claude Opus 5.5); no other model was available in this environment, so the reviews are
-independent in context, not in model.
+conclusions until after its verdict. **Limitation:** all were the same model family (`Gemini 4 Hydrogen (Medium)`
+on PR #20; `Claude Opus 5.5` on PR #17); no other model was available with quota at the time of review,
+so the reviews are independent in context, not in model.
+
+### PR #20 (`integrate/bmd-audit-consolidation` @ `ccee463`)
+
+| Reviewer | Scope | Verdict | Main findings | Resolution |
+|---|---|---|---|---|
+| A, repository and architecture | branches, PRs, history, architecture, duplication, hygiene | **PASS** | No blocking issues; `MASTER_EXECUTION_PLAN` WP-00.3 module-name nit (`native.rs` vs `lib.rs`/`network.rs`); local helper branches can be pruned after merge | Module names aligned |
+| B, desktop | `validate_download_dir`, APFS firmlink, `store.rs`, `palette.rs`, `browserlike.rs`, `scrub()`, `system_helpers.rs` | **PASS** | No P0/P1/P2; targeted tests pass (`bmd-ipc` 61, `bmd-crash` 37, `bmd-mcp` 4, `system_helpers` ok); P3 note on malformed-URL `#fragment` fallback in `scrub_url_candidate` | Non-blocking P3 |
+| C, Android | AND-01/02 fixes, UI recovery actions, manifest/Gradle, `android-bridge` LRU eviction | **CONDITIONAL PASS** | No code defects (`bmd-android-bridge` 19 tests pass); Gradle/NDK 29 blocked locally so conditioned on Android CI green; P3 doc staleness on `AUDIT_REPORT.md` line 141 | Line 141 updated; conditioned on Android CI |
+| D, security and quality | `readme-analytics.yml`, `release.yml`, `validate_download_dir`, `scrub()`, `private_write`, Android bounds | **PASS** | No blocking issues (`bmd-ipc`, `bmd-crash`, `bmd-mcp` suites pass); P3 doc staleness in `MASTER_EXECUTION_PLAN.md` §8 | §8 updated |
+| E, final release | All canonical docs, `ROADMAP.md`, `Cargo.toml`, PR #20 CI & status claims | **CONDITIONAL PASS** | Premature `done since` claim in `ROADMAP.md` (`AND-10`), stale `VERIFICATION_REPORT.md`, `Cargo.toml` lint comment, `SEC-10` status split, `WP-04.2`→`WP-05.1` dependency contradiction, stale PR #16/#17 text | All corrected in PR #20 doc-alignment commit |
+
+### Earlier PR #17 (`integrate/consolidation-2026-11-27`)
 
 | Reviewer | Scope | Verdict | Main findings | Resolution |
 |---|---|---|---|---|
@@ -96,12 +110,12 @@ independent in context, not in model.
 | G0 Discovery complete | **PASS** | every branch (6 remote, 1 local), PR (16), tag (2) and local ref inventoried (BRANCH_RECONCILIATION) |
 | G1 Repository integrity | **PASS** | all refs bundled before any change; no branch with unique work deleted; the only unique objects (agent trees, backup tag) kept in the bundle |
 | G2 Architecture integrity | **PASS** | ARCHITECTURE.md covers both apps and the real dependency directions; one product description (plan §3, §6) |
-| G3 Build integrity | **CONDITIONAL** | desktop: fmt, clippy, tests pass here; Android: passes in CI at `aef830b`, the consolidated head's Android run decides it |
-| G4 Security integrity | **CONDITIONAL** | no P0; the P1 and P2 release blockers are open and named as such (WP-01); advisories checked |
-| G5 Regression integrity | **PASS** | consolidated tests ⊇ baseline tests, 0 failures; the one aborted target also aborts on `main` and passes alone |
-| G6 Independent verification | **PASS, with the same-model limitation** | five reviews done; every finding fixed or planned |
+| G3 Build integrity | **CONDITIONAL** | desktop: fmt, clippy, tests pass locally and on Windows/Linux/macOS CI in PR #20 (`ccee463`); Android: `rust-contracts` passes, `build` / `device-smoke` pending on final PR #20 run |
+| G4 Security integrity | **CONDITIONAL** | no P0; `SEC-03` and `SEC-10` fixed in PR #20; `SEC-01` (P1) and remaining P2/P3 blockers open and named in `WP-01`; `cargo audit` clean |
+| G5 Regression integrity | **PASS** | consolidated tests pass (`bmd-ipc`, `bmd-crash`, `bmd-mcp`, `bmd-android-bridge`, `bmd-tools --test system_helpers` verified on PR #20), 0 failures |
+| G6 Independent verification | **PASS, with the same-model limitation** | five independent reviews completed on PR #20 (`ccee463`); all required doc/comment corrections applied |
 | G7 Execution readiness | **PASS** | MASTER_EXECUTION_PLAN.md: every open finding in one work package, with files, acceptance, tests, dependencies |
-| G8 Consolidation readiness | **PASS** (repository); Android's 16 KiB release check intermittent, AND-10 | PR #17 merged into `main` as `72120d3` with all 17 checks green (Android build and all three device emulators, Windows, Linux, macOS, CodeQL, fuzzing, `cargo audit`); #12, #13, #14, #16 show merged; reconciled branches deleted; `main` is the only branch |
+| G8 Consolidation readiness | **IN PROGRESS** | PR #20 (`integrate/bmd-audit-consolidation`) open and `MERGEABLE`, waiting on final CI green before merge to `main` |
 
 ## 7. Reproducing
 
