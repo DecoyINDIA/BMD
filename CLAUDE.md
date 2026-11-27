@@ -48,10 +48,17 @@ reading [README.md](README.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
   after changing its English (website/, docs/, CHANGELOG.md), `python tools/website/translate_site.py
   --all` sends only the new or changed texts (`--status` shows what each language lacks).
   `BMD_SITE_PREVIEW=1` builds the English pages with their language picker only (fast).
-- Website design changes follow product truth in [PRODUCT.md](PRODUCT.md) and the visual system
-  in [DESIGN.md](DESIGN.md).
+- Website design goes through the Impeccable skill (`/impeccable`, `.claude/skills/impeccable`):
+  product truth in [PRODUCT.md](PRODUCT.md), the visual system in DESIGN.md, the site's
+  direction contract in `.impeccable/surfaces/`; its hook checks every website edit.
 - `tools/installer/build-linux.sh` / `build-macos.sh` — the Linux (AppImage, tar.gz, .deb, .rpm)
   and the experimental macOS (.dmg) downloads; run by `release.yml` on GitHub's runners.
 - Android builds and verification are documented in [docs/android/BUILD_AND_RELEASE.md](docs/android/BUILD_AND_RELEASE.md).
 - Windows: if `cargo` isn't on PATH in an old shell, prefix
   `$env:Path = "$env:USERPROFILE\.cargo\bin;$env:Path"`.
+
+## Maintainer notes
+
+The maintainer's private notes, when present, add to these rules:
+
+@notes/CLAUDE.private.md
