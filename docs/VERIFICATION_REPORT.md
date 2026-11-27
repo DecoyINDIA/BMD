@@ -60,7 +60,7 @@ build) was deleted to free 47 GB, and the run repeated with `CARGO_INCREMENTAL=0
 | Android | `14ac304` (PR #16, documentation only) | failure, twice: Maven Central HTTP 429 while resolving dependencies (run 45889010428, attempts 1 and 2); no code involved (AND-05) |
 | CI, CodeQL, Fuzzing, Help pictures | `14ac304` | success |
 | Dependabot PRs #12, #13, #14 | their heads | success on every system |
-| The consolidation PR | its head | recorded in its pull request; until it is green there, the consolidated tree's Android build (REPO-14's change) is **NOT VERIFIED** |
+| All 17 checks of PR #17 | `0d2aff9` | success, including Android `build` (REPO-14's `cargo rustc --crate-type cdylib` change) and `device-smoke` on API 26, 36 and 36 with 16 KiB pages. The 16 KiB job failed once on a UI-automation timing error in the minified-release test and passed on re-run, with no change to the code |
 
 ## 4. Not verified, and why
 
@@ -100,7 +100,7 @@ independent in context, not in model.
 | G5 Regression integrity | **PASS** | consolidated tests ⊇ baseline tests, 0 failures; the one aborted target also aborts on `main` and passes alone |
 | G6 Independent verification | **PASS, with the same-model limitation** | five reviews done; every finding fixed or planned |
 | G7 Execution readiness | **PASS** | MASTER_EXECUTION_PLAN.md: every open finding in one work package, with files, acceptance, tests, dependencies |
-| G8 Consolidation readiness | **PENDING** | passes when the consolidation PR is merged into `main` and the reconciled branches are deleted |
+| G8 Consolidation readiness | **PASS** | PR #17 merged into `main` as `72120d3` with all 17 checks green (Android build and all three device emulators, Windows, Linux, macOS, CodeQL, fuzzing, `cargo audit`); #12, #13, #14, #16 show merged; reconciled branches deleted; `main` is the only branch |
 
 ## 7. Reproducing
 
