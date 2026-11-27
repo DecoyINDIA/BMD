@@ -87,7 +87,9 @@ android {
 kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
 kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas"); arg("room.incremental", "true") } }
 
-// PublicationManagerTest pins API 34. Resolve its runtime through Gradle's cache
+// PublicationManagerTest pins API 34 and TransferCoordinatorTest API 33 (Android 13's
+// foreground-service rules, AND-01). Every SDK a test pins must be staged here: offline,
+// Robolectric fails a missing one in LocalDependencyResolver. Resolve them through Gradle's cache
 // before testing instead of Robolectric's separate, uncached Maven downloader.
 val robolectricSdk by configurations.creating {
     isCanBeConsumed = false
@@ -150,6 +152,7 @@ tasks.configureEach {
 apply(from = "android-notices.gradle.kts")
 
 dependencies {
+    add(robolectricSdk.name, "org.robolectric:android-all-instrumented:13-robolectric-9030017-i7")
     add(robolectricSdk.name, "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7")
     val composeBom = platform("androidx.compose:compose-bom:2025.10.01")
     implementation(composeBom)
