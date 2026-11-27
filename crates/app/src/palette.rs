@@ -848,7 +848,7 @@ mod tests {
             ("aqua", "Aqua", include_str!("../assets/themes/aqua.toml")),
             (
                 "emerald",
-                "Emerald",
+                "Kombu",
                 include_str!("../assets/themes/emerald.toml"),
             ),
         ] {

@@ -102,24 +102,29 @@ class TransferCoordinator internal constructor(
                 dao.update(task.copy(stage = "WAITING_NETWORK", detail = "Waiting for an allowed network.", updatedAt = System.currentTimeMillis()))
                 return@withContext null
             }
-            val settings = graph.preferences.state.value
-            val networkRuns = active.values.filter { !it.local }
-            val metered = networks.metered(lease.network)
-            val host = DownloadPolicy.parse(task.sourceUrl, task.httpConsent).host
-            val hostUsed = networkRuns.filter { DownloadPolicy.parse(it.task.sourceUrl, it.task.httpConsent).host == host }.sumOf { it.connections }
-            val globalFree = settings.globalSegmentLimit - networkRuns.sumOf { it.connections }
-            val hostFree = settings.perHostLimit - hostUsed
-            val count = minOf(if (metered) 1 else settings.segmentsPerTransfer, globalFree, hostFree)
-            if (networkRuns.size >= (if (metered) 1 else settings.maxActiveTransfers) || count < 1 ||
-                networkRuns.any { it.lease?.let { l -> networks.metered(l.network) } == true }) {
-                networks.release(lease)
-                dao.update(task.copy(stage = "QUEUED", detail = "Waiting for a transfer slot.", updatedAt = System.currentTimeMillis()))
-                return@withContext null
+            try {
+                val settings = graph.preferences.state.value
+                val networkRuns = active.values.filter { !it.local }
+                val metered = networks.metered(lease.network)
+                val host = DownloadPolicy.parse(task.sourceUrl, task.httpConsent).host
+                val hostUsed = networkRuns.filter { DownloadPolicy.parse(it.task.sourceUrl, it.task.httpConsent).host == host }.sumOf { it.connections }
+                val globalFree = settings.globalSegmentLimit - networkRuns.sumOf { it.connections }
+                val hostFree = settings.perHostLimit - hostUsed
+                val count = minOf(if (metered) 1 else settings.segmentsPerTransfer, globalFree, hostFree)
+                if (networkRuns.size >= (if (metered) 1 else settings.maxActiveTransfers) || count < 1 ||
+                    networkRuns.any { it.lease?.let { l -> networks.metered(l.network) } == true }) {
+                    dao.update(task.copy(stage = "QUEUED", detail = "Waiting for a transfer slot.", updatedAt = System.currentTimeMillis()))
+                    return@withContext null
+                }
+                val claimed = task.copy(runGeneration = Math.addExact(task.runGeneration, 1), ownerSession = graph.session,
+                    stage = "CONNECTING", errorCode = null, detail = "Connecting to the source.", speed = 0, updatedAt = System.currentTimeMillis())
+                val claimedRun = Run(claimed, false, count, lease, executorStopped)
+                dao.update(claimed)
+                active[taskId] = claimedRun
+                claimedRun
+            } finally {
+                if (active[taskId]?.lease !== lease) networks.release(lease)
             }
-            val claimed = task.copy(runGeneration = Math.addExact(task.runGeneration, 1), ownerSession = graph.session,
-                stage = "CONNECTING", errorCode = null, detail = "Connecting to the source.", speed = 0, updatedAt = System.currentTimeMillis())
-            try { dao.update(claimed) } catch (error: Exception) { networks.release(lease); throw error }
-            Run(claimed, false, count, lease, executorStopped).also { active[taskId] = it }
         } } ?: return ExecutionOutcome(retry = mayRetry(taskId, epoch))
         var result = ExecutionOutcome()
         try {

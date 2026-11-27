@@ -1,5 +1,6 @@
 package com.blackmarlin.downloader.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -96,14 +97,16 @@ fun SectionTitle(title: String, trailing: (@Composable () -> Unit)? = null) {
 
 @Composable
 fun ContentCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    Card(modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
-        Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(16.dp), content = content)
+    Card(modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
+        Column(Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp), content = content)
     }
 }
 
 @Composable
 fun BrandEmblem(modifier: Modifier = Modifier, large: Boolean = false) {
-    val teal = MaterialTheme.colorScheme.primary
+    val accent = MaterialTheme.colorScheme.primary
     val soft = MaterialTheme.colorScheme.primaryContainer
     Box(modifier.size(if (large) 112.dp else 56.dp).clip(RoundedCornerShape(if (large) 32.dp else 18.dp))
         .background(soft), contentAlignment = Alignment.Center) {
@@ -113,9 +116,9 @@ fun BrandEmblem(modifier: Modifier = Modifier, large: Boolean = false) {
                 cubicTo(size.width * .30f, size.height * .40f, size.width * .58f, size.height * .92f, size.width, size.height * .52f)
                 lineTo(size.width, size.height); lineTo(0f, size.height); close()
             }
-            drawPath(wave, teal.copy(alpha = .12f))
+            drawPath(wave, accent.copy(alpha = .12f))
         }
-        Icon(Icons.Outlined.Download, contentDescription = null, tint = teal, modifier = Modifier.size(if (large) 52.dp else 28.dp))
+        Icon(Icons.Outlined.Download, contentDescription = null, tint = accent, modifier = Modifier.size(if (large) 52.dp else 28.dp))
     }
 }
 
@@ -135,7 +138,7 @@ fun EmptyState(
         Column(Modifier.widthIn(max = 420.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(20.dp)) {
             if (brand) BrandEmblem(large = true) else Box(Modifier.size(88.dp).clip(RoundedCornerShape(28.dp))
                 .background(MaterialTheme.colorScheme.surfaceVariant), contentAlignment = Alignment.Center) {
-                Icon(icon, null, Modifier.size(40.dp), tint = MaterialTheme.colorScheme.primary)
+                Icon(icon, null, Modifier.size(40.dp), tint = MaterialTheme.colorScheme.secondary)
             }
             Text(title, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center, modifier = Modifier.semantics { heading() })
             Text(description, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -179,9 +182,10 @@ fun KeyValue(label: String, value: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun SettingsRow(icon: ImageVector, title: String, description: String? = null, onClick: () -> Unit, trailing: String? = null) {
-    Surface(onClick = onClick, color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp)) {
+    Surface(onClick = onClick, color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
         Row(Modifier.fillMaxWidth().heightIn(min = 76.dp).padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            Icon(icon, null, Modifier.size(24.dp), tint = MaterialTheme.colorScheme.primary)
+            Icon(icon, null, Modifier.size(24.dp), tint = MaterialTheme.colorScheme.secondary)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(title, style = MaterialTheme.typography.titleMedium)
                 description?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
@@ -208,7 +212,7 @@ fun ChoiceRow(title: String, description: String? = null, selected: Boolean, onC
 fun TaskStatus(task: UiTask) {
     val color = when {
         task.stage.needsAttention -> MaterialTheme.colorScheme.error
-        task.stage == TransferStage.COMPLETE -> MaterialTheme.colorScheme.primary
+        task.stage == TransferStage.COMPLETE -> MaterialTheme.colorScheme.secondary
         else -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
@@ -228,9 +232,11 @@ fun ProgressSummary(task: UiTask, reducedMotion: Boolean = false, compact: Boole
         stateDescription = task.progressDescription()
     }) {
         if (showProgress) {
-            if (fraction != null) LinearProgressIndicator(progress = { fraction }, modifier = Modifier.fillMaxWidth().height(5.dp).clip(RoundedCornerShape(3.dp)))
-            else if (task.stage.isActive && !reducedMotion) LinearProgressIndicator(Modifier.fillMaxWidth().height(5.dp).clip(RoundedCornerShape(3.dp)))
-            else Box(Modifier.fillMaxWidth().height(5.dp).clip(RoundedCornerShape(3.dp)).background(MaterialTheme.colorScheme.surfaceVariant))
+            val track = MaterialTheme.colorScheme.surfaceContainerHighest
+            val bar = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp))
+            if (fraction != null) LinearProgressIndicator(progress = { fraction }, modifier = bar, trackColor = track, gapSize = 0.dp, drawStopIndicator = {})
+            else if (task.stage.isActive && !reducedMotion) LinearProgressIndicator(bar, trackColor = track, gapSize = 0.dp)
+            else Box(bar.background(track))
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             val received = if (task.stage == TransferStage.SAVING) task.saveBytes else task.bytesReceived
@@ -253,14 +259,15 @@ fun ProgressSummary(task: UiTask, reducedMotion: Boolean = false, compact: Boole
 @Composable
 fun TransferRow(task: UiTask, selected: Boolean, selecting: Boolean, reducedMotion: Boolean, onClick: () -> Unit, onSelect: () -> Unit, onAction: (TaskOperation) -> Unit) {
     Surface(Modifier.fillMaxWidth().combinedClickable(onClick = if (selecting) onSelect else onClick, onLongClick = onSelect),
-        shape = RoundedCornerShape(20.dp), color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        shape = RoundedCornerShape(16.dp), color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+        border = if (selected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (selecting) Checkbox(selected, onCheckedChange = { onSelect() }, modifier = Modifier.semantics { contentDescription = "Select ${task.name}" })
                 else FileTypeIcon(task.mimeType)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text(task.name, style = MaterialTheme.typography.titleMedium, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    Text(task.origin, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(task.origin, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 if (!selecting && TaskOperation.PAUSE in task.permittedActions) IconButton({ onAction(TaskOperation.PAUSE) }) {
                     Icon(Icons.Outlined.Pause, stringResource(R.string.content_pause_file, task.name, task.progressDescription()))
@@ -283,8 +290,8 @@ fun FileTypeIcon(mimeType: String?, modifier: Modifier = Modifier) {
         mimeType?.contains("zip") == true || mimeType?.contains("compressed") == true -> Icons.Outlined.Archive
         else -> Icons.AutoMirrored.Outlined.InsertDriveFile
     }
-    Box(modifier.size(44.dp).clip(RoundedCornerShape(13.dp)).background(MaterialTheme.colorScheme.surfaceVariant), contentAlignment = Alignment.Center) {
-        Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
+    Box(modifier.size(44.dp).clip(RoundedCornerShape(12.dp)).background(MaterialTheme.colorScheme.surfaceVariant), contentAlignment = Alignment.Center) {
+        Icon(icon, null, tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(24.dp))
     }
 }
 
@@ -292,7 +299,8 @@ fun FileTypeIcon(mimeType: String?, modifier: Modifier = Modifier) {
 @Composable
 fun FileRow(file: UiFile, selected: Boolean = false, selecting: Boolean = false, onClick: () -> Unit, onSelect: () -> Unit) {
     Surface(Modifier.fillMaxWidth().combinedClickable(onClick = if (selecting) onSelect else onClick, onLongClick = onSelect),
-        shape = RoundedCornerShape(16.dp), color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface) {
+        shape = RoundedCornerShape(16.dp), color = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface,
+        border = if (selected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)) {
         Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
             if (selecting) Checkbox(selected, onCheckedChange = { onSelect() }, modifier = Modifier.semantics { contentDescription = "Select ${file.name}" })
             else FileTypeIcon(file.mimeType)

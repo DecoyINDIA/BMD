@@ -203,10 +203,10 @@ pub fn menus(p: &egui::Painter) -> Vec<(&'static str, f32, f32, f32)> {
 /// Paint the menu bar; returns what happened to its titles this frame, for [`menubar_next`]: a
 /// title clicked (or opened and shut by a screen reader), or the pointer over one (which only
 /// moves to it from another open menu).
-pub fn menu_bar(ui: &mut Ui, o: Pos2, width: f32, open: Option<usize>) -> Option<MenuBarEvent> {
-    let p = ui.painter().clone();
+/// The menu bar's own background: its face, its last row and the line under it.
+fn menu_bar_background(p: &egui::Painter, o: Pos2, width: f32) {
     fill(
-        &p,
+        p,
         o.x,
         o.y,
         o.x + width - 1.0,
@@ -215,7 +215,7 @@ pub fn menu_bar(ui: &mut Ui, o: Pos2, width: f32, open: Option<usize>) -> Option
     );
     // The bar's last row (light: #f2f2f2; dark: the bar's own).
     fill(
-        &p,
+        p,
         o.x,
         o.y + MENU_H - 2.0,
         o.x + width - 1.0,
@@ -223,13 +223,22 @@ pub fn menu_bar(ui: &mut Ui, o: Pos2, width: f32, open: Option<usize>) -> Option
         MENUBAR_BOTTOM(),
     );
     fill(
-        &p,
+        p,
         o.x,
         o.y + MENU_H - 1.0,
         o.x + width - 1.0,
         o.y + MENU_H - 1.0,
         MENUBAR_LINE(),
     );
+}
+
+pub fn menu_bar(ui: &mut Ui, o: Pos2, width: f32, open: Option<usize>) -> Option<MenuBarEvent> {
+    let p = ui.painter().clone();
+    // Over the animated backdrop the bar is see-through (its lines too: they match the bar).
+    let backdrop = crate::backdrop::active();
+    if !backdrop {
+        menu_bar_background(&p, o, width);
+    }
     let mut hit = None;
     // For screen readers and UI Automation (#113): a menu bar whose titles are menu items that
     // open their menus (Click, as with the mouse).
@@ -1222,6 +1231,15 @@ pub fn open_sub_at(ctx: &egui::Context, id: &str, i: usize) {
 /// box): the menus' colours and border, rounded as Windows 11's flyouts (they had their own).
 pub fn popup_surface(p: &egui::Painter, rc: egui::Rect) {
     let radius = crate::theme::metrics().flyout_radius;
+    // Lifted off the window by a soft shadow below it (deeper on a dark surface, where a faint
+    // one would not show).
+    let shadow = egui::epaint::Shadow {
+        offset: [0, 4],
+        blur: 16,
+        spread: 0,
+        color: egui::Color32::from_black_alpha(if crate::theme::dark_surface() { 96 } else { 30 }),
+    };
+    p.add(shadow.as_shape(rc, radius.round().clamp(0.0, 255.0) as u8));
     p.rect_filled(rc, radius, POPUP_BG());
     p.rect_stroke(
         rc,
@@ -1861,7 +1879,12 @@ pub enum ToolbarEvent {
 /// Paint the etch (y 20, 21) and the toolbar band (y 22–91).
 /// Client y where the panes (Categories, list) start: below the toolbar band, in both modes.
 pub fn pane_top() -> f32 {
-    70.0
+    // BMD's look: a compact, icon-only toolbar (54 = its 52 px band and the etch's 2).
+    if crate::theme::emerald_workspace() {
+        54.0
+    } else {
+        70.0
+    }
 }
 
 /// The main toolbar: `buttons` (icon, English label, enabled), and `keys`, the button that has
@@ -1882,24 +1905,37 @@ pub fn toolbar(
     let top = o.y + MENU_H;
     let c = crate::theme::colors();
     let emerald = crate::theme::emerald_workspace();
-    fill(&p, o.x, top, o.x + width - 1.0, top, c.toolbar_line);
-    fill(
-        &p,
-        o.x,
-        top + 1.0,
-        o.x + width - 1.0,
-        top + 1.0,
-        c.toolbar_line_light,
-    );
+    // The etched line over the toolbar; none over the animated backdrop (BMD's look draws it
+    // in the canvas colour, a stripe across the clouds).
+    if !crate::backdrop::active() {
+        fill(&p, o.x, top, o.x + width - 1.0, top, c.toolbar_line);
+        fill(
+            &p,
+            o.x,
+            top + 1.0,
+            o.x + width - 1.0,
+            top + 1.0,
+            c.toolbar_line_light,
+        );
+    }
     // Both modes (light-main.md; dark changes only colours): Tahoma labels, 66 px buttons, a
     // 68 px band.
+    // BMD's look: icons alone in a 52 px band, their names on hover, as a Mac app's toolbar.
     let (font, base_w, band_h) = if emerald {
-        (winui::segoe(), 45.0f32, 68.0)
+        (winui::segoe(), 40.0f32, 52.0)
     } else {
         (winui::tahoma(), 66.0f32, 68.0)
     };
     let band = Rect::from_min_size(pos2(o.x, top + 2.0), vec2(width, band_h));
-    p.rect_filled(band, 0.0, WINDOW_BG());
+    if !crate::backdrop::active() {
+        p.rect_filled(band, 0.0, WINDOW_BG());
+    }
+    // Emerald: the menu bar and the toolbar are one band on the canvas, one hairline under it
+    // where the panes begin.
+    if emerald {
+        let y = band.bottom() - 1.0;
+        fill(&p, o.x, y, o.x + width - 1.0, y, c.header_line);
+    }
     let gutter = if emerald { 12.0 } else { 0.0 };
     let mut x = o.x + gutter;
     let menu_y = if emerald {
@@ -1940,6 +1976,9 @@ pub fn toolbar(
             w
         });
     let cap = label_cap(&natural, base_w, available);
+    // Emerald: when the labels don't all fit, every button but the primary one shows its icon
+    // alone (the whole label on hover), one even row rather than some cut and some whole.
+    let all_icons = emerald;
     // For screen readers (#1190: the buttons weren't there at all): a toolbar, named as View's
     // menu item names it, its buttons inside it.
     let bar = ui.interact(
@@ -1974,11 +2013,19 @@ pub fn toolbar(
         let padding = 12.0 + icon_space;
         let bw = if primary {
             primary_width.unwrap_or(base_w)
+        } else if all_icons {
+            base_w
         } else {
             base_w.max((natural[i].0 + 12.0).min(cap))
         };
-        let cut = text_width_font(&p, font.clone(), full).round() + padding > bw;
-        let shown = if cut {
+        let cut =
+            all_icons && !primary || text_width_font(&p, font.clone(), full).round() + padding > bw;
+        // Emerald: a label that doesn't fit goes, its icon centred, the whole label on hover
+        // (no "Delet..." or "Sched..."); the primary action keeps its words, cut if it must.
+        let icon_only = cut && emerald && !primary;
+        let shown = if icon_only {
+            String::new()
+        } else if cut {
             winui::ellipsize(&p, &font, full, bw - padding)
         } else {
             full.to_owned()
@@ -2020,18 +2067,40 @@ pub fn toolbar(
                     _ => c.button_accent,
                 })
             } else {
-                winui::subtle_fill(state, c)
+                None
             };
-            if let Some(face) = face {
-                let inset = if primary { 15.0 } else { 7.0 };
-                let button = winui::rect(Rect::from_min_size(
-                    pos2(x + 2.0, band.top() + inset),
-                    vec2(total - 4.0, band_h - 2.0 * inset),
-                ));
-                p.rect_filled(button, crate::theme::metrics().control_radius, face);
-            }
-            if matches!(icon, Icon::Resume | Icon::Options | Icon::StartQueue) {
-                fill(&p, x, top + 20.0, x, top + 50.0, c.group_line);
+            // The primary action: a pill on a soft shadow of its own colour. The others: a
+            // rounded capsule that fades in under the pointer (0.12 s) and deepens pressed.
+            let inset = if primary { 11.0 } else { 8.0 };
+            let button = winui::rect(Rect::from_min_size(
+                pos2(x + 2.0, band.top() + inset),
+                vec2(total - 4.0, band_h - 2.0 * inset),
+            ));
+            if primary {
+                let face = face.unwrap_or(c.button_accent);
+                let glow = egui::epaint::Shadow {
+                    offset: [0, 2],
+                    blur: 10,
+                    spread: 0,
+                    color: face.gamma_multiply(0.35),
+                };
+                let round = (button.height() / 2.0).round() as u8;
+                p.add(glow.as_shape(button, round));
+                p.rect_filled(button, button.height() / 2.0, face);
+            } else {
+                let hot = ui.ctx().animate_bool_with_time(
+                    resp.id.with("hot"),
+                    *enabled && resp.hovered(),
+                    0.12,
+                );
+                let face = match state {
+                    winui::State::Pressed => Some(c.subtle_pressed),
+                    _ if hot > 0.0 => Some(c.subtle_hot.gamma_multiply(hot)),
+                    _ => None,
+                };
+                if let Some(face) = face {
+                    p.rect_filled(button, 8.0, face);
+                }
             }
         } else if *enabled && resp.hovered() {
             // Hover (IDM 6.42, captured 2026-10-30): the button's own width, from the band's top,
@@ -2087,7 +2156,9 @@ pub fn toolbar(
             }
         }
         let cx = x + bw / 2.0;
-        let (icon_y, size, ly) = if emerald {
+        let (icon_y, size, ly) = if icon_only {
+            (band.center().y, 20.0, top + 53.0)
+        } else if emerald {
             (top + 28.0, 22.0, top + 53.0)
         } else {
             (top + 25.5, 32.0, top + 58.0)
@@ -2127,32 +2198,45 @@ pub fn toolbar(
         );
         if dropdown {
             let ax = x + bw + 4.0;
-            let ay = top + 31.0;
+            let ay = if emerald {
+                band.center().y - 2.0
+            } else {
+                top + 31.0
+            };
             // The split's divider at rest (user choice 2026-10-29, "B"): a classic etched
             // toolbar separator — a shadow line and a highlight beside it — 24 px tall, centred
             // on the arrow; the hover draws the full divider instead.
+            // Emerald: the split shows only under the pointer; at rest the arrow sits beside its
+            // button as one control.
             if emerald {
-                let split = if resp.hovered() {
-                    c.toolbar_hot_edge
-                } else {
-                    c.group_line
-                };
-                fill(&p, x + bw, top + 17.0, x + bw, top + 43.0, split);
+                if resp.hovered() {
+                    let mid = band.center().y;
+                    fill(&p, x + bw, mid - 9.0, x + bw, mid + 9.0, c.toolbar_hot_edge);
+                }
             } else if !(*enabled && resp.hovered()) {
                 let (shadow, light) = (c.toolbar_split_shadow, c.toolbar_split_light);
                 let (y0, y1) = (ay - 10.0, ay + 13.0);
                 winui::fill_l(&p, x + bw - 1.0, y0, x + bw - 1.0, y1, shadow);
                 winui::fill_l(&p, x + bw, y0, x + bw, y1, light);
             }
-            for (row, half) in [3.0f32, 2.0, 1.0, 0.0].iter().enumerate() {
-                winui::fill_l(
-                    &p,
-                    ax + 3.0 - half,
-                    ay + row as f32,
-                    ax + 3.0 + half,
-                    ay + row as f32,
-                    TB_ARROW(),
-                );
+            if emerald {
+                // A thin chevron, as a pop-up button's.
+                let ink = Stroke::new(1.4, TB_ARROW());
+                let tip = pos2(winui::mx(ax + 3.0), ay + 3.0);
+                for dx in [-3.5f32, 3.5] {
+                    p.line_segment([tip + vec2(dx, -3.0), tip], ink);
+                }
+            } else {
+                for (row, half) in [3.0f32, 2.0, 1.0, 0.0].iter().enumerate() {
+                    winui::fill_l(
+                        &p,
+                        ax + 3.0 - half,
+                        ay + row as f32,
+                        ax + 3.0 + half,
+                        ay + row as f32,
+                        TB_ARROW(),
+                    );
+                }
             }
         }
         // No right-click menu: it would offer toolbar looks (sizes, styles) and only one is
@@ -2339,7 +2423,16 @@ pub fn categories(
         pos2(right, bottom - 5.0),
     ));
     if emerald {
-        p.rect_filled(frame, crate::theme::metrics().control_radius, TREE_BG());
+        // Flush on the canvas (no card): a hairline at its trailing edge parts it from the list.
+        // Over the animated backdrop the pane is see-through.
+        if !crate::backdrop::active() {
+            p.rect_filled(frame, 0.0, TREE_BG());
+        }
+        let edge = winui::rect(Rect::from_min_max(
+            pos2(right + 1.0, y0),
+            pos2(right + 2.0, bottom),
+        ));
+        p.rect_filled(edge, 0.0, crate::theme::colors().header_line);
     } else {
         p.rect_stroke(
             frame,
@@ -2359,10 +2452,18 @@ pub fn categories(
     // i18n: title of the side pane that lists the categories
     let caption = crate::i18n::t("Categories");
     // Short of the close box: in a narrow pane or a long translation, "..." and whole on hover.
+    // BMD's look: a small, muted section label over the list, as a Mac sidebar's.
     let caption_font = if emerald {
-        winui::tahoma_bold()
+        let mut f = winui::tahoma_bold();
+        f.size = crate::theme::font_size(11.5);
+        f
     } else {
         font.clone()
+    };
+    let caption_ink = if emerald {
+        crate::theme::colors().muted
+    } else {
+        TEXT()
     };
     let close_margin = if emerald { 24.0 } else { 21.0 };
     let shown = winui::ellipsize(
@@ -2371,7 +2472,14 @@ pub fn categories(
         caption,
         right - close_margin - (o.x + 12.0),
     );
-    let drawn = text_font(&p, caption_font, o.x + 12.0, y0 + caption_y, &shown, TEXT());
+    let drawn = text_font(
+        &p,
+        caption_font,
+        o.x + 12.0,
+        y0 + caption_y,
+        &shown,
+        caption_ink,
+    );
     if shown != caption {
         winui::full_on_hover(ui, drawn, "categories-caption", caption);
     }
@@ -2389,14 +2497,28 @@ pub fn categories(
     if let Some(c) = winui::subtle_fill(winui::State::of(&cr, true), crate::theme::colors()) {
         p.rect_filled(close, crate::theme::metrics().part_radius, c);
     }
-    text_font(
-        &p,
-        winui::arial_bold(),
-        right - if emerald { 18.0 } else { 15.0 },
-        y0 + caption_y,
-        crate::i18n::t("x"),
-        TEXT(),
-    );
+    if emerald {
+        // A drawn ×, in the muted ink, the text ink under the pointer.
+        let ink = if cr.hovered() {
+            TEXT()
+        } else {
+            crate::theme::colors().muted
+        };
+        let m = close.center();
+        let stroke = Stroke::new(1.4, ink);
+        for d in [vec2(4.0, 4.0), vec2(4.0, -4.0)] {
+            p.line_segment([m - d, m + d], stroke);
+        }
+    } else {
+        text_font(
+            &p,
+            winui::arial_bold(),
+            right - 15.0,
+            y0 + caption_y,
+            crate::i18n::t("x"),
+            TEXT(),
+        );
+    }
     if cr.clicked() {
         event = Some(TreeEvent::Close);
     }
@@ -2404,7 +2526,9 @@ pub fn categories(
         pos2(o.x + 8.0, y0 + caption_h),
         pos2(right - 3.0, bottom - 9.0),
     );
-    p.rect_filled(winui::rect(tree), 0.0, TREE_BG());
+    if !(emerald && crate::backdrop::active()) {
+        p.rect_filled(winui::rect(tree), 0.0, TREE_BG());
+    }
 
     // Scroll bars (notes/ui-spec/scrollbars.md "Categories tree"): by rows vertically, by
     // pixels horizontally; each shows when the content overflows (Win32 rule).
@@ -2561,12 +2685,20 @@ pub fn categories(
         };
         if emerald {
             let c = crate::theme::colors();
-            if r.selected || ui.rect_contains_pointer(item) {
-                let face = if r.selected {
-                    c.selection
-                } else {
-                    c.toolbar_hot
-                };
+            // The hover tint fades in and out (0.12 s); the selection is there at once.
+            let hot = ui.ctx().animate_bool_with_time(
+                egui::Id::unique(("tree-hover", k)),
+                ui.rect_contains_pointer(item),
+                0.12,
+            );
+            let face = if r.selected {
+                Some(c.selection)
+            } else if hot > 0.0 {
+                Some(c.toolbar_hot.gamma_multiply(hot))
+            } else {
+                None
+            };
+            if let Some(face) = face {
                 tp.rect_filled(item, crate::theme::metrics().control_radius, face);
             }
         } else if r.selected {

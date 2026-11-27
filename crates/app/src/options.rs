@@ -4775,6 +4775,9 @@ fn tabs(ui: &mut Ui, o: Pos2, page: usize) -> Option<usize> {
     ];
     let p = ui.painter().clone();
     let border = winui::HEADER_LINE();
+    // BMD's look: text tabs on one hairline, the chosen one in full ink over a short rule, the
+    // others muted, a soft tint under the pointer; the page has no frame.
+    let modern = crate::theme::emerald_workspace();
     let (g, pr) = (tab_row(&p, &G, false), tab_row(&p, &P, false));
     let first_row = page < 5 || page == REMOTE_PAGE;
     let (front, back): (&[_], &[_]) = if first_row { (&g, &pr) } else { (&pr, &g) };
@@ -4839,6 +4842,44 @@ fn tabs(ui: &mut Ui, o: Pos2, page: usize) -> Option<usize> {
                 }
             }
         }
+        if modern {
+            let c = crate::theme::colors();
+            let base = if sel { base + 2.0 } else { base };
+            if !sel {
+                let hot =
+                    ui.ctx()
+                        .animate_bool_with_time(resp.id.with("hot"), resp.hovered(), 0.12);
+                if hot > 0.0 {
+                    let tint = winui::rect(Rect::from_min_max(
+                        o + vec2(x0 + 2.0, top + 1.0),
+                        o + vec2(x1 - 2.0, bottom - 1.0),
+                    ));
+                    p.rect_filled(
+                        tint,
+                        crate::theme::metrics().control_radius,
+                        c.subtle_hot.gamma_multiply(hot),
+                    );
+                }
+            }
+            let full = crate::i18n::t(label);
+            let shown = winui::ellipsize(&p, &winui::tahoma(), full, x1 - x0 - 6.0);
+            let w = winui::text_width(&p, &shown);
+            let lx = x0 + ((x1 - x0 - w) / 2.0).floor();
+            let ink = if sel { LIGHT_TEXT() } else { c.muted };
+            let drawn = text(&p, o.x + lx, o.y + base, &shown, ink);
+            if sel {
+                let rule = winui::rect(Rect::from_min_max(
+                    o + vec2(lx - 2.0, 43.0),
+                    o + vec2(lx + w + 2.0, 45.0),
+                ));
+                p.rect_filled(rule, 1.0, LIGHT_TEXT());
+            }
+            if shown != full {
+                winui::full_on_hover(ui, drawn, ("opt-tab-label", i), full);
+            }
+            winui::show_focus(ui, &resp, rc.shrink(2.0));
+            return;
+        }
         let face = if sel {
             LIGHT_PAGE()
         } else if resp.hovered() {
@@ -4892,6 +4933,22 @@ fn tabs(ui: &mut Ui, o: Pos2, page: usize) -> Option<usize> {
         tab(ui, *t, 27.0, 40.0, false);
     }
     // Page frame (x 6..421, y 45..468) with its shadow, then the selected tab over its top.
+    // BMD's look: no frame, the page on the dialog's own colour under one hairline.
+    if modern {
+        fill(
+            &p,
+            o.x + 6.0,
+            o.y + 45.0,
+            o.x + 421.0,
+            o.y + 468.0,
+            winui::LIGHT_BG(),
+        );
+        fill(&p, o.x + 6.0, o.y + 45.0, o.x + 421.0, o.y + 45.0, border);
+        if let Some(t) = front.iter().find(|t| t.0 == page) {
+            tab(ui, *t, 25.0, 38.0, true);
+        }
+        return clicked;
+    }
     fill(
         &p,
         o.x + 6.0,
