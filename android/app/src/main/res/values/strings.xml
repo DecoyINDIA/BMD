@@ -69,4 +69,19 @@
         <item quantity="one">%d saved file</item>
         <item quantity="other">%d saved files</item>
     </plurals>
+    <string name="quick_download_widget">Quick Download</string>
+    <string name="quick_download_url">File URL</string>
+    <string name="quick_download_action">Download</string>
+    <string name="quick_download_success">Downloaded successfully</string>
+    <string name="quick_download_preparing">Preparing download</string>
+    <string name="quick_download_error">The download couldn’t start. Try again.</string>
+    <string name="quick_download_http_title">Allow an unencrypted download?</string>
+    <string name="quick_download_http_message">%1$s uses HTTP. The download can be seen or modified on the network.</string>
+    <string name="quick_download_metered_title">Use this metered connection?</string>
+    <string name="quick_download_metered_message">This download may count toward your data limit.</string>
+    <string name="quick_download_allow">Allow once</string>
+    <string name="quick_download_cancel">Cancel</string>
+    <string name="quick_download_direct_link">Enter a direct file link.</string>
+    <string name="quick_download_duplicate">This link already has a download in Transfers.</string>
+    <string name="quick_download_sign_in">This link needs source sign-in. Add it in Black Marlin.</string>
 </resources>

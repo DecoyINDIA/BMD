@@ -155,8 +155,8 @@ def build_cta_velocity(mode: str) -> str:
     <path fill="{t['cta_ink']}" d="{MARLIN_PATHS['body']}"/>
     <path fill="{t['cta_ink']}" fill-opacity="0.72" d="{MARLIN_PATHS['tail']}"/>
   </g>
-  <text x="76" y="34" fill="{t['cta_ink']}" font-size="18.5" font-weight="700" letter-spacing="-0.3" class="t-disp">Download Black Marlin v1.0.0</text>
-  <text x="76" y="54" fill="{t['cta_sub']}" font-size="11.5" font-weight="500" class="t-mono">Windows x64 Installer · 19.0 MiB · Free (GPL-3.0)</text>
+  <text x="76" y="34" fill="{t['cta_ink']}" font-size="18.5" font-weight="700" letter-spacing="-0.3" class="t-disp">Download Black Marlin</text>
+  <text x="76" y="54" fill="{t['cta_sub']}" font-size="11.5" font-weight="500" class="t-mono">Latest release · Windows, Linux and macOS</text>
   <g class="arrow-glide">
     <path d="M442 25v16m-7-6l7 7 7-7" fill="none" stroke="{t['cta_ink']}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
   </g>

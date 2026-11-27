@@ -30,6 +30,24 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".widget.QuickDownloadActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:taskAffinity="${applicationId}.quickDownload"
+            android:theme="@style/Theme.BlackMarlin.QuickDownload"
+            android:windowSoftInputMode="adjustResize" />
+        <receiver
+            android:name=".widget.QuickDownloadWidget"
+            android:exported="false"
+            android:label="@string/quick_download_widget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quick_download_widget" />
+        </receiver>
         <service android:name=".platform.TransferJobService" android:permission="android.permission.BIND_JOB_SERVICE" android:exported="true" />
         <service android:name=".platform.LocalSaveService" android:exported="false" android:foregroundServiceType="dataSync" />
         <service android:name="androidx.work.impl.foreground.SystemForegroundService" android:foregroundServiceType="dataSync" tools:node="merge" />
