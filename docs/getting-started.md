@@ -55,7 +55,7 @@ builds none for it): install it with your system's packages or pip.
 ![BMD's main window on Linux showing categories and a list of downloads](images/main-linux.webp)
 *BMD in an X11 session on Linux.*
 
-Browser integration is set up by BMD itself at each start (the browsers installed then are found); add the extension as in [Browser integration](browser-integration.md). Firefox installed as a Snap (Ubuntu's) reaches BMD once you allow it; other Snap and Flatpak browsers can't (see [Flatpak and Snap browsers](browser-help.md#linux-sandbox)). The tray icon, Dark Mode support and Launch on startup work on GNOME (Ubuntu's), KDE Plasma, Xfce and Cinnamon.
+Browser integration is set up by BMD itself at each start (the browsers installed then are found); add the extension as in [Browser integration](browser-integration.md). Firefox installed as a Snap (Ubuntu's) reaches BMD once you allow it; other Snap and Flatpak browsers can't (see [Flatpak and Snap browsers](browser-help.md#linux-sandbox)). The tray icon, light and dark modes (following the desktop) and Launch on startup work on GNOME (Ubuntu's), KDE Plasma, Xfce and Cinnamon.
 
 ![BMD's browser extension setup window on Linux](images/browser-offer-linux.webp)
 *Use Set it up if browser integration has not been configured.*

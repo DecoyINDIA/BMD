@@ -66,7 +66,7 @@ where it matters.
 
 Linux isn't experimental any more, since version 0.5.0: every change is checked on a Linux
 desktop as well as on Windows. GNOME, KDE Plasma, Xfce and Cinnamon were checked window by window: the tray icon and
-its menu, **Minimize to the notification area**, Dark Mode support following the desktop, and the
+its menu, **Minimize to the notification area**, light and dark modes following the desktop, and the
 browsers handing downloads over (Ubuntu's Snap Firefox, Google Chrome and Brave). A Wayland
 session runs BMD through XWayland, so menus open under their titles, on tiling compositors such
 as sway too. The `.deb` and `.rpm` were installed in clean Ubuntu 24.04, Debian 12 and Fedora 45
