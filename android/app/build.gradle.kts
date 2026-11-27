@@ -1,3 +1,4 @@
+import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.gradle.api.tasks.testing.Test
 
@@ -29,13 +30,29 @@ android {
         ndk { abiFilters += setOf("arm64-v8a", "x86_64") }
     }
     signingConfigs {
-        val keystore = providers.environmentVariable("BMD_ANDROID_KEYSTORE").orNull
-        if (!keystore.isNullOrBlank()) {
+        val keystore = providers.environmentVariable("BMD_ANDROID_KEYSTORE").orNull?.takeIf { it.isNotBlank() }
+        val storePasswordEnv = providers.environmentVariable("BMD_ANDROID_STORE_PASSWORD").orNull?.takeIf { it.isNotBlank() }
+        val keyAliasEnv = providers.environmentVariable("BMD_ANDROID_KEY_ALIAS").orNull?.takeIf { it.isNotBlank() }
+        val keyPasswordEnv = providers.environmentVariable("BMD_ANDROID_KEY_PASSWORD").orNull?.takeIf { it.isNotBlank() }
+        if (listOf(keystore, storePasswordEnv, keyAliasEnv, keyPasswordEnv).any { it != null }) {
+            val missing = buildList {
+                if (keystore == null) add("BMD_ANDROID_KEYSTORE")
+                if (storePasswordEnv == null) add("BMD_ANDROID_STORE_PASSWORD")
+                if (keyAliasEnv == null) add("BMD_ANDROID_KEY_ALIAS")
+                if (keyPasswordEnv == null) add("BMD_ANDROID_KEY_PASSWORD")
+            }
+            if (missing.isNotEmpty()) {
+                throw GradleException(
+                    "Incomplete Android signing configuration: set all of BMD_ANDROID_KEYSTORE, " +
+                        "BMD_ANDROID_STORE_PASSWORD, BMD_ANDROID_KEY_ALIAS, and BMD_ANDROID_KEY_PASSWORD " +
+                        "(missing: ${missing.joinToString(", ")})."
+                )
+            }
             create("production") {
-                storeFile = file(keystore)
-                storePassword = providers.environmentVariable("BMD_ANDROID_STORE_PASSWORD").get()
-                keyAlias = providers.environmentVariable("BMD_ANDROID_KEY_ALIAS").get()
-                keyPassword = providers.environmentVariable("BMD_ANDROID_KEY_PASSWORD").get()
+                storeFile = file(keystore!!)
+                storePassword = storePasswordEnv
+                keyAlias = keyAliasEnv
+                keyPassword = keyPasswordEnv
             }
         }
     }
@@ -70,18 +87,28 @@ android {
 kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
 kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas"); arg("room.incremental", "true") } }
 
-// PublicationManagerTest pins API 34. Resolve its runtime through Gradle's cache
+// PublicationManagerTest pins API 34 and TransferCoordinatorTest API 33 (Android 13's
+// foreground-service rules, AND-01). Every SDK a test pins must be staged here: offline,
+// Robolectric fails a missing one in LocalDependencyResolver. Resolve them through Gradle's cache
 // before testing instead of Robolectric's separate, uncached Maven downloader.
-val robolectricSdk by configurations.creating {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-    isTransitive = false
+// One configuration per SDK: versions of the same module in one configuration are a conflict
+// Gradle resolves by keeping only the newest, which silently dropped SDK 33's runtime.
+val robolectricRuntimes = mapOf(
+    33 to "org.robolectric:android-all-instrumented:13-robolectric-9030017-i7",
+    34 to "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7",
+)
+val robolectricSdks = robolectricRuntimes.map { (sdk, coordinate) ->
+    configurations.create("robolectricSdk$sdk") {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        isTransitive = false
+    }.also { dependencies.add(it.name, coordinate) }
 }
 val robolectricSdkDirectory = layout.buildDirectory.dir("robolectric-sdk")
 val prepareRobolectricSdk by tasks.registering(Sync::class) {
     group = "verification"
-    description = "Stage the pinned Android runtime for offline Robolectric tests."
-    from(robolectricSdk)
+    description = "Stage the pinned Android runtimes for offline Robolectric tests."
+    from(robolectricSdks)
     into(robolectricSdkDirectory)
 }
 tasks.withType<Test>().configureEach {
@@ -133,7 +160,6 @@ tasks.configureEach {
 apply(from = "android-notices.gradle.kts")
 
 dependencies {
-    add(robolectricSdk.name, "org.robolectric:android-all-instrumented:14-robolectric-10818077-i7")
     val composeBom = platform("androidx.compose:compose-bom:2025.10.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)

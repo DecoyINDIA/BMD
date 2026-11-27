@@ -15,7 +15,7 @@ use futures::FutureExt;
 use network::{Gateway, Network};
 use serde_json::{Value, json};
 use std::{
-    collections::{BTreeMap, HashMap, HashSet},
+    collections::{BTreeMap, HashMap, HashSet, VecDeque},
     path::PathBuf,
     sync::{
         Arc, Mutex, OnceLock,
@@ -28,15 +28,41 @@ const INPUT_LIMIT: usize = 32 * 1024;
 const OUTPUT_LIMIT: usize = 64 * 1024;
 const MAX_HANDLES: usize = 64;
 const MAX_ACTIVE: usize = 4;
+const MAX_INVALID_NETWORKS: usize = 4096;
 static BRIDGE: OnceLock<Arc<Bridge>> = OnceLock::new();
 static INIT_LOCK: Mutex<()> = Mutex::new(());
+
+#[derive(Default)]
+struct InvalidNetworks {
+    set: HashSet<(u64, u64)>,
+    order: VecDeque<(u64, u64)>,
+}
+
+impl InvalidNetworks {
+    fn contains(&self, network: Network) -> bool {
+        self.set.contains(&(network.handle, network.generation))
+    }
+
+    fn insert(&mut self, network: Network) {
+        let key = (network.handle, network.generation);
+        if self.set.contains(&key) {
+            return;
+        }
+        if self.order.len() >= MAX_INVALID_NETWORKS
+            && let Some(evicted) = self.order.pop_front()
+        {
+            self.set.remove(&evicted);
+        }
+        self.set.insert(key);
+        self.order.push_back(key);
+    }
+}
 
 struct Registry {
     next: u64,
     handles: BTreeMap<u64, Arc<Task>>,
     claims: HashMap<String, u64>,
-    invalid_networks: HashSet<(u64, u64)>,
-    network_history_full: bool,
+    invalid_networks: InvalidNetworks,
 }
 pub struct Bridge {
     root: PathBuf,
@@ -131,8 +157,7 @@ impl Bridge {
                 next: 1,
                 handles: BTreeMap::new(),
                 claims: HashMap::new(),
-                invalid_networks: HashSet::new(),
-                network_history_full: false,
+                invalid_networks: InvalidNetworks::default(),
             }),
         }))
     }
@@ -172,10 +197,7 @@ impl Bridge {
             return Err(Fault::retry("EXECUTOR_LIMIT"));
         }
         if let Some(n) = network
-            && (r.network_history_full
-                || n.handle == 0
-                || n.generation == 0
-                || r.invalid_networks.contains(&(n.handle, n.generation)))
+            && (n.handle == 0 || n.generation == 0 || r.invalid_networks.contains(n))
         {
             return Err(Fault::retry("NETWORK_NOT_ADMITTED"));
         }
@@ -239,12 +261,7 @@ impl Bridge {
                     .registry
                     .lock()
                     .map_err(|_| Fault::new("NATIVE_STATE"))?;
-                if r.invalid_networks.len() >= 4096 {
-                    r.network_history_full = true;
-                } else {
-                    r.invalid_networks
-                        .insert((network.handle, network.generation));
-                }
+                r.invalid_networks.insert(network);
                 for task in r.handles.values() {
                     if task.network == Some(network) {
                         task.stop();
@@ -406,7 +423,7 @@ mod tests {
         assert!(bridge.admit("task", 2, None, None).is_ok());
     }
     #[test]
-    fn network_history_saturation_still_cancels_and_blocks_new_admission() {
+    fn invalid_network_history_evicts_oldest_without_blocking_fresh_networks() {
         let dir = tempfile::tempdir().unwrap();
         let bridge = Bridge::new(dir.path().into()).unwrap();
         let network = Network {
@@ -414,20 +431,82 @@ mod tests {
             generation: 1,
         };
         let task = bridge.admit("active", 1, Some(network), None).unwrap();
-        {
-            let mut r = bridge.registry.lock().unwrap();
-            for n in 1..=4096 {
-                r.invalid_networks.insert((n, 1));
-            }
+        for n in 1..=MAX_INVALID_NETWORKS as u64 {
+            bridge
+                .command(Command::InvalidateNetwork {
+                    network: Network {
+                        handle: n,
+                        generation: 1,
+                    },
+                })
+                .unwrap();
         }
+        // Re-invalidating an already-recorded network does not evict older entries.
+        bridge
+            .command(Command::InvalidateNetwork {
+                network: Network {
+                    handle: 1,
+                    generation: 1,
+                },
+            })
+            .unwrap();
+        assert!(
+            bridge
+                .admit(
+                    "still-blocked",
+                    1,
+                    Some(Network {
+                        handle: 1,
+                        generation: 1
+                    }),
+                    None
+                )
+                .is_err()
+        );
+
+        // Invalidating a new network cancels active work, blocks that network, evicts the oldest
+        // (handle 1), retains newer entries (handle 2), and still allows fresh networks.
         bridge
             .command(Command::InvalidateNetwork { network })
             .unwrap();
         assert!(task.cancel.is_cancelled());
+        task.finish(Ok(()), true);
+        bridge
+            .command(Command::Release {
+                handle: task.snapshot().handle,
+            })
+            .unwrap();
+        assert!(
+            bridge
+                .admit("reused-invalid", 1, Some(network), None)
+                .is_err()
+        );
         assert!(
             bridge
                 .admit(
-                    "other",
+                    "newer-invalid",
+                    1,
+                    Some(Network {
+                        handle: 2,
+                        generation: 1
+                    }),
+                    None
+                )
+                .is_err()
+        );
+        {
+            let r = bridge.registry.lock().unwrap();
+            assert_eq!(r.invalid_networks.set.len(), MAX_INVALID_NETWORKS);
+            assert_eq!(r.invalid_networks.order.len(), MAX_INVALID_NETWORKS);
+            assert!(!r.invalid_networks.contains(Network {
+                handle: 1,
+                generation: 1
+            }));
+        }
+        assert!(
+            bridge
+                .admit(
+                    "fresh",
                     1,
                     Some(Network {
                         handle: 9001,
@@ -435,7 +514,7 @@ mod tests {
                     }),
                     None
                 )
-                .is_err()
+                .is_ok()
         );
     }
     #[test]

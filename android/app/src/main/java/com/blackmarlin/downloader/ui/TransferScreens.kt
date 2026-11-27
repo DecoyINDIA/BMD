@@ -175,18 +175,35 @@ private fun TaskRecoveryPanel(task: UiTask, busy: Boolean, model: BmdViewModel) 
         task.stage == TransferStage.NEEDS_CREDENTIALS -> InfoBanner("This source requires authentication", task.detail ?: "Add a supported credential for ${task.origin}. The same URL can resume after its content is validated.", warning = true,
             action = "Edit source credentials", onAction = { model.openCredentials(task.origin, task.id) })
         task.stage == TransferStage.NEEDS_LINK -> InfoBanner("A new link is needed", task.detail ?: "The link may have expired or the source denied access. A replacement starts a new download after you confirm.", warning = true,
-            action = "Replace link", onAction = { model.taskAction(task.id, TaskOperation.REPLACE_LINK) })
-        task.stage == TransferStage.FILE_CHANGED -> InfoBanner("The file changed on the server", "Restart to avoid combining different versions. Your current partial is retained until you choose.", warning = true,
-            action = "Restart", onAction = { model.taskAction(task.id, TaskOperation.RESTART) })
+            action = if (TaskOperation.REPLACE_LINK in task.permittedActions) "Replace link" else null,
+            onAction = if (TaskOperation.REPLACE_LINK in task.permittedActions) ({ model.taskAction(task.id, TaskOperation.REPLACE_LINK) }) else null)
+        task.stage == TransferStage.FILE_CHANGED -> ContentCard {
+            InfoBanner("The file changed on the server", "Restart to avoid combining different versions. Your current partial is retained until you choose.", warning = true,
+                action = if (TaskOperation.RESTART in task.permittedActions) "Restart" else null,
+                onAction = if (TaskOperation.RESTART in task.permittedActions) ({ model.taskAction(task.id, TaskOperation.RESTART) }) else null)
+            if (TaskOperation.REPLACE_LINK in task.permittedActions) {
+                OutlinedButton({ model.taskAction(task.id, TaskOperation.REPLACE_LINK) }, Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled = !busy) { Text("Replace link") }
+            }
+        }
         task.stage == TransferStage.WAITING_SPACE -> InfoBanner("More space is needed", task.detail ?: "The download is paused safely. Free space and then resume it.", warning = true,
             action = "Review storage", onAction = { model.navigate(BmdScreen.STORAGE) })
         task.stage == TransferStage.WAITING_ANDROID -> InfoBanner("Waiting for Android", task.detail ?: "Android could not admit this work in the background. Resume while the app is visible when you are ready.")
         task.stage == TransferStage.INTERRUPTED -> InfoBanner("Ready to recover", task.detail ?: "The previous transfer was interrupted. Resume to validate and continue the saved partial.")
         task.stage == TransferStage.WAITING_VERIFY -> InfoBanner("Downloaded, waiting to verify", task.detail ?: "The expected checksum still needs to be checked. Continue verification while the app is visible.")
         task.stage == TransferStage.WAITING_NETWORK -> InfoBanner("Waiting for an eligible connection", task.detail ?: if (task.networkPolicy == NetworkPolicy.UNMETERED) "This task is waiting for an unmetered network. You can pause it while you wait." else "The download will be retried when an eligible connection is available.")
-        task.stage == TransferStage.FAILED -> InfoBanner("This transfer needs attention", task.detail ?: "The download could not continue. Check its details before retrying.", warning = true,
-            action = if (TaskOperation.RETRY in task.permittedActions) "Retry" else null,
-            onAction = if (TaskOperation.RETRY in task.permittedActions) ({ model.taskAction(task.id, TaskOperation.RETRY) }) else null)
+        task.stage == TransferStage.FAILED -> ContentCard {
+            val retryOperation = when {
+                TaskOperation.RETRY in task.permittedActions -> TaskOperation.RETRY
+                TaskOperation.RESUME in task.permittedActions -> TaskOperation.RESUME
+                else -> null
+            }
+            InfoBanner("This transfer needs attention", task.detail ?: "The download could not continue. Check its details before retrying.", warning = true,
+                action = if (retryOperation != null) "Retry" else null,
+                onAction = retryOperation?.let { op -> { model.taskAction(task.id, op) } })
+            if (TaskOperation.REPLACE_LINK in task.permittedActions) {
+                OutlinedButton({ model.taskAction(task.id, TaskOperation.REPLACE_LINK) }, Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled = !busy) { Text("Replace link") }
+            }
+        }
         task.stage == TransferStage.CANCELED -> InfoBanner("Download canceled", task.detail ?: "The transfer has stopped. Any file already published is preserved.")
         task.detail != null && task.stage != TransferStage.COMPLETE -> InfoBanner(task.stage.label, task.detail)
     }

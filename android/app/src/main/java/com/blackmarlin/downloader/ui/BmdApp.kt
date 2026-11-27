@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -96,11 +97,7 @@ fun BmdApp(model: BmdViewModel, onPlatformEffect: (BmdEffect) -> Unit) {
                 val wide = maxWidth >= 840.dp
                 val selection = session.selectionKind != null
                 val screen = session.route.screen
-                val selectedTab = when (screen) {
-                    BmdScreen.FILES, BmdScreen.FILE_DETAIL -> BmdScreen.FILES
-                    BmdScreen.TRANSFERS, BmdScreen.TRANSFER_DETAIL, BmdScreen.ADD_LINK, BmdScreen.REVIEW, BmdScreen.SEARCH -> BmdScreen.TRANSFERS
-                    else -> BmdScreen.SETTINGS
-                }
+                val selectedTab = selectedNavigationTab(session.route)
                 Row(Modifier.fillMaxSize()) {
                     if (wide) NavigationRail(containerColor = MaterialTheme.colorScheme.surface, modifier = Modifier.fillMaxHeight()) {
                         BrandEmblem(Modifier.padding(vertical = 20.dp))
@@ -154,7 +151,7 @@ fun BmdApp(model: BmdViewModel, onPlatformEffect: (BmdEffect) -> Unit) {
                         },
                         snackbarHost = { SnackbarHost(snackbar) },
                     ) { insets ->
-                        Box(Modifier.padding(insets).fillMaxSize().testTag("screen-${screen.name.lowercase()}")) {
+                        Box(Modifier.padding(insets).consumeWindowInsets(insets).fillMaxSize().testTag("screen-${screen.name.lowercase()}")) {
                             if (state.loading && screen in rootScreens) Column(Modifier.align(Alignment.Center),
                                 horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(16.dp)) {
                                 CircularProgressIndicator()
@@ -188,7 +185,6 @@ private fun BmdScreenContent(state: BmdAppState, session: BmdSession, model: Bmd
         BmdScreen.FILES -> FilesScreen(state, session, model)
         BmdScreen.FILE_DETAIL -> FileDetailScreen(state, session, model)
         BmdScreen.SEARCH -> SearchScreen(state, session, model)
-        BmdScreen.MULTI_SELECT -> if (session.selectionKind == SelectionKind.FILES) FilesScreen(state, session, model) else TransfersScreen(state, session, model)
         BmdScreen.SETTINGS -> SettingsScreen(state, model)
         BmdScreen.NETWORK -> NetworkScreen(state, session, model)
         BmdScreen.STORAGE -> StorageScreen(state, session, model)
@@ -210,7 +206,6 @@ private fun BmdScreen.titleResource(): Int = when (this) {
     BmdScreen.TRANSFER_DETAIL -> R.string.title_transfer
     BmdScreen.FILE_DETAIL -> R.string.title_file
     BmdScreen.SEARCH -> R.string.title_search
-    BmdScreen.MULTI_SELECT -> R.string.title_selection
     BmdScreen.NETWORK -> R.string.title_network
     BmdScreen.STORAGE -> R.string.title_storage
     BmdScreen.APPEARANCE -> R.string.title_appearance

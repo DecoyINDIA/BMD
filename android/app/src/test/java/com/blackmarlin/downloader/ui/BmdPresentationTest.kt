@@ -1,5 +1,6 @@
 package com.blackmarlin.downloader.ui
 
+import com.blackmarlin.downloader.data.permittedTaskActions
 import org.junit.Assert.*
 import org.junit.Test
 
@@ -42,5 +43,41 @@ class BmdPresentationTest {
         assertEquals(listOf("http://[::1]"), sharedHttpLinks("http://[::1]"))
         assertEquals(listOf("https://example.com/file."), sharedHttpLinks("https://example.com/file."))
         assertEquals(listOf("https://example.com/archive.zip"), sharedHttpLinks("Download (https://example.com/archive.zip)."))
+    }
+
+    @Test fun sharedTextScanningIsBoundedAndPreservesSurrogatePairs() {
+        val oversized = "x".repeat(MAX_SHARED_TEXT_CHARS + 5_000) + " https://ignored.example.test/file.zip"
+        assertEquals(emptyList<String>(), sharedHttpLinks(oversized))
+        val prefixLink = "Note https://kept.example.test/file.zip " + "x".repeat(MAX_SHARED_TEXT_CHARS + 5_000)
+        assertEquals(listOf("https://kept.example.test/file.zip"), sharedHttpLinks(prefixLink))
+        val surrogateBoundary = "a".repeat(MAX_SHARED_TEXT_CHARS - 1) + "\uD83D\uDE00"
+        val bounded = boundSharedText(surrogateBoundary)!!
+        assertEquals(MAX_SHARED_TEXT_CHARS - 1, bounded.length)
+        assertFalse(bounded.last().isHighSurrogate())
+    }
+
+    @Test fun destinationAndCredentialsHighlightTheirOriginatingTab() {
+        assertEquals(BmdScreen.TRANSFERS, selectedNavigationTab(BmdRoute(BmdScreen.DESTINATION, context = "draft")))
+        assertEquals(BmdScreen.TRANSFERS, selectedNavigationTab(BmdRoute(BmdScreen.DESTINATION, context = "task-1")))
+        assertEquals(BmdScreen.TRANSFERS, selectedNavigationTab(BmdRoute(BmdScreen.DESTINATION, context = "separate:task-1")))
+        assertEquals(BmdScreen.SETTINGS, selectedNavigationTab(BmdRoute(BmdScreen.DESTINATION, context = "settings")))
+        assertEquals(BmdScreen.TRANSFERS, selectedNavigationTab(BmdRoute(BmdScreen.CREDENTIALS, context = "source")))
+        assertEquals(BmdScreen.SETTINGS, selectedNavigationTab(BmdRoute(BmdScreen.CREDENTIALS, context = "settings")))
+    }
+
+    @Test fun failedAndFileChangedStagesExposeWorkingRecoveryActions() {
+        val failed = permittedTaskActions(TransferStage.FAILED, null, "RUN", local = false, verified = false, hasPublication = false)
+        assertTrue(TaskOperation.RESUME in failed)
+        assertTrue(TaskOperation.REPLACE_LINK in failed)
+        assertTrue(TaskOperation.CANCEL in failed)
+
+        val changed = permittedTaskActions(TransferStage.FILE_CHANGED, null, "RUN", local = false, verified = false, hasPublication = false)
+        assertTrue(TaskOperation.RESTART in changed)
+        assertTrue(TaskOperation.REPLACE_LINK in changed)
+        assertTrue(TaskOperation.CANCEL in changed)
+
+        val waitingAndroid = permittedTaskActions(TransferStage.WAITING_ANDROID, null, "RUN", local = false, verified = false, hasPublication = false)
+        assertTrue(TaskOperation.RESUME in waitingAndroid)
+        assertTrue(TaskOperation.CANCEL in waitingAndroid)
     }
 }

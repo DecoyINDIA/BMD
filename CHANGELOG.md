@@ -14,9 +14,15 @@ Each release's notes on GitHub come from its section here (`## [X.Y.Z]`, see
 
 - **A new typeface, everywhere:** BMD, its website, the browser extension's popup and video button, and the remote control page are now set in IBM Plex Sans (text), IBM Plex Mono (code) and Space Grotesk (titles), built in and the same on every system. Scripts these fonts don't draw (Arabic, Indic, Chinese, Japanese, Korean and others) still use your system's fonts. The Status column is a little wider by default (136 px) for the new font.
 
+### Fixed
+
+- **BMD for Android**: on Android 12 and 13, a download Android wouldn't let continue in the background now waits for you to open BMD and resume it, instead of ending as failed; text shared to BMD is read up to its first 16,000 characters and 50 links, so a very long share no longer slows or closes the app.
+- Crash reports leave out sign-in tokens, tracker passkeys and signed-link signatures from the addresses in their logs, and the download list's backups are written readable by you alone.
+
 ### Security
 
 - Updated a dependency to a version with a published security fix.
+- Tightened which folders a download added through the automation API or MCP may be saved in.
 
 ## [1.0.0] - 2026-11-19
 

@@ -1,8 +1,9 @@
 # Black Marlin Downloader (BMD) — agent guide
 
-Black Marlin Downloader (BMD) is a download manager for Windows in Rust (egui + storytold
-craft-libs), laid out the way Internet Download Manager users expect. Start by reading
-[README.md](README.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Black Marlin Downloader (BMD) is a download manager in Rust targeting Windows, Linux,
+experimental macOS (`egui` + `storytold/craft-libs`), and native Android (Kotlin/Jetpack Compose +
+`bmd-android-bridge` JNI), laid out the way Internet Download Manager users expect. Start by
+reading [README.md](README.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Rules
 
@@ -15,8 +16,11 @@ craft-libs), laid out the way Internet Download Manager users expect. Start by r
    their owners and their sources in `website/assets/alts/SOURCES.txt`.
 2. Every user-visible text goes through `crate::i18n`; run `python tools/i18n/extract.py`
    after adding one.
-3. Windows-only calls live in `crates/app/src/win32.rs`, their Linux and macOS counterparts in
-   `unix.rs`; the rest of the workspace is safe, portable Rust (`unsafe_code = "deny"`). A
+3. OS, FFI, and syscall boundary `allow(unsafe_code)` modules are confined to
+   `crates/app/src/win32.rs`, `crates/app/src/unix.rs`, `crates/engine/src/disk.rs`,
+   `crates/engine/src/sparse.rs`, `crates/nmhost/src/win32.rs`, and
+   `crates/android-bridge/src/{lib,network}.rs` (plus the `crates/crash/examples/crashy.rs` test
+   example); the rest of the workspace is safe, portable Rust (`unsafe_code = "deny"`). A
    feature works on every system, or says why it can't (`cfg` with a comment).
 4. Fix root causes, keep data contracts aligned between producers and consumers, and verify the
    whole system end to end after each change.
@@ -49,6 +53,7 @@ craft-libs), laid out the way Internet Download Manager users expect. Start by r
   direction contract in `.impeccable/surfaces/`; its hook checks every website edit.
 - `tools/installer/build-linux.sh` / `build-macos.sh` — the Linux (AppImage, tar.gz, .deb, .rpm)
   and the experimental macOS (.dmg) downloads; run by `release.yml` on GitHub's runners.
+- Android builds and verification are documented in [docs/android/BUILD_AND_RELEASE.md](docs/android/BUILD_AND_RELEASE.md).
 - Windows: if `cargo` isn't on PATH in an old shell, prefix
   `$env:Path = "$env:USERPROFILE\.cargo\bin;$env:Path"`.
 

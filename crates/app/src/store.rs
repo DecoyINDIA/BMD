@@ -196,7 +196,7 @@ fn keep_generations(p: &Path) {
     if crate::secrets::prepared(|| parse_bytes(&current)).is_none() {
         return;
     }
-    let _ = std::fs::write(backup_path(p), &current);
+    let _ = bmd_ipc::private_write(&backup_path(p), &current);
     let (g1, g2) = (generation_path(p, 1), generation_path(p, 2));
     let g1_age = std::fs::metadata(&g1)
         .and_then(|m| m.modified())
@@ -208,9 +208,18 @@ fn keep_generations(p: &Path) {
     };
     if due {
         if g1.exists() {
-            let _ = std::fs::rename(&g1, &g2);
+            // Copied with the private write rather than renamed: a g1 from before backups were
+            // written privately would otherwise keep its old, readable permissions as g2.
+            match std::fs::read(&g1) {
+                Ok(old) => {
+                    let _ = bmd_ipc::private_write(&g2, &old);
+                }
+                Err(_) => {
+                    let _ = std::fs::rename(&g1, &g2);
+                }
+            }
         }
-        let _ = std::fs::write(&g1, &current);
+        let _ = bmd_ipc::private_write(&g1, &current);
     }
 }
 
@@ -748,5 +757,25 @@ mod tests {
         std::fs::write(&p, b"garbage").unwrap();
         save_to(&p, 5, &[], &layout, &Settings::default(), &[]).unwrap();
         assert_eq!(parse(&backup_path(&p)).unwrap().next_id, 3);
+    }
+
+    #[test]
+    fn backups_are_written_with_private_permissions() {
+        let dir = tempfile::tempdir().unwrap();
+        let p = dir.path().join("downloads.json");
+        save_n(&p, 1);
+        save_n(&p, 2);
+        let bak = backup_path(&p);
+        let g1 = generation_path(&p, 1);
+        assert_eq!(parse(&bak).unwrap().next_id, 1);
+        assert_eq!(parse(&g1).unwrap().next_id, 1);
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            for f in [&bak, &g1] {
+                let mode = std::fs::metadata(f).unwrap().permissions().mode() & 0o777;
+                assert_eq!(mode, 0o600, "{}", f.display());
+            }
+        }
     }
 }
