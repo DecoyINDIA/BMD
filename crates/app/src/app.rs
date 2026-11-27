@@ -2410,6 +2410,7 @@ impl App {
         // Every byte in (#736): no rate, as once it is complete.
         let receiving = it.live.is_some() && !it.past_last_byte();
         list::Row {
+            id: it.id,
             progress: receiving.then(|| it.fraction()).flatten().map(|f| f as f32),
             status_group: match it.status {
                 // i18n: a download's status (state it is in, not a command): being downloaded now

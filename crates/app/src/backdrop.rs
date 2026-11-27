@@ -12,13 +12,15 @@
 use egui::{Color32, ColorImage, Rect, TextureHandle, TextureOptions};
 use std::sync::atomic::{AtomicBool, Ordering};
 
-/// One texel of the backdrop covers this many points of the window.
-const CELL: f32 = 8.0;
-/// The largest backdrop drawn, in texels (a 4K window at CELL 8 is about 480 × 270).
-const MAX_W: usize = 320;
-const MAX_H: usize = 200;
-/// Frames a second while it moves.
-const FPS: f64 = 20.0;
+/// One texel of the backdrop covers this many points of the window (soft clouds: a coarse
+/// texture scaled up with linear filtering is indistinguishable, and a third of the work).
+const CELL: f32 = 12.0;
+/// The largest backdrop drawn, in texels.
+const MAX_W: usize = 240;
+const MAX_H: usize = 150;
+/// Frames a second while it moves. The clouds drift a few texels a second, so 10 looks the same
+/// as 20; every frame redraws the whole window, so this is also the idle CPU cost.
+const FPS: f64 = 10.0;
 /// Noise time per second (the shader's speed 2 × 0.001 × 0.1, a slow drift).
 const SPEED: f32 = 0.2;
 
