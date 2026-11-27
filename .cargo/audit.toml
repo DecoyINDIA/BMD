@@ -1,4 +1,4 @@
-# `cargo audit` (CI: the "dependency advisories" job in ci.yml). Every ignored advisory says why
+# `cargo audit` (CI: .github/workflows/advisories.yml). Every ignored advisory says why
 # and when to look again; an ignore is never a fix.
 [advisories]
 ignore = [

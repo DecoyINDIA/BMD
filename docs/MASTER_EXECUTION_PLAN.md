@@ -22,8 +22,9 @@ A work package here that ships something user-visible gets its ROADMAP line in t
 
 BMD is a mature desktop download manager (Rust, egui; Windows first, Linux, experimental macOS)
 with a newly added native Android app over the same engine. The desktop engine, resume and
-persistence are verified sound; 1,608 tests pass. The repository is now one `main` with no open
-stale work. What stands between this and the next release is mostly **release trust** (SEC-01,
+persistence are verified sound; 1,642 tests pass on the consolidated tree (one target flaky under
+parallel load, DESK-07). Once the consolidation PR is merged (WP-00.1), the repository is one
+`main` with no open stale work. What stands between this and the next release is mostly **release trust** (SEC-01,
 P1) and, for Android, **one lifecycle defect, translations and real-device qualification**.
 Order: stabilize the repository's rules (WP-00), fix the release blockers (WP-01), then the
 narrow reliability windows (WP-02), then each app's completion in parallel (WP-03, WP-04), then
@@ -34,7 +35,7 @@ the cross-cutting work (WP-05…WP-09), and only then a release (WP-10).
 | Area | Status | Evidence |
 |---|---|---|
 | Desktop build, fmt, clippy (`-D warnings`) | PASS on Windows here; PASS on Windows, Linux, macOS in CI | VERIFICATION_REPORT §2 |
-| Desktop tests | 1,608 pass, 0 fail, 32 ignored; 3 targets flaky under full parallel load (pass alone) | VERIFICATION_REPORT §2 |
+| Desktop tests | Consolidated tree: 1,642 pass, 0 fail, 32 ignored; 1 target aborts under full parallel load and passes alone (baseline `main`: 1,608 pass, 3 such targets) | VERIFICATION_REPORT §2 |
 | Extension logic tests | 109 checks pass | `node tools/extension/test.mjs` |
 | Help pictures | PASS after consolidation (failed on `main` before) | `python tools/shots/make.py check` |
 | Dependency advisories | PASS with one documented exception | `cargo audit` |
@@ -68,7 +69,7 @@ Ready for daily use. Next release blocked by SEC-01. Subsystems:
 | List and settings persistence, migration | ~95% | corruption, generations, migration | DESK-04, DESK-05 |
 | Lifecycle (single instance, exit, session end) | ~90% | app integration | DESK-04 |
 | UI responsiveness | ~80% | freeze report test | DESK-01 |
-| Self-update | ~70% (trust) | checksum tests | SEC-01 |
+| Self-update | ~70% | checksum tests | SEC-01 |
 | Installer and release | ~75% | smoke in CI | SEC-01, SEC-07, WP-09.1 |
 
 ## 5. Android readiness
@@ -114,8 +115,8 @@ it was last checked: T (tests), CI, E (emulator), R (runtime by hand), — (not 
 | Browser capture | ✅ (extension, native host) | ➖ (Android share sheet instead) | — | AND-02 | T, CI / E |
 | Clipboard / paste | ✅ | ✅ (explicit Paste) | — | AND-08 | T / E |
 | Notifications | ✅ | ✅ | Progress and completion; Android 13+ asks permission | — | — / E |
-| Remote control, automation API, MCP | ✅ | ➖ | — | SEC-03 | T / — |
-| Self-update | ⚠️ | ➖ (store-managed) | Authentic updates only | SEC-01 | T / — |
+| Remote control, automation API, MCP | ⚠️ | ➖ | — | SEC-03 → WP-01.3 | T / — |
+| Self-update | ⚠️ | ➖ (store-managed) | Only the project's own releases install | SEC-01 → WP-01.1 | T / — |
 | Translations | ✅ (21 languages) | ❌ (English only) | Every visible text translatable | AND-03 → WP-07.1 | CI / — |
 | Accessibility | ⚠️ (Linux screen readers in progress) | — | Screen reader names every control | WP-07.2 | — / — |
 | Dark mode, themes | ✅ | ✅ | — | — | R / E |
@@ -123,12 +124,13 @@ it was last checked: T (tests), CI, E (emulator), R (runtime by hand), — (not 
 ## 7. Defect inventory
 
 All defects, with priority, are the findings in [AUDIT_REPORT.md](AUDIT_REPORT.md):
-REPO-01…13, DESK-01…07, AND-01…09, SEC-01…12. Each open one is assigned to exactly one work
+REPO-01…14, DESK-01…07, AND-01…09, SEC-01…13. Each open one is assigned to exactly one work
 package below; the package's status is the defect's status.
 
 ## 8. Security findings
 
-SEC-01 (P1) and SEC-02, SEC-03 (P2) are release blockers; SEC-06…12 (P3) are hardening.
+SEC-01 (P1) and SEC-03 (P2) are release blockers; SEC-02, SEC-04, SEC-05 (P2) are to be done
+before or with the release; SEC-06…12 (P3) are hardening; SEC-13 is fixed.
 Details are kept with the maintainer until fixed (SECURITY.md). Their work packages are WP-01.x.
 
 ## 9. Technical debt
@@ -154,8 +156,7 @@ Details are kept with the maintainer until fixed (SECURITY.md). Their work packa
 | Gap | Package |
 |---|---|
 | Tests sharing files or ports when the whole workspace runs at once | WP-08.1 |
-| No test of the update path against a tampered checksum list | WP-01.1 |
-| No test that the automation interfaces' save folders are restricted | WP-01.3 |
+| Security regression tests for WP-01.1 and WP-01.3 (listed in the private notes) | WP-01.1, WP-01.3 |
 | No desktop proxy end-to-end test for the manual-proxy change PR #16 made | WP-08.2 |
 | Android: no API 31–35 or real-device runs; no process-death, network-switch or TalkBack tests | WP-04.3 |
 | A shared fixture set proving the three URL-rule copies agree | WP-05.1 |
@@ -169,7 +170,7 @@ Details are kept with the maintainer until fixed (SECURITY.md). Their work packa
   no Rust Android targets), so Android builds were verified in CI only.
 - CI: GitHub Actions (Windows, Linux, macOS, Android emulators, CodeQL, ClusterFuzzLite,
   Scorecard, Pages). Secrets needed for a signed release: the Windows code-signing certificate,
-  Android upload key, the future release-signing key (WP-01.1).
+  Android upload key, and what WP-01.1 adds.
 
 ## 13. Work packages
 
@@ -180,10 +181,12 @@ change, in a fresh context, checks the acceptance criteria against the code and 
 
 ### WP-00 Repository stabilization
 
-**WP-00.1 Consolidate branches and PRs** — P1 · all · DONE
+**WP-00.1 Consolidate branches and PRs** — P1 · all · IN PROGRESS (consolidation PR open; deletions after its merge)
 - Problem: four open PRs, stale branches, a failing check on `main`. Root cause: work landed on
   long-lived branches without a merge path.
-- Done in this consolidation ([BRANCH_RECONCILIATION.md](BRANCH_RECONCILIATION.md)).
+- Reconciled and merged on the consolidation branch ([BRANCH_RECONCILIATION.md](BRANCH_RECONCILIATION.md)); what
+  is left: merge the consolidation PR, delete the reconciled branches, see its CI (Android included)
+  green on `main` (that Android run is also the first proof of REPO-14's build change).
 - Acceptance: one long-lived branch; every open PR merged or closed with a reason; checks green.
 
 **WP-00.2 Apply the PR rules to the Android work** — P1 · Android · IN PROGRESS
@@ -200,7 +203,8 @@ change, in a fresh context, checks the acceptance criteria against the code and 
   `sparse.rs`, `nmhost/src/win32.rs`, `android-bridge` `native.rs` and `network::platform`) in
   CLAUDE.md rule 3 and the `Cargo.toml` lint comment, or move them into such modules. No behaviour
   change.
-- Acceptance: `grep -rn "allow(unsafe_code)" crates` lists only named modules.
+- Acceptance: `grep -rn "allow(unsafe_code)" crates` lists only named modules (examples such as
+  `crates/crash/examples/crashy.rs` included by name).
 - Tests: build and clippy on all systems. Complexity: S.
 
 **WP-00.4 Small documentation debt** — P3 · all · TODO
@@ -213,32 +217,24 @@ change, in a fresh context, checks the acceptance criteria against the code and 
 
 Details of each finding are with the maintainer. Public text for all of these: CHANGELOG wording.
 
-**WP-01.1 Update authenticity** — P1 · desktop · TODO · release blocker
-- Problem: SEC-01. Affected: `crates/tools/src/update.rs`, `.github/workflows/release.yml`,
-  `crates/app/src/help.rs`.
-- Proposal: an offline release-signing key whose public half is built into the app; the release
-  signs its checksum list; the app refuses an update whose signature does not verify (the OpenPGP
-  verifier already used for helpers can be reused). Update-source overrides only in test builds.
-- Acceptance: an update with a valid checksum list but no or a wrong signature is refused with a
-  clear message; a correctly signed one installs.
-- Tests: unit tests for valid, missing, wrong-key and tampered signatures; an end-to-end update
-  against `bmd-labserver`.
-- Independent verification: a security reviewer reproduces each refusal. Complexity: M.
+**WP-01.1 Release trust** — P1 · desktop · TODO · release blocker
+- Problem: SEC-01. Area: how the desktop app and the release pipeline establish that an update
+  is the project's own.
+- Proposal, affected files, acceptance criteria and tests: in the maintainer's private security
+  notes (`notes/SECURITY_AUDIT_2026-11-27.md`, not in the repository), handed to whoever takes
+  the package. Public wording when fixed: the CHANGELOG's.
+- Independent verification: a security reviewer reproduces every acceptance case. Complexity: M.
 
-**WP-01.2 CI least privilege and signing hygiene** — P2 · CI · TODO
-- Problem: SEC-02, SEC-07. Affected: `readme-analytics.yml`, `release.yml`.
-- Proposal: job-level permissions, no persisted checkout token, signing material confined to the
-  step that uses it and removed afterwards. Ties in with WP-09.2.
-- Acceptance: no workflow job holds write permission it does not use; Scorecard's token-permission
-  check passes. Complexity: S.
+**WP-01.2 CI least privilege** — P2 · CI · TODO
+- Problem: SEC-02, SEC-07. Area: what the workflows' tokens and secrets can reach.
+- Acceptance (public part): no workflow job holds a permission it does not use; Scorecard's
+  token-permission check passes; the rest as in the private notes. Ties in with WP-09.2.
+  Complexity: S.
 
-**WP-01.3 Save folders from automation interfaces** — P2 · desktop · TODO · release blocker
-- Problem: SEC-03. Affected: `crates/mcp/src/lib.rs`, `crates/app/src/app.rs` (automation API).
-- Proposal: a folder given through the automation interfaces must be inside a configured download
-  folder, or the download waits in Download File Info for the user; some system folders are
-  always refused.
-- Acceptance and tests: requests inside, outside and into refused folders behave as specified;
-  a test for each. Complexity: S–M.
+**WP-01.3 Automation interface hardening** — P2 · desktop · TODO · release blocker
+- Problem: SEC-03. Area: what a request through the automation interfaces (API, MCP) may do
+  without the user.
+- Proposal, acceptance and tests: in the private notes. Complexity: S–M.
 
 **WP-01.4 Advisory exception review** — P2 · desktop · TODO (recurring)
 - SEC-05: drop the `.cargo/audit.toml` exception when the crash-report crates move to a fixed
@@ -310,7 +306,8 @@ Details of each finding are with the maintainer. Public text for all of these: C
 - Problem: AND-02. Files: `MainActivity.kt`, `ui/BmdViewModel.kt`, `ui/BmdPresentation.kt`.
 - Proposal: cut or refuse shared text above 16 KiB before storing or scanning it; scan off the
   main thread.
-- Acceptance: a 1 MB share neither freezes nor crashes; a test proves it. Complexity: S.
+- Acceptance: a 1 MB share neither freezes nor crashes; a test proves it. Depends on WP-05.1 (the
+  intake uses its shared rules). Complexity: S.
 
 **WP-04.3 Device matrix** — P2 · Android · TODO
 - Problem: AND-04. Proposal: add API 31, 33 and 35 emulators to `android.yml`'s device smoke;
@@ -451,7 +448,7 @@ user-visible text goes through i18n; ROADMAP is updated; the PR shows its proof.
 | R1 Build | All CI jobs green on the release commit, including Android and CodeQL |
 | R2 Tests | Full suite green three times in a row on Windows (WP-08.1) |
 | R3 Security | No open P0/P1; P2 release blockers (WP-01.1, WP-01.3) done; `cargo audit` clean or every exception reasoned |
-| R4 Release trust | Signed checksum list and code signature verified by the previous release's updater (WP-01.1) |
+| R4 Release trust | WP-01.1's acceptance cases pass against the release candidate, checked by the previous release's updater |
 | R5 Android (store) | WP-04.1, WP-04.2, WP-04.3, WP-07.1, WP-10.3 done; real-device checklist recorded |
 | R6 Docs | ROADMAP and CHANGELOG true; help pages for new features |
 | R7 Independent review | A reviewer who did not write the release checks R1–R6 |

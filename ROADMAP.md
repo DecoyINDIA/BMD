@@ -1313,9 +1313,8 @@ These ship in a later version, when they're ready.
   resuming in the background on Android 12 and 13, very large shared texts, its translations,
   more Android versions and real phones, and its store listing
 - 🔄 The Safari extension (in 0.5.2): still to check in Safari itself, signed with a Developer ID
-- 🔄 Release hardening before the next version: how updates and releases are checked, where
-  downloads asked for through the automation interfaces may be saved, and checks for known
-  dependency advisories in CI (done)
+- 🔄 Security hardening before the next version (described in the CHANGELOG when it ships), and
+  a check of the dependencies against known advisories in CI
 
 ### Bugs being looked into
 

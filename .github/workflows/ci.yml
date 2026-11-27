@@ -153,20 +153,6 @@ jobs:
           cargo build --release -p bmd-nmhost
           tools/safari/selftest.sh target/release/bmd-nmhost
 
-  # Known advisories (RustSec) against Cargo.lock; exceptions, each with its reason, are in
-  # .cargo/audit.toml. A new advisory fails here, not in a user's copy.
-  advisories:
-    name: dependency advisories
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
-        with:
-          persist-credentials: false
-      - name: Install cargo-audit
-        run: cargo install cargo-audit --version 0.23.0 --locked
-      - name: cargo audit
-        run: cargo audit
-
   # A translator's reviewed rows (no "#, machine" line) must survive every pull request: no
   # tool or merge may drop them or hand them back to machine translation.
   translations:

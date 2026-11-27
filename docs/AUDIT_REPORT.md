@@ -43,7 +43,9 @@ CHANGELOG's wording.
   Resume state is written atomically and never claims unflushed bytes; a file that changed on the
   server is caught (If-Range, a 200 to a ranged request, byte overlap, FTP size and date); names
   from servers are sanitized (separators, control and bidi characters, reserved Windows names);
-  the list is saved atomically with three backup generations. 1,608 tests pass on this machine.
+  the list is saved atomically with three backup generations. On this machine `main` passed 1,608
+  tests with 3 targets aborting under full parallel load; the consolidated tree passes 1,642 with 1
+  such target (DESK-07), each passing alone.
 - **The Android app is real, not a mock**, and well guarded at its boundaries (JNI panics
   contained, sockets bound to Android's network with no fallback, credentials sealed by the
   Keystore, backup disabled). It is tested on emulators for API 26 and 36 only, has one P1
@@ -76,7 +78,8 @@ work package.
 | REPO-10 | P3 | Gradle wrapper skipped its URL check | **Fixed** (`validateDistributionUrl=true`; its SHA-256 was already pinned) |
 | REPO-11 | P3 | Two README tool trees (`tools/readme`, `scripts/readme`); a stale ARCHITECTURE line on contributor photos; code citing a private `notes/ENGINE.md` | Open → WP-00.4 |
 | REPO-12 | P3 | The shipped app and extension manifests point at the placeholder `bmd.example.com` | Open → WP-10.2 (release-blocking for store builds) |
-| REPO-13 | P3 | Two stale branches, one local branch, five local agent refs | **Fixed**: classified, backed up, removed after merge ([BRANCH_RECONCILIATION.md](BRANCH_RECONCILIATION.md)) |
+| REPO-13 | P3 | Two stale branches, one local branch, five local agent refs | **Pending merge**: classified and backed up; removed once the consolidation PR is merged ([BRANCH_RECONCILIATION.md](BRANCH_RECONCILIATION.md)) |
+| REPO-14 | P2 | PR #16 made `bmd-android-bridge` a shared library on every host; MinGW's linker refuses it ("export ordinal too large"), so `cargo test --workspace` failed on Windows with the GNU toolchain (CI uses MSVC and missed it) | **Fixed in the tree**: an ordinary library in the workspace, the Android build asks for the shared library. The workspace suite now runs on GNU; the changed Android build is proven only by the consolidation PR's Android CI run |
 
 ### Desktop
 
@@ -110,13 +113,14 @@ Details with the maintainer; see SECURITY.md to report one.
 
 | ID | Pri | Area | Status |
 |---|---|---|---|
-| SEC-01 | P1 | Update integrity and authenticity hardening | Open → WP-01.1 (release blocker) |
-| SEC-02 | P2 | Least privilege for a scheduled CI workflow | Open → WP-01.2 |
-| SEC-03 | P2 | Where downloads requested through the automation interfaces may be saved | Open → WP-01.3 |
-| SEC-04 | P2 | Dependency advisories were never checked in CI | **Fixed**: `cargo audit` job; `cargo audit` passes |
+| SEC-01 | P1 | Release trust hardening | Open → WP-01.1 (release blocker) |
+| SEC-02 | P2 | CI least privilege | Open → WP-01.2 |
+| SEC-03 | P2 | Automation interface hardening | Open → WP-01.3 |
+| SEC-04 | P2 | Dependency advisories were never checked in CI | **Fixed in the tree**: a `cargo audit` job; `cargo audit` passes locally; first CI run with the consolidation PR |
 | SEC-05 | P2 | One dependency advisory, only in the developers' symbolication tool, not in the shipped app; no upstream fix yet | **Accepted with reason** in `.cargo/audit.toml`; revisit → WP-01.4 |
+| SEC-13 | P2 | A dependency advisory published 2026-11-20 against a URL-parsing crate used across the workspace | **Fixed**: patched version in both lockfiles; `cargo audit` passes |
 | SEC-06 | P3 | Forked dependencies hosted on personal accounts (all pinned by commit) | Open → WP-01.5 |
-| SEC-07 | P3 | Release signing material handling in CI | Open → WP-01.2 |
+| SEC-07 | P3 | CI least privilege (release job) | Open → WP-01.2 |
 | SEC-08–12 | P3 | Hardening of local interfaces, crash report scrubbing and helper key pinning | Open → WP-01.6 |
 
 Checked and sound: no secret in any tracked file or in history; the command channel, remote
@@ -132,17 +136,19 @@ and time limits; every GitHub Action is pinned by SHA and no workflow uses `pull
 | Desktop (Windows) | **Ready for use; next release blocked by SEC-01** | Engine, resume, persistence and lifecycle verified in code and tests; one P1 in release trust |
 | Desktop (Linux, macOS) | Ready as documented in ROADMAP (Linux) / experimental (macOS) | CI green on both; runtime not checked here |
 | Android | **Source-ready, not release-ready** | Builds and passes emulator tests in CI at `aef830b`; AND-01 (P1), no translations, no device matrix, no store identity |
-| Repository | **Consolidated** | One `main`, no open stale work, checks green (see the verification report) |
+| Repository | **Consolidated on a branch; pending merge** | Every branch and PR reconciled on `integrate/consolidation-2026-11-27`; one `main` once its PR is merged and the reconciled branches are deleted |
 
 ## Quality score
 
 Weighted as the audit brief asks. Each category is scored from the evidence above; an unverified
 category is not given full marks. A total cannot override an open P1: the product is not
-release-ready at either score.
+release-ready at either score. The "after" column is **provisional** until the consolidation PR
+is merged and its CI (Android included) is green on `main`; Android's 4 credits code and emulator
+CI at `aef830b`, not this tree.
 
 | Category | Weight | Before (main `05bdca2`) | After (consolidated) | Evidence |
 |---|---:|---:|---:|---|
-| Functional correctness | 20 | 16 | 16 | 1,608 tests pass; DESK-02…06 open; Android AND-01 |
+| Functional correctness | 20 | 16 | 16 | 1,608 → 1,642 tests pass (flaky targets DESK-07); DESK-02…06 open; Android AND-01 |
 | Architecture and maintainability | 15 | 11 | 12 | Clear inward dependencies; docs now match; REPO-07/08 open |
 | Security and privacy | 15 | 9 | 10 | No P0, sound local interfaces; SEC-01 (P1) open; advisories now checked |
 | Testing and verification | 15 | 11 | 12 | Large unit and fault-injection suite, fuzzing, extension tests; a failing check on `main` (fixed); flaky targets; Android device matrix thin |
