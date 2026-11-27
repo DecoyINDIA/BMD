@@ -754,6 +754,12 @@ fn is_sensitive_param(key: &str) -> bool {
             | "client_secret"
             | "x-amz-signature"
             | "x-amz-security-token"
+            | "x-amz-credential"
+            | "x-goog-signature"
+            | "x-goog-credential"
+            | "code"
+            | "passkey"
+            | "pk"
     )
 }
 
@@ -843,6 +849,25 @@ fn scrub_url_candidate(raw: &str) -> Option<String> {
                 })
                 .collect();
             u.query_pairs_mut().clear().extend_pairs(pairs);
+            changed = true;
+        }
+        // Sign-in pages hand tokens back in the fragment (`#access_token=…`).
+        if let Some(fragment) = u.fragment().filter(|f| f.contains('='))
+            && url::form_urlencoded::parse(fragment.as_bytes()).any(|(k, _)| is_sensitive_param(&k))
+        {
+            let redacted: String = url::form_urlencoded::Serializer::new(String::new())
+                .extend_pairs(
+                    url::form_urlencoded::parse(fragment.as_bytes()).map(|(k, v)| {
+                        let v = if is_sensitive_param(&k) {
+                            "REDACTED".into()
+                        } else {
+                            v
+                        };
+                        (k, v)
+                    }),
+                )
+                .finish();
+            u.set_fragment(Some(&redacted));
             changed = true;
         }
         return changed.then(|| u.into());
@@ -1289,5 +1314,18 @@ mod tests {
             scrubbed_safe,
             r"saved ~\Downloads\file.zip from https://example.com/file.zip?page=2"
         );
+    }
+
+    #[test]
+    fn scrub_redacts_tracker_passkeys_cloud_signatures_and_fragment_tokens() {
+        let text = "announce http://tracker.example/announce?passkey=abc123&info=1 \
+                    gcs https://storage.example/o?X-Goog-Signature=deadbeef&X-Goog-Credential=me \
+                    signin https://app.example/cb#access_token=tok&state=ok";
+        let scrubbed = scrub(text, None);
+        for secret in ["abc123", "deadbeef", "=me", "tok&"] {
+            assert!(!scrubbed.contains(secret), "{secret} left in {scrubbed}");
+        }
+        assert!(scrubbed.contains("info=1"), "{scrubbed}");
+        assert!(scrubbed.contains("state=ok"), "{scrubbed}");
     }
 }

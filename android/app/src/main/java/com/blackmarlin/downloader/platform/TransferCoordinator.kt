@@ -429,7 +429,12 @@ class TransferCoordinator internal constructor(
         if (Build.VERSION.SDK_INT < 31) return false
         var current: Throwable? = error
         while (current != null) {
-            if (Api31Foreground.isNotAllowed(current) || current is IllegalStateException) return true
+            // Android's own refusal, or a wrapper that says what it wraps. Any other
+            // IllegalStateException is a fault, not Android's rule: it fails, never waits.
+            if (Api31Foreground.isNotAllowed(current) ||
+                (current is IllegalStateException &&
+                    current.message?.contains("foreground", ignoreCase = true) == true)
+            ) return true
             current = current.cause
         }
         return false

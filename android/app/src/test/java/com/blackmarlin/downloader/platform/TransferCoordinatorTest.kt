@@ -90,6 +90,22 @@ class TransferCoordinatorTest {
     }
 
     @Test
+    fun api33UnrelatedIllegalStateFailsInsteadOfWaiting() = runBlocking {
+        val task = sampleTask("task-ise-unrelated", 10_005)
+        graph.db.tasks().insert(task)
+
+        val outcome = coordinator.runNetwork(task.id, task.scheduleEpoch, null, false, { false }) {
+            throw IllegalStateException("Cannot perform this operation because the connection pool has been closed")
+        }
+
+        assertFalse(outcome.retry)
+        val updated = graph.db.tasks().task(task.id)!!
+        assertEquals("FAILED", updated.stage)
+        assertEquals("TRANSFER_INTERRUPTED", updated.errorCode)
+        assertNull(updated.ownerSession)
+    }
+
+    @Test
     fun api33SchedulerHoldsWaitingAndroidWhenNotVisible() = runBlocking {
         val task = sampleTask("task-bg-schedule", 10_003)
         graph.db.tasks().insert(task)

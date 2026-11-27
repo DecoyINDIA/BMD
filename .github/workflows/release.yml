@@ -185,7 +185,8 @@ jobs:
           Remove-Item -LiteralPath $pfx -Force -ErrorAction SilentlyContinue
           if ($env:THUMBS) {
             foreach ($thumb in $env:THUMBS.Split(',', [StringSplitOptions]::RemoveEmptyEntries)) {
-              Remove-Item -LiteralPath "Cert:\CurrentUser\My\$thumb" -Force -ErrorAction SilentlyContinue
+              # -DeleteKey: the private key's container goes too, not only the certificate.
+              Remove-Item -LiteralPath "Cert:\CurrentUser\My\$thumb" -DeleteKey -Force -ErrorAction SilentlyContinue
             }
           }
 
