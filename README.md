@@ -17,20 +17,20 @@
 
 <!-- CHAPTER 03: DOWNLOAD BMD -->
 <p align="center">
-  <a href="https://github.com/DecoyINDIA/BMD/releases/download/v1.0.0/BMD-1.0.0-setup.exe">
+  <a href="https://github.com/DecoyINDIA/BMD/releases/latest">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="assets/readme/branding/cta-velocity-dark.svg">
       <source media="(prefers-color-scheme: light)" srcset="assets/readme/branding/cta-velocity-light.svg">
-      <img src="assets/readme/branding/cta-velocity-light.svg" alt="Download Black Marlin Downloader v1.0.0 for Windows x64 (19.0 MiB)" width="460">
+      <img src="assets/readme/branding/cta-velocity-light.svg" alt="Download the latest Black Marlin Downloader release" width="460">
     </picture>
   </a>
 </p>
 
 <p align="center">
   <sub>
-    <strong>Windows x64 Installer (19.0 MiB)</strong> · <code>winget install DecoyINDIA.BMD</code> ·
+    <strong>Windows, Linux and macOS downloads</strong> · <code>winget install DecoyINDIA.BMD</code> ·
     <a href="#download-center">Windows ARM64 / x86 / Portable · Linux (.deb, .rpm, AppImage, Docker) · macOS (Experimental) · Browser Extensions</a> ·
-    <a href="https://github.com/DecoyINDIA/BMD/releases/tag/v1.0.0">v1.0.0 Release Notes</a>
+    <a href="https://github.com/DecoyINDIA/BMD/releases/latest">Latest release notes and installers</a>
   </sub>
 </p>
 
@@ -371,7 +371,9 @@ Next up in [`ROADMAP.md`](ROADMAP.md): Orca screen-reader & Flatpak native-messa
 
 <a id="download-center"></a>
 
-## 15 · Download Center (`v1.0.0`)
+## 15 · Download Center
+
+[Latest installers and checksums](https://github.com/DecoyINDIA/BMD/releases/latest). The tables below list the `v1.0.0` packages.
 
 <p align="center">
   <picture>
