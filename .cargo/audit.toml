@@ -1,0 +1,11 @@
+# `cargo audit` (CI: the "dependency advisories" job in ci.yml). Every ignored advisory says why
+# and when to look again; an ignore is never a fix.
+[advisories]
+ignore = [
+    # ruzstd 0.7.3 (RUSTSEC-2026-0344) comes only through bmd-crash's `native-symbols` feature
+    # (minidump-unwind 0.27 -> wholesym 0.8 -> samply-symbols 0.24 -> object 0.36), which the
+    # shipped app leaves out (`cargo tree -p bmd-app -i ruzstd` finds nothing); only the
+    # developers' bmd-symbolicate reads native debug info with it. All of those crates are at
+    # their latest release (2026-11-27): drop this line once one moves to ruzstd >= 0.9.1.
+    "RUSTSEC-2026-0344",
+]
