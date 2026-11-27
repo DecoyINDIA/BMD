@@ -151,16 +151,43 @@ jobs:
         run: |
           if (-not $env:PFX) { "No certificate: building unsigned."; exit 0 }
           $pfx = Join-Path $env:RUNNER_TEMP "codesign.pfx"
-          [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:PFX))
-          $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" |
-            Sort-Object FullName -Descending | Select-Object -First 1
-          "command=`"$($signtool.FullName)`" sign /fd sha256 /tr http://timestamp.digicert.com /td sha256 /f `"$pfx`" /p `"$env:PASSWORD`" `$f" >> $env:GITHUB_OUTPUT
+          try {
+            [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:PFX))
+            $importArgs = @{ FilePath = $pfx; CertStoreLocation = "Cert:\CurrentUser\My" }
+            if ($env:PASSWORD) {
+              $importArgs.Password = ConvertTo-SecureString $env:PASSWORD -AsPlainText -Force
+            }
+            $imported = @(Import-PfxCertificate @importArgs)
+            $leaf = $imported | Where-Object { $_.HasPrivateKey } | Select-Object -First 1
+            if (-not $leaf) { throw "No certificate with a private key found in codesign.pfx" }
+            $signtool = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" |
+              Sort-Object FullName -Descending | Select-Object -First 1
+            if (-not $signtool) { throw "signtool.exe not found" }
+            "command=`"$($signtool.FullName)`" sign /fd sha256 /tr http://timestamp.digicert.com /td sha256 /sha1 $($leaf.Thumbprint) `$f" >> $env:GITHUB_OUTPUT
+            "thumbprints=$(($imported | ForEach-Object { $_.Thumbprint }) -join ',')" >> $env:GITHUB_OUTPUT
+          } finally {
+            Remove-Item -LiteralPath $pfx -Force -ErrorAction SilentlyContinue
+          }
 
       - name: Installer and portable zip
         shell: pwsh
         env:
           BMD_SIGN_COMMAND: ${{ steps.cert.outputs.command }}
         run: ./tools/installer/build.ps1 -Arch ${{ matrix.arch }}
+
+      - name: Clean up code-signing material
+        if: always()
+        shell: pwsh
+        env:
+          THUMBS: ${{ steps.cert.outputs.thumbprints }}
+        run: |
+          $pfx = Join-Path $env:RUNNER_TEMP "codesign.pfx"
+          Remove-Item -LiteralPath $pfx -Force -ErrorAction SilentlyContinue
+          if ($env:THUMBS) {
+            foreach ($thumb in $env:THUMBS.Split(',', [StringSplitOptions]::RemoveEmptyEntries)) {
+              Remove-Item -LiteralPath "Cert:\CurrentUser\My\$thumb" -Force -ErrorAction SilentlyContinue
+            }
+          }
 
       # The programs on the machine that built them: for this processor, and a download works.
       - name: Smoke test
@@ -238,12 +265,12 @@ jobs:
       - name: Send the Firefox add-on to addons.mozilla.org
         if: ${{ startsWith(github.ref, 'refs/tags/') && steps.keys.outputs.amo == 'true' }}
         env:
-          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
-          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+          WEB_EXT_API_KEY: ${{ secrets.AMO_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_JWT_SECRET }}
         shell: pwsh
         run: |
           $log = & ./tools/release/node_modules/.bin/web-ext sign --source-dir target/extension/firefox --artifacts-dir target/signed `
-            --channel listed --approval-timeout 0 --api-key $env:AMO_JWT_ISSUER --api-secret $env:AMO_JWT_SECRET 2>&1
+            --channel listed --approval-timeout 0 2>&1
           $log | Write-Output
           if ($LASTEXITCODE -ne 0) {
             # A re-run: Mozilla refuses a version it has already. Anything else fails here.
