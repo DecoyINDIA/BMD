@@ -167,7 +167,19 @@ pub fn startup_id(setting: &str) -> String {
     std::env::var("BMD_THEME")
         .ok()
         .filter(|s| !s.is_empty())
-        .unwrap_or_else(|| setting.to_owned())
+        .unwrap_or_else(|| settled_id(setting).to_owned())
+}
+
+/// The look a saved setting starts in. BMD has two looks, Emerald's light and dark (View →
+/// Appearance); a built-in theme the menu no longer offers starts in Emerald. A theme file of
+/// the user's own is kept.
+pub fn settled_id(setting: &str) -> &str {
+    let retired = setting.is_empty()
+        || setting == "native"
+        || crate::palette::builtins()
+            .iter()
+            .any(|t| t.id == setting && t.id != "emerald");
+    if retired { "emerald" } else { setting }
 }
 
 /// What the system said when Native was last made.

@@ -10,8 +10,8 @@ Key facts:
 - 86 interface languages (every Windows 11 display language), right-to-left layouts for Arabic, Hebrew, Persian, Urdu and Uyghur.
 - Imports IDM's export files (.ef2). Accepts IDM's command-line switches (/d /p /f /a /n /s). Has a CLI (bmd-cli, with --json output for scripts and agents) and a local token-protected automation API, described by a JSON Schema.
 - AI assistants: an MCP server (bmd-mcp) lets Claude, Cursor, VS Code and other MCP clients list, add, pause, resume and remove downloads in the running app.
-- Privacy: the app has no accounts, no analytics, no telemetry; an update check against GitHub at each start (and once a day while it runs) that can be turned off.
-- In the source now, coming with version 0.5.0: themes (Classic, Native, High contrast, Metro, Adwaita, Breeze, Luna, Aero, Aqua), View → Interface size, a link grabber with archive extraction, image galleries via gallery-dl, RSS feeds for torrents, debrid accounts (Real-Debrid, AllDebrid, Premiumize, Mega-Debrid), downloads held to one network adapter with a kill switch, a chosen DNS, the server's country and round trip, a phone remote control on the local network, a headless server mode (Docker, Unraid), and sign-ins in the system's keychain. Each has a page under https://bmd.example.com/features/.
+- Privacy: the app has no accounts, analytics or telemetry. It checks GitHub for updates at startup and once an hour while it runs. The update check can be turned off.
+- In the source now, coming with version 0.5.0: two looks (light and dark in Kombu Green, Brushed Aluminium and Signal Orange, under View → Appearance), View → Interface size, a link grabber with archive extraction, image galleries via gallery-dl, RSS feeds for torrents, debrid accounts (Real-Debrid, AllDebrid, Premiumize, Mega-Debrid), downloads held to one network adapter with a kill switch, a chosen DNS, the server's country and round trip, a phone remote control on the local network, a headless server mode (Docker, Unraid), and sign-ins in the system's keychain. Each has a page under https://bmd.example.com/features/.
 - Written in Rust with egui. Maintained by DecoyINDIA.
 
 ## Pages
@@ -19,7 +19,7 @@ Key facts:
 - [Download](https://bmd.example.com/download.html): Windows installer and portable zip, macOS .dmg, Linux AppImage/.deb/.rpm/.tar.gz, browser extension, checksums, the official sources and how to check a download's checksum and signature
 - [Free IDM alternative](https://bmd.example.com/idm-alternative.html): BMD as a free, open-source alternative to Internet Download Manager, compared side by side with IDM and with nine other free download managers (Free Download Manager, AB Download Manager, Motrix, Neat Download Manager, Prism, JDownloader 2, Xtreme Download Manager, Gopeed, DOWNitUP)
 - [Features](https://bmd.example.com/features/): a page for each feature, with its window, where it is in the app and what it can't do yet
-- [Themes](https://bmd.example.com/themes.html): every built-in theme, light and dark, and how to make your own
+- [Themes](https://bmd.example.com/themes.html): BMD's light and dark look, and how to make your own theme
 - [Questions and answers](https://bmd.example.com/faq/)
 - [Help and tutorials](https://bmd.example.com/help/)
 - [What's new](https://bmd.example.com/news.html)

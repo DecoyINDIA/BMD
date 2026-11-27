@@ -57,7 +57,7 @@ Losing a connection at 90% of a multi-gigabyte archive shouldn't cost you the tr
 
 ## 04 · Product Experience
 
-Every frame below is captured directly from the real running application—never mocked or painted on. BMD follows your OS light/dark preference automatically and ships **9 built-in themes** (`Emerald` default, `Classic`, `High contrast`, `Metro`, `Adwaita`, `Breeze`, `Luna`, `Aero`, `Aqua`) plus dynamic **`Native`** OS accent matching (**10** choices in **View → Theme**), alongside custom `theme.toml` / `.json`, Base16 YAML, and live `pywal` / `wallust` palettes checked for WCAG AA contrast.
+Every frame below is captured directly from the real running application—never mocked or painted on. BMD has two looks, light and dark, both in its brand colours (Kombu Green, Brushed Aluminium and a Signal Orange accent): **View → Appearance** picks Light, Dark or Follow system. Theme makers can still load a custom `theme.toml` / `.json`, Base16 YAML or live `pywal` / `wallust` palette (checked for WCAG AA contrast) with `BMD_THEME`.
 
 <p align="center">
   <picture>

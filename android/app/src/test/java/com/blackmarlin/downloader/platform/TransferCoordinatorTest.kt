@@ -62,7 +62,7 @@ class TransferCoordinatorTest {
 
         assertFalse(outcome.retry)
         assertFalse(outcome.localReady)
-        assertTrue(networks.released)
+        assertEquals(1, networks.releaseCount)
         assertFalse(coordinator.hasOwner(task.id))
         val updated = graph.db.tasks().task(task.id)!!
         assertEquals("WAITING_ANDROID", updated.stage)
@@ -82,7 +82,7 @@ class TransferCoordinatorTest {
 
         assertFalse(outcome.retry)
         assertFalse(outcome.localReady)
-        assertTrue(networks.released)
+        assertEquals(1, networks.releaseCount)
         val updated = graph.db.tasks().task(task.id)!!
         assertEquals("WAITING_ANDROID", updated.stage)
         assertNull(updated.errorCode)
@@ -134,6 +134,26 @@ class TransferCoordinatorTest {
         assertNull(updated.ownerSession)
     }
 
+    @Test
+    fun networkAdmissionReleasesLeaseWhenMeteringThrows() = runBlocking {
+        val task = sampleTask("task-metering-error", 10_005)
+        graph.db.tasks().insert(task)
+        val failure = IllegalStateException("metering failed")
+        networks.meteringFailure = failure
+
+        val thrown = runCatching {
+            coordinator.runNetwork(task.id, task.scheduleEpoch, null, false) {
+                error("Foreground work started after failed admission")
+            }
+        }.exceptionOrNull()
+
+        assertEquals(failure.javaClass, thrown?.javaClass)
+        assertEquals(failure.message, thrown?.message)
+        assertFalse(coordinator.hasOwner(task.id))
+        assertNull(graph.db.tasks().task(task.id)!!.ownerSession)
+        assertEquals("The unclaimed lease must be released once", 1, networks.releaseCount)
+    }
+
     private fun sampleTask(id: String, jobId: Int) = TaskEntity(
         id = id,
         submissionId = "sub-$id",
@@ -147,15 +167,20 @@ class TransferCoordinatorTest {
     )
 
     private class FakeNetworkGateway(private val network: Network) : NetworkGateway {
-        var released = false
+        var releaseCount = 0
+            private set
+        var meteringFailure: IllegalStateException? = null
         override fun select(policy: NetworkPolicy, allowMetered: Boolean): Network = network
         override fun admit(network: Network, policy: NetworkPolicy, allowMetered: Boolean): NetworkLease =
             NetworkLease(network, 1L, policy, allowMetered)
         override fun release(lease: NetworkLease) {
-            released = true
+            releaseCount++
             lease.valid.set(false)
         }
-        override fun metered(network: Network): Boolean = false
+        override fun metered(network: Network): Boolean {
+            meteringFailure?.let { throw it }
+            return false
+        }
         override fun eligible(network: Network, policy: NetworkPolicy, allowMetered: Boolean): Boolean = true
     }
 }

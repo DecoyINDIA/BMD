@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.blackmarlin.downloader.R
 
@@ -106,7 +105,7 @@ fun TransferDetailScreen(state: BmdAppState, session: BmdSession, model: BmdView
             ProgressSummary(task, state.settings.reducedMotion)
             if (task.stage == TransferStage.SAVING) Text("Download finished. Saving to ${task.destination.displayName}…", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (task.stage == TransferStage.VERIFYING) Text("Checking the complete file against your expected SHA-256 before saving.", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            if (task.sha256Verified) Text("Matches your expected SHA-256", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.primary)
+            if (task.sha256Verified) Text("Matches your expected SHA-256", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.secondary)
             if (TaskOperation.PAUSE in task.permittedActions) Button({ model.taskAction(task.id, TaskOperation.PAUSE) }, Modifier.fillMaxWidth().heightIn(min = 52.dp), enabled = !session.busy) { Text(stringResource(R.string.action_pause)) }
             if (TaskOperation.RESUME in task.permittedActions) Button({ model.taskAction(task.id, TaskOperation.RESUME) }, Modifier.fillMaxWidth().heightIn(min = 52.dp), enabled = !session.busy) {
                 Text(if (task.stage == TransferStage.WAITING_VERIFY) "Continue verification" else stringResource(R.string.action_resume))
@@ -139,7 +138,7 @@ fun TransferDetailScreen(state: BmdAppState, session: BmdSession, model: BmdView
             TextButton({ diagnosticsOpen = !diagnosticsOpen }, Modifier.fillMaxWidth()) { Text(if (diagnosticsOpen) "Hide technical details" else "Show technical details") }
             if (diagnosticsOpen) {
                 task.errorCode?.let { KeyValue("Error code", it) }
-                task.diagnostics?.let { Text(it, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace) }
+                task.diagnostics?.let { Text(it, style = MaterialTheme.typography.bodySmall, fontFamily = BmdFonts.Mono) }
             }
         }
         if (TaskOperation.CANCEL in task.permittedActions) OutlinedButton({ model.taskAction(task.id, TaskOperation.CANCEL) }, Modifier.fillMaxWidth().heightIn(min = 48.dp), enabled = !session.busy) {

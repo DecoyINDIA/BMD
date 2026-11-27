@@ -19,6 +19,8 @@ tasks.register("generateAndroidNotices") {
     inputs.file(file("android-notices.gradle.kts"))
     inputs.file(file("../third_party/licenses/Apache-2.0.txt"))
     inputs.file(file("../third_party/licenses/rustls-platform-verifier-android-0.2.0/LICENSE-MIT"))
+    inputs.file(file("../../crates/app/assets/fonts/OFL-IBMPlex.txt"))
+    inputs.file(file("../../crates/app/assets/fonts/OFL-SpaceGrotesk.txt"))
     outputs.dir(noticesDirectory)
     doLast {
         val artifacts = runtimeNames.flatMap { configurations.getByName(it).resolvedConfiguration.resolvedArtifacts }
@@ -140,6 +142,13 @@ tasks.register("generateAndroidNotices") {
                 "artifacts" to artifactReport, "embeddedNotices" to embedded.keys.toList(), "pomEvidence" to pomEvidence)
         }
         check(unresolved.isEmpty()) { "Missing Android dependency license evidence: ${unresolved.joinToString()}. Review the resolved POM/artifact before shipping." }
+        for ((name, license) in listOf(
+            "IBM Plex Sans and IBM Plex Mono" to "OFL-IBMPlex.txt",
+            "Space Grotesk" to "OFL-SpaceGrotesk.txt",
+        )) {
+            text.append("\n" + "=".repeat(72) + "\n$name — bundled app fonts\n")
+            text.append(file("../../crates/app/assets/fonts/$license").readText())
+        }
         text.append("\n" + "=".repeat(72) + "\nApache License, Version 2.0\n\n")
         text.append(file("../third_party/licenses/Apache-2.0.txt").readText())
         val directory = noticesDirectory.get().asFile.apply { mkdirs() }
