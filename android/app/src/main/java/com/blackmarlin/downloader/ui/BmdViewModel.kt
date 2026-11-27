@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 enum class BmdScreen {
     TRANSFERS, ADD_LINK, REVIEW, DESTINATION, TRANSFER_DETAIL, FILES, FILE_DETAIL,
-    SEARCH, MULTI_SELECT, SETTINGS, NETWORK, STORAGE, APPEARANCE, NOTIFICATIONS,
+    SEARCH, SETTINGS, NETWORK, STORAGE, APPEARANCE, NOTIFICATIONS,
     CREDENTIALS, HELP, ABOUT,
 }
 data class BmdRoute(val screen: BmdScreen, val id: String? = null, val context: String? = null)
@@ -110,7 +110,7 @@ class BmdViewModel(
     private val mutableSession = MutableStateFlow(BmdSession(
         route = restoreRoute(),
         draft = DownloadDraft(
-            url = savedState["draftUrl"] ?: "",
+            url = boundSharedText(savedState.get<String>("draftUrl")).orEmpty(),
             fileName = savedState["draftName"] ?: "",
             expectedSha256 = savedState["draftSha"] ?: "",
             submissionId = savedState["draftSubmissionId"] ?: UUID.randomUUID().toString(),
@@ -138,7 +138,7 @@ class BmdViewModel(
             restored.screen == BmdScreen.FILE_DETAIL || restored.screen == BmdScreen.FILES -> BmdScreen.FILES
             restored.screen in setOf(BmdScreen.SETTINGS, BmdScreen.NETWORK, BmdScreen.STORAGE, BmdScreen.APPEARANCE,
                 BmdScreen.NOTIFICATIONS, BmdScreen.HELP, BmdScreen.ABOUT) ||
-                (restored.screen == BmdScreen.CREDENTIALS && restored.context == "settings") -> BmdScreen.SETTINGS
+                (restored.screen in setOf(BmdScreen.CREDENTIALS, BmdScreen.DESTINATION) && restored.context == "settings") -> BmdScreen.SETTINGS
             else -> BmdScreen.TRANSFERS
         }
         routes.clear()
@@ -215,10 +215,11 @@ class BmdViewModel(
 
     fun addLink() = navigate(BmdScreen.ADD_LINK)
     fun setDraftUrl(value: String) {
+        val bounded = boundSharedText(value).orEmpty()
         probeJob?.cancel()
         pendingConsent = null
         mutableSession.update { it.copy(dialog = null) }
-        updateDraft { copy(url = value, fileName = if (replacementTaskId == null) "" else fileName,
+        updateDraft { copy(url = bounded, fileName = if (replacementTaskId == null) "" else fileName,
             expectedSha256 = if (replacementTaskId == null) "" else expectedSha256, review = null, allowPlainHttp = false, allowMeteredOnce = false,
             credential = null, error = null, submissionId = UUID.randomUUID().toString()) }
     }
@@ -227,24 +228,26 @@ class BmdViewModel(
     fun setDraftNetwork(value: NetworkPolicy) = updateDraft { copy(networkPolicy = value, networkExplicit = true, allowMeteredOnce = false) }
     fun pasteLink() = emit(BmdEffect.ReadClipboard)
     fun pastedText(text: String?) {
-        if (text.isNullOrBlank()) { message("The clipboard does not contain a link."); return }
-        val links = sharedHttpLinks(text)
+        val bounded = boundSharedText(text)
+        if (bounded.isNullOrBlank()) { message("The clipboard does not contain a link."); return }
+        val links = sharedHttpLinks(bounded)
         when {
             links.size > 1 -> showDialog(BmdDialog.SharedLinks(links))
             links.size == 1 -> setDraftUrl(links.first())
-            else -> setDraftUrl(text.trim())
+            else -> setDraftUrl(bounded.trim())
         }
     }
 
     fun incomingShare(text: String) {
-        val links = sharedHttpLinks(text)
+        val bounded = boundSharedText(text).orEmpty()
+        val links = sharedHttpLinks(bounded)
         // A new share invalidates earlier probes/consents even before a multi-link choice.
         discardDraft()
         navigate(BmdScreen.ADD_LINK)
         when {
             links.size > 1 -> showDialog(BmdDialog.SharedLinks(links))
             links.size == 1 -> setDraftUrl(links.first())
-            else -> { setDraftUrl(text.trim()); draftError("Share a direct HTTP or HTTPS file link.") }
+            else -> { setDraftUrl(bounded.trim()); draftError("Share a direct HTTP or HTTPS file link.") }
         }
     }
 
@@ -548,7 +551,7 @@ class BmdViewModel(
     }
     private fun persistDraft() {
         val draft = mutableSession.value.draft
-        savedState["draftUrl"] = draft.url
+        savedState["draftUrl"] = boundSharedText(draft.url).orEmpty()
         savedState["draftName"] = draft.fileName
         savedState["draftSha"] = draft.expectedSha256
         savedState["draftSubmissionId"] = draft.submissionId

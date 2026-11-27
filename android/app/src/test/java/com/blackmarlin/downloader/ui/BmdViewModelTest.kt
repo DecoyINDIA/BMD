@@ -153,6 +153,20 @@ class BmdViewModelTest {
         assertEquals("https://new.example.test/new.zip", request.review.url)
         assertFalse(command.toString().contains("NEW-TASK-TOKEN"))
     }
+
+    @Test fun oversizeSharedTextAndDraftUrlAreBoundedInViewModelAndSavedState() = runTest {
+        val oversizedInvalid = "not a link " + "a".repeat(MAX_SHARED_TEXT_CHARS * 4)
+        model.incomingShare(oversizedInvalid)
+        val storedUrl = savedState.get<String>("draftUrl")!!
+        assertEquals(model.session.value.draft.url, storedUrl)
+        assertTrue(storedUrl.length <= MAX_SHARED_TEXT_CHARS)
+        assertNotNull(model.session.value.draft.error)
+
+        val oversizedWithPrefixLink = "Download https://example.test/file.zip " + "b".repeat(MAX_SHARED_TEXT_CHARS * 4)
+        model.incomingShare(oversizedWithPrefixLink)
+        assertEquals("https://example.test/file.zip", model.session.value.draft.url)
+        assertEquals("https://example.test/file.zip", savedState.get<String>("draftUrl"))
+    }
 }
 
 private class FakeUiStore : BmdUiStore {
