@@ -468,6 +468,11 @@ mod imp {
                 };
                 (covers.then(|| proxy.clone()), login.clone())
             }
+            #[cfg(target_os = "android")]
+            Proxy::Pac { .. } => {
+                return Err(Error::BadState("PAC is not available on Android".into()));
+            }
+            #[cfg(not(target_os = "android"))]
             Proxy::Pac { script } => {
                 let first = crate::pac::routes(script, url).ok().and_then(|routes| {
                     routes.into_iter().find_map(|r| match r {

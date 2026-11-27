@@ -105,21 +105,10 @@ macro_rules! palette {
             $(#[doc = $doc] pub $field: Color32,)*
         }
 
-        /// Every role: its key in a theme file and what it colours, in declaration order.
-        // The theme picker and the themes help page (#45, next) list them.
-        #[allow(dead_code)]
-        pub const ROLES: &[(&str, &str)] = &[$(($key, $doc),)*];
+        #[cfg(test)]
+        pub const ROLE_KEYS: &[&str] = &[$($key,)*];
 
         impl Palette {
-            /// The colour of the role with this key.
-            #[allow(dead_code)]
-            pub fn role(&self, key: &str) -> Option<Color32> {
-                match key {
-                    $($key => Some(self.$field),)*
-                    _ => None,
-                }
-            }
-
             /// Sets the role with this key; false when there is no such role.
             pub fn set_role(&mut self, key: &str, c: Color32) -> bool {
                 match key {
@@ -334,20 +323,11 @@ macro_rules! metrics {
             $(#[doc = $doc] pub $field: f32,)*
         }
 
-        /// Every size: its key in a theme file and what it sizes.
-        #[allow(dead_code)]
-        pub const SIZES: &[(&str, &str)] = &[$(($key, $doc),)*];
+        #[cfg(test)]
+        pub const SIZE_KEYS: &[&str] = &[$($key,)*];
 
         impl Metrics {
             pub const CLASSIC: Self = Self { $($field: $value,)* };
-
-            #[allow(dead_code)]
-            pub fn get(&self, key: &str) -> Option<f32> {
-                match key {
-                    $($key => Some(self.$field),)*
-                    _ => None,
-                }
-            }
 
             /// Sets the size with this key; false when there is no such size.
             pub fn set(&mut self, key: &str, v: f32) -> bool {
@@ -693,21 +673,23 @@ mod tests {
 
     #[test]
     fn every_role_and_size_has_one_key() {
-        let mut keys: Vec<&str> = ROLES.iter().map(|(k, _)| *k).collect();
+        let mut keys: Vec<&str> = ROLE_KEYS.to_vec();
         keys.sort_unstable();
         let n = keys.len();
         keys.dedup();
         assert_eq!(keys.len(), n, "a role key is used twice");
-        let mut sizes: Vec<&str> = SIZES.iter().map(|(k, _)| *k).collect();
+        let mut sizes: Vec<&str> = SIZE_KEYS.to_vec();
         sizes.sort_unstable();
         let n = sizes.len();
         sizes.dedup();
         assert_eq!(sizes.len(), n, "a size key is used twice");
-        for (k, _) in ROLES {
-            assert!(CLASSIC.light.role(k).is_some());
+        for k in ROLE_KEYS {
             let mut p = CLASSIC.dark;
-            assert!(p.set_role(k, Color32::RED));
-            assert_eq!(p.role(k), Some(Color32::RED));
+            assert!(p.set_role(k, Color32::RED), "missing role {k}");
+        }
+        for k in SIZE_KEYS {
+            let mut m = Metrics::CLASSIC;
+            assert!(m.set(k, 1.0), "missing size {k}");
         }
     }
 
