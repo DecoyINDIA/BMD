@@ -124,7 +124,8 @@ Details with the maintainer; see SECURITY.md to report one.
 | SEC-13 | P2 | A dependency advisory published 2026-11-20 against a URL-parsing crate used across the workspace | **Fixed**: patched version in both lockfiles; `cargo audit` passes |
 | SEC-06 | P3 | Forked dependencies hosted on personal accounts (all pinned by commit) | Open → WP-01.5 |
 | SEC-07 | P3 | CI least privilege (release job) | Open → WP-01.2 |
-| SEC-08–12 | P3 | Hardening of local interfaces, crash report scrubbing and helper key pinning | Open → WP-01.6 |
+| SEC-08, 09, 11, 12 | P3 | Hardening of local interfaces and helper key pinning | Open → WP-01.6 |
+| SEC-10 | P3 | Crash report URL and query/fragment scrubbing | **Fixed in PR #20** (`crates/crash/src/report.rs`), tested |
 
 Checked and sound: no secret in any tracked file or in history; the command channel, remote
 control server, native messaging host, extension messaging and Click'n'Load are bound, token- or
@@ -138,7 +139,7 @@ and time limits; every GitHub Action is pinned by SHA and no workflow uses `pull
 |---|---|---|
 | Desktop (Windows) | **Ready for use; next release blocked by SEC-01** | Engine, resume, persistence and lifecycle verified in code and tests; one P1 in release trust |
 | Desktop (Linux, macOS) | Ready as documented in ROADMAP (Linux) / experimental (macOS) | CI green on both; runtime not checked here |
-| Android | **Source-ready, not release-ready** | APK and AAB build; API 26 and API 36 (4 KiB) pass; the API 36 16 KiB optimized-release test is intermittent (AND-10, P1); AND-01 (P1), no translations, no device matrix, no store identity |
+| Android | **Source-ready, not release-ready** | APK and AAB build; API 26 and API 36 (4 KiB) pass; the API 36 16 KiB optimized-release test is intermittent (AND-10, P1); AND-01 fixed in code (device run pending), no translations, no device matrix, no store identity |
 | Repository | **Consolidated** | One `main` (PR #17, `72120d3`), every reconciled branch deleted, 17 checks green |
 
 ## Quality score
@@ -151,7 +152,7 @@ it now stands. Android's 4 credits real, CI-tested code on emulators, not store-
 | Category | Weight | Before (main `05bdca2`) | After (consolidated) | Evidence |
 |---|---:|---:|---:|---|
 | Functional correctness | 20 | 16 | 16 | 1,608 → 1,642 tests pass (flaky targets DESK-07); DESK-02…06 open; Android AND-01 |
-| Architecture and maintainability | 15 | 11 | 12 | Clear inward dependencies; docs now match; REPO-07/08 open |
+| Architecture and maintainability | 15 | 11 | 12 | Clear inward dependencies; docs now match; REPO-07 fixed, REPO-08 open |
 | Security and privacy | 15 | 9 | 10 | No P0, sound local interfaces; SEC-01 (P1) open; advisories now checked |
 | Testing and verification | 15 | 11 | 12 | Large unit and fault-injection suite, fuzzing, extension tests; a failing check on `main` (fixed); flaky targets; Android device matrix thin |
 | Desktop readiness | 10 | 7 | 7 | Ready to use; release trust and UI-thread I/O open |
