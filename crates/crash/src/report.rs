@@ -720,20 +720,168 @@ fn duration(secs: u64) -> String {
     }
 }
 
-/// The home folder as `~` (in paths of either kind of separator).
+/// The home folder as `~` (in paths of either kind of separator) and URL credentials/sensitive
+/// query parameters redacted.
 pub fn scrub(text: &str, home: Option<&Path>) -> String {
-    let Some(home) = home.map(|h| h.display().to_string()) else {
-        return text.to_owned();
-    };
-    if home.len() < 3 {
-        return text.to_owned();
-    }
-    let mut out = text.replace(&home, "~");
-    let flipped = home.replace('\\', "/");
-    if flipped != home {
-        out = out.replace(&flipped, "~");
+    let mut out = scrub_urls(text);
+    if let Some(home) = home.map(|h| h.display().to_string())
+        && home.len() >= 3
+    {
+        out = out.replace(&home, "~");
+        let flipped = home.replace('\\', "/");
+        if flipped != home {
+            out = out.replace(&flipped, "~");
+        }
     }
     out
+}
+
+fn is_sensitive_param(key: &str) -> bool {
+    matches!(
+        key.to_ascii_lowercase().as_str(),
+        "token"
+            | "key"
+            | "api_key"
+            | "apikey"
+            | "auth"
+            | "sig"
+            | "signature"
+            | "password"
+            | "secret"
+            | "access_token"
+            | "refresh_token"
+            | "id_token"
+            | "client_secret"
+            | "x-amz-signature"
+            | "x-amz-security-token"
+    )
+}
+
+fn scrub_urls(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    let mut pos = 0;
+    while let Some(rel) = text[pos..].find("://") {
+        let sep = pos + rel;
+        let scheme_bytes = &text.as_bytes()[pos..sep];
+        let mut scheme_start = scheme_bytes.len();
+        while scheme_start > 0 {
+            let b = scheme_bytes[scheme_start - 1];
+            if b.is_ascii_alphanumeric() || matches!(b, b'+' | b'-' | b'.') {
+                scheme_start -= 1;
+            } else {
+                break;
+            }
+        }
+        let abs_start = pos + scheme_start;
+        let scheme = &text[abs_start..sep];
+        if scheme.is_empty() || !scheme.as_bytes()[0].is_ascii_alphabetic() {
+            out.push_str(&text[pos..sep + 3]);
+            pos = sep + 3;
+            continue;
+        }
+
+        let after_sep = sep + 3;
+        let mut end = after_sep;
+        while end < text.len() {
+            let ch = text[end..].chars().next().unwrap();
+            if ch.is_ascii_whitespace()
+                || ch.is_ascii_control()
+                || matches!(ch, '"' | '\'' | '<' | '>' | '`')
+            {
+                break;
+            }
+            end += ch.len_utf8();
+        }
+        // Trim sentence-ending punctuation outside the URL while keeping balanced `(...)`.
+        while end > after_sep {
+            let last = text[after_sep..end].chars().next_back().unwrap();
+            if matches!(last, ',' | ';' | '.' | ']' | '}') {
+                end -= last.len_utf8();
+            } else if last == ')' {
+                let slice = &text[after_sep..end];
+                let opens = slice.bytes().filter(|&b| b == b'(').count();
+                let closes = slice.bytes().filter(|&b| b == b')').count();
+                if closes > opens {
+                    end -= 1;
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        let candidate = &text[abs_start..end];
+        out.push_str(&text[pos..abs_start]);
+        match scrub_url_candidate(candidate) {
+            Some(redacted) => out.push_str(&redacted),
+            None => out.push_str(candidate),
+        }
+        pos = end;
+    }
+    out.push_str(&text[pos..]);
+    out
+}
+
+fn scrub_url_candidate(raw: &str) -> Option<String> {
+    if let Ok(mut u) = url::Url::parse(raw) {
+        let mut changed = false;
+        if !u.username().is_empty() || u.password().is_some() {
+            let _ = u.set_username("REDACTED");
+            let _ = u.set_password(None);
+            changed = true;
+        }
+        if u.query().is_some() && u.query_pairs().any(|(k, _)| is_sensitive_param(&k)) {
+            let pairs: Vec<(String, String)> = u
+                .query_pairs()
+                .map(|(k, v)| {
+                    if is_sensitive_param(&k) {
+                        (k.into_owned(), "REDACTED".to_owned())
+                    } else {
+                        (k.into_owned(), v.into_owned())
+                    }
+                })
+                .collect();
+            u.query_pairs_mut().clear().extend_pairs(pairs);
+            changed = true;
+        }
+        return changed.then(|| u.into());
+    }
+
+    // Fallback for malformed/truncated `scheme://...` strings that fail strict URL parsing.
+    let sep = raw.find("://")?;
+    let (prefix, rest) = (&raw[..sep + 3], &raw[sep + 3..]);
+    let auth_end = rest.find(['/', '?', '#']).unwrap_or(rest.len());
+    let (auth, tail) = (&rest[..auth_end], &rest[auth_end..]);
+    let mut changed = false;
+    let new_auth = if let Some(at) = auth.rfind('@') {
+        changed = true;
+        format!("REDACTED@{}", &auth[at + 1..])
+    } else {
+        auth.to_owned()
+    };
+    let new_tail = if let Some(q_idx) = tail.find('?') {
+        let (path_part, query_and_frag) = (&tail[..q_idx + 1], &tail[q_idx + 1..]);
+        let frag_idx = query_and_frag.find('#').unwrap_or(query_and_frag.len());
+        let (query, frag) = (&query_and_frag[..frag_idx], &query_and_frag[frag_idx..]);
+        let pairs: Vec<String> = query
+            .split('&')
+            .map(|part| {
+                if let Some((k, _)) = part.split_once('=')
+                    && is_sensitive_param(k)
+                {
+                    changed = true;
+                    format!("{k}=REDACTED")
+                } else {
+                    part.to_owned()
+                }
+            })
+            .collect();
+        format!("{path_part}{}{frag}", pairs.join("&"))
+    } else {
+        tail.to_owned()
+    };
+    changed.then(|| format!("{prefix}{new_auth}{new_tail}"))
 }
 
 #[cfg(test)]
@@ -1089,6 +1237,57 @@ mod tests {
         assert_eq!(
             trim_function("bmd_engine::job::Job<alloc::string::String>::run"),
             "bmd_engine::job::Job::run"
+        );
+    }
+
+    #[test]
+    fn scrub_redacts_url_userinfo_and_sensitive_query_params() {
+        let line = concat!(
+            r#"fetching "https://alice:hunter2@cdn.example.com/a.zip" "#,
+            "via https://onlyuser@proxy.example.com/ ",
+            "and https://s3.example.com/file(1).bin?seed=7&token=val_tok123&key=val_k1&api_key=val_ak&",
+            "auth=val_a1&sig=val_s1&signature=val_s2&password=val_pw&secret=val_sec999&access_token=val_at&page=2."
+        );
+        let scrubbed = scrub(line, None);
+        for leaked in [
+            "alice",
+            "hunter2",
+            "onlyuser",
+            "val_tok123",
+            "val_k1",
+            "val_ak",
+            "val_a1",
+            "val_s1",
+            "val_s2",
+            "val_pw",
+            "val_sec999",
+            "val_at",
+        ] {
+            assert!(
+                !scrubbed.contains(leaked),
+                "leaked {leaked:?} in {scrubbed}"
+            );
+        }
+        assert!(
+            scrubbed.contains("https://REDACTED@cdn.example.com/a.zip"),
+            "{scrubbed}"
+        );
+        assert!(
+            scrubbed.contains("https://REDACTED@proxy.example.com/"),
+            "{scrubbed}"
+        );
+        assert!(scrubbed.contains("file(1).bin?seed=7"), "{scrubbed}");
+        assert!(scrubbed.contains("token=REDACTED"), "{scrubbed}");
+        assert!(scrubbed.contains("access_token=REDACTED"), "{scrubbed}");
+        assert!(scrubbed.contains("page=2."), "{scrubbed}");
+
+        // Non-sensitive URLs stay untouched, and home directory scrubbing still works alongside.
+        let safe =
+            r"saved C:\Users\Someone\Downloads\file.zip from https://example.com/file.zip?page=2";
+        let scrubbed_safe = scrub(safe, Some(Path::new(r"C:\Users\Someone")));
+        assert_eq!(
+            scrubbed_safe,
+            r"saved ~\Downloads\file.zip from https://example.com/file.zip?page=2"
         );
     }
 }

@@ -20,7 +20,31 @@ fn main() {
     for name in ["yt-dlp.exe", "ffmpeg.exe", "gallery-dl.exe"] {
         std::fs::write(root.join("bin").join(name), b"fake executable").unwrap();
     }
-    let path = std::env::join_paths(["empty", "bin"].map(|n| root.join(n))).unwrap();
+    let mut path_dirs: Vec<std::path::PathBuf> =
+        ["empty", "bin"].into_iter().map(|n| root.join(n)).collect();
+    // Dynamically linked x86_64-pc-windows-gnu test binaries need MinGW runtime DLLs on PATH
+    // when the child process starts.
+    #[cfg(target_env = "gnu")]
+    if let Some(parent_path) = std::env::var_os("PATH") {
+        const MINGW_DLLS: &[&str] = &[
+            "libgcc_s_seh-1.dll",
+            "libgcc_s_dw2-1.dll",
+            "libwinpthread-1.dll",
+            "libstdc++-6.dll",
+        ];
+        if let Some(exe_dir) = std::env::current_exe()
+            .ok()
+            .and_then(|p| p.parent().map(Path::to_path_buf))
+        {
+            path_dirs.push(exe_dir);
+        }
+        for dir in std::env::split_paths(&parent_path) {
+            if MINGW_DLLS.iter().any(|dll| dir.join(dll).is_file()) && !path_dirs.contains(&dir) {
+                path_dirs.push(dir);
+            }
+        }
+    }
+    let path = std::env::join_paths(path_dirs).unwrap();
     let status = Command::new(std::env::current_exe().unwrap())
         .env(ROOT, root)
         .env("PATH", path)

@@ -399,6 +399,176 @@ pub fn private_write(path: &std::path::Path, bytes: &[u8]) -> std::io::Result<()
         .atomic_write(path, bytes)
 }
 
+/// Rejects relative, non-canonical, device/UNC, filesystem-root, autostart, system, and
+/// credential/repository directories before a silent/automated download writes into them.
+pub fn validate_download_dir(raw: &str) -> Result<(), &'static str> {
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return Err("download folder cannot be empty");
+    }
+    if trimmed.chars().any(char::is_control) {
+        return Err("download folder contains control characters");
+    }
+    validate_lexical_download_dir(trimmed)?;
+
+    // If an ancestor exists on this machine (e.g., a symlink pointing to `/etc` or `Startup`),
+    // canonicalize it and re-check the resolved path as well.
+    let path = std::path::Path::new(trimmed);
+    let mut suffix: Vec<&std::ffi::OsStr> = Vec::new();
+    let mut cur = Some(path);
+    while let Some(p) = cur {
+        if p.exists() {
+            if let Ok(canon) = std::fs::canonicalize(p) {
+                let mut full = canon;
+                for part in suffix.iter().rev() {
+                    full.push(part);
+                }
+                let s = full.to_string_lossy();
+                let normalized = s.strip_prefix(r"\\?\").unwrap_or(&s);
+                if normalized.starts_with(r"UNC\") || normalized.starts_with("UNC/") {
+                    return Err("network or UNC paths are not allowed");
+                }
+                validate_lexical_download_dir(normalized)?;
+            }
+            break;
+        }
+        if let Some(name) = p.file_name() {
+            suffix.push(name);
+        }
+        cur = p.parent();
+    }
+    Ok(())
+}
+
+fn validate_lexical_download_dir(raw: &str) -> Result<(), &'static str> {
+    if raw.starts_with(r"\\.\")
+        || raw.starts_with(r"\\?\")
+        || raw.starts_with("//./")
+        || raw.starts_with("//?/")
+    {
+        return Err("device or verbatim paths are not allowed");
+    }
+    if raw.starts_with(r"\\") || raw.starts_with("//") {
+        return Err("network or UNC paths are not allowed");
+    }
+    let bytes = raw.as_bytes();
+    let (is_windows_drive, rest) = if bytes.len() >= 3
+        && bytes[0].is_ascii_alphabetic()
+        && bytes[1] == b':'
+        && (bytes[2] == b'\\' || bytes[2] == b'/')
+    {
+        (true, &raw[3..])
+    } else if let Some(rest) = raw.strip_prefix('/') {
+        (false, rest)
+    } else {
+        return Err("download folder must be an absolute path");
+    };
+
+    let mut segs: Vec<String> = Vec::new();
+    for part in rest.split(['/', '\\']) {
+        if part.is_empty() {
+            continue;
+        }
+        if part == "." || part == ".." {
+            return Err("download folder must be a canonical path without '.' or '..'");
+        }
+        if part.contains(':') {
+            return Err("download folder contains an invalid drive or stream separator");
+        }
+        segs.push(part.to_ascii_lowercase());
+    }
+    if segs.is_empty() {
+        return Err("cannot save directly to the filesystem root");
+    }
+
+    const BLOCKED_SEGMENTS: &[&str] = &[
+        ".ssh",
+        ".git",
+        ".gnupg",
+        ".aws",
+        ".kube",
+        ".docker",
+        "start menu",
+        "startup",
+        "autostart",
+        "launchagents",
+        "launchdaemons",
+    ];
+    if segs.iter().any(|s| BLOCKED_SEGMENTS.contains(&s.as_str())) {
+        return Err("cannot save into a sensitive, repository, or autostart folder");
+    }
+    if segs.windows(4).any(|w| {
+        w[0] == "appdata"
+            && (w[1] == "roaming" || w[1] == "local")
+            && w[2] == "microsoft"
+            && w[3] == "windows"
+    }) || segs
+        .windows(3)
+        .any(|w| w[0] == "appdata" && w[1] == "roaming" && w[2] == "bmd")
+    {
+        return Err("cannot save into Windows or application configuration folders");
+    }
+
+    if is_windows_drive {
+        const WIN_SYSTEM_ROOTS: &[&str] = &[
+            "windows",
+            "program files",
+            "program files (x86)",
+            "programdata",
+            "system volume information",
+            "$recycle.bin",
+            "recovery",
+            "boot",
+            "efi",
+        ];
+        if WIN_SYSTEM_ROOTS.contains(&segs[0].as_str()) {
+            return Err("cannot save into a Windows system folder");
+        }
+    } else {
+        const UNIX_SYSTEM_ROOTS: &[&str] = &[
+            "etc",
+            "usr",
+            "bin",
+            "sbin",
+            "lib",
+            "lib64",
+            "lib32",
+            "boot",
+            "dev",
+            "proc",
+            "sys",
+            "root",
+            "run",
+            "opt",
+            "snap",
+            "system",
+            "library",
+            "applications",
+            "cores",
+        ];
+        if UNIX_SYSTEM_ROOTS.contains(&segs[0].as_str()) {
+            return Err("cannot save into a system folder");
+        }
+        let var_tail = if segs[0] == "var" {
+            Some(&segs[1..])
+        } else if segs.len() >= 2 && segs[0] == "private" && segs[1] == "var" {
+            Some(&segs[2..])
+        } else {
+            None
+        };
+        if let Some(tail) = var_tail {
+            let allowed = tail.first().is_some_and(|s| s == "tmp" || s == "folders");
+            if !allowed {
+                return Err("cannot save into a system /var folder");
+            }
+        }
+        if segs.len() >= 2 && segs[0] == "private" && segs[1] == "etc" {
+            return Err("cannot save into a system folder");
+        }
+    }
+    Ok(())
+}
+
 /// Portable mode: the `data` folder next to the program, when it exists and can be written
 /// (else the profile folder is used). Nothing is written to the registry in this mode.
 /// Asked once per run and kept, like [`data_dir`] (#565).
@@ -1170,6 +1340,55 @@ mod tests {
     fn tokens_are_random() {
         assert_ne!(random_token(), random_token());
         assert_eq!(random_token().len(), 64);
+    }
+
+    #[test]
+    fn download_dir_validation_rejects_dangerous_and_traversal_paths() {
+        for bad in [
+            "",
+            "   ",
+            "relative/path",
+            r"C:relative",
+            r"D:\Files\..\Windows",
+            "/tmp/../etc",
+            "/home/user/./Downloads",
+            "/",
+            r"C:\",
+            r"\\server\share",
+            r"\\.\C:\Downloads",
+            r"\\?\C:\Windows",
+            r"C:\Users\alice\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup",
+            r"C:\Users\alice\AppData\Roaming\Microsoft\Windows\Start Menu",
+            r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp",
+            r"C:\Users\alice\Startup",
+            r"C:\Windows\System32",
+            r"C:\Program Files\App",
+            "/etc/cron.d",
+            "/usr/local/bin",
+            "/home/alice/.ssh",
+            "/home/alice/repo/.git",
+            r"D:\repo\.git\hooks",
+            "/home/alice/.config/autostart",
+            "/var/log",
+        ] {
+            assert!(validate_download_dir(bad).is_err(), "should reject {bad}");
+        }
+
+        for good in [
+            r"D:\Files",
+            r"C:\Users\alice\Downloads",
+            r"C:\Users\alice\AppData\Local\Temp\bmd-test",
+            "/home/alice/Downloads",
+            "/tmp/bmd-downloads",
+            "/var/tmp/bmd-downloads",
+            "/var/folders/xx/yy/T/bmd-test",
+        ] {
+            assert!(
+                validate_download_dir(good).is_ok(),
+                "should allow {good}: {:?}",
+                validate_download_dir(good)
+            );
+        }
     }
 }
 
