@@ -1260,11 +1260,16 @@ thread_local! {
 /// a caption style in its caption colour; Windows 10 in its own, which no app can set). Cheap:
 /// DWM is asked only when it changes.
 pub fn caption_colour(hwnd: isize, rgb: [u8; 3]) {
+    caption_colour_value(hwnd, u32::from_le_bytes([rgb[0], rgb[1], rgb[2], 0]));
+}
+
+/// [`caption_colour`] with the COLORREF itself, or DWMWA_COLOR_DEFAULT (Windows' own colour:
+/// a marker, not an rgb that bytes could rebuild).
+fn caption_colour_value(hwnd: isize, colour: u32) {
     use windows_sys::Win32::Graphics::Dwm::{DWMWA_CAPTION_COLOR, DwmSetWindowAttribute};
     if !windows_11() {
         return;
     }
-    let colour = u32::from_le_bytes([rgb[0], rgb[1], rgb[2], 0]);
     let changed = CAPTION_COLOUR.with(|m| {
         m.try_borrow_mut()
             .is_ok_and(|mut m| m.insert(hwnd, colour) != Some(colour))
@@ -1292,10 +1297,7 @@ pub fn caption_tint(title: &str, rgb: Option<[u8; 3]>) -> bool {
     };
     match rgb {
         Some(rgb) => caption_colour(hwnd as isize, rgb),
-        None => {
-            let [r, g, b, _] = DWMWA_COLOR_DEFAULT.to_le_bytes();
-            caption_colour(hwnd as isize, [r, g, b]);
-        }
+        None => caption_colour_value(hwnd as isize, DWMWA_COLOR_DEFAULT),
     }
     true
 }

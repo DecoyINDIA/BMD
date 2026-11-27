@@ -392,6 +392,9 @@ impl ListState {
 }
 
 pub struct Row {
+    /// The download's id: what a row's animations are keyed by (two downloads can share a
+    /// name; the id never repeats, and sorting doesn't change it).
+    pub id: u64,
     /// What the Status filter sees: Downloading, Stopped, Waiting, Complete or Error.
     pub status_group: &'static str,
     /// Bytes received for an active transfer when its total is known.
@@ -1107,13 +1110,13 @@ pub fn show(
                     winui::SELECTED_INACTIVE(),
                 );
             } else if emerald {
-                // The hover bar fades in and out (0.12 s), keyed by the row's file.
+                // The hover bar fades in and out (0.12 s), keyed by the download's id.
                 let over = resp
                     .hover_pos()
                     .map(english)
                     .is_some_and(|p| p.y >= top && p.y < top + row_h());
                 let hot = ui.ctx().animate_bool_with_time(
-                    egui::Id::unique(("row-hover", &row.cells[0])),
+                    egui::Id::unique(("row-hover", row.id)),
                     over,
                     0.12,
                 );
@@ -1207,10 +1210,10 @@ pub fn show(
                 );
                 if let Some(progress) = progress {
                     // BMD's look: the bar glides to each new value (0.35 s) rather than jumping
-                    // once a second, keyed by the file's name so sorting doesn't restart it.
+                    // once a second, keyed by the download's id so sorting doesn't restart it.
                     let progress = if emerald {
                         ui.ctx().animate_value_with_time(
-                            egui::Id::unique(("row-progress", &row.cells[0])),
+                            egui::Id::unique(("row-progress", row.id)),
                             progress,
                             0.35,
                         )
@@ -1932,6 +1935,7 @@ mod tests {
         cells[0] = name.into();
         cells[SOURCE] = source.into();
         Row {
+            id: 0,
             progress: None,
             status_group: status,
             icon: IconKey::Silk("page_white"),
@@ -2175,6 +2179,7 @@ mod tests {
         ctx.enable_accesskit();
         let rows: Vec<Row> = (0..3)
             .map(|i| Row {
+                id: i as u64,
                 progress: None,
                 status_group: "Complete",
                 icon: IconKey::Silk("page_white"),
