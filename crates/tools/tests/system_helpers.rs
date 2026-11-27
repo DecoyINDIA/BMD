@@ -20,6 +20,7 @@ fn main() {
     for name in ["yt-dlp.exe", "ffmpeg.exe", "gallery-dl.exe"] {
         std::fs::write(root.join("bin").join(name), b"fake executable").unwrap();
     }
+    #[cfg_attr(not(target_env = "gnu"), allow(unused_mut))]
     let mut path_dirs: Vec<std::path::PathBuf> =
         ["empty", "bin"].into_iter().map(|n| root.join(n)).collect();
     // Dynamically linked x86_64-pc-windows-gnu test binaries need MinGW runtime DLLs on PATH
