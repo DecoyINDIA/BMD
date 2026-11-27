@@ -18,7 +18,9 @@ DENY_PATTERNS = (
     ("test/assertion failure", r"assertionerror|assertionfailederror|assertionfailed|comparisonfailure|org\.opentest4j|failures!!!|\b\d+ tests? completed, [1-9]\d* failed\b|\btests? failed\b|\bclassMethod FAILED\b|\b\w+Tests?\s*>[^\n]*\bFAILED\b"),
     ("compiler/source/R8 failure", r"compilation (?:failed|errors?)|could not compile|script compilation|unresolved reference|type mismatch|\bsyntaxerror\b|\bmissing class(?:es)?\b|(?:^|\n)\s*e:|error\[e\d+\]|ERROR:\s*R8"),
     ("lint failure", r"lint found [1-9]\d* errors?|\blinterror\b|\bError:[^\n]*\[[A-Z][A-Za-z0-9]+\]"),
-    ("integrity/trust failure", r"(?:checksum|signature|digest|hash)[^\n]*(?:mismatch|invalid|does not match|failed|failure|error)|(?:mismatch|invalid|failed|failure|error)[^\n]*(?:checksum|signature|digest)|DOES NOT VERIFY|PKIX|SSLHandshakeException|certificate[^\n]*(?:invalid|untrusted|failed)"),
+    # Certificate failures by their diagnostics, never by a bare "PKIX", which is also part of
+    # artifact names (org.bouncycastle:bcpkix-jdk18on).
+    ("integrity/trust failure", r"(?:checksum|signature|digest|hash)[^\n]*(?:mismatch|invalid|does not match|failed|failure|error)|(?:mismatch|invalid|failed|failure|error)[^\n]*(?:checksum|signature|digest)|DOES NOT VERIFY|PKIX path (?:building|validation) failed|unable to find valid certification path|ValidatorException|SSLHandshakeException|certificate[^\n]*(?:invalid|untrusted|failed|expired|revoked)"),
     ("product task entered", r"> Task :[^\n ]*:(?:test|compile|lint|minify|assemble|package|bundle)[^\n ]*|Execution failed for task ':[^']*(?:test|compile|lint|minify|assemble|package|bundle)[^']*'"),
 )
 DEPENDENCY_FAILURE = re.compile(r"Could not (?:resolve|GET|HEAD|download|get resource)|Failed to fetch maven artifact", re.IGNORECASE)
@@ -29,9 +31,16 @@ TRANSPORT_FAILURE = re.compile(
 )
 
 
+# What a dependency is called is not a diagnostic: Gradle quotes the URLs it fetched and the
+# group:artifact:version it resolved, and those can hold any word the rules look for (bcpkix,
+# digest, signature...). The deny rules read the log with them taken out.
+NAMES = re.compile(r"'[a-z][a-z0-9+.-]*://[^'\s]*'|(?<![\w.:-])[A-Za-z0-9_.-]+:[A-Za-z0-9_.-]+:[A-Za-z0-9_.+-]+\b")
+
+
 def classify(output: str) -> tuple[bool, str]:
+    diagnostics = NAMES.sub("<name>", output)
     for reason, pattern in DENY_PATTERNS:
-        if re.search(pattern, output, re.IGNORECASE):
+        if re.search(pattern, diagnostics, re.IGNORECASE):
             return False, reason
     if not DEPENDENCY_FAILURE.search(output):
         return False, "not a dependency-resolution failure"
@@ -40,13 +49,19 @@ def classify(output: str) -> tuple[bool, str]:
     return True, "dependency transport failure"
 
 
+def gradle_wrapper(platform: str = sys.platform) -> Path:
+    """The Gradle wrapper this system can start: Windows runs the batch file, since the POSIX
+    script is not a program there (WinError 193)."""
+    return ROOT / "android" / ("gradlew.bat" if platform == "win32" else "gradlew")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--log-dir", type=Path, default=ROOT / "android/app/build/reports/dependency-resolution")
     args = parser.parse_args()
     args.log_dir.mkdir(parents=True, exist_ok=True)
     # Intentionally fixed: callers cannot wrap compile/test/lint/package commands.
-    command = [str(ROOT / "android/gradlew"), "--no-daemon", "--no-parallel", "--max-workers=2",
+    command = [str(gradle_wrapper()), "--no-daemon", "--no-parallel", "--max-workers=2",
                "--console=plain", "-PskipNativeBuild=true", ":resolveAndroidDependencies"]
     attempts = []
     for number in range(1, 4):
