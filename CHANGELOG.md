@@ -5,12 +5,18 @@ Each release's notes on GitHub come from its section here (`## [X.Y.Z]`, see
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-27
+
 ### Added
 
 - **Social posts start at once, in their best quality:** a TikTok, X (Twitter), Instagram, Facebook or Threads post's address given to **Add URL** (typed or pasted), or sent by the browser's **Download video** button, no longer waits in the Download video window for a choice. Once yt-dlp has looked it up, it downloads the best quality the post has: its best video joined with its best sound, as the window's first line. The short links the apps' Share buttons copy are recognised too (`vm.tiktok.com`, `tiktok.com/t/…`, `facebook.com/share/v/…`, `fb.watch`, `instagram.com/<name>/reel/…`, `threads.net/@name/post/…`). Without ffmpeg, the window stays open and offers it, since the best quality needs it, and the download starts once it is installed. A private or deleted post, or one the site refuses, stays in the window with the reason. **Social posts: start at once** in the Download video window turns it off, to choose a quality again; other video sites (YouTube, Vimeo…) still show their qualities.
 - **BMD for Android** (source): a native Android app (Android 8.0 and later) over the same download engine as the desktop. It downloads direct HTTP and HTTPS links shared to it or pasted, pauses and resumes them, can check a file's SHA-256, and saves into Downloads or a folder you pick, without an account. It is not yet in a store; see `docs/android/` to build it.
 
+- **Android Quick Download widget:** paste a link or open the download form from your home screen.
+
 ### Changed
+
+- **Desktop and Android:** the Black Marlin logo uses a black silhouette with a white outline for light and dark backgrounds.
 
 - **A new typeface, everywhere:** BMD, its website, the browser extension's popup and video button, and the remote control page are now set in IBM Plex Sans (text), IBM Plex Mono (code) and Space Grotesk (titles), built in and the same on every system. Scripts these fonts don't draw (Arabic, Indic, Chinese, Japanese, Korean and others) still use your system's fonts. The Status column is a little wider by default (136 px) for the new font.
 
