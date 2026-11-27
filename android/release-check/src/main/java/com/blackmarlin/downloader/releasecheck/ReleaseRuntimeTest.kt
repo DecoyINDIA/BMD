@@ -201,6 +201,7 @@ class ReleaseRuntimeTest {
         var matchingReads = 0
         while (SystemClock.elapsedRealtime() < end) {
             try {
+                freshTree()
                 val field = device.findObjects(selector).filter {
                     val bounds = it.visibleBounds
                     bounds.height() > 0 && bounds.width() > 0
@@ -254,6 +255,9 @@ class ReleaseRuntimeTest {
         while (SystemClock.elapsedRealtime() < end) {
             var ready: UiObject2? = null
             try {
+                // A cached node keeps its old bounds and so looks settled; a tap there would land
+                // where the control was, not where it is.
+                freshTree()
                 // Preserve the original first-visible-match order. A merged row and its
                 // child may both match; they must not create a new uniqueness failure.
                 val label = device.findObjects(labelSelector).firstOrNull {
@@ -304,12 +308,27 @@ class ReleaseRuntimeTest {
         return null
     }
 
+    /**
+     * UiAutomator answers from the accessibility cache, and a Compose scroll does not always
+     * invalidate it in time: on the API 36 16 KiB-page emulator the cache still held the
+     * unscrolled Review screen while the screen showed Advanced options scrolled into view
+     * (run 45945391501, failure.xml against failure.png). Every observation that decides where
+     * to look or tap reads the app's current tree instead.
+     */
+    private fun freshTree() {
+        device.waitForIdle(300)
+        instrumentation.uiAutomation.clearCache()
+    }
+
     private fun scrollTo(selector: BySelector, timeout: Long): UiObject2 {
         val end = SystemClock.elapsedRealtime() + remaining(timeout)
         val target = selector.pkg(TARGET_PACKAGE)
-        fun visibleTarget(): UiObject2? = device.findObjects(target).firstOrNull {
-            val bounds = it.visibleBounds
-            bounds.height() > 0 && bounds.width() > 0
+        fun visibleTarget(): UiObject2? {
+            freshTree()
+            return device.findObjects(target).firstOrNull {
+                val bounds = it.visibleBounds
+                bounds.height() > 0 && bounds.width() > 0
+            }
         }
         var gestures = 0
         while (SystemClock.elapsedRealtime() < end) {
@@ -333,7 +352,15 @@ class ReleaseRuntimeTest {
                                 bounds.centerX(), if (down) upper else lower, 24))
                         gestures++
                         remaining(1)
-                        visibleTarget()?.let { return it }
+                        val found = visibleTarget()
+                        // What the tree shows after each stroke: enough to tell a screen that
+                        // didn't move from a tree that didn't follow it.
+                        val texts = device.findObjects(By.pkg(TARGET_PACKAGE).textStartsWith(""))
+                            .mapNotNull { runCatching { it.text }.getOrNull() }.filter { it.isNotBlank() }
+                        Log.i("BmdReleaseAcceptance", "$phase: stroke $gestures (${if (down) "down" else "up"}) " +
+                            "in $bounds, target ${if (found != null) "visible" else "not visible"}; " +
+                            "tree shows ${texts.firstOrNull()} .. ${texts.lastOrNull()}")
+                        found?.let { return it }
                     }
                 }
             } catch (_: StaleObjectException) {

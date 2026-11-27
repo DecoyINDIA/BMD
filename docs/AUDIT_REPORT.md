@@ -80,6 +80,8 @@ work package.
 | REPO-12 | P3 | The shipped app and extension manifests point at the placeholder `bmd.example.com` | Open → WP-10.2 (release-blocking for store builds) |
 | REPO-13 | P3 | Two stale branches, one local branch, five local agent refs | **Fixed**: classified, backed up, merged and deleted; `main` is the only branch ([BRANCH_RECONCILIATION.md](BRANCH_RECONCILIATION.md)) |
 | REPO-14 | P2 | PR #16 made `bmd-android-bridge` a shared library on every host; MinGW's linker refuses it ("export ordinal too large"), so `cargo test --workspace` failed on Windows with the GNU toolchain (CI uses MSVC and missed it) | **Fixed**: an ordinary library in the workspace, the Android build asks for the shared library; the workspace suite runs on GNU and the Android build passed in PR #17's CI |
+| REPO-15 | P2 | The Android dependency preflight's classifier matched `PKIX` (and other rule words) inside artifact names: a Maven HTTP 429 on `org.bouncycastle:bcpkix-jdk18on` was taken for a certificate failure and not retried (run 45846587660) | **Fixed**: rules read the log with URLs and coordinates removed, certificates matched by their diagnostics; the archived case is a test |
+| REPO-16 | P2 | The dependency preflight started `android/gradlew` on every system; on Windows that fails with WinError 193 | **Fixed**: `gradlew.bat` on Windows; tested. Gradle itself not run to the end here (its distribution is not cached on this machine) |
 
 ### Desktop
 
@@ -106,6 +108,7 @@ work package.
 | AND-07 | P3 | Cleartext is allowed app-wide (the engine asks per download), with no network security config | Open → WP-04.4 |
 | AND-08 | P3 | A share replaces the link being typed without asking | Open → WP-04.4 |
 | AND-09 | P3 | `versionCode = 1` is fixed in the build file | Open → WP-10.3 |
+| AND-10 | P1 | The optimized-release acceptance test on the API 36 16 KiB-page emulator fails intermittently before the download starts (`main` at `72120d3`, run 45945391501; PR #17 attempt 1): the captured screenshot shows Advanced options scrolled into view while the captured accessibility tree still shows the unscrolled screen, so the test never sees the control. The app scrolled; UiAutomator read a stale accessibility cache. Release checksum and publication on that configuration are therefore not proven on every run | Fix in review: the test reads a fresh tree before every observation and logs each swipe; **open** until the 16 KiB release job passes on repeated runs → WP-09.3 |
 
 ### Security and supply chain
 
@@ -135,7 +138,7 @@ and time limits; every GitHub Action is pinned by SHA and no workflow uses `pull
 |---|---|---|
 | Desktop (Windows) | **Ready for use; next release blocked by SEC-01** | Engine, resume, persistence and lifecycle verified in code and tests; one P1 in release trust |
 | Desktop (Linux, macOS) | Ready as documented in ROADMAP (Linux) / experimental (macOS) | CI green on both; runtime not checked here |
-| Android | **Source-ready, not release-ready** | Builds and passes emulator tests in CI at `aef830b`; AND-01 (P1), no translations, no device matrix, no store identity |
+| Android | **Source-ready, not release-ready** | APK and AAB build; API 26 and API 36 (4 KiB) pass; the API 36 16 KiB optimized-release test is intermittent (AND-10, P1); AND-01 (P1), no translations, no device matrix, no store identity |
 | Repository | **Consolidated** | One `main` (PR #17, `72120d3`), every reconciled branch deleted, 17 checks green |
 
 ## Quality score

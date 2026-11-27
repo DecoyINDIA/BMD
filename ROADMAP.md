@@ -1311,7 +1311,8 @@ These ship in a later version, when they're ready.
   share and paste, pause and resume, SHA-256 check, saving to Downloads or a chosen folder),
   built and tested in CI on Android 8.0 and 16 emulators; still to do before a store release:
   resuming in the background on Android 12 and 13, very large shared texts, its translations,
-  more Android versions and real phones, and its store listing
+  more Android versions and real phones, a dependable optimized-release check on 16 KiB-page
+  Android, and its store listing
 - 🔄 The Safari extension (in 0.5.2): still to check in Safari itself, signed with a Developer ID
 - 🔄 Security hardening before the next version (described in the CHANGELOG when it ships), and
   a check of the dependencies against known advisories in CI
