@@ -1287,6 +1287,10 @@ Everything below ships together, in version 1.0.0, the first release as BMD.
   report window asks GitHub
 - ✅ A magnet link or .torrent file opened with BMD brings no command-line options with it;
   Refresh download address opens web pages only
+- ✅ Website: the home page's first view is a classic hero (headline, subline, one Download
+  button, the 5.4× benchmark figure beside its link, the real window), set to the
+  landing-page-design skill's type styles, spacing and motion on a flat band, in the site's one
+  typeface; the label and barcode stay on the closing section and the IDM alternative page
 
 ## Being worked on
 
