@@ -1,6 +1,6 @@
-/* BMD — site styles. The world is a courier's waybill: the logo's blue as the
+/* BMD — site styles. The world is a courier's waybill: blue as the
    board the parcel sits on, thermal-label sheets for what is read, black ink in hairline fields, a real barcode.
-   The logo's green is reserved for the one action (Download) and for delivered; blue is for
+   Green is reserved for the one action (Download) and for delivered; blue is for
    links. Self-hosted faces: Space Grotesk for headings and field names, IBM Plex Sans for what is read, IBM Plex Mono for code. No build step. */
 
 @font-face {
@@ -46,7 +46,7 @@
   --font: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, "Noto Sans", sans-serif;
   --display: "Space Grotesk", "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, "Noto Sans", sans-serif;
   --mono: "IBM Plex Mono", "Cascadia Mono", Consolas, "SF Mono", ui-monospace, Menlo, monospace;
-  /* The board: the page, in the logo's blue. Text on it is --on-board, or --on-board-2 (both
+  /* The blue board is the page background. Text on it is --on-board, or --on-board-2 (both
      checked AA on the board). */
   --board: #1f63d6;
   --board-deep: #1854bb;
