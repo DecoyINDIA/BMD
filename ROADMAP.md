@@ -204,10 +204,10 @@ Everything below ships together, in version 0.5.0.
   in this look rather than the classic one
 - ✅ Two looks: View → Appearance (Light, Dark, Follow system) replaces Dark Mode support,
   Always dark and the theme list; BMD's brand colours (Kombu Green, Brushed Aluminium, Signal
-  Orange, 60 / 30 / 10); the look refined (one canvas for menu bar, toolbar and sidebar,
-  a hairline to the list, a quiet list header, a compact icon-only toolbar, rounded row selection, alternating rows, a title bar in the canvas's colour,
-  soft shadows under popups, an animated brand-colour backdrop behind the canvas); Android on
-  the same brand colours
+  Orange, 60 / 30 / 10); the look refined (one canvas for menu bar, toolbar and sidebar, a
+  hairline to the list, a quiet list header, a compact icon-only toolbar, rounded row selection,
+  alternating rows, a title bar in the canvas's colour, soft shadows under popups, an animated
+  brand-colour backdrop behind the canvas); Android on the same brand colours
 - ✅ Dark mode: grey notes and error texts readable (4.5:1), Options' failed checks no longer dark
   red on the dark dialog
 - ✅ A minimized BMD keeps working: queues, the Scheduler, download limits, the kill switch and
