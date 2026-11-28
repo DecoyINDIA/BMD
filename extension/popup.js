@@ -3,9 +3,8 @@
 // site to the browser, opening the app or its Options, and the media the tab loaded (#38), each
 // to download. background.js does the work.
 const ext = globalThis.browser ?? globalThis.chrome;
-const BROWSER_HELP = "https://xolver.in/products/bmd/#browser-integration";
-const TOPIC_GUIDE = "https://github.com/DecoyINDIA/BMD/blob/main/docs/browser-help.md";
-// Support BMD is the project link, not troubleshooting. The Help link points to Xolver.
+const HELP = "https://github.com/DecoyINDIA/BMD/blob/main/docs/browser-help.md";
+// The project on GitHub (the app's Help → Support BMD): a plain link, in a new tab.
 const PROJECT_URL = "https://github.com/DecoyINDIA/BMD";
 const t = (key, ...subs) => ext.i18n.getMessage(key, subs) || key;
 const $ = (id) => document.getElementById(id);
@@ -16,7 +15,7 @@ document.documentElement.lang = lang;
 document.documentElement.dir = t("@@bidi_dir") === "rtl" ? "rtl" : "ltr";
 for (const el of document.querySelectorAll("[data-i18n]")) el.textContent = t(el.dataset.i18n);
 for (const el of document.querySelectorAll("[data-i18n-placeholder]")) el.placeholder = t(el.dataset.i18nPlaceholder);
-$("help").href = BROWSER_HELP;
+$("help").href = HELP;
 $("support").href = PROJECT_URL;
 
 // The tab it is about: the window's active tab; with `?page=ADDRESS` (this page opened in a tab of
@@ -48,7 +47,7 @@ async function show() {
   }
   const fix = $("fix");
   fix.hidden = s.connected && s.why !== "update-app";
-  fix.href = `${TOPIC_GUIDE}#${s.why || "not-installed"}`;
+  fix.href = `${HELP}#${s.why || "not-installed"}`;
   $("take").checked = !s.paused;
   showDeclined(s.connected && s.declined);
   $("take").disabled = !s.connected;
@@ -202,7 +201,7 @@ async function showMedia(tab, connected) {
   const none = $("media-none");
   none.hidden = list.length > 0 && !kept;
   none.textContent = t(kept ? "popup_media_store" : r && r.streamed ? "popup_media_streamed" : "popup_media_none");
-  $("help").href = kept ? `${TOPIC_GUIDE}#store-youtube` : BROWSER_HELP;
+  $("help").href = kept ? `${HELP}#store-youtube` : HELP;
   const ul = $("media-list");
   ul.replaceChildren();
   for (const m of list) {

@@ -450,7 +450,7 @@ pub fn schema() -> serde_json::Value {
             an app that doesn't answer within 2 seconds `timeout`. The browser's quality menu \
             (`video_lookup`, `video_poll`, `video_pick`, sent by its native host) is answered \
             with a `VideoLookupAnswer`. \
-            Guide: https://github.com/DecoyINDIA/BMD/blob/main/docs/command-line.md#the-automation-api",
+            Guide: https://bmd.example.com/help/command-line.html#the-automation-api",
         "$ref": request.get("$ref").cloned().unwrap_or(serde_json::Value::Null),
         "$defs": defs,
     })
