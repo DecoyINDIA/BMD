@@ -457,7 +457,7 @@ fn notice(v: &Video) -> Option<VideoNotice> {
         text: crate::videodlg::js_runtime_note().to_owned(),
         // i18n: link in the browser's video menu, after the note that YouTube needs a JavaScript runtime: opens the help page that says how to install Node.js or Deno
         link: crate::i18n::t("How to install one").to_owned(),
-        url: crate::help::page_url(crate::videodlg::JS_RUNTIME_HELP, crate::i18n::code()),
+        url: crate::help::page_url(crate::videodlg::JS_RUNTIME_HELP),
     })
 }
 
@@ -1494,8 +1494,8 @@ mod tests {
         );
         assert!(!notice.link.is_empty());
         assert!(
-            notice.url.starts_with("https://bmd.example.com/")
-                && notice.url.ends_with("/help/video.html#javascript-runtime"),
+            notice.url
+                == "https://github.com/DecoyINDIA/BMD/blob/main/docs/video.md#javascript-runtime",
             "{}",
             notice.url
         );

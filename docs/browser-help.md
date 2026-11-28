@@ -12,7 +12,7 @@ To check BMD's side, open **Options → General** in BMD and click **Test browse
 
 The browser can't find the small helper program it talks to. It is registered when BMD is installed.
 
-1. Install BMD with the setup from [the download page](https://bmd.example.com/download.html), and keep **Set up browser integration** ticked.
+1. Install BMD with the setup from [the download page](https://xolver.in/products/bmd/#downloads), and keep **Set up browser integration** ticked.
 2. Already installed? Open BMD, then **Options → General → Test browser integration**, and click **Set it up** if it offers to.
 3. The portable copy can't be connected: it writes nothing outside its own folder. Use the installed copy for browser integration. See [Portable mode](portable.md).
 4. **Started BMD from inside a zip?** WinRAR, 7-Zip and Windows itself run a program from inside a zip by unpacking it to a temporary folder, which they delete afterwards. A copy run that way can't be connected (**Test browser integration** says **This copy runs from a temporary folder that will be deleted**): unzip it to a folder of its own first. Older versions of BMD did set browser integration up from there, and left the browsers looking for a copy that was gone (**The browsers are set up for a copy that is gone**). Start your installed BMD, up to date, once: it takes browser integration back by itself.

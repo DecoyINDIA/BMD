@@ -3093,7 +3093,7 @@ async function videoPick(m, sender) {
 
 const isWeb = (u) => typeof u === "string" && /^https?:\/\//i.test(u);
 // Where the button's "Get BMD" goes.
-const GET_BMD = "https://github.com/DecoyINDIA/BMD/releases";
+const GET_BMD = "https://xolver.in/products/bmd/#downloads";
 // A new tab next to `tab`, opened from it.
 const beside = (tab) => ({
   ...(Number.isInteger(tab.id) ? { openerTabId: tab.id } : {}),

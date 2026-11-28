@@ -1,14 +1,14 @@
-# Problems with bmd.example.com. Each page's "Report a problem with this page" opens it
+# Problems with the website and help pages. Each page's "Report a problem with this page" opens it
 # with the page filled in (tools/website/build.py: the id `page` is the URL's parameter).
 name: Website problem
-description: A mistake, a broken link or something hard to read on bmd.example.com.
+description: A mistake, broken link or confusing instructions on the Black Marlin Downloader website or help pages.
 labels: [website]
 body:
   - type: input
     id: page
     attributes:
       label: Page
-      placeholder: https://bmd.example.com/download.html
+      placeholder: https://xolver.in/products/bmd/#downloads
     validations:
       required: true
   - type: textarea
