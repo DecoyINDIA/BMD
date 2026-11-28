@@ -29,11 +29,20 @@ def main():
     source = subprocess.check_output(["git", "-C", str(repo), "show", f"{commit}:{source_path}"])
     root = ET.fromstring(source)
     ns = "{http://schemas.android.com/apk/res/android}"
-    assert root.tag == "vector" and all(child.tag == "path" for child in root)
-    assert all(set(child.attrib) == {ns + "fillColor", ns + "pathData"} for child in root)
+    assert root.tag == "vector"
     width, height = root.get(ns + "viewportWidth"), root.get(ns + "viewportHeight")
-    paths = [(child.get(ns + "fillColor"), child.get(ns + "pathData")) for child in root]
-    markup = "\n".join(f'  <path fill="{color}" d="{data}"/>' for color, data in paths)
+    def svg_element(child):
+        if child.tag == "path":
+            assert set(child.attrib) == {ns + "fillColor", ns + "pathData"}
+            return f'<path fill="{child.get(ns + "fillColor")}" d="{child.get(ns + "pathData")}"/>'
+        assert child.tag == "group"
+        assert set(child.attrib) <= {ns + name for name in ("translateX", "translateY", "scaleX", "scaleY")}
+        tx, ty = (child.get(ns + name, "0") for name in ("translateX", "translateY"))
+        sx, sy = (child.get(ns + name, "1") for name in ("scaleX", "scaleY"))
+        return f'<g transform="translate({tx} {ty}) scale({sx} {sy})">' + "".join(map(svg_element, child)) + '</g>'
+
+    paths = [(child.get(ns + "fillColor"), child.get(ns + "pathData")) for child in root.iter("path")]
+    markup = "\n".join(map(svg_element, root))
     out.mkdir(parents=True, exist_ok=True)
     icon = out / "black-marlin-store-icon.svg"
     icon.write_text(f'''<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 {width} {height}">
@@ -42,7 +51,7 @@ def main():
 {markup}
 </svg>
 ''', encoding="utf-8")
-    assert [(p.get("fill"), p.get("d")) for p in ET.parse(icon).getroot().findall("{http://www.w3.org/2000/svg}path")] == paths
+    assert [(p.get("fill"), p.get("d")) for p in ET.parse(icon).getroot().iter("{http://www.w3.org/2000/svg}path")] == paths
     feature = out / "black-marlin-feature-graphic-draft.svg"
     feature.write_text(f'''<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
   <title>Black Marlin feature graphic draft</title>

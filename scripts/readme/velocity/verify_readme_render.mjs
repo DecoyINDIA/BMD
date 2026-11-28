@@ -4,7 +4,7 @@ import puppeteer from 'puppeteer-core';
 import { findBrowser, startStaticServer } from './render.mjs';
 
 const REPO_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')), '..', '..', '..');
-const REVIEW_DIR = 'C:\\Users\\subha\\.gemini\\antigravity\\brain\\22023cbd-5916-4595-8b3f-30b158a4c07c\\scratch\\review\\cycle-3';
+const REVIEW_DIR = path.join(REPO_ROOT, 'target', 'readme-velocity', 'review', 'readme');
 const README_MD = fs.readFileSync(path.join(REPO_ROOT, 'README.md'), 'utf8');
 
 function mdToPreviewHtml(md) {
