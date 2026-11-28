@@ -148,7 +148,7 @@ def build_cta_velocity(mode: str) -> str:
     <polygon class="sheen" points="0,4 58,4 22,70 -36,70" fill="#ffffff"/>
   </g>
   <g transform="translate(18 14) scale(0.047)">
-    {LOGO_MARKUP}
+    {LOGO_MARKUP.replace("#C7CAC5", "#354230") if mode == "dark" else LOGO_MARKUP}
   </g>
   <text x="76" y="34" fill="{t['cta_ink']}" font-size="18.5" font-weight="700" letter-spacing="-0.3" class="t-disp">Download Black Marlin</text>
   <text x="76" y="54" fill="{t['cta_sub']}" font-size="11.5" font-weight="500" class="t-mono">Latest release · Windows, Linux and macOS</text>
