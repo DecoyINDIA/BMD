@@ -1494,7 +1494,8 @@ mod tests {
         );
         assert!(!notice.link.is_empty());
         assert!(
-            notice.url == "https://github.com/DecoyINDIA/BMD/blob/main/docs/video.md#javascript-runtime",
+            notice.url
+                == "https://github.com/DecoyINDIA/BMD/blob/main/docs/video.md#javascript-runtime",
             "{}",
             notice.url
         );
