@@ -39,10 +39,13 @@ jobs:
           adb shell cmd uimode night no
           adb shell am start -a android.intent.action.MAIN -c android.intent.category.HOME
           sleep 5
-          adb shell input swipe 350 1200 350 300 500
+          adb shell input swipe 540 1800 540 500 500
           sleep 4
           adb shell screencap -p /sdcard/light.png
           adb pull /sdcard/light.png evidence/launcher-light.png
+          adb shell uiautomator dump /sdcard/light.xml
+          adb pull /sdcard/light.xml evidence/launcher-light.xml
+          grep -qi "Black Marlin" evidence/launcher-light.xml
           adb shell cmd uimode night yes
           sleep 5
           adb shell screencap -p /sdcard/dark.png
