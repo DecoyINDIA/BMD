@@ -1293,6 +1293,10 @@ Everything below ships together, in version 1.0.0, the first release as BMD.
   report window asks GitHub
 - ✅ A magnet link or .torrent file opened with BMD brings no command-line options with it;
   Refresh download address opens web pages only
+- ✅ Website: the home page's first view is a classic hero (headline, subline, one Download
+  button, the 5.4× benchmark figure beside its link, the real window), set to the
+  landing-page-design skill's type styles, spacing and motion on a flat band, in the site's one
+  typeface; the label and barcode stay on the closing section and the IDM alternative page
 
 ## Being worked on
 
@@ -1316,7 +1320,8 @@ These ship in a later version, when they're ready.
 - 🔄 **BMD for Android**: the native app over the desktop's engine (direct HTTP and HTTPS,
   share and paste, pause and resume, SHA-256 check, saving to Downloads or a chosen folder),
   built and tested in CI on Android 8.0 and 16 emulators; done since: waiting instead of failing
-  when Android 12 and 13 stop a background resume, and bounding very large shared texts; still to do
+  when Android 12 and 13 stop a background resume, bounding very large shared texts, and the
+  Quick Download widget filling its box with a link you copied when you tap it; still to do
   before a store release: dependable optimized-release checks on 16 KiB-page Android, checking
   the background resume on Android 12 and 13 devices, its translations, more Android versions and
   real phones, and its store listing
