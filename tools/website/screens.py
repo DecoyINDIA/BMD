@@ -5,12 +5,12 @@ converts or crops one by hand. The day versions come from a folder of tools/lab/
 shots (--light: a Docs screenshots run's docs/ folder, .github/workflows/docs-shots.yml), the night
 versions from the same shots taken with -Dark (its site-dark/ folder):
 
-    python -I tools/website/screens.py <run>\\site-dark --light <run>\\docs
+    python -I tools/website/screens.py <run>\\site-dark --light <run>\\docs --help-raw <run>\\help-raw
     python -I tools/website/screens.py D:\\shots\\dark --light D:\\shots\\light --density 2
 
-A shot that isn't there is skipped and its WebP kept: the video quality window, for one, needs a
-real video page and can't be shot offline, so screens/video-*.webp stay as they are. Each WebP is
-lossless (#186: text and one-pixel lines stay sharp), written only when its bytes change.
+The video quality window comes from the help capture of the app's built-in sample, when supplied.
+A missing shot leaves its existing WebP in place. Each WebP is lossless (#186: text and one-pixel
+lines stay sharp), written only when its bytes change.
 
 Every <img> in website/*.html that shows a WebP written here gets its width and height set to the
 picture's size in CSS pixels (its pixels / --density: docs-shots.ps1 shoots at 1x, so 1 unless the
@@ -126,6 +126,7 @@ def main() -> None:
                     help="the -Dark shots (default target/site-shots/dark)")
     ap.add_argument("--light", default=str(ROOT / "target" / "site-shots" / "light"),
                     help="the day shots (default target/site-shots/light)")
+    ap.add_argument("--help-raw", type=Path, help="the workflow's raw help captures for the video quality window")
     ap.add_argument("--density", type=float, default=1.0,
                     help="the shots' pixels per CSS pixel: 1 for docs-shots.ps1's 1x, 2 with -Zoom 2")
     a = ap.parse_args()
@@ -148,6 +149,14 @@ def main() -> None:
         write(src, out, a.density, sizes)
     else:
         missing.append((out, dark / f"{name}.png"))
+    if a.help_raw:
+        for mode in ("light", "dark"):
+            src = a.help_raw / mode / "video-subs.png"
+            out = f"screens/video-{mode}.webp"
+            if src.is_file():
+                write(src, out, a.density, sizes)
+            else:
+                missing.append((out, src))
     for out, src in missing:
         print(f"  {'kept' if (ASSETS / out).is_file() else 'none:'} {out}, no {src}")
     fix_html(sizes)

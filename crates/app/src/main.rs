@@ -126,7 +126,8 @@ pub fn app_icon() -> std::sync::Arc<egui::IconData> {
 pub fn app_icon_for_surface(dark: bool) -> std::sync::Arc<egui::IconData> {
     if cfg!(target_os = "macos") {
         // eframe takes an empty icon as "none" (AppTitleIconSetter).
-        static NONE: std::sync::OnceLock<std::sync::Arc<egui::IconData>> = std::sync::OnceLock::new();
+        static NONE: std::sync::OnceLock<std::sync::Arc<egui::IconData>> =
+            std::sync::OnceLock::new();
         return NONE.get_or_init(Default::default).clone();
     }
     app_picture_for_surface(dark)
@@ -143,7 +144,10 @@ fn app_picture_for_surface(dark: bool) -> std::sync::Arc<egui::IconData> {
     let (icon, png): (_, &[u8]) = if dark {
         (&DARK, include_bytes!("../assets/icons/app/bmd-256.png"))
     } else {
-        (&LIGHT, include_bytes!("../assets/icons/app/bmd-light-256.png"))
+        (
+            &LIGHT,
+            include_bytes!("../assets/icons/app/bmd-light-256.png"),
+        )
     };
     icon.get_or_init(|| {
         std::sync::Arc::new(eframe::icon_data::from_png_bytes(png).unwrap_or_default())

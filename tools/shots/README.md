@@ -47,10 +47,12 @@ pictures, and returns them as the `docs-shots` artifact. Then, from the reposito
 ```powershell
 gh run download <run id> -n docs-shots -D target\docs-shots-run
 python tools/shots/make.py docs target\docs-shots-run                  # docs/images/*.webp
-python -I tools/website/screens.py target\docs-shots-run\site-dark --light target\docs-shots-run\docs
+python -I tools/website/screens.py target\docs-shots-run\site-dark --light target\docs-shots-run\docs --help-raw target\docs-shots-run\help-raw
 Copy-Item -Recurse -Force target\docs-shots-run\help-raw\* target\shots\raw\
 python tools/shots/make.py build                                        # docs/images/help/*.webp
 python tools/shots/make.py check
+python tools/readme/social.py
+node scripts/readme/velocity/build.mjs --only product-cinema
 ```
 
 `make.py docs` also takes single PNGs, each as `docs/images/<its name>.webp`: the browser's
