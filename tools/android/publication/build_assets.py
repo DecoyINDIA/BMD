@@ -47,7 +47,8 @@ def main():
     icon = out / "black-marlin-store-icon.svg"
     icon.write_text(f'''<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 {width} {height}">
   <title>Black Marlin launcher artwork</title>
-  <desc>Faithful export of the original repository VectorDrawable. Path geometry and colors are unchanged.</desc>
+  <desc>Launcher artwork on the opaque store tile. The mark's paths and colors are unchanged.</desc>
+  <rect width="{width}" height="{height}" fill="#354230"/>
 {markup}
 </svg>
 ''', encoding="utf-8")
@@ -60,7 +61,7 @@ def main():
   <path d="M660 500 C700 395 846 398 1024 257 L1024 500Z" fill="#A5DED6"/>
   <path d="M795 500 C820 447 944 396 1024 425 L1024 500Z" fill="#85CBC1"/>
   <g transform="translate(90 64) scale(0.6666666666666667)">
-{markup}
+{markup.replace("#C7CAC5", "#354230")}
   </g>
   <g fill="#112C2D" font-family="DejaVu Sans,sans-serif">
     <text x="186" y="110" font-size="28" font-weight="700">Black Marlin</text>
