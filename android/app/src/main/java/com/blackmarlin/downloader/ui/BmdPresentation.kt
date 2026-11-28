@@ -134,6 +134,9 @@ fun sharedHttpLinks(value: String): List<String> {
     }.filter { parseSourceOrigin(it) != null }.distinct().take(MAX_SHARED_LINKS).toList()
 }
 
+/** The one link a clipboard text holds, or null: several links are ambiguous, so none is picked for the user. */
+fun clipboardHttpLink(value: CharSequence?): String? = sharedHttpLinks(boundSharedText(value).orEmpty()).singleOrNull()
+
 fun selectedNavigationTab(route: BmdRoute): BmdScreen = when {
     route.screen == BmdScreen.FILES || route.screen == BmdScreen.FILE_DETAIL -> BmdScreen.FILES
     route.screen in setOf(BmdScreen.TRANSFERS, BmdScreen.TRANSFER_DETAIL, BmdScreen.ADD_LINK, BmdScreen.REVIEW, BmdScreen.SEARCH) -> BmdScreen.TRANSFERS
