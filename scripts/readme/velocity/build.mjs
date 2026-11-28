@@ -13,7 +13,7 @@ import {
 const REPO_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')), '..', '..', '..');
 const SCENES_DIR = path.join(REPO_ROOT, 'scripts', 'readme', 'velocity', 'scenes');
 const ASSETS_OUT = path.join(REPO_ROOT, 'assets', 'readme');
-const SCRATCH_ROOT = 'C:\\Users\\subha\\.gemini\\antigravity\\brain\\22023cbd-5916-4595-8b3f-30b158a4c07c\\scratch';
+const SCRATCH_ROOT = path.join(REPO_ROOT, 'target', 'readme-velocity');
 const FRAMES_ROOT = path.join(SCRATCH_ROOT, 'frames');
 const REVIEW_ROOT = path.join(SCRATCH_ROOT, 'review');
 
