@@ -247,6 +247,12 @@ pub fn keep_theme(
             vid,
             egui::ViewportCommand::SetTheme(crate::theme::system_theme(dark)),
         );
+        if !cfg!(target_os = "macos") {
+            ctx.send_viewport_cmd_to(
+                vid,
+                egui::ViewportCommand::Icon(Some(crate::app_icon_for_surface(dark))),
+            );
+        }
         ctx.data_mut(|d| d.insert_temp(theme_key, dark));
         // The window is revealed on the next frame: make sure there is one.
         ctx.request_repaint();

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Builds the legacy BMD website into target/site (GitHub Pages publishes it, .github/workflows/
+"""Builds bmd.example.com into target/site (GitHub Pages publishes it, .github/workflows/
 pages.yml). No framework: website/ holds the hand-written home page, styles, scripts and assets;
 website/content/ the pages written as Markdown (FAQ, legal); the rest comes from the repository
 itself so the site never drifts from it: docs/*.md become the help pages, CHANGELOG.md the news
@@ -43,9 +43,8 @@ WEB = ROOT / "website"
 CONTENT = WEB / "content"
 OUT = ROOT / "target" / "site"
 # A placeholder until BMD has a domain of its own (example.com is reserved: it never resolves to
-# anyone's site). It is retained here for the unmigrated legacy site's metadata only.
+# anyone's site). Change it here, in crates/app/src/help.rs (SITE) and wherever else it is written.
 SITE = "https://bmd.example.com"
-PRODUCT_SITE = "https://xolver.in/products/bmd/"
 REPO = "https://github.com/DecoyINDIA/BMD"
 # The creator's GitHub Sponsors page: linked from the website with upstream attribution.
 SPONSORS = "https://github.com/sponsors/DecoyINDIA"
@@ -738,10 +737,10 @@ ON_SITE = {
 }
 
 
-# Engineering records in docs/ that are not help pages: not built, not
+# Engineering records in docs/ that are no help page (the 2026-11-27 audit's): not built, not
 # translated; a link to one goes to the repository.
 NOT_HELP = {"MASTER_EXECUTION_PLAN.md", "AUDIT_REPORT.md", "VERIFICATION_REPORT.md",
-            "BRANCH_RECONCILIATION.md", "website-cutover.md"}
+            "BRANCH_RECONCILIATION.md"}
 
 
 def doc_link(target: str, here: Path) -> str:
@@ -1762,51 +1761,6 @@ def bust_caches() -> None:
             page.write_text(new, "utf-8", newline="\n")
 
 
-def legacy_redirect(path: str) -> str | None:
-    """Only redirect public product and help entry points that Xolver replaces."""
-    destinations = {
-        "/": "",
-        "/downloads/": "#downloads",
-        "/download.html": "#downloads",
-        "/idm-alternative.html": "",
-        "/help/": "#help",
-        "/help/getting-started.html": "#install",
-        "/help/browser-integration.html": "#browser-integration",
-        "/help/troubleshooting.html": "#troubleshooting",
-    }
-    if path == "/features/" or path.startswith("/features/"):
-        return PRODUCT_SITE
-    if path == "/faq/" or path.startswith("/faq/"):
-        return PRODUCT_SITE + "#help"
-    return PRODUCT_SITE + destinations[path] if path in destinations else None
-
-
-def publish_legacy_redirects(available: dict[str, list[str]]) -> None:
-    """Pages serves static files, not HTTP redirect rules. Give each known route a
-    zero-delay redirect, canonical URL and a plain link that works without scripts."""
-    paths = {"/downloads/", *(path for path, _ in PAGES)}
-    for path in sorted(paths):
-        destination = legacy_redirect(path)
-        if destination is None:
-            continue
-        url = esc(destination)
-        for code in available.get(path, ["en"]):
-            file = sitei18n.file_of(OUT, sitei18n.lang_path(path, code))
-            file.parent.mkdir(parents=True, exist_ok=True)
-            file.write_text(f"""<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Black Marlin Downloader is now on Xolver</title>
-  <link rel="canonical" href="{url}">
-  <meta http-equiv="refresh" content="0; url={url}">
-</head>
-<body><p><a href="{url}">Continue to Black Marlin Downloader on Xolver</a>.</p></body>
-</html>
-""", "utf-8", newline="\n")
-    PAGES[:] = [(path, priority) for path, priority in PAGES if legacy_redirect(path) is None]
-
-
 def finish(available: dict[str, list[str]]) -> None:
     bust_caches()
     # One sitemap per language under an index, each page with its languages (sitei18n).
@@ -1839,9 +1793,6 @@ def main() -> None:
     only = ["none"] if os.environ.get("BMD_SITE_ENGLISH_ONLY") == "1" else None
     # BMD_SITE_PREVIEW=1: the English pages with their language picker, nothing translated (fast).
     available = sitei18n.localize(OUT, SITE, only, translated=os.environ.get("BMD_SITE_PREVIEW") != "1")
-    # Keep the legacy content available for translation and screenshot maintenance.
-    if os.environ.get("BMD_SITE_KEEP_LEGACY") != "1":
-        publish_legacy_redirects(available)
     finish(available)
     langs = len({c for v in available.values() for c in v})
     print(f"{len(PAGES)} pages in {langs} language(s) -> {OUT}")

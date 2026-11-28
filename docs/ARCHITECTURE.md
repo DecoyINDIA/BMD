@@ -25,7 +25,7 @@ How BMD's pieces fit together.
 | `android/` | — | The native Android app (Kotlin, Jetpack Compose, Room): screens, scheduling, storage publication and encrypted source credentials, over `bmd-android-bridge` ([android/BUILD_AND_RELEASE.md](android/BUILD_AND_RELEASE.md)) |
 | `extension/` | — | The Chromium (MV3) and Firefox extension |
 | `docs/` | — | The user guide and tutorials, this file, the benchmark data; the website makes the guide its help pages, which Help opens |
-| `website/` | — | Legacy website source. `tools/website/build.py` emits redirects to the [canonical Xolver page](https://xolver.in/products/bmd/) where Xolver replaces an entry point, and still builds the detailed guides, news, legal, and technical reference |
+| `website/` | — | bmd.example.com's own pages (home, download, features, themes, FAQ); `tools/website/build.py` adds the help from `docs/` and the news from the CHANGELOG, in 22 languages, and GitHub Pages publishes it |
 
 Dependencies point inward: `app`, `cli` and `remote` use `engine` and `ipc`; `mcp` and `nmhost` use
 only `ipc` (they talk to the running app, never download themselves); `android-bridge` uses only

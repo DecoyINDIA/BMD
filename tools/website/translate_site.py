@@ -153,7 +153,7 @@ Rules:
 # ---- The English site's segments -------------------------------------------------------------------
 
 def build_english() -> None:
-    env = dict(os.environ, BMD_SITE_NO_STATS="1", BMD_SITE_KEEP_LEGACY="1")
+    env = dict(os.environ, BMD_SITE_NO_STATS="1")
     # Only English: the catalogs being translated mustn't decide what the English pages are.
     env["BMD_SITE_ENGLISH_ONLY"] = "1"
     subprocess.run([sys.executable, str(HERE / "build.py")], check=True, env=env,

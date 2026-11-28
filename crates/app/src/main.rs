@@ -108,43 +108,48 @@ pub fn window_builder() -> egui::ViewportBuilder {
 /// The main window's title (dialogs find their owner by it).
 pub const MAIN_TITLE: &str = concat!("BMD ", env!("CARGO_PKG_VERSION"));
 
-/// The Mint Forward mark for the Windows caption and other native window icons.
-pub const WINDOW_ICON_PNG: &[u8] = if cfg!(windows) {
-    include_bytes!("../assets/icons/app/bmd-windows.png")
-} else {
-    include_bytes!("../assets/icons/app/bmd-256.png")
-};
+/// The transparent mark for painted surfaces, in the color that contrasts with the theme.
+pub fn brand_mark() -> egui::ImageSource<'static> {
+    if theme::dark_surface() {
+        egui::include_image!("../assets/icons/app/bmd-48.png")
+    } else {
+        egui::include_image!("../assets/icons/app/bmd-light-48.png")
+    }
+}
 
 /// The system scales this icon for the caption, taskbar and Alt+Tab. On macOS the app bundle
 /// supplies the Dock icon.
 pub fn app_icon() -> std::sync::Arc<egui::IconData> {
+    app_icon_for_surface(theme::dark_surface())
+}
+
+pub fn app_icon_for_surface(dark: bool) -> std::sync::Arc<egui::IconData> {
     if cfg!(target_os = "macos") {
         // eframe takes an empty icon as "none" (AppTitleIconSetter).
         static NONE: std::sync::OnceLock<std::sync::Arc<egui::IconData>> =
             std::sync::OnceLock::new();
         return NONE.get_or_init(Default::default).clone();
     }
-    if cfg!(windows) {
-        static ICON: std::sync::OnceLock<std::sync::Arc<egui::IconData>> =
-            std::sync::OnceLock::new();
-        return ICON
-            .get_or_init(|| {
-                std::sync::Arc::new(
-                    eframe::icon_data::from_png_bytes(WINDOW_ICON_PNG).unwrap_or_default(),
-                )
-            })
-            .clone();
-    }
-    app_picture()
+    app_picture_for_surface(dark)
 }
 
-/// The app icon's picture, the 256 px size, on every system: what BMD draws as a picture (the
-/// crash report window's heading). Not [`app_icon`], empty on macOS. The tray's icon takes the
-/// hand-made size it is drawn at instead (`tray::picture`, #1161).
+/// A 256 px mark for the crash report heading, including on macOS.
 pub fn app_picture() -> std::sync::Arc<egui::IconData> {
-    static ICON: std::sync::OnceLock<std::sync::Arc<egui::IconData>> = std::sync::OnceLock::new();
-    ICON.get_or_init(|| {
-        let png = include_bytes!("../assets/icons/app/bmd-256.png");
+    app_picture_for_surface(theme::dark_surface())
+}
+
+fn app_picture_for_surface(dark: bool) -> std::sync::Arc<egui::IconData> {
+    static DARK: std::sync::OnceLock<std::sync::Arc<egui::IconData>> = std::sync::OnceLock::new();
+    static LIGHT: std::sync::OnceLock<std::sync::Arc<egui::IconData>> = std::sync::OnceLock::new();
+    let (icon, png): (_, &[u8]) = if dark {
+        (&DARK, include_bytes!("../assets/icons/app/bmd-256.png"))
+    } else {
+        (
+            &LIGHT,
+            include_bytes!("../assets/icons/app/bmd-light-256.png"),
+        )
+    };
+    icon.get_or_init(|| {
         std::sync::Arc::new(eframe::icon_data::from_png_bytes(png).unwrap_or_default())
     })
     .clone()
