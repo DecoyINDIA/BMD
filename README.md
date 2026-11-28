@@ -28,7 +28,8 @@
 
 <p align="center">
   <sub>
-    <strong>Windows, Linux and macOS downloads</strong> · <code>winget install DecoyINDIA.BMD</code> ·
+    <strong>Windows, Linux and experimental macOS builds</strong> ·
+    <a href="https://xolver.in/products/bmd/">Official product page</a> ·
     <a href="#download-center">Windows ARM64 / x86 / Portable · Linux (.deb, .rpm, AppImage, Docker) · macOS (Experimental) · Browser Extensions</a> ·
     <a href="https://github.com/DecoyINDIA/BMD/releases/latest">Latest release notes and installers</a>
   </sub>
@@ -386,7 +387,7 @@ Next up in [`ROADMAP.md`](ROADMAP.md): Orca screen-reader & Flatpak native-messa
 Published **2026-11-27** · [Release Notes (`v1.1.0`)](https://github.com/DecoyINDIA/BMD/releases/tag/v1.1.0) · [All Releases](https://github.com/DecoyINDIA/BMD/releases)
 
 ### Windows (Windows 10 / 11)
-Also via WinGet: `winget install DecoyINDIA.BMD`
+For a guided choice, use the [official Xolver Downloads page](https://xolver.in/downloads/). The links below point directly to the published installers.
 
 | Architecture | Installer (Recommended) | Portable Zip (`data/` beside exe) | Raw Zip (`%APPDATA%\bmd`) |
 | :--- | :--- | :--- | :--- |
