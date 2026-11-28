@@ -1709,7 +1709,8 @@ mod tests {
             let file = if page == "README.md" {
                 out.join("help/index.html")
             } else {
-                out.join("help").join(format!("{}.html", page.trim_end_matches(".md")))
+                out.join("help")
+                    .join(format!("{}.html", page.trim_end_matches(".md")))
             };
             let Ok(html) = std::fs::read_to_string(&file) else {
                 panic!("{doc}: legacy help route isn't built ({})", file.display());
