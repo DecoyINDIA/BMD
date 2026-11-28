@@ -1885,11 +1885,14 @@ const MPD = (protect) => `<?xml version="1.0"?>
   ok("#171: the button and the menu read the frame's possible manifests when no stream is known");
 }
 
-// The button's logo is the extension's own icon, kept in video.js as data.
+// The video controls embed the transparent mark in both approved color variants.
 {
   const video = readText("../../extension/video.js");
-  const icon = readFileSync(new URL("../../extension/icons/icon-48.png", import.meta.url)).toString("base64");
-  assert.ok(video.includes(`"data:image/png;base64,${icon}"`), "video.js's LOGO is extension/icons/icon-48.png");
+  const mark = readText("../../art/BMD Black Marlin Icon.svg");
+  for (const [name, svg] of [["LOGO", mark.replaceAll("#C7CAC5", "#354230")], ["LOGO_ON_DARK", mark]]) {
+    assert.ok(!svg.includes("<rect"), "the inline mark has no background");
+    assert.ok(video.includes(`const ${name} = "data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}"`));
+  }
   ok("video button logo");
 }
 
