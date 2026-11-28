@@ -2,14 +2,14 @@
   "schema_version": 1,
   "repository": "DecoyINDIA/BMD",
   "tracking_started_at": "2026-11-26T16:20:48Z",
-  "last_updated_at": "2026-11-27T16:26:19Z",
-  "last_successful_api_sync_at": "2026-11-27T16:26:19Z",
+  "last_updated_at": "2026-11-28T01:17:07Z",
+  "last_successful_api_sync_at": "2026-11-28T01:17:07Z",
   "api_status": "ok",
   "api_error": null,
   "rate_limit": {
-    "remaining": 4864,
+    "remaining": 4997,
     "limit": 5000,
-    "reset_at": "2026-11-27T16:42:45Z"
+    "reset_at": "2026-11-28T02:17:07Z"
   },
   "classification_policy": {
     "product_downloads": "Installers, portable archives, Linux packages (.AppImage, .deb, .rpm, .tar.gz), experimental macOS .dmg, and browser extensions (.zip, .xpi). Zero double-counting.",
@@ -22,17 +22,17 @@
     "watchers": 0,
     "contributors_count": 4,
     "default_branch": "main",
-    "pushed_at": "2026-11-27T16:22:17Z"
+    "pushed_at": "2026-11-27T18:37:52Z"
   },
   "summary": {
-    "release_count": 1,
-    "total_product_downloads": 37,
-    "total_auxiliary_downloads": 19,
-    "total_all_assets": 56,
-    "latest_release_tag": "v1.0.0",
-    "latest_release_published_at": "2026-11-19T16:50:34Z",
-    "latest_release_downloads": 37,
-    "latest_release_all_assets": 56,
+    "release_count": 2,
+    "total_product_downloads": 59,
+    "total_auxiliary_downloads": 32,
+    "total_all_assets": 91,
+    "latest_release_tag": "v1.1.0",
+    "latest_release_published_at": "2026-11-27T17:09:57Z",
+    "latest_release_downloads": 22,
+    "latest_release_all_assets": 35,
     "most_downloaded_release": {
       "tag_name": "v1.0.0",
       "product_downloads": 37,
@@ -40,55 +40,426 @@
     },
     "most_downloaded_platform": {
       "name": "Windows",
-      "downloads": 20
+      "downloads": 29
     },
-    "daily_delta": 10,
+    "daily_delta": 32,
     "weekly_delta": null,
     "monthly_delta": null,
     "delta_notes": {
-      "daily_delta": "Computed from 2026-11-26T16:20:48Z to 2026-11-27T16:26:19Z",
-      "weekly_delta": "Insufficient history (24h recorded; requires >= 7d since tracking started)",
-      "monthly_delta": "Insufficient history (24h recorded; requires >= 30d since tracking started)"
+      "daily_delta": "Computed from 2026-11-26T17:07:02Z to 2026-11-28T01:17:07Z",
+      "weekly_delta": "Insufficient history (32h recorded; requires >= 7d since tracking started)",
+      "monthly_delta": "Insufficient history (32h recorded; requires >= 30d since tracking started)"
     }
   },
   "platforms": [
     {
       "name": "Windows",
-      "downloads": 20,
+      "downloads": 29,
       "category": "downloadable",
-      "share_of_product_pct": 54.05,
-      "share_of_all_assets_pct": 35.71
+      "share_of_product_pct": 49.15,
+      "share_of_all_assets_pct": 31.87
     },
     {
       "name": "Linux",
-      "downloads": 8,
+      "downloads": 16,
       "category": "downloadable",
-      "share_of_product_pct": 21.62,
-      "share_of_all_assets_pct": 14.29
+      "share_of_product_pct": 27.12,
+      "share_of_all_assets_pct": 17.58
     },
     {
       "name": "macOS (Experimental)",
-      "downloads": 2,
+      "downloads": 4,
       "category": "downloadable",
-      "share_of_product_pct": 5.41,
-      "share_of_all_assets_pct": 3.57
+      "share_of_product_pct": 6.78,
+      "share_of_all_assets_pct": 4.4
     },
     {
       "name": "Browser Extensions",
-      "downloads": 7,
+      "downloads": 10,
       "category": "downloadable",
-      "share_of_product_pct": 18.92,
-      "share_of_all_assets_pct": 12.5
+      "share_of_product_pct": 16.95,
+      "share_of_all_assets_pct": 10.99
     },
     {
       "name": "Other / Auxiliary",
-      "downloads": 19,
+      "downloads": 32,
       "category": "auxiliary",
       "share_of_product_pct": 0.0,
-      "share_of_all_assets_pct": 33.93
+      "share_of_all_assets_pct": 35.16
     }
   ],
   "releases": [
+    {
+      "tag_name": "v1.1.0",
+      "name": "BMD v1.1.0",
+      "published_at": "2026-11-27T17:09:57Z",
+      "prerelease": false,
+      "html_url": "https://github.com/DecoyINDIA/BMD/releases/tag/v1.1.0",
+      "product_downloads": 22,
+      "auxiliary_downloads": 13,
+      "all_assets_downloads": 35,
+      "asset_count": 39,
+      "platforms": {
+        "Windows": 9,
+        "Linux": 8,
+        "macOS (Experimental)": 2,
+        "Browser Extensions": 3,
+        "Other / Auxiliary": 13
+      },
+      "assets": [
+        {
+          "name": "SHA256SUMS.txt",
+          "download_count": 2,
+          "size": 3372,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/SHA256SUMS.txt",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-android-SHA256SUMS.txt",
+          "download_count": 1,
+          "size": 89,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-android-SHA256SUMS.txt",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-android.apk",
+          "download_count": 1,
+          "size": 19633287,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-android.apk",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-arm64.zip",
+          "download_count": 1,
+          "size": 24175303,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-arm64.zip",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Windows"
+        },
+        {
+          "name": "BMD-1.1.0-chrome-web-store.zip",
+          "download_count": 1,
+          "size": 454304,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-chrome-web-store.zip",
+          "category": "downloadable",
+          "kind": "browser_extension",
+          "platform": "Browser Extensions"
+        },
+        {
+          "name": "BMD-1.1.0-extension-chromium.zip",
+          "download_count": 1,
+          "size": 455689,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-extension-chromium.zip",
+          "category": "downloadable",
+          "kind": "browser_extension",
+          "platform": "Browser Extensions"
+        },
+        {
+          "name": "BMD-1.1.0-extension-firefox.xpi",
+          "download_count": 1,
+          "size": 456934,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-extension-firefox.xpi",
+          "category": "downloadable",
+          "kind": "browser_extension",
+          "platform": "Browser Extensions"
+        },
+        {
+          "name": "BMD-1.1.0-linux-arm64.AppImage",
+          "download_count": 1,
+          "size": 23714312,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-arm64.AppImage",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Linux"
+        },
+        {
+          "name": "BMD-1.1.0-linux-arm64.AppImage.zsync",
+          "download_count": 1,
+          "size": 81291,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-arm64.AppImage.zsync",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-linux-arm64.deb",
+          "download_count": 1,
+          "size": 20304838,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-arm64.deb",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Linux"
+        },
+        {
+          "name": "BMD-1.1.0-linux-arm64.rpm",
+          "download_count": 1,
+          "size": 24448458,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-arm64.rpm",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Linux"
+        },
+        {
+          "name": "BMD-1.1.0-linux-arm64.tar.gz",
+          "download_count": 1,
+          "size": 24464760,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-arm64.tar.gz",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Linux"
+        },
+        {
+          "name": "BMD-1.1.0-linux-x86_64.AppImage",
+          "download_count": 1,
+          "size": 24898040,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-x86_64.AppImage",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Linux"
+        },
+        {
+          "name": "BMD-1.1.0-linux-x86_64.AppImage.zsync",
+          "download_count": 1,
+          "size": 85339,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-x86_64.AppImage.zsync",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-linux-x86_64.deb",
+          "download_count": 1,
+          "size": 21164580,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-x86_64.deb",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Linux"
+        },
+        {
+          "name": "BMD-1.1.0-linux-x86_64.rpm",
+          "download_count": 1,
+          "size": 25752007,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-x86_64.rpm",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Linux"
+        },
+        {
+          "name": "BMD-1.1.0-linux-x86_64.tar.gz",
+          "download_count": 1,
+          "size": 25829039,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-linux-x86_64.tar.gz",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Linux"
+        },
+        {
+          "name": "BMD-1.1.0-macos-arm64-experimental.dmg",
+          "download_count": 1,
+          "size": 18269463,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-macos-arm64-experimental.dmg",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "macOS (Experimental)"
+        },
+        {
+          "name": "BMD-1.1.0-macos-x86_64-experimental.dmg",
+          "download_count": 1,
+          "size": 20777860,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-macos-x86_64-experimental.dmg",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "macOS (Experimental)"
+        },
+        {
+          "name": "BMD-1.1.0-portable-arm64.zip",
+          "download_count": 1,
+          "size": 24176963,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-portable-arm64.zip",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Windows"
+        },
+        {
+          "name": "BMD-1.1.0-portable-x86.zip",
+          "download_count": 1,
+          "size": 24268263,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-portable-x86.zip",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Windows"
+        },
+        {
+          "name": "BMD-1.1.0-portable.zip",
+          "download_count": 1,
+          "size": 25711152,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-portable.zip",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Windows"
+        },
+        {
+          "name": "BMD-1.1.0-setup-arm64.exe",
+          "download_count": 1,
+          "size": 19204523,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-setup-arm64.exe",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Windows"
+        },
+        {
+          "name": "BMD-1.1.0-setup-x86.exe",
+          "download_count": 1,
+          "size": 19792226,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-setup-x86.exe",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Windows"
+        },
+        {
+          "name": "BMD-1.1.0-setup.exe",
+          "download_count": 1,
+          "size": 20473305,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-setup.exe",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Windows"
+        },
+        {
+          "name": "BMD-1.1.0-symbols-linux-arm64.zip",
+          "download_count": 1,
+          "size": 5328941,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-symbols-linux-arm64.zip",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-symbols-linux-x86_64.zip",
+          "download_count": 1,
+          "size": 6169355,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-symbols-linux-x86_64.zip",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-symbols-macos-arm64.zip",
+          "download_count": 1,
+          "size": 2902531,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-symbols-macos-arm64.zip",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-symbols-macos-x86_64.zip",
+          "download_count": 1,
+          "size": 3109112,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-symbols-macos-x86_64.zip",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-symbols-windows-arm64.zip",
+          "download_count": 1,
+          "size": 6141178,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-symbols-windows-arm64.zip",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-symbols-windows-x64.zip",
+          "download_count": 1,
+          "size": 4499603,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-symbols-windows-x64.zip",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-symbols-windows-x86.zip",
+          "download_count": 1,
+          "size": 5524108,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-symbols-windows-x86.zip",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "BMD-1.1.0-x64.zip",
+          "download_count": 1,
+          "size": 25710104,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-x64.zip",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Windows"
+        },
+        {
+          "name": "BMD-1.1.0-x86.zip",
+          "download_count": 1,
+          "size": 24266607,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/BMD-1.1.0-x86.zip",
+          "category": "downloadable",
+          "kind": "installer_or_package",
+          "platform": "Windows"
+        },
+        {
+          "name": "LICENSE-flag-icons",
+          "download_count": 0,
+          "size": 1087,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/LICENSE-flag-icons",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "SOURCE.txt",
+          "download_count": 0,
+          "size": 417,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/SOURCE.txt",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "countries.txt",
+          "download_count": 0,
+          "size": 750,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/countries.txt",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "flags.png",
+          "download_count": 0,
+          "size": 95142,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/flags.png",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        },
+        {
+          "name": "ipcountry.bin.xz",
+          "download_count": 0,
+          "size": 674264,
+          "browser_download_url": "https://github.com/DecoyINDIA/BMD/releases/download/v1.1.0/ipcountry.bin.xz",
+          "category": "auxiliary",
+          "kind": "auxiliary",
+          "platform": "Other / Auxiliary"
+        }
+      ]
+    },
     {
       "tag_name": "v1.0.0",
       "name": "BMD v1.0.0",
@@ -532,6 +903,25 @@
         "Linux": 8,
         "macOS (Experimental)": 2,
         "Browser Extensions": 7
+      }
+    },
+    {
+      "timestamp": "2026-11-28T01:17:07Z",
+      "total_product_downloads": 59,
+      "total_all_assets": 91,
+      "stars": 0,
+      "forks": 0,
+      "open_issues": 1,
+      "release_count": 2,
+      "per_release_product": {
+        "v1.1.0": 22,
+        "v1.0.0": 37
+      },
+      "per_platform_product": {
+        "Windows": 29,
+        "Linux": 16,
+        "macOS (Experimental)": 4,
+        "Browser Extensions": 10
       }
     }
   ],
