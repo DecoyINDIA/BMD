@@ -115,6 +115,10 @@
 }
 :root[data-theme="dark"] .for-light, :root[data-theme="dark"] .for-light-i { display: none; }
 :root[data-theme="dark"] .for-dark, :root[data-theme="dark"] .for-dark-i { display: block; }
+:root[data-theme="dark"] img[src="/assets/logo-64.png"] { content: url("/assets/logo-64-dark.png"); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) img[src="/assets/logo-64.png"] { content: url("/assets/logo-64-dark.png"); }
+}
 [hidden] { display: none !important; }
 
 /* ---- Base -------------------------------------------------------------------------------------- */
