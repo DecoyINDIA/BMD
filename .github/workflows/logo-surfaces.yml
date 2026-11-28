@@ -1,0 +1,71 @@
+name: Verify logo surfaces
+on:
+  push:
+    branches: [verify/logo-surfaces]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Download PR Android build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download 46117831673 -n android-build-6e3101234baf88a88bd4c8b838874aacb7c12552 -D artifacts
+      - name: Launch Android emulator and capture app drawer
+        run: |
+          sdkmanager "platform-tools" "emulator" "system-images;android-36;google_apis;x86_64"
+          export ANDROID_USER_HOME="$RUNNER_TEMP/android" ANDROID_AVD_HOME="$RUNNER_TEMP/android/avd"
+          mkdir -p "$ANDROID_AVD_HOME" evidence
+          echo no | avdmanager create avd -n logo -k "system-images;android-36;google_apis;x86_64" --device pixel_2 --force
+          sudo chmod a+rw /dev/kvm
+          "$ANDROID_HOME/emulator/emulator" -avd logo -memory 3072 -no-window -no-audio -no-snapshot -gpu swiftshader_indirect -no-boot-anim > evidence/emulator.log 2>&1 &
+          timeout 300 adb wait-for-device
+          timeout 300 bash -c 'until adb shell getprop sys.boot_completed | tr -d "\r" | grep -qx 1; do sleep 2; done'
+          adb install -r artifacts/outputs/apk/debug/app-debug.apk
+          adb shell input keyevent 82
+          adb shell cmd uimode night no
+          adb shell am start -a android.intent.action.MAIN -c android.intent.category.HOME
+          sleep 5
+          adb shell input swipe 350 1200 350 300 500
+          sleep 4
+          adb shell screencap -p /sdcard/light.png
+          adb pull /sdcard/light.png evidence/launcher-light.png
+          adb shell cmd uimode night yes
+          sleep 5
+          adb shell screencap -p /sdcard/dark.png
+          adb pull /sdcard/dark.png evidence/launcher-dark.png
+          adb shell uiautomator dump /sdcard/launcher.xml
+          adb pull /sdcard/launcher.xml evidence/launcher.xml
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: logo-android-launcher
+          path: evidence
+  macos:
+    runs-on: macos-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Build macOS installer
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash tools/installer/build-macos.sh
+      - name: Inspect installer icon
+        run: |
+          mkdir -p evidence
+          dmg=$(find target/dist -name '*arm64*.dmg' -print -quit)
+          hdiutil attach "$dmg" -nobrowse -mountpoint "$RUNNER_TEMP/bmd-mount"
+          ditto "$RUNNER_TEMP/bmd-mount/BMD.app/Contents/Resources/AppIcon.icns" evidence/AppIcon.icns
+          iconutil -c iconset evidence/AppIcon.icns -o evidence/icon.iconset
+          plutil -extract CFBundleIconFile raw "$RUNNER_TEMP/bmd-mount/BMD.app/Contents/Info.plist" | tee evidence/icon-name.txt
+          test "$(cat evidence/icon-name.txt)" = AppIcon
+          hdiutil detach "$RUNNER_TEMP/bmd-mount"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: logo-macos-installer
+          path: evidence
