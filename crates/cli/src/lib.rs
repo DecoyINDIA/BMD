@@ -21,7 +21,7 @@ use serde_json::json;
     about = "BMD command line",
     long_about = "BMD command line: downloads, videos and torrents without the \
                   window, and the running app's automation API. Guide: \
-                  https://bmd.example.com/help/command-line.html"
+                  https://github.com/DecoyINDIA/BMD/blob/main/docs/command-line.md"
 )]
 struct Cli {
     /// Print JSON for programs: one object per line (`progress` events, then `done`, `paused`
@@ -622,7 +622,7 @@ pub const FLAG: &str = "--cli";
 /// section on installing one.
 fn js_runtime_note() -> String {
     "YouTube needs a JavaScript runtime to list its video qualities: install Node.js or Deno, \
-     then look it up again (https://bmd.example.com/help/video.html#javascript-runtime)"
+     then look it up again (https://github.com/DecoyINDIA/BMD/blob/main/docs/video.md#javascript-runtime)"
         .into()
 }
 

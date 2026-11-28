@@ -24,64 +24,27 @@ pub const CHECK_EVERY: i64 = 24 * 3600;
 /// The check at start waits this long (the window, the list and the downloads first).
 pub const CHECK_AFTER_START: std::time::Duration = std::time::Duration::from_secs(5);
 
-/// The official website: the home page and the user guide, docs/*.md made into pages by
-/// tools/website/build.py. GitHub (REPO) keeps what is GitHub's: issues, releases, the source.
-/// A placeholder (example.com is reserved) until BMD has a domain: the same as build.py's SITE.
-pub const SITE: &str = "https://bmd.example.com";
+/// The public home for product information, downloads and first-line help.
+pub const SITE: &str = "https://xolver.in/products/bmd/";
 
-/// The website's languages besides English, its folders (`/de/help/`): tools/website/sitei18n.py's
-/// LANGS, which a test keeps this list equal to. English is at the root.
-const SITE_LANGS: &[&str] = &[
-    "es", "pt-br", "pt", "fr", "de", "ru", "ar", "zh-hans", "ja", "ko", "tr", "it", "id", "vi",
-    "hi", "fa", "pl", "uk", "nl", "th", "bn",
-];
-
-/// The website's folder for the interface language `code` (a catalog's code: `de`, `pt-br`,
-/// `es-mx`…): the language itself, else its base language (`es-mx` reads `/es/`, `fr-ca`
-/// `/fr/`), else none, English. `zh-hant` stays English: the site has Simplified Chinese only.
-fn site_lang(code: &str) -> Option<&'static str> {
-    let code = code.to_ascii_lowercase();
-    let base = code.split(['-', '_']).next().unwrap_or_default();
-    SITE_LANGS
-        .iter()
-        .find(|l| **l == code)
-        .or_else(|| SITE_LANGS.iter().find(|l| **l == base))
-        .copied()
+/// A guide filename and optional heading, as passed by the Help menu and app dialogs.
+/// Xolver covers the entry points. Use the maintained GitHub guide for specific topics and
+/// headings that haven't been migrated, so contextual links still take the reader to the answer.
+pub fn page_url(doc: &str) -> String {
+    match doc {
+        "" => SITE.to_owned(),
+        "README.md" | "README.md#tutorials" => format!("{SITE}#help"),
+        "getting-started.md" => format!("{SITE}#install"),
+        "browser-integration.md" => format!("{SITE}#browser-integration"),
+        "troubleshooting.md" => format!("{SITE}#troubleshooting"),
+        _ => format!("{REPO}/blob/main/docs/{doc}"),
+    }
 }
 
-/// The website's address of a user guide page in the language `lang` (an interface language
-/// code): `doc` is the page's file in docs/ with an optional section (`"video.md"`,
-/// `"README.md#tutorials"`; the guide's contents are README.md), `""` the home page. The mapping
-/// is build.py's: docs/README.md is /help/, docs/<page>.md /help/<page>.html.
-pub fn page_url(doc: &str, lang: &str) -> String {
-    let (file, anchor) = match doc.split_once('#') {
-        Some((file, anchor)) => (file, format!("#{anchor}")),
-        None => (doc, String::new()),
-    };
-    let path = match file {
-        "" => return REPO.to_owned(),
-        "README.md" => "/help/".to_owned(),
-        page => format!("/help/{}.html", page.strip_suffix(".md").unwrap_or(page)),
-    };
-    let folder = site_lang(lang).map(|l| format!("/{l}")).unwrap_or_default();
-    format!("{SITE}{folder}{path}{anchor}")
-}
-
-/// The website's page that thanks everyone who sent a pull request, opened an issue or joined a
-/// conversation (About's **Contributors**), in the language `lang` when the site has it. Not a
-/// guide page: [`page_url`] would map it under `/help/`.
-fn contributors_page(lang: &str) -> String {
-    let folder = site_lang(lang).map(|l| format!("/{l}")).unwrap_or_default();
-    format!("{SITE}{folder}/contributors.html")
-}
-
-/// Open a page of the user guide on the website, in the interface language when the site has
-/// it (`doc` as page_url takes it: `"video.md"`, `"README.md#tutorials"`, `""` the home page).
-/// Never in an off-screen test run (BMD_OFFSCREEN), whose clicks come from scripts, not from a
-/// person at the browser.
+/// Open public help on request only. Off-screen test runs do not launch a browser.
 pub fn open_page(doc: &str) {
     if !crate::offscreen() {
-        crate::launch::open(page_url(doc, crate::i18n::code()));
+        crate::launch::open(page_url(doc));
     }
 }
 
@@ -937,12 +900,11 @@ impl About {
                 if winui::link(ui, &p, source.0, source.1, "Source code", "source") {
                     crate::launch::open(REPO);
                 }
-                // Who sent the pull requests, opened the issues and joined the conversations: the
-                // website builds the list from GitHub at every build, so it is never stale.
+                // The contribution history lives with the source repository.
                 if winui::link(ui, &p, people.0, people.1, "Contributors", "contributors")
                     && !crate::offscreen()
                 {
-                    crate::launch::open(contributors_page(crate::i18n::code()));
+                    crate::launch::open(format!("{REPO}/graphs/contributors"));
                 }
                 if winui::link(
                     ui,
@@ -1624,86 +1586,30 @@ mod tests {
     }
 
     #[test]
-    fn help_pages_are_the_websites_in_the_interface_language() {
-        let at = |doc, lang| page_url(doc, lang);
-        assert_eq!(at("README.md", "en"), "https://bmd.example.com/help/");
-        assert_eq!(
-            at("README.md#tutorials", "en"),
-            "https://bmd.example.com/help/#tutorials"
-        );
-        assert_eq!(
-            at("video.md", "de"),
-            "https://bmd.example.com/de/help/video.html"
-        );
-        assert_eq!(
-            at("queues-and-scheduler.md#the-scheduler-window", "ar"),
-            "https://bmd.example.com/ar/help/queues-and-scheduler.html#the-scheduler-window"
-        );
-        assert_eq!(at("", "fr"), REPO);
-        assert_eq!(at("", "en"), REPO);
-        // The site's folders: its own codes, a region read as its language, else English.
-        for (lang, folder) in [
-            ("pt-br", "/pt-br"),
-            ("pt", "/pt"),
-            ("zh-hans", "/zh-hans"),
-            ("es-mx", "/es"),
-            ("fr-ca", "/fr"),
-            ("zh-hant", ""),
-            ("sv", ""),
-            ("ca-es-valencia", ""),
-            ("he", ""),
-            ("", ""),
+    fn help_keeps_product_entry_points_and_contextual_guide_links() {
+        assert_eq!(page_url(""), SITE);
+        for (doc, anchor) in [
+            ("README.md", "help"),
+            ("README.md#tutorials", "help"),
+            ("getting-started.md", "install"),
+            ("browser-integration.md", "browser-integration"),
+            ("troubleshooting.md", "troubleshooting"),
         ] {
-            assert_eq!(
-                at("options.md", lang),
-                format!("https://bmd.example.com{folder}/help/options.html"),
-                "{lang}"
-            );
+            assert_eq!(page_url(doc), format!("{SITE}#{anchor}"));
+        }
+        for doc in [
+            "video.md#javascript-runtime",
+            "queues-and-scheduler.md#the-scheduler-window",
+            "options.md",
+            "browser-help.md#not-installed",
+        ] {
+            assert_eq!(page_url(doc), format!("{REPO}/blob/main/docs/{doc}"));
         }
     }
 
     /// The repository's root.
     fn root() -> std::path::PathBuf {
         std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../..")
-    }
-
-    #[test]
-    fn the_site_languages_are_the_websites() {
-        // tools/website/sitei18n.py: `LANGS = [` then one `("code", …),` per language.
-        let py = std::fs::read_to_string(root().join("tools/website/sitei18n.py")).unwrap();
-        let list = py.split("\nLANGS = [").nth(1).unwrap();
-        let codes: Vec<&str> = list
-            .split("\n]")
-            .next()
-            .unwrap()
-            .lines()
-            .filter_map(|l| l.trim().strip_prefix("(\"")?.split('"').next())
-            .collect();
-        assert_eq!(codes, SITE_LANGS);
-    }
-
-    #[test]
-    fn the_contributors_page_is_the_websites_in_every_language() {
-        // English is at the root (SITE_LANGS leaves it out); the others get their folder, as
-        // page_url's pages do.
-        assert_eq!(
-            contributors_page("en"),
-            "https://bmd.example.com/contributors.html"
-        );
-        assert_eq!(
-            contributors_page("de"),
-            "https://bmd.example.com/de/contributors.html"
-        );
-        // A regional code reads its base language.
-        assert_eq!(
-            contributors_page("es-mx"),
-            "https://bmd.example.com/es/contributors.html"
-        );
-        // The site has Simplified Chinese only.
-        assert_eq!(
-            contributors_page("zh-hant"),
-            "https://bmd.example.com/contributors.html"
-        );
     }
 
     /// Every user guide page the program links to (`doc` as page_url takes it): the literal
@@ -1717,8 +1623,10 @@ mod tests {
             docs.push(bmd_ipc::extension::help_doc(why));
         }
         let calls = regex::Regex::new(r#"(?:open_page|HelpPage)\(\s*"([^"]+)""#).unwrap();
-        let site =
-            regex::Regex::new(r"https://bmd\.example\.com/help/([\w.-]*)(#[\w-]+)?").unwrap();
+        let site = regex::Regex::new(
+            r"https://github\.com/DecoyINDIA/BMD/blob/main/docs/([\w.-]+\.md)(#[\w-]+)?",
+        )
+        .unwrap();
         let mut files = vec![];
         let mut dirs = vec![root().join("crates"), root().join("extension")];
         while let Some(dir) = dirs.pop() {
@@ -1738,11 +1646,7 @@ mod tests {
                 docs.extend(calls.captures_iter(&text).map(|c| c[1].to_owned()));
             }
             for c in site.captures_iter(&text) {
-                let page = match &c[1] {
-                    "" => "README.md".to_owned(),
-                    p => format!("{}.md", p.strip_suffix(".html").unwrap_or(p)),
-                };
-                docs.push(format!("{page}{}", c.get(2).map_or("", |a| a.as_str())));
+                docs.push(format!("{}{}", &c[1], c.get(2).map_or("", |a| a.as_str())));
             }
         }
         docs.sort();
@@ -1800,21 +1704,24 @@ mod tests {
     fn linked_help_pages_are_on_the_built_site() {
         let out = std::path::PathBuf::from(std::env::var("BMD_SITE_DIR").expect("BMD_SITE_DIR"));
         for doc in linked_docs() {
-            let url = page_url(&doc, "en");
-            let path = url.strip_prefix(SITE).unwrap();
-            let (path, anchor) = path.split_once('#').unwrap_or((path, ""));
-            let mut file = out.join(path.trim_start_matches('/'));
-            if path.ends_with('/') {
-                file.push("index.html");
-            }
-            let Ok(html) = std::fs::read_to_string(&file) else {
-                panic!("{doc}: {url} isn't built ({})", file.display());
+            let url = page_url(&doc);
+            let (page, anchor) = doc.split_once('#').unwrap_or((&doc, ""));
+            let file = if page == "README.md" {
+                out.join("help/index.html")
+            } else {
+                out.join("help")
+                    .join(format!("{}.html", page.trim_end_matches(".md")))
             };
-            if !anchor.is_empty() {
+            let Ok(html) = std::fs::read_to_string(&file) else {
+                panic!("{doc}: legacy help route isn't built ({})", file.display());
+            };
+            if url.starts_with(SITE) {
+                let canonical = format!("rel=\"canonical\" href=\"{url}\"");
+                assert!(html.contains(&canonical), "{doc}: no redirect to {url}");
+            } else if !anchor.is_empty() {
                 let id = format!("id=\"{anchor}\"");
-                assert!(html.contains(&id), "{doc}: {url} has no #{anchor}");
+                assert!(html.contains(&id), "{doc}: legacy guide has no #{anchor}");
             }
-            println!("{doc} -> {url}: ok");
         }
     }
 }
