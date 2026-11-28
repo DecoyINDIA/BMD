@@ -2443,7 +2443,7 @@ const CASES = {
     const log = path.join(data, "logs", "bmd.log");
     const from = fs.existsSync(log) ? fs.statSync(log).size : 0;
     const label = "Download all links with BMD";
-    const help = "https://bmd.example.com/help/browser-help.html";
+    const help = "https://github.com/DecoyINDIA/BMD/blob/main/docs/browser-help.md";
     // The tabs open now (the help page's, when the extension explains a failure).
     const tabs = () =>
       t.kind === "chromium"
