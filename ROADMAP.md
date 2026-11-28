@@ -33,6 +33,7 @@ Everything below ships together, in version 0.5.0.
   125 %
 - ✅ Windows: sharp, evenly spaced text at every interface size: letters no longer run together
   or drift apart
+- ✅ The automatic update check runs at startup and hourly (was daily), offers each version once per session, and its switch reads **Check for updates automatically**
 - ✅ Linux: Update now asks the package manager which package BMD is; a copy installed by
   another package manager (pacman) is left to the system's updates, with a plain message
 - ✅ The README opens with **Try our application**, a link straight to the Windows setup file, and the website's Download button links to it before any script runs (the README's link names the version: update it with each release)

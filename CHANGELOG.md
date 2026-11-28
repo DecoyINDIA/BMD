@@ -5,6 +5,10 @@ Each release's notes on GitHub come from its section here (`## [X.Y.Z]`, see
 
 ## [Unreleased]
 
+### Changed
+
+- **Updates are checked hourly:** BMD looks for a new version a few seconds after it starts and once an hour while it runs (it was once a day). The update window opens in front once per version in a session. The switch in **Help → Check for updates** is now **Check for updates automatically**, and turning it off stops the automatic check.
+
 ## [1.1.0] - 2026-11-27
 
 ### Added
