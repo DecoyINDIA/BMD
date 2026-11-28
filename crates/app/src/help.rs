@@ -852,11 +852,8 @@ impl About {
             |ui, o| {
                 let p = ui.painter().clone();
                 let ink = winui::TEXT();
-                egui::Image::from_bytes(
-                    "bytes://bmd-48.png",
-                    include_bytes!("../assets/icons/app/bmd-48.png"),
-                )
-                .paint_at(ui, winui::r(o, 16.0, 16.0, 48.0, 48.0));
+                egui::Image::new(crate::brand_mark())
+                    .paint_at(ui, winui::r(o, 16.0, 16.0, 48.0, 48.0));
                 winui::text(&p, o.x + 80.0, o.y + 28.0, crate::i18n::t("BMD"), ink);
                 let version = crate::i18n::fmt(
                     crate::i18n::t("Version {version} ({commit})"),

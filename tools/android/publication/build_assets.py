@@ -47,8 +47,7 @@ def main():
     icon = out / "black-marlin-store-icon.svg"
     icon.write_text(f'''<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 {width} {height}">
   <title>Black Marlin launcher artwork</title>
-  <desc>Launcher artwork on the opaque store tile. The mark's paths and colors are unchanged.</desc>
-  <rect width="{width}" height="{height}" fill="#354230"/>
+  <desc>Transparent launcher artwork. The mark's paths and colors are unchanged.</desc>
 {markup}
 </svg>
 ''', encoding="utf-8")
@@ -82,7 +81,7 @@ def main():
         with Image.open(png) as image:
             assert image.size == dimensions and image.mode == mode
             if mode == "RGBA":
-                assert image.getchannel("A").getextrema() == (255, 255)
+                assert image.getchannel("A").getextrema() == (0, 255)
                 assert png.stat().st_size <= 1024 * 1024
         outputs.append({"svg": svg.name, "png": png.name, "dimensions": dimensions, "mode": mode,
             "pngBytes": png.stat().st_size, "pngSha256": digest(png), "svgSha256": digest(svg), "status": "draft-for-review"})
