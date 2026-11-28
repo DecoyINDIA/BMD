@@ -274,7 +274,7 @@ pub fn banner(
     // `r` gives the rect where it is on screen (mirrored in RTL): the logo at the start side.
     p.rect_filled(r(o, 0.0, 0.0, w, h), 0.0, FIELD());
     fill_l(p, o.x, o.y + h, o.x + w - 1.0, o.y + h, FIELD_EDGE());
-    egui::Image::new(egui::include_image!("../assets/icons/app/bmd-48.png"))
+    egui::Image::new(crate::brand_mark())
         .paint_at(ui, r(o, 18.0, 18.0, 48.0, 48.0));
     // The headline on one line: cut with "..." at the far edge (a long translation), whole on
     // hover.
@@ -6906,7 +6906,7 @@ pub mod caption {
             } else {
                 pos2(rect.left() + 16.0, rect.center().y)
             };
-            egui::Image::from_bytes("bytes://bmd/window-icon.png", crate::WINDOW_ICON_PNG)
+            egui::Image::new(crate::brand_mark())
                 .paint_at(ui, Rect::from_center_size(icon_c.round(), vec2(16.0, 16.0)));
         }
         let font = if st.bold {

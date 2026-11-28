@@ -31,10 +31,13 @@ def save_ico(path: Path, sizes: list[int], icons: dict[int, Image.Image]) -> Non
 
 def main() -> None:
     src = Image.open(SRC).convert("RGBA")
+    light = Image.open(LIGHT_SRC).convert("RGBA")
     icons = {s: src.resize((s, s), Image.LANCZOS) for s in SIZES}
     for size in SIZES:
         icons[size].save(APP / f"bmd-{size}.png")
     icons[256].save(APP / "bmd-windows.png")
+    for size in (48, 256):
+        light.resize((size, size), Image.LANCZOS).save(APP / f"bmd-light-{size}.png")
     save_ico(APP / "bmd.ico", SIZES, icons)
     for size in (16, 32, 48, 128):
         icons[size].save(EXT / f"icon-{size}.png")
@@ -56,7 +59,6 @@ def main() -> None:
     save_ico(WEB / "favicon.ico", FAVICON_SIZES, icons)
     assets = WEB / "assets"
     icons[32].save(assets / "favicon-32.png")
-    light = Image.open(LIGHT_SRC).convert("RGBA")
     light.resize((64, 64), Image.LANCZOS).save(assets / "logo-64.png")
     icons[64].save(assets / "logo-64-dark.png")
     icons[256].save(assets / "logo-256.webp", lossless=True)
