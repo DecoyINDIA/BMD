@@ -1320,7 +1320,8 @@ These ship in a later version, when they're ready.
 - 🔄 **BMD for Android**: the native app over the desktop's engine (direct HTTP and HTTPS,
   share and paste, pause and resume, SHA-256 check, saving to Downloads or a chosen folder),
   built and tested in CI on Android 8.0 and 16 emulators; done since: waiting instead of failing
-  when Android 12 and 13 stop a background resume, and bounding very large shared texts; still to do
+  when Android 12 and 13 stop a background resume, bounding very large shared texts, and the
+  Quick Download widget filling its box with a link you copied when you tap it; still to do
   before a store release: dependable optimized-release checks on 16 KiB-page Android, checking
   the background resume on Android 12 and 13 devices, its translations, more Android versions and
   real phones, and its store listing
