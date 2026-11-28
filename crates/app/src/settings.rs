@@ -344,10 +344,9 @@ pub struct Settings {
     pub torrent_stop_ratio: u32,
     pub torrent_stop_minutes_on: bool,
     pub torrent_stop_minutes: u32,
-    /// Help: look for a newer release once a week (D-020; its switch is in Check for updates:
-    /// Options → General has no free row in IDM's layout).
+    /// Look for new releases automatically (Help → Check for updates).
     pub update_check: bool,
-    /// When the weekly check last ran (Unix seconds; 0: never).
+    /// When the automatic check last ran (Unix seconds; 0: never).
     pub update_checked: i64,
     /// The user's categories (D-021), after IDM's and Torrents.
     pub custom_categories: Vec<crate::model::CustomCategory>,

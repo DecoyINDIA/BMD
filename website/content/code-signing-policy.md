@@ -31,7 +31,7 @@ Whatever the signature, you can still check every download against the release's
 BMD has no telemetry, no analytics and no ads, and it sends nothing about you to us. It connects to other systems only for these:
 
 - **What you ask for:** the servers you download from, torrent peers and trackers, and the services you turn on yourself, such as a proxy, a DNS or a debrid account.
-- **Updates:** when it starts, and once a day while it stays open, BMD asks GitHub for its latest version. You can turn this off in **Help → Check for updates** (**Check for updates at every start**).
+- **Updates:** when it starts, and once an hour while it stays open, BMD asks GitHub for its latest version. You can turn this off in **Help → Check for updates** (**Check for updates automatically**).
 - **Helpers you install:** yt-dlp and ffmpeg (and gallery-dl) come from their official releases when you choose to install them, and yt-dlp is kept up to date when you download videos.
 - **Crash reports:** after a crash, the report window may fetch that version's debugging symbols from BMD's GitHub release and ask GitHub whether the same problem was reported already. The report itself opens in your browser, on GitHub, only if you choose to send it.
 

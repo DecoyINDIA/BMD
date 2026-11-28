@@ -182,7 +182,7 @@ A few settings live outside this window:
 - **Downloads → Speed Limiter → Settings...** — speed limits. See [Connections and speed](connections-and-speed.md#speed-limiter).
 - **Tasks → Torrent settings...** — sharing and file associations, and whether the browser hands `.torrent` downloads to BMD. See [Torrents](torrents.md#torrent-settings).
 - **View → Appearance**, **Draw with**, **Interface size** and **Language**. See [Getting started](getting-started.md#light-and-dark) and [Troubleshooting](troubleshooting.md).
-- **Help → Check for updates...** — **Check for updates at every start** is in that window.
+- **Help → Check for updates...** — **Check for updates automatically** is in that window.
 
 ## Next steps
 

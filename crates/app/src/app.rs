@@ -1258,8 +1258,10 @@ pub struct App {
     /// The browser extension's offer (extension.rs), and whether this run has weighed it.
     extension: Option<crate::extension::Extension>,
     extension_weighed: bool,
-    /// The weekly update check, while it runs.
+    /// The automatic update check, while it runs.
     auto_update: Option<crate::help::Slot>,
+    /// The last version offered automatically during this session.
+    update_offered_this_run: Option<String>,
     /// The automatic check found a new version: its window comes to the front once shown.
     raise_updates: bool,
     /// Options was asked for from outside (the extension's Button settings..., `/show`): it comes
@@ -2034,6 +2036,7 @@ impl App {
             extension: None,
             extension_weighed: false,
             auto_update: None,
+            update_offered_this_run: None,
             raise_updates: false,
             raise_options: false,
             started: Instant::now(),
@@ -11177,11 +11180,8 @@ impl App {
         self.dirty = true;
     }
 
-    /// IDM looks for a new version once a week; so do we (off: the switch in Check for updates). Found: the
-    /// update window says so; otherwise nothing shows.
-    /// The automatic update check: a few seconds after every start, then once a day while BMD
-    /// runs (it was at most once a week). A new version's window comes to the front, as apps
-    /// announce theirs. Not in off-screen test runs (their windows stay as asked).
+    /// Check shortly after startup and hourly while BMD runs. Bring each new version's
+    /// update window to the front once per session.
     fn auto_update_check(&mut self, ctx: &egui::Context) {
         let now = chrono::Utc::now().timestamp();
         let first = self.update_checked_this_run.is_none()
@@ -11224,8 +11224,12 @@ impl App {
             .and_then(|s| s.lock().unwrap().take());
         if let Some(res) = done {
             self.auto_update = None;
-            if let (Ok(crate::help::Found::Newer(rel)), None) = (res, &self.updates) {
+            if self.settings.update_check
+                && let (Ok(crate::help::Found::Newer(rel)), None) = (res, &self.updates)
+                && self.update_offered_this_run.as_deref() != Some(rel.version.as_str())
+            {
                 tracing::info!("update available: {}", rel.version);
+                self.update_offered_this_run = Some(rel.version.clone());
                 self.updates = Some(crate::help::Updates::found(rel));
                 self.raise_updates = true;
             }
@@ -11304,10 +11308,10 @@ impl App {
         {
             self.about = None;
         }
-        let mut weekly = self.settings.update_check;
+        let mut automatic = self.settings.update_check;
         let mut close_for_update = false;
         if let Some(d) = &mut self.updates {
-            match d.show(ctx, &self.rt, &mut weekly) {
+            match d.show(ctx, &self.rt, &mut automatic) {
                 Outcome::Open => {}
                 // Update now: the new copy is going in place; BMD saves and closes for it.
                 Outcome::Done(true) => {
@@ -11320,8 +11324,8 @@ impl App {
         if close_for_update {
             self.run(Cmd::Exit, None, ctx);
         }
-        if weekly != self.settings.update_check {
-            self.settings.update_check = weekly;
+        if automatic != self.settings.update_check {
+            self.settings.update_check = automatic;
             self.dirty = true;
         }
         if let Some(d) = &mut self.shortcuts

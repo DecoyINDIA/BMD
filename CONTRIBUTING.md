@@ -53,6 +53,14 @@ Keep changes focused and match the code around them. A few rules hold everywhere
 - **Fix causes, not cases**, and keep producers and consumers of shared data (the download list,
   the browser extension's messages, the catalogs) in step.
 
+## Delivering desktop updates
+
+Set the new version in `Cargo.toml`, then push a matching `vX.Y.Z` tag. The
+[release workflow](.github/workflows/release.yml) builds the installers and publishes them with
+`SHA256SUMS.txt` as the latest BMD release on GitHub. Installed desktop copies detect the release
+on their next automatic check. Users can choose **Update now** in BMD to download and install
+the update.
+
 ## Fuzzing
 
 The parsers that read what servers, web pages and downloaded files send have fuzz targets in

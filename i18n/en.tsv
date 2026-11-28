@@ -782,8 +782,8 @@
 #. window title in the Help menu's windows (About, updates, shortcuts, Tell a friend)
 	Check for updates	Check for updates
 #. checkbox in the Help menu's windows (About, updates, shortcuts, Tell a friend)
-#. check box in the update window: look for a new version every time BMD starts
-	Check for updates at every start	Check for updates at every start
+#. check box in the update window: look for a new version at startup and while running
+	Check for updates automatically	Check for updates automatically
 #. text in errors.rs
 #. what to do when the proxy set in Options didn't let a helper's download connect; {proxy} = the Options tab Proxy / Socks; {name} = yt-dlp, ffmpeg or gallery-dl; {helpers} and {other} = the buttons Helpers and Use another program
 #. {name} = a file name (keep the braces as they are)

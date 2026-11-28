@@ -127,7 +127,7 @@ To back up your list, quit BMD (**Tasks → Exit**) and copy `downloads.json`.
 
 ## Updates
 
-**Help → Check for updates...** tells you whether a newer version is out, and what is new in it. **Check for updates at every start** in that window lets BMD look by itself: a few seconds after it starts, and once a day while it stays open. When there's a new version, its window opens in front.
+**Help → Check for updates...** shows the latest version and what's new. With **Check for updates automatically** enabled, BMD checks a few seconds after startup and once an hour while it runs. The update window opens in front once per version during the session.
 
 When there is one, **Update now** downloads it, checks it, puts it in place and restarts BMD; your list, settings and downloads stay as they are:
 

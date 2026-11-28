@@ -1,6 +1,6 @@
 //! The Help menu (D-020): the user guide and the home page on the website (docs/ made into
 //! pages, in the interface language), problem reports on GitHub (pre-filled), update checks
-//! against GitHub Releases (on demand, and at every start and once a day while running), About,
+//! against GitHub Releases (on demand, at startup, and hourly while running), About,
 //! Keyboard shortcuts and Tell a friend.
 
 use std::sync::{Arc, Mutex};
@@ -19,8 +19,8 @@ const LATEST: &str = "https://api.github.com/repos/DecoyINDIA/BMD/releases/lates
 const REPO_PATH: &str = "DecoyINDIA/BMD";
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const COMMIT: &str = env!("BMD_COMMIT");
-/// While BMD runs, the automatic check comes again this often (it also checks at every start).
-pub const CHECK_EVERY: i64 = 24 * 3600;
+/// While BMD runs, the automatic check comes again this often (it also checks shortly after every start).
+pub const CHECK_EVERY: i64 = 3600;
 /// The check at start waits this long (the window, the list and the downloads first).
 pub const CHECK_AFTER_START: std::time::Duration = std::time::Duration::from_secs(5);
 
@@ -477,13 +477,13 @@ impl Updates {
         }
     }
 
-    /// `weekly`: the automatic check (its switch is here, under the answer). `Done(true)`:
+    /// `automatic`: the automatic check (its switch is here, under the answer). `Done(true)`:
     /// the update is going in place, BMD closes for it (and starts again).
     pub fn show(
         &mut self,
         ctx: &egui::Context,
         rt: &tokio::runtime::Handle,
-        weekly: &mut bool,
+        automatic: &mut bool,
     ) -> Outcome<bool> {
         if let Some(r) = self.slot.as_ref().and_then(|s| s.lock().unwrap().take()) {
             self.result = Some(r);
@@ -730,9 +730,9 @@ impl Updates {
                     winui::checkbox_until(
                         ui,
                         o + vec2(11.0, bottom + 4.0),
-                        weekly,
-                        // i18n: check box in the update window: look for a new version every time BMD starts
-                        "Check for updates at every start",
+                        automatic,
+                        // i18n: check box in the update window: look for a new version at startup and while running
+                        "Check for updates automatically",
                         true,
                         Some(o.x + status_right),
                     );
