@@ -19,9 +19,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.content.FileProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withResumed
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -33,11 +35,14 @@ import com.blackmarlin.downloader.ui.BmdViewModel
 import com.blackmarlin.downloader.ui.DestinationKind
 import com.blackmarlin.downloader.ui.UiDestination
 import com.blackmarlin.downloader.ui.UiFile
+import com.blackmarlin.downloader.ui.UpdatePrompt
 import com.blackmarlin.downloader.ui.boundSharedText
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.yield
 
 class MainActivity : ComponentActivity() {
+    private val updates: AndroidUpdates by viewModels()
     private val model: BmdViewModel by viewModels {
         viewModelFactory {
             initializer { BmdViewModel((application as BmdUiStoreOwner).uiStore, createSavedStateHandle()) }
@@ -52,6 +57,9 @@ class MainActivity : ComponentActivity() {
     private val notificationPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         model.refreshSystemState()
         if (!granted) model.message("Notifications are off. You can still see transfer status in the app.")
+    }
+    private val installPermission = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (packageManager.canRequestPackageInstalls()) installUpdate()
     }
     private val destinationPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val target = destinationTarget
@@ -85,7 +93,23 @@ class MainActivity : ComponentActivity() {
             if (target != null) pendingDocumentResult = PendingDocumentResult(target, uri, savedInstanceState.getInt("documentResultFlags"),
                 savedInstanceState.getBoolean("documentResultLocate"), savedInstanceState.getString("documentResultDraftId"))
         }
-        setContent { BmdApp(model, ::handlePlatformEffect) }
+        setContent { BmdApp(model, ::handlePlatformEffect) { UpdatePrompt(updates, ::installUpdate) } }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                launch {
+                    while (true) {
+                        updates.check()
+                        delay(UPDATE_CHECK_INTERVAL)
+                    }
+                }
+                updates.update.collect { update ->
+                    if (update is AndroidUpdate.Ready && update.openInstaller) {
+                        updates.installerOpened()
+                        installUpdate()
+                    }
+                }
+            }
+        }
         if (savedInstanceState == null) handleEntryIntent(intent)
         if (pendingDocumentResult != null) deliverPendingDocumentResult()
     }
@@ -97,6 +121,24 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onResume() { super.onResume(); model.refreshSystemState() }
+
+    private fun installUpdate() {
+        val update = updates.update.value as? AndroidUpdate.Ready ?: return
+        if (!update.apk.isFile) {
+            updates.dismiss()
+            model.message(getString(R.string.update_file_missing))
+            return
+        }
+        launchSafely {
+            if (packageManager.canRequestPackageInstalls()) {
+                val uri = FileProvider.getUriForFile(this, "$packageName.updates", update.apk)
+                startActivity(Intent(Intent.ACTION_VIEW).setDataAndType(uri, "application/vnd.android.package-archive")
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION))
+            } else {
+                installPermission.launch(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
+            }
+        }
+    }
     override fun onSaveInstanceState(outState: Bundle) {
         destinationTarget?.let { outState.putString("destinationTarget", it) }
         destinationDraftId?.let { outState.putString("destinationDraftId", it) }

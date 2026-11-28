@@ -73,7 +73,7 @@ private val navigationItems = listOf(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BmdApp(model: BmdViewModel, onPlatformEffect: (BmdEffect) -> Unit) {
+fun BmdApp(model: BmdViewModel, onPlatformEffect: (BmdEffect) -> Unit, updatePrompt: @Composable () -> Unit = {}) {
     val state by model.appState.collectAsStateWithLifecycle()
     val session by model.session.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
@@ -86,6 +86,7 @@ fun BmdApp(model: BmdViewModel, onPlatformEffect: (BmdEffect) -> Unit) {
     }
     BackHandler(session.route.screen !in rootScreens || session.selectionKind != null || session.dialog != null) { model.back() }
     BmdTheme(state.settings.theme) {
+        if (session.dialog == null) updatePrompt()
         val darkTheme = MaterialTheme.colorScheme.background.luminance() < .5f
         LaunchedEffect(darkTheme) { onPlatformEffect(BmdEffect.UpdateSystemBars(darkTheme)) }
         DisposableEffect(session.route.screen) {

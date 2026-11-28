@@ -84,4 +84,15 @@
     <string name="quick_download_direct_link">Enter a direct file link.</string>
     <string name="quick_download_duplicate">This link already has a download in Transfers.</string>
     <string name="quick_download_sign_in">This link needs source sign-in. Add it in Black Marlin.</string>
+    <string name="update_available">BMD %1$s is available</string>
+    <string name="update_message">Download the update here and confirm the installation in Android.</string>
+    <string name="update_now">Update now</string>
+    <string name="update_later">Later</string>
+    <string name="update_retry">Try again</string>
+    <string name="update_downloading">Downloading BMD %1$s</string>
+    <string name="update_ready">BMD %1$s is ready to install</string>
+    <string name="update_install">Install</string>
+    <string name="update_install_message">Confirm the update in Android. If asked, allow Black Marlin to install apps from this source.</string>
+    <string name="update_failed">The update could not be downloaded or verified.</string>
+    <string name="update_file_missing">The update file is no longer available. Reopen BMD to check again.</string>
 </resources>

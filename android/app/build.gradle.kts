@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.gradle.api.tasks.testing.Test
 
 val nativeOutput = layout.buildDirectory.dir("generated/native")
+val playDistribution = providers.gradleProperty("playDistribution").map(String::toBoolean).getOrElse(false)
 val nativeRevision = providers.exec {
     workingDir(rootProject.projectDir.parentFile)
     commandLine("python3", "tools/android/source_revision.py")
@@ -25,6 +26,7 @@ android {
         targetSdk = 36
         versionCode = 2
         versionName = "1.1.0"
+        buildConfigField("boolean", "GITHUB_UPDATES", (!playDistribution).toString())
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "ENGINE_REVISION", "\"${nativeRevision.get()}\"")
         ndk { abiFilters += setOf("arm64-v8a", "x86_64") }
@@ -69,6 +71,9 @@ android {
         jniLibs.srcDir(nativeOutput.map { it.dir("jniLibs") })
         assets.srcDir(nativeOutput.map { it.dir("assets") })
         assets.srcDir(layout.buildDirectory.dir("generated/androidNotices"))
+    }
+    if (playDistribution) {
+        sourceSets.getByName("release").manifest.srcFile("src/play/AndroidManifest.xml")
     }
     buildFeatures { compose = true; buildConfig = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }

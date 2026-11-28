@@ -118,4 +118,11 @@ No production private key is stored in the repository. To make a signed release,
 
 The ordinary pull-request workflow builds unsigned release candidates and a debug-signed test APK. A successful AAB build does not mean the application is published to Google Play. Store publication additionally needs the user's publisher account, app signing/upload key, current store declarations and privacy-policy URL, real screenshots, device acceptance evidence and release authorization. Never ship the debug certificate as a production signing key.
 
+For in-app updates to GitHub installations, publish `BMD-X.Y.Z-android.apk` and
+`BMD-X.Y.Z-android-SHA256SUMS.txt` on the stable `vX.Y.Z` release. The APK needs that version name,
+a higher Android version code and the same app signing certificate. BMD checks on launch and hourly
+while in the foreground. **Update now** verifies the APK and opens Android's installation confirmation.
+For Google Play distribution, build with `-PplayDistribution=true` to use Play's update mechanism
+and omit BMD's package installation permission from the release manifest.
+
 Before marking a build production-ready, verify process death, Android user-stop/reboot holds, assigned-network loss and metering changes, denied notifications, bounded retry, low storage, revoked SAF access, interrupted publication and ambiguous provider completion on real Android executions. Retain those test reports with the native manifest and artifact hashes. Design mockups and planning approval are not substitutes for this execution evidence.
