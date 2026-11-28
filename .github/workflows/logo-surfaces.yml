@@ -39,7 +39,9 @@ jobs:
           adb shell cmd uimode night no
           adb shell am start -a android.intent.action.MAIN -c android.intent.category.HOME
           sleep 5
-          adb shell input swipe 540 1800 540 500 500
+          adb shell input keyevent KEYCODE_ALL_APPS
+          sleep 2
+          adb shell input swipe 540 1860 540 350 250
           sleep 4
           adb shell screencap -p /sdcard/light.png
           adb pull /sdcard/light.png evidence/launcher-light.png
