@@ -51,6 +51,8 @@ Already have yt-dlp or ffmpeg for another program? Use those instead of a second
 ![The video helpers window: yt-dlp and ffmpeg, each with its version and Use another program...](images/help/video-helpers.webp)
 *Helpers...: use your own yt-dlp or ffmpeg instead.*
 
+<a name="javascript-runtime"></a>
+
 ### A JavaScript runtime for YouTube {#javascript-runtime}
 
 YouTube hides most of a video's qualities behind small puzzles that yt-dlp solves with a JavaScript runtime: **Deno**, **Node.js** or **Bun**. Without one, the list is short, sometimes only the sound and a low quality, and BMD says so: *YouTube needs a JavaScript runtime to list its video qualities*. Other sites don't need one.

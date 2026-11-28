@@ -18,6 +18,12 @@ downloads on the releases page.
 Always use the **versioned** release address, never a "latest" link, and never replace a file
 after submitting it: a new version is a new submission.
 
+## Listing links
+
+- Website: https://xolver.in/products/bmd/
+- Support: https://xolver.in/products/bmd/#help
+- Privacy policy and versioned setup URLs remain separate.
+
 ## Why these switches
 
 - `/STORE=1`: the setup leaves `store.marker` in the program's folder. BMD then treats the copy as
