@@ -1,6 +1,7 @@
 package com.blackmarlin.downloader.widget
 
 import android.appwidget.AppWidgetManager
+import android.content.ClipboardManager
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -20,7 +21,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,6 +69,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -87,6 +92,19 @@ import kotlinx.coroutines.flow.first
 
 class QuickDownloadActivity : ComponentActivity() {
     private val model by viewModels<QuickDownloadModel>()
+
+    // Text only, and only when the clipboard says it holds text: a clip's URI is never opened, and a clip
+    // that is not text is not read at all (reading shows Android's "pasted from your clipboard" notice).
+    private fun clipboardText(): CharSequence? = runCatching {
+        val clipboard = getSystemService(ClipboardManager::class.java)
+        if (!clipboard.hasPrimaryClip() || clipboard.primaryClipDescription?.hasMimeType("text/*") != true) return@runCatching null
+        clipboard.primaryClip?.takeIf { it.itemCount > 0 }?.getItemAt(0)?.text
+    }.getOrNull()
+
+    // Android hands the clipboard only to the focused window; callers wait for that first.
+    private fun autofillFromClipboard() {
+        if (model.acceptsClipboardLink) model.autofillFromClipboard(clipboardText())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,6 +152,8 @@ class QuickDownloadActivity : ComponentActivity() {
                     progressLabel = task?.stage?.label ?: stringResource(R.string.quick_download_preparing),
                     reducedMotion = app.settings.reducedMotion,
                     focusOnOpen = savedInstanceState == null,
+                    autofillOnOpen = savedInstanceState == null && intent.getBooleanExtra(EXTRA_AUTOFILL, false),
+                    onAutofill = ::autofillFromClipboard,
                     onUrlChange = model::edit,
                     onDownload = model::submit,
                     onDismiss = ::finish,
@@ -152,6 +172,11 @@ class QuickDownloadActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        /** Set by a tap on the widget's text box: fill it from the clipboard once the panel has focus. */
+        const val EXTRA_AUTOFILL = "autofill"
     }
 }
 
@@ -178,12 +203,15 @@ private fun DownloadPanel(
     progressLabel: String,
     reducedMotion: Boolean,
     focusOnOpen: Boolean,
+    autofillOnOpen: Boolean,
+    onAutofill: () -> Unit,
     onUrlChange: (String) -> Unit,
     onDownload: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val focus = remember { FocusRequester() }
     val autoFocus = remember { mutableStateOf(focusOnOpen && face == PanelFace.FORM) }
+    val autofill = remember { mutableStateOf(autofillOnOpen && face == PanelFace.FORM) }
     val keyboard = LocalSoftwareKeyboardController.current
     val windowInfo = LocalWindowInfo.current
     val focusManager = LocalFocusManager.current
@@ -222,19 +250,32 @@ private fun DownloadPanel(
                     when (shown) {
                         PanelFace.FORM -> {
                             LaunchedEffect(Unit) {
-                                if (autoFocus.value && face == PanelFace.FORM) {
+                                if ((autoFocus.value || autofill.value) && face == PanelFace.FORM) {
+                                    val focusField = autoFocus.value
+                                    val fill = autofill.value
                                     autoFocus.value = false
+                                    autofill.value = false
                                     snapshotFlow { windowInfo.isWindowFocused }.first { it }
-                                    withFrameNanos { }
-                                    focus.requestFocus()
-                                    withFrameNanos { }
-                                    keyboard?.show()
+                                    if (fill) onAutofill()
+                                    if (focusField) {
+                                        withFrameNanos { }
+                                        focus.requestFocus()
+                                        withFrameNanos { }
+                                        keyboard?.show()
+                                    }
                                 }
                             }
                             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                                 OutlinedTextField(
                                     value = url, onValueChange = onUrlChange,
-                                    modifier = Modifier.fillMaxWidth().focusRequester(focus),
+                                    modifier = Modifier.fillMaxWidth().focusRequester(focus)
+                                        // A tap on the empty box offers the copied link. Watched, never consumed.
+                                        .pointerInput(Unit) {
+                                            awaitEachGesture {
+                                                awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                                                if (waitForUpOrCancellation(PointerEventPass.Initial) != null) onAutofill()
+                                            }
+                                        },
                                     label = { Text(stringResource(R.string.quick_download_url)) },
                                     singleLine = true,
                                     isError = error != null,

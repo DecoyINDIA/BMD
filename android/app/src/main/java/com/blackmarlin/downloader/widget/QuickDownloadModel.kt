@@ -9,6 +9,7 @@ import com.blackmarlin.downloader.ui.BmdCommand
 import com.blackmarlin.downloader.ui.BmdUiException
 import com.blackmarlin.downloader.ui.InspectLinkRequest
 import com.blackmarlin.downloader.ui.StartDownloadRequest
+import com.blackmarlin.downloader.ui.clipboardHttpLink
 import com.blackmarlin.downloader.ui.parseSourceOrigin
 import java.util.UUID
 import kotlinx.coroutines.CancellationException
@@ -28,6 +29,16 @@ data class QuickDownloadForm(
     val consent: QuickDownloadConsent? = null,
 )
 
+/** Whether a copied link may still be offered: nothing running, nothing typed, and not cleared on purpose. */
+internal val QuickDownloadForm.acceptsClipboardLink: Boolean get() = !busy && url.isBlank() && !edited
+
+/** Fills the box with the clipboard's single link. Marked edited like typing, so an old error hides and a cleared box stays clear. */
+internal fun QuickDownloadForm.withClipboardLink(text: CharSequence?): QuickDownloadForm {
+    if (!acceptsClipboardLink) return this
+    val link = clipboardHttpLink(text) ?: return this
+    return QuickDownloadForm(url = link, edited = true)
+}
+
 class QuickDownloadModel(private val app: Application) : AndroidViewModel(app) {
     private val graph = app.bmdGraph()
     private val widgets = graph.quickDownloads
@@ -40,6 +51,10 @@ class QuickDownloadModel(private val app: Application) : AndroidViewModel(app) {
     fun edit(url: String) {
         if (!form.value.busy) mutableForm.value = QuickDownloadForm(url = url, edited = true)
     }
+
+    val acceptsClipboardLink: Boolean get() = form.value.acceptsClipboardLink
+
+    fun autofillFromClipboard(text: CharSequence?) { mutableForm.value = form.value.withClipboardLink(text) }
 
     fun clearUrl() { mutableForm.value = QuickDownloadForm() }
 
