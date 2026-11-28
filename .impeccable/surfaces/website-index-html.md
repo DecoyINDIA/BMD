@@ -39,17 +39,7 @@ damped (night instruments); colour lives in fields and stamps, reading text stay
 STORY: The visitor recognizes IDM's window before reading a word, reads that it is rebuilt,
 faster and free, sees the delivery times against IDM, and downloads.
 
-FIRST VIEWPORT: The real main window, about 84% of the content width and set toward the end,
-as the parcel. A waybill label card, about a third of the width, is stuck across its lower start
-corner (the owner's choice, after trying the end corner): tilted about two degrees, its depth in
-a contact shadow and a long soft one (no 3D turn, no pointer movement: the owner's call), sharing
-the window's grid cell so the section clears it. It carries the sender block (logo,
-name), the headline set large, the subline, the green Download action, macOS and Linux with their
-icons, the fields (postage free; delivery time; for Windows 10 and 11; version and size) and the
-barcode. Under the window's caption, beside the label, on the board: "Made possible by these
-amazing humans" and a row of the contributors' round photos with "+N" (the owner's choice,
-2026-11-08: a "liked by" line). A slim header above. Mobile: the window full width, the card below overlapping its lower
-edge with a gentler tilt, the caption under it, then the contributors' row.
+FIRST VIEWPORT: a classic hero on a flat band, built with the landing-page-design skill (2026-11-27, the owner's request, replacing the waybill card stuck on the window): headline and subline centred at 680px, the one green Download, a fine line for Linux and macOS, one proof line (the benchmark's 5.4×, linked), the real main window in a 16px frame, its caption, then the contributors' row ("Made possible by these amazing humans"). The type stays IBM Plex Sans, the site's one typeface. The waybill with its barcode stays on the closing section and the IDM alternative page. Mobile: the same column, the Download in the first screen.
 
 FORM: grounded candidate 5 of 7 (courier waybill and parcel label); seed:d1b9f806aa0c2dc4.
 Signature interaction: the tracking race, two shipments scanned event by event to the real
