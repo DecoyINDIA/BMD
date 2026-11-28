@@ -209,7 +209,7 @@ Recorded **2026-10-29** (`website/bench/results.json`, status `final`, commit `c
 <table>
   <tr>
     <td width="52%" valign="top">
-      <a href="docs/video.md"><img src="docs/images/video-button-youtube.webp" alt="Floating Download video button and quality selector over an embedded YouTube player"></a><br>
+      <a href="docs/video.md"><img src="docs/images/video-button-youtube.webp" alt="Floating Download video button over a YouTube video"></a><br>
       <sub><strong>In-Page Video &amp; Gallery Capture (<code>bmd-tools</code>):</strong> Signature-verified <code>yt-dlp</code>, <code>ffmpeg</code>, and <code>gallery-dl</code> across 1,000+ sites—up to 4K 60fps HDR or a <code>Most compatible (H.264 + AAC)</code> MP4 preset, with chapters, subtitles, playlists, and multi-connection HLS/DASH via <code>bmd-engine</code>.</sub>
     </td>
     <td width="48%" valign="top" align="center">
