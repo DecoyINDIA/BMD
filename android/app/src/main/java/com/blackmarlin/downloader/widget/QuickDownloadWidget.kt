@@ -121,11 +121,19 @@ class QuickDownloadWidgets(private val context: Context, private val store: BmdU
                 .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
+        // Its own request code: PendingIntents that differ only in extras would otherwise be one and the same.
+        val openAndPaste = PendingIntent.getActivity(
+            context, -id,
+            Intent(context, QuickDownloadActivity::class.java)
+                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
+                .putExtra(QuickDownloadActivity.EXTRA_AUTOFILL, true),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+        )
         manager.updateAppWidget(id, RemoteViews(context.packageName, R.layout.quick_download_widget).apply {
             setViewVisibility(R.id.quick_download_form, if (face == Face.Idle) View.VISIBLE else View.GONE)
             setViewVisibility(R.id.quick_download_progress, if (face is Face.Progress) View.VISIBLE else View.GONE)
             setViewVisibility(R.id.quick_download_success, if (face == Face.Success) View.VISIBLE else View.GONE)
-            setOnClickPendingIntent(R.id.quick_download_url, open)
+            setOnClickPendingIntent(R.id.quick_download_url, openAndPaste)
             setOnClickPendingIntent(R.id.quick_download_button, open)
             setOnClickPendingIntent(R.id.quick_download_progress, open)
             if (face is Face.Progress) {

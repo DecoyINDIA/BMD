@@ -37,33 +37,24 @@
   <!--@header-->
 
   <main id="main">
-    <!-- The parcel: the real window, its waybill stuck across the lower corner. -->
-    <section class="parcel" id="top">
-      <div class="wrap parcel-inner">
-        <figure class="parcel-window" data-lightbox>
+    <!-- Hero (landing-page-design): headline, subline, the one action, one proof, the real window.
+         The people behind it follow as a thanks row (build.py crew_pile). -->
+    <section class="hero" id="top">
+      <div class="wrap hero-inner">
+        <h1 class="heading-1 hero-head">The download manager you already know. Rebuilt to be faster.</h1>
+        <p class="body-7 hero-sub">The free IDM alternative. It opens every connection at once, picks up after a crash, and keeps torrents and video in one list.</p>
+        <div class="hero-act">
+          <!--@split-->
+        </div>
+        <p class="caption-2 hero-fine">Free and open source, with no ads, no trial and no sign up. For <a href="/download.html#linux"><svg class="os-ico" aria-hidden="true"><use href="#os-linux"/></svg>Linux</a> too, and <a href="/download.html#macos"><svg class="os-ico" aria-hidden="true"><use href="#os-macos"/></svg>macOS</a> to try.</p>
+        <p class="body-5 hero-proof"><b class="body-4">5.4× faster</b> than IDM 6.42 on a 1 GiB file, timed on one PC. <a href="/benchmark.html">See the benchmark</a></p>
+
+        <figure class="hero-window" data-lightbox>
           <img class="for-light" src="/assets/screens/main-light.webp" width="930" height="500" fetchpriority="high" alt="BMD's main window in light mode with categories, completed downloads, and an active transfer.">
           <img class="for-dark" src="/assets/screens/main-dark.webp" width="930" height="500" alt="BMD's main window in dark mode with categories and a download list.">
-          <figcaption>The real app, version {{VERSION}} on Windows 11 · every screenshot on this site is unretouched.</figcaption>
+          <figcaption class="caption-2">The real app, version {{VERSION}} on Windows 11 · every screenshot on this site is unretouched.</figcaption>
         </figure>
 
-        <div class="waybill" data-print>
-          <div class="wb-band">
-            <img src="/assets/logo-64.png" width="40" height="40" alt="">
-            <span class="wb-from"><b>Black Marlin Downloader</b><small>Free and open source · GPL-3.0</small></span>
-          </div>
-          <h1 class="wb-head">The download manager you already know. Rebuilt to be faster.</h1>
-          <p class="wb-sub">The free, open-source IDM alternative. Every connection at once, crash-safe resume, torrents and video in one list.</p>
-          <div class="wb-act">
-            <!--@split-->
-          </div>
-          <p class="wb-fine">For <a href="/download.html#linux"><svg class="os-ico" aria-hidden="true"><use href="#os-linux"/></svg>Linux</a> too, and <a href="/download.html#macos"><svg class="os-ico" aria-hidden="true"><use href="#os-macos"/></svg>macOS</a> to try.</p>
-          <p class="wb-stores">Browser extension: <a class="wb-amo" href="/help/guide-catch-browser-downloads.html">Chromium setup</a> <span class="wb-browsers"><span><img src="/assets/browsers/chrome.png" width="16" height="16" alt="">Chrome</span> <span><img src="/assets/browsers/edge.png" width="16" height="16" alt="">Edge</span> <span><img src="/assets/browsers/brave.png" width="16" height="16" alt="">Brave</span> <span><img src="/assets/browsers/opera.png" width="16" height="16" alt="">Opera</span></span></p>
-          <!--@fields-->
-          <div class="wb-code"><!--@barcode--><span translate="no">BMD {{VERSION}}</span></div>
-        </div>
-
-        <!-- The crew: the people on GitHub who made it possible, on the board beside the label
-             (build.py crew_pile, tools/contributors.py); left out when GitHub can't be read. -->
         <!--@crew-->
       </div>
     </section>
