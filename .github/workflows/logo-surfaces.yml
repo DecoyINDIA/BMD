@@ -69,3 +69,32 @@ jobs:
         with:
           name: logo-macos-installer
           path: evidence
+  tray:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Install X11 desktop and build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libgl1-mesa-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev cmake libclang-dev xvfb xauth openbox xdotool wmctrl imagemagick dbus-x11 xfce4-panel xfce4-indicator-plugin
+      - name: Build desktop app
+        run: cargo build --locked -p bmd-app
+      - name: Capture real X11 desktop panel
+        run: |
+          mkdir -p evidence "$RUNNER_TEMP/bmd-data"
+          export BMD_DATA_DIR="$RUNNER_TEMP/bmd-data" LIBGL_ALWAYS_SOFTWARE=1 XDG_SESSION_TYPE=x11
+          xvfb-run -a -s '-screen 0 1280x800x24' dbus-run-session -- bash -c '
+            openbox &
+            xfce4-panel &
+            sleep 5
+            target/debug/bmd > evidence/app.log 2>&1 &
+            sleep 25
+            import -window root evidence/tray-desktop.png
+            wmctrl -lp > evidence/windows.txt
+          '
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: logo-linux-tray
+          path: evidence
