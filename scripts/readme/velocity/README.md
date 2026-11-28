@@ -39,4 +39,5 @@ python scripts/readme/validate_assets.py
 python -m unittest scripts/readme/test_analytics.py
 ```
 
-Raw PNG frame sequences and review contact sheets are written exclusively outside the git repository (`scratch/frames/`, `scratch/review/`), keeping the working tree free of temporary caches.
+Raw PNG frames and review contact sheets go into the ignored `target/readme-velocity/` directory.
+After refreshing the app screenshots, run `node scripts/readme/velocity/build.mjs --only product-cinema` to rebuild the screenshot animation in both themes.

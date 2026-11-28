@@ -274,8 +274,7 @@ pub fn banner(
     // `r` gives the rect where it is on screen (mirrored in RTL): the logo at the start side.
     p.rect_filled(r(o, 0.0, 0.0, w, h), 0.0, FIELD());
     fill_l(p, o.x, o.y + h, o.x + w - 1.0, o.y + h, FIELD_EDGE());
-    egui::Image::new(crate::brand_mark())
-        .paint_at(ui, r(o, 18.0, 18.0, 48.0, 48.0));
+    egui::Image::new(crate::brand_mark()).paint_at(ui, r(o, 18.0, 18.0, 48.0, 48.0));
     // The headline on one line: cut with "..." at the far edge (a long translation), whole on
     // hover.
     let bold = tahoma_title();
