@@ -16,12 +16,9 @@ FONT_DISPLAY = "'Space Grotesk', 'Segoe UI', system-ui, -apple-system, sans-seri
 FONT_BODY = "'IBM Plex Sans', 'Segoe UI', system-ui, -apple-system, sans-serif"
 FONT_MONO = "'IBM Plex Mono', 'Cascadia Mono', Consolas, ui-monospace, monospace"
 
-MARLIN_PATHS = {
-    "dorsal": "M125 118C177 88 255 83 312 111C238 158 155 217 128 293C120 252 139 209 166 173C191 139 177 115 125 118Z",
-    "body": "M437 15C387 67 362 96 344 125C357 113 371 105 386 99C359 124 339 151 330 180C346 208 354 241 346 274C344 256 339 240 330 229C327 298 278 360 205 387C191 393 176 397 158 399L130 356C167 344 213 354 239 308C263 266 244 219 204 211C169 204 140 235 128 293C119 240 167 179 221 150C252 133 273 119 309 109C352 98 394 48 437 15Z",
-    "belly": "M223 179C261 148 306 162 326 191C344 215 351 244 346 274C343 248 332 229 311 215C287 198 252 184 223 179Z",
-    "tail": "M49 295C103 296 136 323 176 341C205 354 229 351 255 337C232 360 194 374 165 394C145 414 132 438 124 462C122 423 148 395 133 367C114 337 81 306 49 295Z",
-}
+LOGO = ET.parse(ROOT / "art" / "BMD Black Marlin Icon.svg").getroot()
+LOGO_GROUP = LOGO.find("{http://www.w3.org/2000/svg}g")
+LOGO_MARKUP = ET.tostring(LOGO_GROUP, encoding="unicode").replace("ns0:", "").replace(':ns0=', '=')
 
 THEMES = {
     "dark": {
@@ -150,10 +147,8 @@ def build_cta_velocity(mode: str) -> str:
   <g clip-path="url(#cta-clip-{mode})">
     <polygon class="sheen" points="0,4 58,4 22,70 -36,70" fill="#ffffff"/>
   </g>
-  <g transform="translate(18 14) scale(0.095)">
-    <path fill="{t['cta_ink']}" fill-opacity="0.88" d="{MARLIN_PATHS['dorsal']}"/>
-    <path fill="{t['cta_ink']}" d="{MARLIN_PATHS['body']}"/>
-    <path fill="{t['cta_ink']}" fill-opacity="0.72" d="{MARLIN_PATHS['tail']}"/>
+  <g transform="translate(18 14) scale(0.047)">
+    {LOGO_MARKUP}
   </g>
   <text x="76" y="34" fill="{t['cta_ink']}" font-size="18.5" font-weight="700" letter-spacing="-0.3" class="t-disp">Download Black Marlin</text>
   <text x="76" y="54" fill="{t['cta_sub']}" font-size="11.5" font-weight="500" class="t-mono">Latest release · Windows, Linux and macOS</text>

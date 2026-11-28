@@ -28,7 +28,8 @@
 
 <p align="center">
   <sub>
-    <strong>Windows, Linux and macOS downloads</strong> · <code>winget install DecoyINDIA.BMD</code> ·
+    <strong>Windows, Linux and experimental macOS builds</strong> ·
+    <a href="https://xolver.in/products/bmd/">Official product page</a> ·
     <a href="#download-center">Windows ARM64 / x86 / Portable · Linux (.deb, .rpm, AppImage, Docker) · macOS (Experimental) · Browser Extensions</a> ·
     <a href="https://github.com/DecoyINDIA/BMD/releases/latest">Latest release notes and installers</a>
   </sub>
@@ -209,7 +210,7 @@ Recorded **2026-10-29** (`website/bench/results.json`, status `final`, commit `c
 <table>
   <tr>
     <td width="52%" valign="top">
-      <a href="docs/video.md"><img src="docs/images/video-button-youtube.webp" alt="Floating Download video button and quality selector over an embedded YouTube player"></a><br>
+      <a href="docs/video.md"><img src="docs/images/video-button-youtube.webp" alt="Floating Download video button over a YouTube video"></a><br>
       <sub><strong>In-Page Video &amp; Gallery Capture (<code>bmd-tools</code>):</strong> Signature-verified <code>yt-dlp</code>, <code>ffmpeg</code>, and <code>gallery-dl</code> across 1,000+ sites—up to 4K 60fps HDR or a <code>Most compatible (H.264 + AAC)</code> MP4 preset, with chapters, subtitles, playlists, and multi-connection HLS/DASH via <code>bmd-engine</code>.</sub>
     </td>
     <td width="48%" valign="top" align="center">
@@ -335,21 +336,21 @@ Refreshed every **6 hours** via [`.github/workflows/readme-analytics.yml`](.gith
 <!-- BMD:ANALYTICS-TEXT:START -->
 | Metric | Value |
 | :--- | :--- |
-| **Product & Extension Downloads** | **37** (excludes 19 auxiliary files; zero double-counting) |
-| **All Release Assets Total** (incl. symbols, `.zsync`, checksums, geo) | 56 |
-| **Latest Release** | `v1.0.0` (37 product downloads · 2026-11-19) |
-| **Growth Windows** | 24h: +10 · 7d: pending · 30d: pending |
+| **Product & Extension Downloads** | **59** (excludes 32 auxiliary files; zero double-counting) |
+| **All Release Assets Total** (incl. symbols, `.zsync`, checksums, geo) | 91 |
+| **Latest Release** | `v1.1.0` (22 product downloads · 2026-11-27) |
+| **Growth Windows** | 24h: +32 · 7d: pending · 30d: pending |
 | **Repository Pulse** | 0 stars · 0 forks · 4 contributors |
 | **Tracking Started** | `2026-11-26 16:20 UTC` |
-| **Last Synced** | `2026-11-27 16:26 UTC` · `api_status`: `ok (live GitHub API)` |
+| **Last Synced** | `2026-11-28 01:17 UTC` · `api_status`: `ok (live GitHub API)` |
 
 | Platform Bucket | Category | Downloads | Share (Product) | Share (All Assets) |
 | :--- | :--- | ---: | ---: | ---: |
-| Windows | Product | 20 | 54.0% | 35.7% |
-| Linux | Product | 8 | 21.6% | 14.3% |
-| macOS (Experimental) | Product | 2 | 5.4% | 3.6% |
-| Browser Extensions | Product | 7 | 18.9% | 12.5% |
-| Other / Auxiliary | Auxiliary | 19 | n/a | 33.9% |
+| Windows | Product | 29 | 49.1% | 31.9% |
+| Linux | Product | 16 | 27.1% | 17.6% |
+| macOS (Experimental) | Product | 4 | 6.8% | 4.4% |
+| Browser Extensions | Product | 10 | 16.9% | 11.0% |
+| Other / Auxiliary | Auxiliary | 32 | n/a | 35.2% |
 <!-- BMD:ANALYTICS-TEXT:END -->
 
 </details>
@@ -386,7 +387,7 @@ Next up in [`ROADMAP.md`](ROADMAP.md): Orca screen-reader & Flatpak native-messa
 Published **2026-11-27** · [Release Notes (`v1.1.0`)](https://github.com/DecoyINDIA/BMD/releases/tag/v1.1.0) · [All Releases](https://github.com/DecoyINDIA/BMD/releases)
 
 ### Windows (Windows 10 / 11)
-Also via WinGet: `winget install DecoyINDIA.BMD`
+For a guided choice, use the [official Xolver Downloads page](https://xolver.in/downloads/). The links below point directly to the published installers.
 
 | Architecture | Installer (Recommended) | Portable Zip (`data/` beside exe) | Raw Zip (`%APPDATA%\bmd`) |
 | :--- | :--- | :--- | :--- |

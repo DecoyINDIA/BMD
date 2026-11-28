@@ -10437,7 +10437,7 @@ impl App {
         let dt = self
             .drop_target
             .get_or_insert_with(|| crate::droptarget::DropTarget::new(pos));
-        let icon = egui::include_image!("../assets/icons/app/bmd-48.png");
+        let icon = crate::brand_mark();
         for ev in dt.show(ctx, &icon) {
             use crate::droptarget::Event;
             match ev {

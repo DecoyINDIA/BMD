@@ -77,6 +77,10 @@ pub fn router(state: Arc<State>) -> Router {
             get(|| async { ([(header::CONTENT_TYPE, "image/png")], ICON).into_response() }),
         )
         .route(
+            "/mark-light.png",
+            get(|| async { ([(header::CONTENT_TYPE, "image/png")], MARK_LIGHT).into_response() }),
+        )
+        .route(
             "/fonts/plex-sans.woff2",
             get(|| async { font(FONT_PLEX_SANS) }),
         )
@@ -117,6 +121,7 @@ static SCRIPT: &str = include_str!("../web/app.js");
 static STYLE: &str = include_str!("../web/app.css");
 /// The app's icon (art/), for the page's tab and a phone's home screen.
 static ICON: &[u8] = include_bytes!("../../app/assets/icons/app/bmd-256.png");
+static MARK_LIGHT: &[u8] = include_bytes!("../../../website/assets/logo-64.png");
 static MANIFEST: &str = include_str!("../web/manifest.webmanifest");
 /// The page's fonts (SIL OFL 1.1, `web/fonts/`): IBM Plex Sans for text, IBM Plex Mono for the
 /// sign-in code, Space Grotesk for headlines. Served from here, nothing from another site.

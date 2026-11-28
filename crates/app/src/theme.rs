@@ -225,6 +225,12 @@ pub fn apply_mode(ctx: &egui::Context) {
         egui::ViewportId::ROOT,
         egui::ViewportCommand::SetTheme(system_theme(dark_surface)),
     );
+    if !cfg!(target_os = "macos") {
+        ctx.send_viewport_cmd_to(
+            egui::ViewportId::ROOT,
+            egui::ViewportCommand::Icon(Some(crate::app_icon_for_surface(dark_surface))),
+        );
+    }
 }
 
 /// The winit window theme for a dark (true) or light caption.
